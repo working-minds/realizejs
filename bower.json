@@ -1,0 +1,28 @@
+{
+  "name": "wkm-react-frontend",
+  "version": "0.0.0",
+  "authors": [
+    "Pedro Jesus <pjesus@wkm.com.br>"
+  ],
+  "description": "Elementos de Frontend, utilizando ReactJS",
+  "moduleType": [
+    "es6"
+  ],
+  "license": "MIT",
+  "homepage": "www.wkm.com.br",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+
+  "dependencies": {
+    "react": "*",
+    "materialize": "~0.97.0",
+    "moment": "~2.10.3",
+    "numeral": "~1.5.3",
+    "jquery-serialize-object": "~2.5.0"
+  }
+}

@@ -1,0 +1,10 @@
+var InputSelectOption = React.createClass({
+  propTypes: {
+    name: React.PropTypes.string,
+    value: React.PropTypes.string
+  },
+
+  render: function() {
+    return <option value={this.props.value}>{this.props.name}</option>;
+  }
+});
