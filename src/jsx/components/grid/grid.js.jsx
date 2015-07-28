@@ -20,7 +20,19 @@ var Grid = React.createClass({
         param: 's',
         valueFormat: '%{field} %{direction}'
       },
-      sortData: {}
+      sortData: {},
+      filterForm: {
+        inputs: {
+          name: { label: 'Nome' }
+        }
+      },
+      columns: {
+        name: { label: 'Nome' }
+      },
+      data: {
+        dataRows: [],
+        count: 0
+      }
     };
   },
 
@@ -73,6 +85,12 @@ var Grid = React.createClass({
   },
 
   renderPagination: function() {
+    var totalRowsCount = this.state.count;
+    var pageRowsCount = this.state.dataRows.length;
+    if(totalRowsCount <= pageRowsCount) {
+      return null;
+    }
+
     return (
       <div className="grid__pagination row">
         <Pagination

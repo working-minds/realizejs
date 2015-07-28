@@ -26,7 +26,7 @@ var GridTable = React.createClass({
           {this.renderTableHeaders()}
         </thead>
         <tbody>
-          {this.renderTableRows()}
+          {(this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()}
         </tbody>
       </table>
     );
@@ -77,5 +77,20 @@ var GridTable = React.createClass({
     }
 
     return rowComponents;
+  },
+
+  renderEmptyMessage: function() {
+    var columnsCount = 0;
+    for(var key in this.props.columns) {
+      columnsCount++;
+    }
+
+    return (
+      <tr>
+        <td colSpan={columnsCount}>
+          Nenhum resultado foi encontrado.
+        </td>
+      </tr>
+    );
   }
 });
