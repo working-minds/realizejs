@@ -7,7 +7,7 @@
   "homepage": "http://www.wkm.com.br",
   "repository": {
     "type": "git",
-    "url": "http://git.wkm.com.br:wkm/frontend.git"
+    "url": "http://git.wkm.com.br:wkm/react-frontend.git"
   },
   "engines": {
     "node": ">= 0.10.0"

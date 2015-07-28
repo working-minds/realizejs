@@ -18,6 +18,11 @@
     "tests"
   ],
 
+  "main": [
+    "dist/css/wkm-react-frontend.css",
+    "dist/js/wkm-react-frontend.min.js",
+  ],
+
   "dependencies": {
     "react": "*",
     "materialize": "~0.97.0",
