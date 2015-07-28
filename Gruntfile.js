@@ -17,7 +17,7 @@ module.exports = function(grunt) {
           {
             expand: true,
             cwd: 'src/jsx',
-            src: ['**/*.jsx'],
+            src: ['src/jsx/**/*.jsx'],
             dest: 'src/js',
             ext: '.js'
           }
@@ -48,6 +48,20 @@ module.exports = function(grunt) {
         src: 'dist/js/<%= pkg.name %>.js',
         dest: 'dist/js/<%= pkg.name %>.min.js'
       }
+    },
+
+    cssmin: {
+      build: {
+        files: [
+          {
+            expand: true,
+            cwd: 'dist/css',
+            src: ['<%= pkg.name %>.css'],
+            dest: 'dist/css',
+            ext: '.min.css'
+          }
+        ]
+      }
     }
   });
 
@@ -55,10 +69,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-react');
 
 
-  grunt.registerTask('build', ['react:build', 'concat:js', 'concat:css', 'uglify']);
+  grunt.registerTask('build', ['react:build', 'concat:js', 'concat:css', 'uglify', 'cssmin']);
   grunt.registerTask('default', ['build']);
 };

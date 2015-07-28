@@ -1,0 +1,4 @@
+/*!
+ * WKM Frontend v0.0.0 (http://www.wkm.com.br)
+ * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
+ */.grid__pagination{text-align:center}.grid__pagination .pagination{display:inline-block}.column--currency,.column--datetime,.column--number{white-space:nowrap}.filter__button-group button{margin-left:1.5em}.filter__button-group .filter__button--clear{color:#000}.table-header .table-header__name.sortable{cursor:pointer}.table-header .table-header__name.sortable.asc:after{content:' \25B4'}.table-header .table-header__name.sortable.desc:after{content:' \25BE'}

@@ -19,7 +19,7 @@
   ],
 
   "main": [
-    "dist/css/wkm-react-frontend.css",
+    "dist/css/wkm-react-frontend.min.css",
     "dist/js/wkm-react-frontend.min.js"
   ],
 
