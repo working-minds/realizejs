@@ -19,7 +19,7 @@ var GridTableCell = React.createClass({
   },
 
   cssClass: function() {
-    return "column--" + this.props.format;
+    return  WRF.themeClass('grid.table.cell grid.table.cell.' + this.props.format);
   },
 
   renderValue: function() {

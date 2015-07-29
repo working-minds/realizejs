@@ -19,7 +19,7 @@ var GridTableHeader = React.createClass({displayName: "GridTableHeader",
 
   render: function() {
     return (
-      React.createElement("th", {className: "table-header"}, 
+      React.createElement("th", {className: WRF.themeClass('grid.table.header')}, 
         React.createElement("span", {onClick: this.sortColumn, className: this.className()}, 
           this.props.label || this.props.name
         )
@@ -28,7 +28,7 @@ var GridTableHeader = React.createClass({displayName: "GridTableHeader",
   },
 
   className: function() {
-    var className = "table-header__name";
+    var className = WRF.themeClass('grid.table.header');
     if(this.props.sortable) {
       className += " sortable";
 

@@ -48,7 +48,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   render: function() {
     return (
-      React.createElement("div", {className: "grid " + WRF.themeProp('grid.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid')}, 
         this.renderFilter(), 
 
         this.renderPagination(), 
@@ -60,7 +60,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderFilter: function() {
     return (
-      React.createElement("div", {className: "grid__filter " + WRF.themeProp('grid.row.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid.filter.wrapper grid.row')}, 
         React.createElement(GridFilter, {
           form: this.props.filterForm, 
           url: this.props.url, 
@@ -72,7 +72,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderTable: function() {
     return (
-      React.createElement("div", {className: "grid__table " + WRF.themeProp('grid.row.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid.table.wrapper grid.row')}, 
         React.createElement(GridTable, {
           columns: this.props.columns, 
           sortConfigs: this.props.sortConfigs, 
@@ -92,7 +92,7 @@ var Grid = React.createClass({displayName: "Grid",
     }
 
     return (
-      React.createElement("div", {className: "grid__pagination " + WRF.themeProp('grid.row.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid.pagination.wrapper grid.row')}, 
         React.createElement(Pagination, React.__spread({}, 
           this.props.paginationConfigs, 
           {page: this.state.page, 

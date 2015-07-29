@@ -32,7 +32,8 @@ module.exports = function(grunt) {
       },
       js: {
         src: [
-          'src/js/application.js',
+          'src/js/config.js',
+          'src/js/theme.js',
           'src/js/themes/**/*.js',
           'src/js/components/**/*.js'
         ],

@@ -12,9 +12,7 @@ var GridFilter = React.createClass({
 
   getDefaultProps: function() {
     return {
-      form: {
-
-      },
+      form: {},
       method: "GET",
       submitButton: {
         name: 'Filtrar',

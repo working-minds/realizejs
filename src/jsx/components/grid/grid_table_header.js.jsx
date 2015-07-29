@@ -19,7 +19,7 @@ var GridTableHeader = React.createClass({
 
   render: function() {
     return (
-      <th className="table-header">
+      <th className={WRF.themeClass('grid.table.header')}>
         <span onClick={this.sortColumn} className={this.className()}>
           {this.props.label || this.props.name}
         </span>
@@ -28,7 +28,7 @@ var GridTableHeader = React.createClass({
   },
 
   className: function() {
-    var className = "table-header__name";
+    var className = WRF.themeClass('grid.table.header');
     if(this.props.sortable) {
       className += " sortable";
 

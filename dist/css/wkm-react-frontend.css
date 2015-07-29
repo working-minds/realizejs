@@ -10,10 +10,6 @@
   display: inline-block;
 }
 
-.column--currency, .column--number, .column--datetime {
-  white-space: nowrap;
-}
-
 .filter__button-group button {
   margin-left: 1.5em;
 }
@@ -32,4 +28,8 @@
 
 .table-header .table-header__name.sortable.desc:after {
   content: ' \25BE';
+}
+
+.table-cell--currency, .table-cell--number, .table-cell--datetime {
+  white-space: nowrap;
 }

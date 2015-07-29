@@ -12,9 +12,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
   getDefaultProps: function() {
     return {
-      form: {
-
-      },
+      form: {},
       method: "GET",
       submitButton: {
         name: 'Filtrar',
@@ -22,7 +20,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
       },
       clearButton: {
         name: 'Limpar',
-        className: 'filter__button--clear grey lighten-4'
+        className: WRF.themeClass('grid.filter.clearButton button.cancel')
       },
       onSuccess: function(data) {
         return true;
@@ -48,7 +46,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
         this.props.children, 
 
-        React.createElement("div", {className: "filter__button-group col s12 m12 l12 right-align"}, 
+        React.createElement("div", {className: WRF.themeClass('grid.filter.buttonGroup')}, 
           React.createElement(Button, React.__spread({},  this.props.clearButton, {onClick: this.resetFilter})), 
           React.createElement(Button, React.__spread({},  this.props.submitButton, {type: "submit"}))
         )

@@ -1,6 +1,6 @@
 WRF.themes.materialize = {
   grid: {
-    cssClass: 'grid container',
+    cssClass: 'grid',
 
     row: {
       cssClass: 'row'
@@ -21,11 +21,43 @@ WRF.themes.materialize = {
     },
 
     table: {
+      cssClass: 'striped responsive-table',
+
       wrapper: {
         cssClass: 'grid__table'
       },
 
-      cssClass: 'striped responsive-table'
+      header: {
+        cssClass: 'table-header',
+
+        label: {
+          cssClass: 'table-header__name'
+        }
+      },
+
+      cell: {
+        cssClass: 'table-cell',
+
+        text: {
+          cssClass: 'table-cell--text'
+        },
+
+        currency: {
+          cssClass: 'table-cell--currency'
+        },
+
+        number: {
+          cssClass: 'table-cell--number'
+        },
+
+        boolean: {
+          cssClass: 'table-cell--boolean'
+        },
+
+        datetime: {
+          cssClass: 'table-cell--datetime'
+        }
+      }
     },
 
     pagination: {

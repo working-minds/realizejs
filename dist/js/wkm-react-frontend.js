@@ -4,42 +4,170 @@
  */
 var WRF = {};
 
-WRF.themes = {};
 WRF.config = {
-  theme: 'materialize'
+  theme: 'default'
 };
 
-WRF.themeProp = function(key) {
+WRF.themes = {};
+
+WRF.getTheme = function() {
+  var defaultTheme = WRF.themes.default;
+  var currentTheme = WRF.themes[WRF.config.theme];
+
+  return $.extend({}, defaultTheme, currentTheme);
+};
+
+WRF.themeProp = function(key, theme) {
   if(!key) {
     return '';
   }
 
-  var defaultTheme = WRF.themes.default;
-  var theme = $.extend({}, defaultTheme, WRF.themes[WRF.config.theme]);
-  var key_array = key.split('.');
+  if(theme === undefined) {
+    theme = this.getTheme();
+  }
+
+  var keyArr = key.split('.');
   var prop = theme;
 
-  while(key_array.length > 0) {
-    prop = prop[key_array.pop()];
+  try {
+    while(keyArr.length > 0) {
+      prop = prop[keyArr.shift()];
+    }
+  } catch(err) {
+    return '';
   }
 
   return prop;
 };
 
+WRF.themeClass = function(keys) {
+  var theme = this.getTheme();
+  var keysArr = keys.split(' ');
+  var themeClass = "";
+
+  while(keysArr.length > 0) {
+    var key = keysArr.shift();
+    var classKey = key + '.cssClass';
+
+    themeClass += WRF.themeProp(classKey, theme) + ' ';
+  }
+
+  return themeClass;
+};
 
 WRF.themes.default = {
   grid: {
-    class: '',
+    cssClass: 'grid',
+
     row: {
-      class: ''
+      cssClass: ''
+    },
+
+    filter: {
+      wrapper: {
+        cssClass: 'grid__filter'
+      },
+
+      buttonGroup: {
+        cssClass: 'filter__button-group'
+      },
+
+      clearButton: {
+        cssClass: 'filter__button--clear'
+      }
+    },
+
+    table: {
+      wrapper: {
+        cssClass: 'grid__table'
+      }
+    },
+
+    pagination: {
+      wrapper: {
+        cssClass: 'grid__pagination'
+      }
+    }
+  },
+
+  button: {
+    cancel: {
+      cssClass: ''
     }
   }
 };
 WRF.themes.materialize = {
   grid: {
-    class: 'container',
+    cssClass: 'grid',
+
     row: {
-      class: 'row'
+      cssClass: 'row'
+    },
+
+    filter: {
+      wrapper: {
+        cssClass: 'grid__filter'
+      },
+
+      buttonGroup: {
+        cssClass: 'filter__button-group col s12 m12 l12 right-align'
+      },
+
+      clearButton: {
+        cssClass: 'filter__button--clear'
+      }
+    },
+
+    table: {
+      cssClass: 'striped responsive-table',
+
+      wrapper: {
+        cssClass: 'grid__table'
+      },
+
+      header: {
+        cssClass: 'table-header',
+
+        label: {
+          cssClass: 'table-header__name'
+        }
+      },
+
+      cell: {
+        cssClass: 'table-cell',
+
+        text: {
+          cssClass: 'table-cell--text'
+        },
+
+        currency: {
+          cssClass: 'table-cell--currency'
+        },
+
+        number: {
+          cssClass: 'table-cell--number'
+        },
+
+        boolean: {
+          cssClass: 'table-cell--boolean'
+        },
+
+        datetime: {
+          cssClass: 'table-cell--datetime'
+        }
+      }
+    },
+
+    pagination: {
+      wrapper: {
+        cssClass: 'grid__pagination'
+      }
+    }
+  },
+
+  button: {
+    cancel: {
+      cssClass: 'grey lighten-4'
     }
   }
 };
@@ -254,7 +382,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   render: function() {
     return (
-      React.createElement("div", {className: "grid " + WRF.themeProp('grid.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid')}, 
         this.renderFilter(), 
 
         this.renderPagination(), 
@@ -266,7 +394,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderFilter: function() {
     return (
-      React.createElement("div", {className: "grid__filter " + WRF.themeProp('grid.row.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid.filter.wrapper grid.row')}, 
         React.createElement(GridFilter, {
           form: this.props.filterForm, 
           url: this.props.url, 
@@ -278,7 +406,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderTable: function() {
     return (
-      React.createElement("div", {className: "grid__table " + WRF.themeProp('grid.row.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid.table.wrapper grid.row')}, 
         React.createElement(GridTable, {
           columns: this.props.columns, 
           sortConfigs: this.props.sortConfigs, 
@@ -298,7 +426,7 @@ var Grid = React.createClass({displayName: "Grid",
     }
 
     return (
-      React.createElement("div", {className: "grid__pagination " + WRF.themeProp('grid.row.class')}, 
+      React.createElement("div", {className: WRF.themeClass('grid.pagination.wrapper grid.row')}, 
         React.createElement(Pagination, React.__spread({}, 
           this.props.paginationConfigs, 
           {page: this.state.page, 
@@ -394,9 +522,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
   getDefaultProps: function() {
     return {
-      form: {
-
-      },
+      form: {},
       method: "GET",
       submitButton: {
         name: 'Filtrar',
@@ -404,7 +530,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
       },
       clearButton: {
         name: 'Limpar',
-        className: 'filter__button--clear grey lighten-4'
+        className: WRF.themeClass('grid.filter.clearButton button.cancel')
       },
       onSuccess: function(data) {
         return true;
@@ -430,7 +556,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
         this.props.children, 
 
-        React.createElement("div", {className: "filter__button-group col s12 m12 l12 right-align"}, 
+        React.createElement("div", {className: WRF.themeClass('grid.filter.buttonGroup')}, 
           React.createElement(Button, React.__spread({},  this.props.clearButton, {onClick: this.resetFilter})), 
           React.createElement(Button, React.__spread({},  this.props.submitButton, {type: "submit"}))
         )
@@ -472,7 +598,7 @@ var GridTable = React.createClass({displayName: "GridTable",
 
   render: function() {
     return(
-      React.createElement("table", {className: "striped responsive-table"}, 
+      React.createElement("table", {className: WRF.themeClass('grid.table')}, 
         React.createElement("thead", null, 
           this.renderTableHeaders()
         ), 
@@ -567,7 +693,7 @@ var GridTableCell = React.createClass({displayName: "GridTableCell",
   },
 
   cssClass: function() {
-    return "column--" + this.props.format;
+    return  WRF.themeClass('grid.table.cell grid.table.cell.' + this.props.format);
   },
 
   renderValue: function() {
@@ -629,7 +755,7 @@ var GridTableHeader = React.createClass({displayName: "GridTableHeader",
 
   render: function() {
     return (
-      React.createElement("th", {className: "table-header"}, 
+      React.createElement("th", {className: WRF.themeClass('grid.table.header')}, 
         React.createElement("span", {onClick: this.sortColumn, className: this.className()}, 
           this.props.label || this.props.name
         )
@@ -638,7 +764,7 @@ var GridTableHeader = React.createClass({displayName: "GridTableHeader",
   },
 
   className: function() {
-    var className = "table-header__name";
+    var className = WRF.themeClass('grid.table.header');
     if(this.props.sortable) {
       className += " sortable";
 

@@ -1,9 +1,4 @@
-var WRF = {};
-
 WRF.themes = {};
-WRF.config = {
-  theme: 'materialize'
-};
 
 WRF.getTheme = function() {
   var defaultTheme = WRF.themes.default;
@@ -24,8 +19,12 @@ WRF.themeProp = function(key, theme) {
   var keyArr = key.split('.');
   var prop = theme;
 
-  while(keyArr.length > 0) {
-    prop = prop[keyArr.pop()];
+  try {
+    while(keyArr.length > 0) {
+      prop = prop[keyArr.shift()];
+    }
+  } catch(err) {
+    return '';
   }
 
   return prop;
@@ -37,7 +36,7 @@ WRF.themeClass = function(keys) {
   var themeClass = "";
 
   while(keysArr.length > 0) {
-    var key = keysArr.pop();
+    var key = keysArr.shift();
     var classKey = key + '.cssClass';
 
     themeClass += WRF.themeProp(classKey, theme) + ' ';
@@ -45,4 +44,3 @@ WRF.themeClass = function(keys) {
 
   return themeClass;
 };
-
