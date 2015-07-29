@@ -22,7 +22,7 @@ var GridFilter = React.createClass({
       },
       clearButton: {
         name: 'Limpar',
-        className: 'filter__button--clear grey lighten-4'
+        className: WRF.themeClass('grid.filter.clearButton button.cancel')
       },
       onSuccess: function(data) {
         return true;
@@ -48,7 +48,7 @@ var GridFilter = React.createClass({
 
         {this.props.children}
 
-        <div className="filter__button-group col s12 m12 l12 right-align">
+        <div className={WRF.themeClass('grid.filter.buttonGroup')}>
           <Button {...this.props.clearButton} onClick={this.resetFilter} />
           <Button {...this.props.submitButton} type="submit" />
         </div>

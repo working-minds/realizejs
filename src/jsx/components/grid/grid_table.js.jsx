@@ -21,7 +21,7 @@ var GridTable = React.createClass({
 
   render: function() {
     return(
-      <table className="striped responsive-table">
+      <table className={WRF.themeClass('grid.table')}>
         <thead>
           {this.renderTableHeaders()}
         </thead>
