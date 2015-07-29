@@ -26,7 +26,7 @@ var GridTable = React.createClass({displayName: "GridTable",
           this.renderTableHeaders()
         ), 
         React.createElement("tbody", null, 
-          this.renderTableRows()
+          (this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()
         )
       )
     );
@@ -77,5 +77,20 @@ var GridTable = React.createClass({displayName: "GridTable",
     }
 
     return rowComponents;
+  },
+
+  renderEmptyMessage: function() {
+    var columnsCount = 0;
+    for(var key in this.props.columns) {
+      columnsCount++;
+    }
+
+    return (
+      React.createElement("tr", null, 
+        React.createElement("td", {colSpan: columnsCount}, 
+          "Nenhum resultado foi encontrado."
+        )
+      )
+    );
   }
 });

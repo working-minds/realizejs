@@ -11,7 +11,10 @@ var Pagination = React.createClass({displayName: "Pagination",
     return {
       page: 1,
       perPage: 20,
-      window: 4
+      window: 4,
+      onPagination: function(page) {
+        return true;
+      }
     };
   },
 

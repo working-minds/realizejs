@@ -2,6 +2,47 @@
  * WKM Frontend v0.0.0 (http://www.wkm.com.br)
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
+var WRF = {};
+
+WRF.themes = {};
+WRF.config = {
+  theme: 'materialize'
+};
+
+WRF.themeProp = function(key) {
+  if(!key) {
+    return '';
+  }
+
+  var defaultTheme = WRF.themes.default;
+  var theme = $.extend({}, defaultTheme, WRF.themes[WRF.config.theme]);
+  var key_array = key.split('.');
+  var prop = theme;
+
+  while(key_array.length > 0) {
+    prop = prop[key_array.pop()];
+  }
+
+  return prop;
+};
+
+
+WRF.themes.default = {
+  grid: {
+    class: '',
+    row: {
+      class: ''
+    }
+  }
+};
+WRF.themes.materialize = {
+  grid: {
+    class: 'container',
+    row: {
+      class: 'row'
+    }
+  }
+};
 var Button = React.createClass({displayName: "Button",
   propTypes: {
     name: React.PropTypes.string,
@@ -185,7 +226,19 @@ var Grid = React.createClass({displayName: "Grid",
         param: 's',
         valueFormat: '%{field} %{direction}'
       },
-      sortData: {}
+      sortData: {},
+      filterForm: {
+        inputs: {
+          name: { label: 'Nome' }
+        }
+      },
+      columns: {
+        name: { label: 'Nome' }
+      },
+      data: {
+        dataRows: [],
+        count: 0
+      }
     };
   },
 
@@ -201,7 +254,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   render: function() {
     return (
-      React.createElement("div", {className: "grid"}, 
+      React.createElement("div", {className: "grid " + WRF.themeProp('grid.class')}, 
         this.renderFilter(), 
 
         this.renderPagination(), 
@@ -213,7 +266,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderFilter: function() {
     return (
-      React.createElement("div", {className: "grid__filter row"}, 
+      React.createElement("div", {className: "grid__filter " + WRF.themeProp('grid.row.class')}, 
         React.createElement(GridFilter, {
           form: this.props.filterForm, 
           url: this.props.url, 
@@ -225,7 +278,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderTable: function() {
     return (
-      React.createElement("div", {className: "grid__table row"}, 
+      React.createElement("div", {className: "grid__table " + WRF.themeProp('grid.row.class')}, 
         React.createElement(GridTable, {
           columns: this.props.columns, 
           sortConfigs: this.props.sortConfigs, 
@@ -238,8 +291,14 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   renderPagination: function() {
+    var totalRowsCount = this.state.count;
+    var pageRowsCount = this.state.dataRows.length;
+    if(totalRowsCount <= pageRowsCount) {
+      return null;
+    }
+
     return (
-      React.createElement("div", {className: "grid__pagination row"}, 
+      React.createElement("div", {className: "grid__pagination " + WRF.themeProp('grid.row.class')}, 
         React.createElement(Pagination, React.__spread({}, 
           this.props.paginationConfigs, 
           {page: this.state.page, 
@@ -418,7 +477,7 @@ var GridTable = React.createClass({displayName: "GridTable",
           this.renderTableHeaders()
         ), 
         React.createElement("tbody", null, 
-          this.renderTableRows()
+          (this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()
         )
       )
     );
@@ -469,6 +528,21 @@ var GridTable = React.createClass({displayName: "GridTable",
     }
 
     return rowComponents;
+  },
+
+  renderEmptyMessage: function() {
+    var columnsCount = 0;
+    for(var key in this.props.columns) {
+      columnsCount++;
+    }
+
+    return (
+      React.createElement("tr", null, 
+        React.createElement("td", {colSpan: columnsCount}, 
+          "Nenhum resultado foi encontrado."
+        )
+      )
+    );
   }
 });
 
@@ -959,7 +1033,10 @@ var Pagination = React.createClass({displayName: "Pagination",
     return {
       page: 1,
       perPage: 20,
-      window: 4
+      window: 4,
+      onPagination: function(page) {
+        return true;
+      }
     };
   },
 

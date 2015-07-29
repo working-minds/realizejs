@@ -20,7 +20,19 @@ var Grid = React.createClass({displayName: "Grid",
         param: 's',
         valueFormat: '%{field} %{direction}'
       },
-      sortData: {}
+      sortData: {},
+      filterForm: {
+        inputs: {
+          name: { label: 'Nome' }
+        }
+      },
+      columns: {
+        name: { label: 'Nome' }
+      },
+      data: {
+        dataRows: [],
+        count: 0
+      }
     };
   },
 
@@ -36,7 +48,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   render: function() {
     return (
-      React.createElement("div", {className: "grid"}, 
+      React.createElement("div", {className: "grid " + WRF.themeProp('grid.class')}, 
         this.renderFilter(), 
 
         this.renderPagination(), 
@@ -48,7 +60,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderFilter: function() {
     return (
-      React.createElement("div", {className: "grid__filter row"}, 
+      React.createElement("div", {className: "grid__filter " + WRF.themeProp('grid.row.class')}, 
         React.createElement(GridFilter, {
           form: this.props.filterForm, 
           url: this.props.url, 
@@ -60,7 +72,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderTable: function() {
     return (
-      React.createElement("div", {className: "grid__table row"}, 
+      React.createElement("div", {className: "grid__table " + WRF.themeProp('grid.row.class')}, 
         React.createElement(GridTable, {
           columns: this.props.columns, 
           sortConfigs: this.props.sortConfigs, 
@@ -73,8 +85,14 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   renderPagination: function() {
+    var totalRowsCount = this.state.count;
+    var pageRowsCount = this.state.dataRows.length;
+    if(totalRowsCount <= pageRowsCount) {
+      return null;
+    }
+
     return (
-      React.createElement("div", {className: "grid__pagination row"}, 
+      React.createElement("div", {className: "grid__pagination " + WRF.themeProp('grid.row.class')}, 
         React.createElement(Pagination, React.__spread({}, 
           this.props.paginationConfigs, 
           {page: this.state.page, 

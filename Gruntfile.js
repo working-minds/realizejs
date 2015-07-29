@@ -17,7 +17,7 @@ module.exports = function(grunt) {
           {
             expand: true,
             cwd: 'src/jsx',
-            src: ['src/jsx/**/*.jsx'],
+            src: ['**/*.jsx'],
             dest: 'src/js',
             ext: '.js'
           }
@@ -31,7 +31,11 @@ module.exports = function(grunt) {
         stripBanners: false
       },
       js: {
-        src: ['src/js/**/*.js'],
+        src: [
+          'src/js/application.js',
+          'src/js/themes/**/*.js',
+          'src/js/components/**/*.js'
+        ],
         dest: 'dist/js/<%= pkg.name %>.js'
       },
       css: {

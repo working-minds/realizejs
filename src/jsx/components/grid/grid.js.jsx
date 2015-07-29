@@ -48,7 +48,7 @@ var Grid = React.createClass({
 
   render: function() {
     return (
-      <div className="grid">
+      <div className={"grid " + WRF.themeProp('grid.class')}>
         {this.renderFilter()}
 
         {this.renderPagination()}
@@ -60,7 +60,7 @@ var Grid = React.createClass({
 
   renderFilter: function() {
     return (
-      <div className="grid__filter row">
+      <div className={"grid__filter " + WRF.themeProp('grid.row.class')}>
         <GridFilter
           form={this.props.filterForm}
           url={this.props.url}
@@ -72,7 +72,7 @@ var Grid = React.createClass({
 
   renderTable: function() {
     return (
-      <div className="grid__table row">
+      <div className={"grid__table " + WRF.themeProp('grid.row.class')}>
         <GridTable
           columns={this.props.columns}
           sortConfigs={this.props.sortConfigs}
@@ -92,7 +92,7 @@ var Grid = React.createClass({
     }
 
     return (
-      <div className="grid__pagination row">
+      <div className={"grid__pagination " + WRF.themeProp('grid.row.class')}>
         <Pagination
           {...this.props.paginationConfigs}
           page={this.state.page}
