@@ -3,14 +3,25 @@ var Input = React.createClass({displayName: "Input",
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.string,
+    value: React.PropTypes.string,
+    onChange: React.PropTypes.func,
     component: React.PropTypes.string,
-    value: React.PropTypes.string
+    componentMapping: React.PropTypes.object
   },
 
   getDefaultProps: function() {
     return {
+      value: null,
+      onChange: function(event) {
+        return true;
+      },
       component: 'text',
-      value: null
+      componentMapping: {
+        text: InputText,
+        checkbox: InputCheckbox,
+        select: InputSelect,
+        hidden: InputHidden
+      }
     };
   },
 
@@ -21,6 +32,13 @@ var Input = React.createClass({displayName: "Input",
   },
 
   render: function() {
+    if(this.props.component === 'hidden')
+      return this.renderHiddenInput();
+    else
+      return this.renderVisibleInput();
+  },
+
+  renderVisibleInput: function() {
     return (
       React.createElement("div", {className: "input-field col l3 m4 s12"}, 
         this.renderComponentInput(), 
@@ -29,38 +47,19 @@ var Input = React.createClass({displayName: "Input",
     );
   },
 
-  renderComponentInput: function() {
-    var componentMapping = {
-      text: InputText,
-      checkbox: InputCheckbox,
-      select: InputSelect
-    };
+  renderHiddenInput: function() {
+    return this.renderComponentInput();
+  },
 
-    return React.createElement(componentMapping[this.props.component],
-                               React.__spread({}, this.props,
-                                              {
-                                                value: this.state.value,
-                                                name: (this.props.name || this.props.id),
-                                                onChange: this.onChange
-                                              })
-    );
+  renderComponentInput: function() {
+    var componentInputClass = this.props.componentMapping[this.props.component];
+    var componentInputName = this.props.name || this.props.id;
+    var componentInputProps = React.__spread({}, this.props, { name: componentInputName });
+
+    return React.createElement(componentInputClass, componentInputProps);
   },
 
   labelValue: function() {
-    var label = this.props.label;
-    if(!label) {
-      label = this.props.name;
-    }
-
-    return label;
-  },
-
-  onChange: function(event) {
-    target = event.currentTarget;
-    var value = target.value;
-
-    this.setState({
-      value: value
-    });
+    return this.props.label || this.props.name;
   }
 });
