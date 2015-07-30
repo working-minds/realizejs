@@ -35,7 +35,7 @@ var Form = React.createClass({displayName: "Form",
       React.createElement("form", {action: this.props.action, 
         id: this.props.id, 
         onSubmit: this.handleSubmit, 
-        onReset: this.handleReset, 
+        onReset: this.props.onReset, 
         ref: "form"}, 
 
         this.renderInputs(), 
@@ -85,35 +85,6 @@ var Form = React.createClass({displayName: "Form",
         this.props.onError(xhr, status, error);
       }.bind(this)
     });
-  },
-
-  handleReset: function(event) {
-    var refInputs = this.getRefInputs();
-    for(var i = 0; i < refInputs.length; i++) {
-      var refInput = refInputs[i];
-      var inputNode = React.findDOMNode(refInput);
-
-      inputNode.value = "";
-      refInput.onChange({currentTarget: inputNode});
-    }
-
-    this.props.onReset(event);
-  },
-
-  getRefInputs: function() {
-    var refInputs = [];
-    var refs = this.refs;
-
-    for(var refName in refs) {
-      if(refs.hasOwnProperty(refName)) {
-        var ref = refs[refName];
-        if(refName.match(/^input_/)) {
-          refInputs.push(ref);
-        }
-      }
-    }
-
-    return refInputs;
   }
 
 });

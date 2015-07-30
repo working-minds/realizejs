@@ -3,9 +3,9 @@
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
 $.extend(FormSerializer.patterns, {
-  validate: /^[a-z_][a-z0-9_\.-]*(?:\[(?:\d*|[a-z0-9_\.-]+)\])*$/i,
-  key: /[a-z0-9_\.-]+|(?=\[\])/gi,
-  named: /^[a-z0-9_\.-]+$/i
+  validate: /^[a-z_][a-z0-9#_\.-]*(?:\[(?:\d*|[a-z0-9#_\.-]+)\])*$/i,
+  key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
+  named: /^[a-z0-9#_\.-]+$/i
 });
 var WRF = {};
 
@@ -279,7 +279,7 @@ var Form = React.createClass({displayName: "Form",
       React.createElement("form", {action: this.props.action, 
         id: this.props.id, 
         onSubmit: this.handleSubmit, 
-        onReset: this.handleReset, 
+        onReset: this.props.onReset, 
         ref: "form"}, 
 
         this.renderInputs(), 
@@ -329,35 +329,6 @@ var Form = React.createClass({displayName: "Form",
         this.props.onError(xhr, status, error);
       }.bind(this)
     });
-  },
-
-  handleReset: function(event) {
-    var refInputs = this.getRefInputs();
-    for(var i = 0; i < refInputs.length; i++) {
-      var refInput = refInputs[i];
-      var inputNode = React.findDOMNode(refInput);
-
-      inputNode.value = "";
-      refInput.onChange({currentTarget: inputNode});
-    }
-
-    this.props.onReset(event);
-  },
-
-  getRefInputs: function() {
-    var refInputs = [];
-    var refs = this.refs;
-
-    for(var refName in refs) {
-      if(refs.hasOwnProperty(refName)) {
-        var ref = refs[refName];
-        if(refName.match(/^input_/)) {
-          refInputs.push(ref);
-        }
-      }
-    }
-
-    return refInputs;
   }
 
 });
@@ -587,7 +558,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
         this.props.children, 
 
         React.createElement("div", {className: WRF.themeClass('grid.filter.buttonGroup')}, 
-          React.createElement(Button, React.__spread({},  this.props.clearButton, {onClick: this.resetFilter})), 
+          React.createElement(Button, React.__spread({},  this.props.clearButton, {type: "reset"})), 
           React.createElement(Button, React.__spread({},  this.props.submitButton, {type: "submit"}))
         )
       )
@@ -596,11 +567,6 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
   serialize: function() {
     return this.refs.form.serialize();
-  },
-
-  resetFilter: function(event) {
-    var formNode = React.findDOMNode(this.refs.form);
-    formNode.reset();
   }
 
 });
@@ -794,7 +760,7 @@ var GridTableHeader = React.createClass({displayName: "GridTableHeader",
   },
 
   className: function() {
-    var className = WRF.themeClass('grid.table.header');
+    var className = WRF.themeClass('grid.table.header.label');
     if(this.props.sortable) {
       className += " sortable";
 
@@ -874,7 +840,7 @@ var Input = React.createClass({displayName: "Input",
     value: React.PropTypes.string,
     onChange: React.PropTypes.func,
     component: React.PropTypes.string,
-    componentMapping: React.PropTypes.object
+    componentMapping: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -884,11 +850,15 @@ var Input = React.createClass({displayName: "Input",
         return true;
       },
       component: 'text',
-      componentMapping: {
-        text: InputText,
-        checkbox: InputCheckbox,
-        select: InputSelect,
-        hidden: InputHidden
+      componentMapping: function(component) {
+        var mapping = {
+          text: InputText,
+          checkbox: InputCheckbox,
+          select: InputSelect,
+          hidden: InputHidden
+        };
+
+        return mapping[component];
       }
     };
   },
@@ -920,7 +890,7 @@ var Input = React.createClass({displayName: "Input",
   },
 
   renderComponentInput: function() {
-    var componentInputClass = this.props.componentMapping[this.props.component];
+    var componentInputClass = this.props.componentMapping(this.props.component);
     var componentInputName = this.props.name || this.props.id;
     var componentInputProps = React.__spread({}, this.props, { name: componentInputName });
 
