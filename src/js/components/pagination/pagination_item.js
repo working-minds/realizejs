@@ -48,7 +48,7 @@ var PaginationItem = React.createClass({displayName: "PaginationItem",
 
   render: function() {
     return (
-      React.createElement("li", {className: this.className(), onClick: this.props.onClick}, 
+      React.createElement("li", {className: this.className(), onClick: this.handleClick}, 
         React.createElement("a", {href: "#!"}, 
           this.props.text, 
           !!this.props.iconType ? this.renderIcon() : ''
@@ -59,5 +59,11 @@ var PaginationItem = React.createClass({displayName: "PaginationItem",
 
   renderIcon: function() {
     return React.createElement(Icon, {type: this.props.iconType});
+  },
+
+  handleClick: function() {
+    if(!this.props.disabled) {
+      this.props.onClick();
+    }
   }
 });

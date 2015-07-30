@@ -68,7 +68,7 @@ var Pagination = React.createClass({
     var active = (this.props.page === page);
 
     return (
-      <PaginationItem active={active} text={page} onClick={this.navigateTo.bind(this, page)}/>
+      <PaginationItem active={active} text={String(page)} onClick={this.navigateTo.bind(this, page)} key={"page_" + page} />
     );
   },
 
