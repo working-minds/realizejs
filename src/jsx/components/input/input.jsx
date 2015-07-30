@@ -6,7 +6,7 @@ var Input = React.createClass({
     value: React.PropTypes.string,
     onChange: React.PropTypes.func,
     component: React.PropTypes.string,
-    componentMapping: React.PropTypes.object
+    componentMapping: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -16,11 +16,15 @@ var Input = React.createClass({
         return true;
       },
       component: 'text',
-      componentMapping: {
-        text: InputText,
-        checkbox: InputCheckbox,
-        select: InputSelect,
-        hidden: InputHidden
+      componentMapping: function(component) {
+        var mapping = {
+          text: InputText,
+          checkbox: InputCheckbox,
+          select: InputSelect,
+          hidden: InputHidden
+        };
+
+        return mapping[component];
       }
     };
   },
@@ -52,7 +56,7 @@ var Input = React.createClass({
   },
 
   renderComponentInput: function() {
-    var componentInputClass = this.props.componentMapping[this.props.component];
+    var componentInputClass = this.props.componentMapping(this.props.component);
     var componentInputName = this.props.name || this.props.id;
     var componentInputProps = React.__spread({}, this.props, { name: componentInputName });
 
