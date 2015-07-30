@@ -32,9 +32,11 @@ module.exports = function(grunt) {
       },
       js: {
         src: [
+          'src/js/serializer.js',
           'src/js/config.js',
           'src/js/theme.js',
           'src/js/themes/**/*.js',
+          'src/js/mixins/**/*.js',
           'src/js/components/**/*.js'
         ],
         dest: 'dist/js/<%= pkg.name %>.js'

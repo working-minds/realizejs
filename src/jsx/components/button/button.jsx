@@ -32,8 +32,8 @@ var Button = React.createClass({
   },
 
   className: function() {
-    var className = "btn waves-effect waves-light ";
-    className += this.props.className;
+    var className = WRF.themeClass('button');
+    className += " " + this.props.className;
 
     return className;
   }

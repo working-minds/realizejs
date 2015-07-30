@@ -20,12 +20,6 @@ var Input = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    if(!this.props.name) {
-      this.props.name = this.props.id;
-    }
-  },
-
   render: function() {
     return (
       <div className="input-field col l3 m4 s12">
@@ -37,12 +31,19 @@ var Input = React.createClass({
 
   renderComponentInput: function() {
     var componentMapping = {
-      text: <InputText {...this.props} value={this.state.value} onChange={this.onChange} />,
-      checkbox: <InputCheckbox {...this.props} value={this.state.value} onChange={this.onChange} />,
-      select: <InputSelect {...this.props} value={this.state.value} onChange={this.onChange} />
+      text: InputText,
+      checkbox: InputCheckbox,
+      select: InputSelect
     };
 
-    return componentMapping[this.props.component];
+    return React.createElement(componentMapping[this.props.component],
+                               React.__spread({}, this.props,
+                                              {
+                                                value: this.state.value,
+                                                name: (this.props.name || this.props.id),
+                                                onChange: this.onChange
+                                              })
+    );
   },
 
   labelValue: function() {

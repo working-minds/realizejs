@@ -67,7 +67,13 @@ WRF.themes.materialize = {
     }
   },
 
+  form: {
+    cssClass: ''
+  },
+
   button: {
+    cssClass: 'btn waves-effect waves-light',
+
     cancel: {
       cssClass: 'grey lighten-4'
     }
