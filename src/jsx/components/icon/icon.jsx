@@ -1,12 +1,12 @@
 var Icon = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
-    iconType: React.PropTypes.string
+    type: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      iconType: ''
+      type: ''
     };
   },
 
@@ -19,7 +19,7 @@ var Icon = React.createClass({
   render: function() {
     return (
       <i className={this.className()}>
-        {WRF.themeProp(this.prop.iconType)}
+        {WRF.themeProp(this.props.type)}
       </i>
     );
   }

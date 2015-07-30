@@ -898,12 +898,12 @@ var GridTableRow = React.createClass({displayName: "GridTableRow",
 var Icon = React.createClass({displayName: "Icon",
   mixins: [CssClassMixin],
   propTypes: {
-    iconType: React.PropTypes.string
+    type: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      iconType: ''
+      type: ''
     };
   },
 
@@ -916,7 +916,7 @@ var Icon = React.createClass({displayName: "Icon",
   render: function() {
     return (
       React.createElement("i", {className: this.className()}, 
-        WRF.themeProp(this.prop.iconType)
+        WRF.themeProp(this.props.type)
       )
     );
   }
