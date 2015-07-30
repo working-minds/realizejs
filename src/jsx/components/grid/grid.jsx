@@ -1,4 +1,5 @@
 var Grid = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
@@ -42,13 +43,14 @@ var Grid = React.createClass({
       count: this.props.data.count,
       page: 1,
       filterData: {},
-      sortData: this.props.sortData
+      sortData: this.props.sortData,
+      themeClassKey: 'grid'
     };
   },
 
   render: function() {
     return (
-      <div className={WRF.themeClass('grid')}>
+      <div className={this.className()}>
         {this.renderFilter()}
 
         {this.renderPagination()}
@@ -60,7 +62,7 @@ var Grid = React.createClass({
 
   renderFilter: function() {
     return (
-      <div className={WRF.themeClass('grid.filter.wrapper grid.row')}>
+      <div className={this.props.clearTheme ? '' : WRF.themeClass('grid.filter.wrapper grid.row')}>
         <GridFilter
           form={this.props.filterForm}
           url={this.props.url}
@@ -72,7 +74,7 @@ var Grid = React.createClass({
 
   renderTable: function() {
     return (
-      <div className={WRF.themeClass('grid.table.wrapper grid.row')}>
+      <div className={this.props.clearTheme ? '' : WRF.themeClass('grid.table.wrapper grid.row')}>
         <GridTable
           columns={this.props.columns}
           sortConfigs={this.props.sortConfigs}
@@ -92,7 +94,7 @@ var Grid = React.createClass({
     }
 
     return (
-      <div className={WRF.themeClass('grid.pagination.wrapper grid.row')}>
+      <div className={this.props.clearTheme ? '' : WRF.themeClass('grid.pagination.wrapper grid.row')}>
         <Pagination
           {...this.props.paginationConfigs}
           page={this.state.page}

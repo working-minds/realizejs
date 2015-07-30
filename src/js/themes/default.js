@@ -3,7 +3,7 @@ WRF.themes.default = {
     cssClass: 'grid',
 
     row: {
-      cssClass: ''
+      cssClass: 'row'
     },
 
     filter: {
@@ -21,8 +21,42 @@ WRF.themes.default = {
     },
 
     table: {
+      cssClass: '',
+
       wrapper: {
         cssClass: 'grid__table'
+      },
+
+      header: {
+        cssClass: 'table-header',
+
+        label: {
+          cssClass: 'table-header__name'
+        }
+      },
+
+      cell: {
+        cssClass: 'table-cell',
+
+        text: {
+          cssClass: 'table-cell--text'
+        },
+
+        currency: {
+          cssClass: 'table-cell--currency'
+        },
+
+        number: {
+          cssClass: 'table-cell--number'
+        },
+
+        boolean: {
+          cssClass: 'table-cell--boolean'
+        },
+
+        datetime: {
+          cssClass: 'table-cell--datetime'
+        }
       }
     },
 
@@ -33,7 +67,13 @@ WRF.themes.default = {
     }
   },
 
+  form: {
+    cssClass: ''
+  },
+
   button: {
+    cssClass: '',
+
     cancel: {
       cssClass: ''
     }

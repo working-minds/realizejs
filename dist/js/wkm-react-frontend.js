@@ -65,7 +65,7 @@ WRF.themes.default = {
     cssClass: 'grid',
 
     row: {
-      cssClass: ''
+      cssClass: 'row'
     },
 
     filter: {
@@ -83,8 +83,42 @@ WRF.themes.default = {
     },
 
     table: {
+      cssClass: '',
+
       wrapper: {
         cssClass: 'grid__table'
+      },
+
+      header: {
+        cssClass: 'table-header',
+
+        label: {
+          cssClass: 'table-header__name'
+        }
+      },
+
+      cell: {
+        cssClass: 'table-cell',
+
+        text: {
+          cssClass: 'table-cell--text'
+        },
+
+        currency: {
+          cssClass: 'table-cell--currency'
+        },
+
+        number: {
+          cssClass: 'table-cell--number'
+        },
+
+        boolean: {
+          cssClass: 'table-cell--boolean'
+        },
+
+        datetime: {
+          cssClass: 'table-cell--datetime'
+        }
       }
     },
 
@@ -95,7 +129,13 @@ WRF.themes.default = {
     }
   },
 
+  form: {
+    cssClass: ''
+  },
+
   button: {
+    cssClass: '',
+
     cancel: {
       cssClass: ''
     }
@@ -180,24 +220,45 @@ WRF.themes.materialize = {
     cancel: {
       cssClass: 'grey lighten-4'
     }
-  }
-};
-var CssClassMixin = {
+  },
 
-  //themeClass
-  //clearTheme
-  //className
+  pagination: {
+    cssClass: 'pagination',
 
-  getDefaultProps: function() {
-    return {
+    item: {
+      cssClass: 'waves-effect',
 
+      disabled: {
+        cssClass: 'disabled'
+      },
+
+      active: {
+        cssClass: 'active'
+      }
     }
   },
 
-  className: function(themeClass) {
+  icon: {
+    cssClass: 'material-icons',
+    left: 'chevron-left',
+    right: 'chevron-right'
+  }
+};
+var CssClassMixin = {
+  getDefaultProps: function() {
+    return {
+      clearTheme: false,
+      className: ''
+    };
+  },
+
+  className: function() {
     var className = '';
+    if(!this.props.clearTheme && !!this.state.themeClassKey) {
+      className += WRF.themeClass(this.state.themeClassKey) + ' ';
+    }
 
-
+    className += this.props.className;
     return className;
   }
 };
@@ -334,6 +395,7 @@ var Form = React.createClass({displayName: "Form",
 });
 
 var Grid = React.createClass({displayName: "Grid",
+  mixins: [CssClassMixin],
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
@@ -377,13 +439,14 @@ var Grid = React.createClass({displayName: "Grid",
       count: this.props.data.count,
       page: 1,
       filterData: {},
-      sortData: this.props.sortData
+      sortData: this.props.sortData,
+      themeClassKey: 'grid'
     };
   },
 
   render: function() {
     return (
-      React.createElement("div", {className: WRF.themeClass('grid')}, 
+      React.createElement("div", {className: this.className()}, 
         this.renderFilter(), 
 
         this.renderPagination(), 
@@ -395,7 +458,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderFilter: function() {
     return (
-      React.createElement("div", {className: WRF.themeClass('grid.filter.wrapper grid.row')}, 
+      React.createElement("div", {className: this.props.clearTheme ? '' : WRF.themeClass('grid.filter.wrapper grid.row')}, 
         React.createElement(GridFilter, {
           form: this.props.filterForm, 
           url: this.props.url, 
@@ -407,7 +470,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderTable: function() {
     return (
-      React.createElement("div", {className: WRF.themeClass('grid.table.wrapper grid.row')}, 
+      React.createElement("div", {className: this.props.clearTheme ? '' : WRF.themeClass('grid.table.wrapper grid.row')}, 
         React.createElement(GridTable, {
           columns: this.props.columns, 
           sortConfigs: this.props.sortConfigs, 
@@ -427,7 +490,7 @@ var Grid = React.createClass({displayName: "Grid",
     }
 
     return (
-      React.createElement("div", {className: WRF.themeClass('grid.pagination.wrapper grid.row')}, 
+      React.createElement("div", {className: this.props.clearTheme ? '' : WRF.themeClass('grid.pagination.wrapper grid.row')}, 
         React.createElement(Pagination, React.__spread({}, 
           this.props.paginationConfigs, 
           {page: this.state.page, 
@@ -832,6 +895,33 @@ var GridTableRow = React.createClass({displayName: "GridTableRow",
   }
 });
 
+var Icon = React.createClass({displayName: "Icon",
+  mixins: [CssClassMixin],
+  propTypes: {
+    iconType: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      iconType: ''
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'icon'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("i", {className: this.className()}, 
+        WRF.themeProp(this.prop.iconType)
+      )
+    );
+  }
+});
+
 var Input = React.createClass({displayName: "Input",
   propTypes: {
     id: React.PropTypes.string,
@@ -1057,6 +1147,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   },
 
   loadOptionsCallback: function(data) {
+    //TODO: transformar estes campos em Props
     var nameField = 'name';
     var valueField = 'id';
 
@@ -1166,6 +1257,7 @@ var InputText = React.createClass({displayName: "InputText",
 });
 
 var Pagination = React.createClass({displayName: "Pagination",
+  mixins: [CssClassMixin],
   propTypes: {
     count: React.PropTypes.number,
     page: React.PropTypes.number,
@@ -1185,9 +1277,15 @@ var Pagination = React.createClass({displayName: "Pagination",
     };
   },
 
+  getInitialState: function() {
+    return {
+      themeClassKey: 'pagination'
+    };
+  },
+
   render: function() {
     return (
-      React.createElement("ul", {className: "pagination"}, 
+      React.createElement("ul", {className: this.className()}, 
         this.renderPreviousButton(), 
         this.renderPageButtons(), 
         this.renderNextButton()
@@ -1196,32 +1294,18 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderPreviousButton: function() {
-    var liClass = "waves-effect";
-    if(this.props.page <= 1) {
-      liClass= "disabled";
-    }
+    var disabled = this.props.page <= 1;
 
     return (
-      React.createElement("li", {className: liClass, onClick: this.navigateToPrevious}, 
-        React.createElement("a", {href: "#!"}, 
-          React.createElement("i", {className: "material-icons"}, "chevron_left")
-        )
-      )
+      React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.left", onClick: this.navigateToPrevious})
     );
   },
 
   renderNextButton: function() {
-    var liClass = "waves-effect";
-    if(this.props.page >= this.lastPage()) {
-      liClass= "disabled";
-    }
+    var disabled = this.props.page >= this.lastPage();
 
     return (
-      React.createElement("li", {className: liClass, onClick: this.navigateToNext}, 
-        React.createElement("a", {href: "#!"}, 
-          React.createElement("i", {className: "material-icons"}, "chevron_right")
-        )
-      )
+      React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.right", onClick: this.navigateToNext})
     );
   },
 
@@ -1239,15 +1323,10 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderPageButton: function(page) {
-    var liClass = "waves-effect";
-    if(this.props.page == page) {
-      liClass = "active";
-    }
+    var active = this.props.page == page;
 
     return (
-      React.createElement("li", {className: liClass, key: "page_" + page, onClick: this.navigateTo.bind(this, page)}, 
-        React.createElement("a", {href: "#!"}, page)
-      )
+      React.createElement(PaginationItem, {active: active, text: page, onClick: this.navigateTo.bind(this, page)})
     );
   },
 
@@ -1267,5 +1346,58 @@ var Pagination = React.createClass({displayName: "Pagination",
 
   navigateTo: function(page) {
     this.props.onPagination(page);
+  }
+});
+
+var PaginationItem = React.createClass({displayName: "PaginationItem",
+  mixins: [CssClassMixin],
+  propTypes: {
+    disabled: React.PropTypes.bool,
+    active: React.PropTypes.bool,
+    iconType: React.PropTypes.string,
+    text: React.PropTypes.string,
+    onClick: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      disabled: false,
+      active: false,
+      iconType: null,
+      text: '',
+      onClick: function(event) {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    var themeClassKey = 'pagination.item';
+    if(this.props.disabled) {
+      themeClassKey += ' pagination.item.disabled';
+    }
+
+    if(this.props.active) {
+      themeClassKey += ' pagination.item.active';
+    }
+
+    return {
+      themeClassKey: themeClassKey
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("li", {className: this.className(), onClick: this.props.onClick}, 
+        React.createElement("a", {href: "#!"}, 
+          this.props.text, 
+          !!this.props.iconType ? this.renderIcon() : ''
+        )
+      )
+    );
+  },
+
+  renderIcon: function() {
+    return React.createElement(Icon, {type: this.props.iconType});
   }
 });

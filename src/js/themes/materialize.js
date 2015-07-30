@@ -77,5 +77,27 @@ WRF.themes.materialize = {
     cancel: {
       cssClass: 'grey lighten-4'
     }
+  },
+
+  pagination: {
+    cssClass: 'pagination',
+
+    item: {
+      cssClass: 'waves-effect',
+
+      disabled: {
+        cssClass: 'disabled'
+      },
+
+      active: {
+        cssClass: 'active'
+      }
+    }
+  },
+
+  icon: {
+    cssClass: 'material-icons',
+    left: 'chevron-left',
+    right: 'chevron-right'
   }
 };

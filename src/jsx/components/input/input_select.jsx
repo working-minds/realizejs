@@ -104,6 +104,7 @@ var InputSelect = React.createClass({
   },
 
   loadOptionsCallback: function(data) {
+    //TODO: transformar estes campos em Props
     var nameField = 'name';
     var valueField = 'id';
 

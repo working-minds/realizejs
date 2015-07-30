@@ -1,4 +1,5 @@
 var Pagination = React.createClass({displayName: "Pagination",
+  mixins: [CssClassMixin],
   propTypes: {
     count: React.PropTypes.number,
     page: React.PropTypes.number,
@@ -18,9 +19,15 @@ var Pagination = React.createClass({displayName: "Pagination",
     };
   },
 
+  getInitialState: function() {
+    return {
+      themeClassKey: 'pagination'
+    };
+  },
+
   render: function() {
     return (
-      React.createElement("ul", {className: "pagination"}, 
+      React.createElement("ul", {className: this.className()}, 
         this.renderPreviousButton(), 
         this.renderPageButtons(), 
         this.renderNextButton()
@@ -29,32 +36,18 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderPreviousButton: function() {
-    var liClass = "waves-effect";
-    if(this.props.page <= 1) {
-      liClass= "disabled";
-    }
+    var disabled = this.props.page <= 1;
 
     return (
-      React.createElement("li", {className: liClass, onClick: this.navigateToPrevious}, 
-        React.createElement("a", {href: "#!"}, 
-          React.createElement("i", {className: "material-icons"}, "chevron_left")
-        )
-      )
+      React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.left", onClick: this.navigateToPrevious})
     );
   },
 
   renderNextButton: function() {
-    var liClass = "waves-effect";
-    if(this.props.page >= this.lastPage()) {
-      liClass= "disabled";
-    }
+    var disabled = this.props.page >= this.lastPage();
 
     return (
-      React.createElement("li", {className: liClass, onClick: this.navigateToNext}, 
-        React.createElement("a", {href: "#!"}, 
-          React.createElement("i", {className: "material-icons"}, "chevron_right")
-        )
-      )
+      React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.right", onClick: this.navigateToNext})
     );
   },
 
@@ -72,15 +65,10 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderPageButton: function(page) {
-    var liClass = "waves-effect";
-    if(this.props.page == page) {
-      liClass = "active";
-    }
+    var active = this.props.page == page;
 
     return (
-      React.createElement("li", {className: liClass, key: "page_" + page, onClick: this.navigateTo.bind(this, page)}, 
-        React.createElement("a", {href: "#!"}, page)
-      )
+      React.createElement(PaginationItem, {active: active, text: page, onClick: this.navigateTo.bind(this, page)})
     );
   },
 

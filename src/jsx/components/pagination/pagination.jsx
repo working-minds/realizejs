@@ -1,4 +1,5 @@
 var Pagination = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
     count: React.PropTypes.number,
     page: React.PropTypes.number,
@@ -18,9 +19,15 @@ var Pagination = React.createClass({
     };
   },
 
+  getInitialState: function() {
+    return {
+      themeClassKey: 'pagination'
+    };
+  },
+
   render: function() {
     return (
-      <ul className="pagination">
+      <ul className={this.className()}>
         {this.renderPreviousButton()}
         {this.renderPageButtons()}
         {this.renderNextButton()}
@@ -29,32 +36,18 @@ var Pagination = React.createClass({
   },
 
   renderPreviousButton: function() {
-    var liClass = "waves-effect";
-    if(this.props.page <= 1) {
-      liClass= "disabled";
-    }
+    var disabled = this.props.page <= 1;
 
     return (
-      <li className={liClass} onClick={this.navigateToPrevious}>
-        <a href="#!">
-          <i className="material-icons">chevron_left</i>
-        </a>
-      </li>
+      <PaginationItem disabled={disabled} iconType="icon.left" onClick={this.navigateToPrevious} />
     );
   },
 
   renderNextButton: function() {
-    var liClass = "waves-effect";
-    if(this.props.page >= this.lastPage()) {
-      liClass= "disabled";
-    }
+    var disabled = this.props.page >= this.lastPage();
 
     return (
-      <li className={liClass} onClick={this.navigateToNext}>
-        <a href="#!">
-          <i className="material-icons">chevron_right</i>
-        </a>
-      </li>
+      <PaginationItem disabled={disabled} iconType="icon.right" onClick={this.navigateToNext} />
     );
   },
 
@@ -72,15 +65,10 @@ var Pagination = React.createClass({
   },
 
   renderPageButton: function(page) {
-    var liClass = "waves-effect";
-    if(this.props.page == page) {
-      liClass = "active";
-    }
+    var active = this.props.page == page;
 
     return (
-      <li className={liClass} key={"page_" + page} onClick={this.navigateTo.bind(this, page)}>
-        <a href="#!">{page}</a>
-      </li>
+      <PaginationItem active={active} text={page} onClick={this.navigateTo.bind(this, page)}/>
     );
   },
 

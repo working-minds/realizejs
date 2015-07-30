@@ -1,19 +1,18 @@
 var CssClassMixin = {
-
-  //themeClass
-  //clearTheme
-  //className
-
   getDefaultProps: function() {
     return {
-
-    }
+      clearTheme: false,
+      className: ''
+    };
   },
 
-  className: function(themeClass) {
+  className: function() {
     var className = '';
+    if(!this.props.clearTheme && !!this.state.themeClassKey) {
+      className += WRF.themeClass(this.state.themeClassKey) + ' ';
+    }
 
-
+    className += this.props.className;
     return className;
   }
 };
