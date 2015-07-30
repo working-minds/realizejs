@@ -21,18 +21,29 @@ var PaginationItem = React.createClass({
   },
 
   getInitialState: function() {
+    return {
+      themeClassKey: this.buildThemeClassKey()
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.buildThemeClassKey(nextProps)
+    });
+  },
+
+  buildThemeClassKey: function(props) {
+    props = props || this.props;
     var themeClassKey = 'pagination.item';
-    if(this.props.disabled) {
+    if(props.disabled) {
       themeClassKey += ' pagination.item.disabled';
     }
 
-    if(this.props.active) {
+    if(props.active) {
       themeClassKey += ' pagination.item.active';
     }
 
-    return {
-      themeClassKey: themeClassKey
-    };
+    return themeClassKey;
   },
 
   render: function() {

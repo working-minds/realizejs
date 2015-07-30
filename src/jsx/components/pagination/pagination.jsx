@@ -36,7 +36,7 @@ var Pagination = React.createClass({
   },
 
   renderPreviousButton: function() {
-    var disabled = this.props.page <= 1;
+    var disabled = (this.props.page <= 1);
 
     return (
       <PaginationItem disabled={disabled} iconType="icon.left" onClick={this.navigateToPrevious} />
@@ -44,7 +44,7 @@ var Pagination = React.createClass({
   },
 
   renderNextButton: function() {
-    var disabled = this.props.page >= this.lastPage();
+    var disabled = (this.props.page >= this.lastPage());
 
     return (
       <PaginationItem disabled={disabled} iconType="icon.right" onClick={this.navigateToNext} />
@@ -65,7 +65,7 @@ var Pagination = React.createClass({
   },
 
   renderPageButton: function(page) {
-    var active = this.props.page == page;
+    var active = (this.props.page === page);
 
     return (
       <PaginationItem active={active} text={page} onClick={this.navigateTo.bind(this, page)}/>

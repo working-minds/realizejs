@@ -240,8 +240,8 @@ WRF.themes.materialize = {
 
   icon: {
     cssClass: 'material-icons',
-    left: 'chevron-left',
-    right: 'chevron-right'
+    left: 'chevron_left',
+    right: 'chevron_right'
   }
 };
 var CssClassMixin = {
@@ -915,9 +915,7 @@ var Icon = React.createClass({displayName: "Icon",
 
   render: function() {
     return (
-      React.createElement("i", {className: this.className()}, 
-        WRF.themeProp(this.props.type)
-      )
+      React.createElement("i", {className: this.className()}, WRF.themeProp(this.props.type))
     );
   }
 });
@@ -1294,7 +1292,7 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderPreviousButton: function() {
-    var disabled = this.props.page <= 1;
+    var disabled = (this.props.page <= 1);
 
     return (
       React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.left", onClick: this.navigateToPrevious})
@@ -1302,7 +1300,7 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderNextButton: function() {
-    var disabled = this.props.page >= this.lastPage();
+    var disabled = (this.props.page >= this.lastPage());
 
     return (
       React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.right", onClick: this.navigateToNext})
@@ -1323,7 +1321,7 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderPageButton: function(page) {
-    var active = this.props.page == page;
+    var active = (this.props.page === page);
 
     return (
       React.createElement(PaginationItem, {active: active, text: page, onClick: this.navigateTo.bind(this, page)})
@@ -1372,18 +1370,29 @@ var PaginationItem = React.createClass({displayName: "PaginationItem",
   },
 
   getInitialState: function() {
+    return {
+      themeClassKey: this.buildThemeClassKey()
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.buildThemeClassKey(nextProps)
+    });
+  },
+
+  buildThemeClassKey: function(props) {
+    props = props || this.props;
     var themeClassKey = 'pagination.item';
-    if(this.props.disabled) {
+    if(props.disabled) {
       themeClassKey += ' pagination.item.disabled';
     }
 
-    if(this.props.active) {
+    if(props.active) {
       themeClassKey += ' pagination.item.active';
     }
 
-    return {
-      themeClassKey: themeClassKey
-    };
+    return themeClassKey;
   },
 
   render: function() {

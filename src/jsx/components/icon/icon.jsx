@@ -18,9 +18,7 @@ var Icon = React.createClass({
 
   render: function() {
     return (
-      <i className={this.className()}>
-        {WRF.themeProp(this.props.type)}
-      </i>
+      <i className={this.className()}>{WRF.themeProp(this.props.type)}</i>
     );
   }
 });
