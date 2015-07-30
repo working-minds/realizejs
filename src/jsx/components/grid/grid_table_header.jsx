@@ -28,7 +28,7 @@ var GridTableHeader = React.createClass({
   },
 
   className: function() {
-    var className = WRF.themeClass('grid.table.header');
+    var className = WRF.themeClass('grid.table.header.label');
     if(this.props.sortable) {
       className += " sortable";
 

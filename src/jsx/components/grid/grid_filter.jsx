@@ -47,7 +47,7 @@ var GridFilter = React.createClass({
         {this.props.children}
 
         <div className={WRF.themeClass('grid.filter.buttonGroup')}>
-          <Button {...this.props.clearButton} onClick={this.resetFilter} />
+          <Button {...this.props.clearButton} type="reset" />
           <Button {...this.props.submitButton} type="submit" />
         </div>
       </Form>
@@ -56,11 +56,6 @@ var GridFilter = React.createClass({
 
   serialize: function() {
     return this.refs.form.serialize();
-  },
-
-  resetFilter: function(event) {
-    var formNode = React.findDOMNode(this.refs.form);
-    formNode.reset();
   }
 
 });
