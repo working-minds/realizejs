@@ -7,6 +7,22 @@ module.exports = function(grunt) {
             ' * Copyright 2015-<%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
             ' */\n',
 
+    watch: {
+      scripts: {
+        files: [
+          'src/js/config.js',
+          'src/js/serializer.js',
+          'src/js/theme.js',
+          'src/js/themes/**/*.js',
+          'src/jsx/**/*.jsx'
+        ],
+        tasks: ['build'],
+        options: {
+          interrupt: true
+        }
+      }
+    },
+
     jshint: {
       files: ['Gruntfile.js', 'src/jsx/**/*.jsx']
     },
@@ -77,6 +93,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-react');
 
