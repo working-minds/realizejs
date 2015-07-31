@@ -4,6 +4,7 @@ var Form = React.createClass({
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
+    focus: React.PropTypes.bool,
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
@@ -15,6 +16,7 @@ var Form = React.createClass({
       action: '',
       method: 'POST',
       dataType: 'json',
+      focus: true,
       onSuccess: function(data) {
         return true;
       },
@@ -28,6 +30,14 @@ var Form = React.createClass({
         return true;
       }
     };
+  },
+
+  componentDidMount: function() {
+    var firstInputRef = this.refs.input_0;
+
+    if(!!firstInputRef && this.props.focus) {
+      firstInputRef.focus();
+    }
   },
 
   render: function() {
@@ -47,11 +57,13 @@ var Form = React.createClass({
   renderInputs: function() {
     var inputsProps = this.props.inputs;
     var inputComponents = [];
+    var inputIndex = 0;
 
     for(var inputName in inputsProps) {
       if(inputsProps.hasOwnProperty(inputName)) {
         var inputProps = inputsProps[inputName];
-        inputComponents.push(<Input {...inputProps} id={inputName} key={inputName} ref={"input_" + inputName} />);
+        inputComponents.push(<Input {...inputProps} id={inputName} key={"input_" + inputIndex} ref={"input_" + inputIndex} />);
+        inputIndex++;
       }
     }
 

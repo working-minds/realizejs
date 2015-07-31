@@ -1,4 +1,10 @@
 var CssClassMixin = {
+  propTypes: {
+    clearTheme: React.PropTypes.bool,
+    className: React.PropTypes.string,
+    themeClassKey: React.PropTypes.string
+  },
+
   getDefaultProps: function() {
     return {
       clearTheme: false,

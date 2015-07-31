@@ -1,22 +1,18 @@
 var InputSelect = React.createClass({
+  mixins: [InputComponentMixin],
+
   propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string,
     options: React.PropTypes.array,
     optionsUrl: React.PropTypes.string,
     dependsOn: React.PropTypes.object,
     includeBlank: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
     nameField: React.PropTypes.string,
-    valueField: React.PropTypes.string,
-    onChange: React.PropTypes.func
+    valueField: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      disabled: false,
       dependsOn: null,
       options: [],
       nameField: 'name',

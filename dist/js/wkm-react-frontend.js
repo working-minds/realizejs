@@ -245,6 +245,12 @@ WRF.themes.materialize = {
   }
 };
 var CssClassMixin = {
+  propTypes: {
+    clearTheme: React.PropTypes.bool,
+    className: React.PropTypes.string,
+    themeClassKey: React.PropTypes.string
+  },
+
   getDefaultProps: function() {
     return {
       clearTheme: false,
@@ -260,6 +266,31 @@ var CssClassMixin = {
 
     className += this.props.className;
     return className;
+  }
+};
+var InputComponentMixin = {
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    value: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    onChange: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      disabled: false,
+      onChange: function(event) {
+        return true;
+      }
+    };
+  },
+
+  focus: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    if(!!inputNode) {
+      inputNode.focus();
+    }
   }
 };
 var Button = React.createClass({displayName: "Button",
@@ -309,6 +340,7 @@ var Form = React.createClass({displayName: "Form",
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
+    focus: React.PropTypes.bool,
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
@@ -320,6 +352,7 @@ var Form = React.createClass({displayName: "Form",
       action: '',
       method: 'POST',
       dataType: 'json',
+      focus: true,
       onSuccess: function(data) {
         return true;
       },
@@ -333,6 +366,14 @@ var Form = React.createClass({displayName: "Form",
         return true;
       }
     };
+  },
+
+  componentDidMount: function() {
+    var firstInputRef = this.refs.input_0;
+
+    if(!!firstInputRef && this.props.focus) {
+      firstInputRef.focus();
+    }
   },
 
   render: function() {
@@ -352,11 +393,13 @@ var Form = React.createClass({displayName: "Form",
   renderInputs: function() {
     var inputsProps = this.props.inputs;
     var inputComponents = [];
+    var inputIndex = 0;
 
     for(var inputName in inputsProps) {
       if(inputsProps.hasOwnProperty(inputName)) {
         var inputProps = inputsProps[inputName];
-        inputComponents.push(React.createElement(Input, React.__spread({},  inputProps, {id: inputName, key: inputName, ref: "input_" + inputName})));
+        inputComponents.push(React.createElement(Input, React.__spread({},  inputProps, {id: inputName, key: "input_" + inputIndex, ref: "input_" + inputIndex})));
+        inputIndex++;
       }
     }
 
@@ -955,6 +998,11 @@ var Input = React.createClass({displayName: "Input",
     };
   },
 
+  focus: function() {
+    var inputComponentRef = this.refs.inputComponent;
+    inputComponentRef.focus();
+  },
+
   render: function() {
     if(this.props.component === 'hidden')
       return this.renderHiddenInput();
@@ -978,7 +1026,7 @@ var Input = React.createClass({displayName: "Input",
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
     var componentInputName = this.props.name || this.props.id;
-    var componentInputProps = React.__spread({}, this.props, { name: componentInputName });
+    var componentInputProps = React.__spread({}, this.props, { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
   },
@@ -989,288 +1037,57 @@ var Input = React.createClass({displayName: "Input",
 });
 
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string,
-    onChange: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      disabled: false
-    };
-  },
+  mixins: [InputComponentMixin],
 
   componentDidMount: function() {
-    React.findDOMNode(this.refs.checkbox).indeterminate = true;
+    React.findDOMNode(this.refs.input).indeterminate = true;
   },
 
   render: function() {
     return (
-      React.createElement("input", {
-        id: this.props.id, 
-        name: this.props.name, 
-        onChange: this.props.onChange, 
-        type: "checkbox", className: "validate", ref: "checkbox"}
-      )
+      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", ref: "input", className: "validate"}))
     );
   }
 });
 
 var InputHidden = React.createClass({displayName: "InputHidden",
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string
-  },
+  mixins: [InputComponentMixin],
 
   render: function() {
     return (
-      React.createElement("input", {
-        id: this.props.id, 
-        name: this.props.name, 
-        value: this.props.value, 
-        type: "hidden"}
-      )
+      React.createElement("input", React.__spread({},  this.props, {type: "hidden", ref: "input"}))
     );
-  }
-});
-
-var InputSelect = React.createClass({displayName: "InputSelect",
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string,
-    options: React.PropTypes.array,
-    optionsUrl: React.PropTypes.string,
-    dependsOn: React.PropTypes.object,
-    includeBlank: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    onChange: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      includeBlank: true,
-      disabled: false,
-      dependsOn: null,
-      options: []
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      options: this.props.options,
-      disabled: this.props.disabled
-    };
-  },
-
-  componentWillMount: function() {
-    if(!!this.props.dependsOn) {
-      this.state.disabled = true;
-    }
-  },
-
-  componentDidMount: function() {
-    this.applyMaterialize();
-
-    if(this.props.optionsUrl) {
-      if(!!this.props.dependsOn) {
-        this.listenDependableChanges();
-      } else {
-        this.loadOptions();
-      }
-    }
-  },
-
-  componentDidUpdate: function(previousProps, previousState) {
-    var state = this.state;
-    if(state.options != previousState.options) {
-      this.applyMaterialize();
-    }
-  },
-
-  render: function() {
-    return (
-      React.createElement("select", {
-        id: this.props.id, 
-        name: this.props.name, 
-        value: this.props.value, 
-        onChange: this.props.onChange, 
-        disabled: this.state.disabled, 
-        ref: "select"}, 
-        this.renderOptions()
-      )
-    );
-  },
-
-  handleChange: function(event) {
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
-
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(event);
-  },
-
-  renderOptions: function() {
-    var selectOptions = [];
-    var options = this.state.options;
-
-    if(this.props.includeBlank) {
-      selectOptions.push(React.createElement(InputSelectOption, {name: "Selecione", value: "", key: "empty_option"}));
-    }
-
-    for(var i = 0; i < options.length; i++) {
-      var optionProps = options[i];
-      selectOptions.push(React.createElement(InputSelectOption, React.__spread({},  optionProps, {key: optionProps.name})));
-    }
-
-    return selectOptions;
-  },
-
-  loadOptions: function(params) {
-    $.ajax({
-      url: this.props.optionsUrl,
-      method: 'GET',
-      dataType: 'json',
-      data: params,
-      success: this.loadOptionsCallback,
-      error: function(xhr, status, error) {
-        console.log('InputSelect Load error:' + error);
-      }.bind(this)
-    });
-  },
-
-  loadOptionsCallback: function(data) {
-    //TODO: transformar estes campos em Props
-    var nameField = 'name';
-    var valueField = 'id';
-
-    var options = [];
-    for(var i = 0; i < data.length; i++) {
-      var dataItem = data[i];
-      var option = {
-        name: String(dataItem[nameField]),
-        value: String(dataItem[valueField])
-      };
-
-      options.push(option);
-    }
-
-    this.setState({
-      options: options,
-      disabled: (!!this.props.dependsOn && options.length <= 0)
-    });
-  },
-
-  listenDependableChanges: function() {
-    var dependsOnObj = this.props.dependsOn;
-    var dependableId = dependsOnObj.dependableId;
-    var paramName = dependsOnObj.paramName || dependableId;
-    var dependable = document.getElementById(dependableId);
-
-    $(dependable).on('dependable_changed', function(event, dependableValue) {
-      if(!dependableValue) {
-        this.emptyAndDisable();
-        return false;
-      }
-
-      var loadParams = {};
-      loadParams[paramName] = dependableValue;
-      this.loadOptions(loadParams);
-    }.bind(this));
-  },
-
-  emptyAndDisable: function() {
-    this.setState({
-      options: [],
-      disabled: true
-    });
-  },
-
-  // Funcoes especificas para o Materialize
-
-  applyMaterialize: function() {
-    var selectElement = React.findDOMNode(this.refs.select);
-
-    $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
-    this.handleChangeMaterialize(selectElement);
-  },
-
-  handleChangeMaterialize: function(selectElement) {
-    var $selectElement = $(selectElement);
-    var fakeEvent = { currentTarget: selectElement };
-
-    //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
-    $selectElement.parent().parent().find('> .caret').remove();
-
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(fakeEvent);
-  }
-});
-
-var InputSelectOption = React.createClass({displayName: "InputSelectOption",
-  propTypes: {
-    name: React.PropTypes.string,
-    value: React.PropTypes.string
-  },
-
-  render: function() {
-    return React.createElement("option", {value: this.props.value}, this.props.name);
   }
 });
 
 var InputText = React.createClass({displayName: "InputText",
+  mixins: [InputComponentMixin],
   propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string,
-    placeholder: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    onChange: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      disabled: false
-    };
+    placeholder: React.PropTypes.string
   },
 
   render: function() {
     return (
-      React.createElement("input", {
-        placeholder: this.props.placeholder, 
-        id: this.props.id, 
-        name: this.props.name, 
-        value: this.props.value, 
-        onChange: this.props.onChange, 
-        disabled: this.props.disabled, 
-        type: "text", className: "validate"}
-      )
+      React.createElement("input", React.__spread({},  this.props, {type: "text", ref: "input", className: "validate"}))
     );
   }
 });
 
 var InputSelect = React.createClass({displayName: "InputSelect",
+  mixins: [InputComponentMixin],
+
   propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string,
     options: React.PropTypes.array,
     optionsUrl: React.PropTypes.string,
     dependsOn: React.PropTypes.object,
     includeBlank: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
     nameField: React.PropTypes.string,
-    valueField: React.PropTypes.string,
-    onChange: React.PropTypes.func
+    valueField: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      disabled: false,
       dependsOn: null,
       options: [],
       nameField: 'name',

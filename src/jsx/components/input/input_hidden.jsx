@@ -1,18 +1,9 @@
 var InputHidden = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string
-  },
+  mixins: [InputComponentMixin],
 
   render: function() {
     return (
-      <input
-        id={this.props.id}
-        name={this.props.name}
-        value={this.props.value}
-        type="hidden"
-      />
+      <input {...this.props} type="hidden" ref="input" />
     );
   }
 });

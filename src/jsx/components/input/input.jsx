@@ -35,6 +35,11 @@ var Input = React.createClass({
     };
   },
 
+  focus: function() {
+    var inputComponentRef = this.refs.inputComponent;
+    inputComponentRef.focus();
+  },
+
   render: function() {
     if(this.props.component === 'hidden')
       return this.renderHiddenInput();
@@ -58,7 +63,7 @@ var Input = React.createClass({
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
     var componentInputName = this.props.name || this.props.id;
-    var componentInputProps = React.__spread({}, this.props, { name: componentInputName });
+    var componentInputProps = React.__spread({}, this.props, { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
   },
