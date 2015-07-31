@@ -21,7 +21,7 @@ var Form = React.createClass({
       onError: function(xhr, status, error) {
         return true;
       },
-      onSubmit: function(event) {
+      onSubmit: function(event, postData) {
         return true;
       },
       onReset: function(event) {
@@ -65,9 +65,9 @@ var Form = React.createClass({
 
   handleSubmit: function(event) {
     event.preventDefault();
+    var postData = this.serialize();
 
-    if(this.props.onSubmit(event)) {
-      var postData = this.serialize();
+    if(this.props.onSubmit(event, postData)) {
       this.submit(postData);
     }
   },

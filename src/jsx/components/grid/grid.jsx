@@ -66,8 +66,7 @@ var Grid = React.createClass({
         <GridFilter
           form={this.props.filterForm}
           url={this.props.url}
-          onSubmit={this.onFilterSubmit}
-          ref="gridFilter" />
+          onSubmit={this.onFilterSubmit} />
       </div>
     );
   },
@@ -80,8 +79,7 @@ var Grid = React.createClass({
           sortConfigs={this.props.sortConfigs}
           sortData={this.state.sortData}
           dataRows={this.state.dataRows}
-          onSort={this.onSort}
-          ref="gridTable" />
+          onSort={this.onSort} />
       </div>
     );
   },
@@ -110,8 +108,8 @@ var Grid = React.createClass({
     this.loadData();
   },
 
-  onFilterSubmit: function(event) {
-    this.state.filterData = this.refs.gridFilter.serialize();
+  onFilterSubmit: function(event, postData) {
+    this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
 

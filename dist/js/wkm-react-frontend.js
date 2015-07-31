@@ -326,7 +326,7 @@ var Form = React.createClass({displayName: "Form",
       onError: function(xhr, status, error) {
         return true;
       },
-      onSubmit: function(event) {
+      onSubmit: function(event, postData) {
         return true;
       },
       onReset: function(event) {
@@ -370,9 +370,9 @@ var Form = React.createClass({displayName: "Form",
 
   handleSubmit: function(event) {
     event.preventDefault();
+    var postData = this.serialize();
 
-    if(this.props.onSubmit(event)) {
-      var postData = this.serialize();
+    if(this.props.onSubmit(event, postData)) {
       this.submit(postData);
     }
   },
@@ -462,8 +462,7 @@ var Grid = React.createClass({displayName: "Grid",
         React.createElement(GridFilter, {
           form: this.props.filterForm, 
           url: this.props.url, 
-          onSubmit: this.onFilterSubmit, 
-          ref: "gridFilter"})
+          onSubmit: this.onFilterSubmit})
       )
     );
   },
@@ -476,8 +475,7 @@ var Grid = React.createClass({displayName: "Grid",
           sortConfigs: this.props.sortConfigs, 
           sortData: this.state.sortData, 
           dataRows: this.state.dataRows, 
-          onSort: this.onSort, 
-          ref: "gridTable"})
+          onSort: this.onSort})
       )
     );
   },
@@ -506,8 +504,8 @@ var Grid = React.createClass({displayName: "Grid",
     this.loadData();
   },
 
-  onFilterSubmit: function(event) {
-    this.state.filterData = this.refs.gridFilter.serialize();
+  onFilterSubmit: function(event, postData) {
+    this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
 
