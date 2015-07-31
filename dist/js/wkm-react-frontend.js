@@ -1262,6 +1262,8 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     dependsOn: React.PropTypes.object,
     includeBlank: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
+    nameField: React.PropTypes.string,
+    valueField: React.PropTypes.string,
     onChange: React.PropTypes.func
   },
 
@@ -1270,7 +1272,9 @@ var InputSelect = React.createClass({displayName: "InputSelect",
       includeBlank: true,
       disabled: false,
       dependsOn: null,
-      options: []
+      options: [],
+      nameField: 'name',
+      valueField: 'id'
     };
   },
 
@@ -1358,16 +1362,13 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   },
 
   loadOptionsCallback: function(data) {
-    //TODO: transformar estes campos em Props
-    var nameField = 'name';
-    var valueField = 'id';
-
     var options = [];
+
     for(var i = 0; i < data.length; i++) {
       var dataItem = data[i];
       var option = {
-        name: String(dataItem[nameField]),
-        value: String(dataItem[valueField])
+        name: String(dataItem[this.props.nameField]),
+        value: String(dataItem[this.props.valueField])
       };
 
       options.push(option);

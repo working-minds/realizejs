@@ -85,6 +85,12 @@ module.exports = function(grunt) {
           }
         ]
       }
+    },
+
+    clean: {
+      build: {
+        src: ["src/js/components", "src/js/mixins"]
+      }
     }
   });
 
@@ -94,10 +100,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-react');
 
 
-  grunt.registerTask('build', ['react:build', 'concat:js', 'concat:css', 'uglify', 'cssmin']);
+  grunt.registerTask('build', ['react:build', 'concat:js', 'concat:css', 'uglify', 'cssmin', 'clean']);
   grunt.registerTask('default', ['build']);
 };
