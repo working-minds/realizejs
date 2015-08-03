@@ -447,12 +447,12 @@ var Grid = React.createClass({displayName: "Grid",
     filterForm: React.PropTypes.object,
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
-    dataRowsKey: React.PropTypes.string
+    dataRowsParam: React.PropTypes.string,
+    countParam: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      dataRowsKey: 'data',
       paginationConfigs: {
         pageParam: 'p'
       },
@@ -469,6 +469,8 @@ var Grid = React.createClass({displayName: "Grid",
       columns: {
         name: { label: 'Nome' }
       },
+      dataRowsParam: 'data',
+      countParam: 'count',
       data: {
         dataRows: [],
         count: 0
@@ -580,8 +582,8 @@ var Grid = React.createClass({displayName: "Grid",
 
   dataLoaded: function(data) {
     this.setState({
-      dataRows: data[this.props.dataRowsKey],
-      count: data.count
+      dataRows: data[this.props.dataRowsParam],
+      count: data[this.props.countParam]
     });
   },
 
