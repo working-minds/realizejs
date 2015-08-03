@@ -1,13 +1,15 @@
 var GridFilter = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
-    form: React.PropTypes.object,
+    inputs: React.PropTypes.object,
     url: React.PropTypes.string,
     method: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     clearButton: React.PropTypes.object,
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
-    onSubmit: React.PropTypes.func
+    onSubmit: React.PropTypes.func,
+    onReset: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -20,7 +22,7 @@ var GridFilter = React.createClass({
       },
       clearButton: {
         name: 'Limpar',
-        className: WRF.themeClass('grid.filter.clearButton button.cancel')
+        additionalThemeClassKeys: 'grid.filter.clearButton button.cancel'
       },
       onSuccess: function(data) {
         return true;
@@ -34,23 +36,24 @@ var GridFilter = React.createClass({
     };
   },
 
+  getInitialState: function() {
+    return {
+      themeClassKey: 'grid.filter.wrapper grid.row'
+    };
+  },
+
   render: function() {
     return(
-      <Form {...this.props.form}
-        action={this.props.url}
-        method={this.props.method}
-        onSuccess={this.props.onSuccess}
-        onError={this.props.onError}
-        onSubmit={this.props.onSubmit}
-        ref="form">
-
+      <div className={this.className()}>
+        <Form {...this.props} ref="form">
         {this.props.children}
 
-        <div className={WRF.themeClass('grid.filter.buttonGroup')}>
-          <Button {...this.props.clearButton} type="reset" />
-          <Button {...this.props.submitButton} type="submit" />
-        </div>
-      </Form>
+          <div className={WRF.themeClass('grid.filter.buttonGroup')}>
+            <Button {...this.props.clearButton} type="reset" />
+            <Button {...this.props.submitButton} type="submit" />
+          </div>
+        </Form>
+      </div>
     );
   },
 

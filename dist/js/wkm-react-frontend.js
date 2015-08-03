@@ -241,7 +241,8 @@ WRF.themes.materialize = {
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',
-    right: 'chevron_right'
+    right: 'chevron_right',
+    search: 'search'
   }
 };
 var CssClassMixin = {
@@ -294,17 +295,24 @@ var InputComponentMixin = {
   }
 };
 var Button = React.createClass({displayName: "Button",
+  mixins: [CssClassMixin],
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
     icon: React.PropTypes.string,
-    className: React.PropTypes.string,
-    onClick: React.PropTypes.func
+    onClick: React.PropTypes.func,
+    additionalThemeClassKeys: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      className: ''
+      additionalThemeClassKeys: ''
+    }
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'button ' + this.props.additionalThemeClassKeys
     };
   },
 
@@ -318,19 +326,11 @@ var Button = React.createClass({displayName: "Button",
   },
 
   renderIcon: function() {
-    var iconName = this.props.icon;
-    if(!iconName) {
+    if(!this.props.icon) {
       return '';
     }
 
-    return React.createElement("i", {className: "material-icons right"}, iconName);
-  },
-
-  className: function() {
-    var className = WRF.themeClass('button');
-    className += " " + this.props.className;
-
-    return className;
+    return React.createElement(Icon, {className: "right", type: this.props.icon});
   }
 });
 
@@ -503,11 +503,10 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderFilter: function() {
     return (
-      React.createElement("div", {className: this.props.clearTheme ? '' : WRF.themeClass('grid.filter.wrapper grid.row')}, 
-        React.createElement(GridFilter, {
-          form: this.props.filterForm, 
-          url: this.props.url, 
-          onSubmit: this.onFilterSubmit})
+      React.createElement(GridFilter, React.__spread({}, 
+        this.props.filterForm, 
+        {url: this.props.url, 
+        onSubmit: this.onFilterSubmit})
       )
     );
   },
@@ -616,15 +615,17 @@ var Grid = React.createClass({displayName: "Grid",
 });
 
 var GridFilter = React.createClass({displayName: "GridFilter",
+  mixins: [CssClassMixin],
   propTypes: {
-    form: React.PropTypes.object,
+    inputs: React.PropTypes.object,
     url: React.PropTypes.string,
     method: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     clearButton: React.PropTypes.object,
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
-    onSubmit: React.PropTypes.func
+    onSubmit: React.PropTypes.func,
+    onReset: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -637,7 +638,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
       },
       clearButton: {
         name: 'Limpar',
-        className: WRF.themeClass('grid.filter.clearButton button.cancel')
+        additionalThemeClassKeys: 'grid.filter.clearButton button.cancel'
       },
       onSuccess: function(data) {
         return true;
@@ -651,21 +652,22 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     };
   },
 
+  getInitialState: function() {
+    return {
+      themeClassKey: 'grid.filter.wrapper grid.row'
+    };
+  },
+
   render: function() {
     return(
-      React.createElement(Form, React.__spread({},  this.props.form, 
-        {action: this.props.url, 
-        method: this.props.method, 
-        onSuccess: this.props.onSuccess, 
-        onError: this.props.onError, 
-        onSubmit: this.props.onSubmit, 
-        ref: "form"}), 
-
+      React.createElement("div", {className: this.className()}, 
+        React.createElement(Form, React.__spread({},  this.props, {ref: "form"}), 
         this.props.children, 
 
-        React.createElement("div", {className: WRF.themeClass('grid.filter.buttonGroup')}, 
-          React.createElement(Button, React.__spread({},  this.props.clearButton, {type: "reset"})), 
-          React.createElement(Button, React.__spread({},  this.props.submitButton, {type: "submit"}))
+          React.createElement("div", {className: WRF.themeClass('grid.filter.buttonGroup')}, 
+            React.createElement(Button, React.__spread({},  this.props.clearButton, {type: "reset"})), 
+            React.createElement(Button, React.__spread({},  this.props.submitButton, {type: "submit"}))
+          )
         )
       )
     );
@@ -958,8 +960,12 @@ var Icon = React.createClass({displayName: "Icon",
 
   render: function() {
     return (
-      React.createElement("i", {className: this.className()}, WRF.themeProp(this.props.type))
+      React.createElement("i", {className: this.className()}, this.themeIconType())
     );
+  },
+
+  themeIconType: function() {
+    return WRF.themeProp('icon.' + this.props.type);
   }
 });
 
@@ -1297,7 +1303,7 @@ var Pagination = React.createClass({displayName: "Pagination",
     var disabled = (this.props.page <= 1);
 
     return (
-      React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.left", onClick: this.navigateToPrevious})
+      React.createElement(PaginationItem, {disabled: disabled, iconType: "left", onClick: this.navigateToPrevious})
     );
   },
 
@@ -1305,7 +1311,7 @@ var Pagination = React.createClass({displayName: "Pagination",
     var disabled = (this.props.page >= this.lastPage());
 
     return (
-      React.createElement(PaginationItem, {disabled: disabled, iconType: "icon.right", onClick: this.navigateToNext})
+      React.createElement(PaginationItem, {disabled: disabled, iconType: "right", onClick: this.navigateToNext})
     );
   },
 

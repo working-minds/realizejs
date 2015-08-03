@@ -98,6 +98,7 @@ WRF.themes.materialize = {
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',
-    right: 'chevron_right'
+    right: 'chevron_right',
+    search: 'search'
   }
 };

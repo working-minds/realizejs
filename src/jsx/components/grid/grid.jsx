@@ -64,12 +64,11 @@ var Grid = React.createClass({
 
   renderFilter: function() {
     return (
-      <div className={this.props.clearTheme ? '' : WRF.themeClass('grid.filter.wrapper grid.row')}>
-        <GridFilter
-          form={this.props.filterForm}
-          url={this.props.url}
-          onSubmit={this.onFilterSubmit} />
-      </div>
+      <GridFilter
+        {...this.props.filterForm}
+        url={this.props.url}
+        onSubmit={this.onFilterSubmit}
+      />
     );
   },
 

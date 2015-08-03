@@ -39,7 +39,7 @@ var Pagination = React.createClass({
     var disabled = (this.props.page <= 1);
 
     return (
-      <PaginationItem disabled={disabled} iconType="icon.left" onClick={this.navigateToPrevious} />
+      <PaginationItem disabled={disabled} iconType="left" onClick={this.navigateToPrevious} />
     );
   },
 
@@ -47,7 +47,7 @@ var Pagination = React.createClass({
     var disabled = (this.props.page >= this.lastPage());
 
     return (
-      <PaginationItem disabled={disabled} iconType="icon.right" onClick={this.navigateToNext} />
+      <PaginationItem disabled={disabled} iconType="right" onClick={this.navigateToNext} />
     );
   },
 

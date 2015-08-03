@@ -1,15 +1,22 @@
 var Button = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
     icon: React.PropTypes.string,
-    className: React.PropTypes.string,
-    onClick: React.PropTypes.func
+    onClick: React.PropTypes.func,
+    additionalThemeClassKeys: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      className: ''
+      additionalThemeClassKeys: ''
+    }
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'button ' + this.props.additionalThemeClassKeys
     };
   },
 
@@ -23,18 +30,10 @@ var Button = React.createClass({
   },
 
   renderIcon: function() {
-    var iconName = this.props.icon;
-    if(!iconName) {
+    if(!this.props.icon) {
       return '';
     }
 
-    return <i className="material-icons right">{iconName}</i>;
-  },
-
-  className: function() {
-    var className = WRF.themeClass('button');
-    className += " " + this.props.className;
-
-    return className;
+    return <Icon className="right" type={this.props.icon} />;
   }
 });
