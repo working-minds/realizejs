@@ -25,9 +25,7 @@ WRF.themes.materialize = {
     },
 
     pagination: {
-      wrapper: {
-        cssClass: 'grid__pagination'
-      }
+      cssClass: 'grid__pagination'
     }
   },
 

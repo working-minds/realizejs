@@ -10,18 +10,13 @@ var Pagination = React.createClass({
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'pagination',
       page: 1,
       perPage: 20,
       window: 4,
       onPagination: function(page) {
         return true;
       }
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      themeClassKey: 'pagination'
     };
   },
 

@@ -168,9 +168,7 @@ WRF.themes.materialize = {
     },
 
     pagination: {
-      wrapper: {
-        cssClass: 'grid__pagination'
-      }
+      cssClass: 'grid__pagination'
     }
   },
 
@@ -468,7 +466,9 @@ var Grid = React.createClass({displayName: "Grid",
   getDefaultProps: function() {
     return {
       paginationConfigs: {
-        pageParam: 'p'
+        param: 'p',
+        perPage: 20,
+        window: 4
       },
       sortConfigs: {
         param: 's',
@@ -545,13 +545,11 @@ var Grid = React.createClass({displayName: "Grid",
     }
 
     return (
-      React.createElement("div", {className: this.props.clearTheme ? '' : WRF.themeClass('grid.pagination.wrapper grid.row')}, 
-        React.createElement(Pagination, React.__spread({}, 
-          this.props.paginationConfigs, 
-          {page: this.state.page, 
-          count: this.state.count, 
-          onPagination: this.onPagination})
-        )
+      React.createElement(GridPagination, React.__spread({}, 
+        this.props.paginationConfigs, 
+        {page: this.state.page, 
+        count: this.state.count, 
+        onPagination: this.onPagination})
       )
     );
   },
@@ -601,7 +599,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   buildPostData: function() {
     var postData = $.extend({}, this.state.filterData);
-    postData[this.props.paginationConfigs.pageParam] = this.state.page;
+    postData[this.props.paginationConfigs.param] = this.state.page;
     if(!$.isEmptyObject(this.state.sortData)) {
       $.extend(postData, this.buildSortPostData());
     }
@@ -690,6 +688,43 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     return this.refs.form.serialize();
   }
 
+});
+
+var GridPagination = React.createClass({displayName: "GridPagination",
+  mixins: [CssClassMixin],
+  propTypes: {
+    count: React.PropTypes.number,
+    page: React.PropTypes.number,
+    perPage: React.PropTypes.number,
+    window: React.PropTypes.number,
+    onPagination: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'grid.pagination grid.row',
+      page: 1,
+      perPage: 20,
+      window: 4,
+      onPagination: function(page) {
+        return true;
+      }
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement(Pagination, {
+          page: this.props.page, 
+          count: this.props.count, 
+          perPage: this.props.perPage, 
+          window: this.props.window, 
+          onPagination: this.props.onPagination}
+        )
+      )
+    );
+  }
 });
 
 var GridTable = React.createClass({displayName: "GridTable",
@@ -1064,18 +1099,13 @@ var Pagination = React.createClass({displayName: "Pagination",
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'pagination',
       page: 1,
       perPage: 20,
       window: 4,
       onPagination: function(page) {
         return true;
       }
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      themeClassKey: 'pagination'
     };
   },
 

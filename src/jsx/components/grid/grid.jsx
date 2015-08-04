@@ -15,7 +15,9 @@ var Grid = React.createClass({
   getDefaultProps: function() {
     return {
       paginationConfigs: {
-        pageParam: 'p'
+        param: 'p',
+        perPage: 20,
+        window: 4
       },
       sortConfigs: {
         param: 's',
@@ -92,14 +94,12 @@ var Grid = React.createClass({
     }
 
     return (
-      <div className={this.props.clearTheme ? '' : WRF.themeClass('grid.pagination.wrapper grid.row')}>
-        <Pagination
-          {...this.props.paginationConfigs}
-          page={this.state.page}
-          count={this.state.count}
-          onPagination={this.onPagination}
-        />
-      </div>
+      <GridPagination
+        {...this.props.paginationConfigs}
+        page={this.state.page}
+        count={this.state.count}
+        onPagination={this.onPagination}
+      />
     );
   },
 
@@ -148,7 +148,7 @@ var Grid = React.createClass({
 
   buildPostData: function() {
     var postData = $.extend({}, this.state.filterData);
-    postData[this.props.paginationConfigs.pageParam] = this.state.page;
+    postData[this.props.paginationConfigs.param] = this.state.page;
     if(!$.isEmptyObject(this.state.sortData)) {
       $.extend(postData, this.buildSortPostData());
     }
