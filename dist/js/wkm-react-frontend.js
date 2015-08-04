@@ -57,7 +57,7 @@ WRF.themeClass = function(keys) {
     themeClass += WRF.themeProp(classKey, theme) + ' ';
   }
 
-  return themeClass;
+  return themeClass.trim();
 };
 
 WRF.themes.default = {
@@ -164,48 +164,48 @@ WRF.themes.materialize = {
     },
 
     table: {
-      cssClass: 'striped responsive-table',
-
-      wrapper: {
-        cssClass: 'grid__table'
-      },
-
-      header: {
-        cssClass: 'table-header',
-
-        label: {
-          cssClass: 'table-header__name'
-        }
-      },
-
-      cell: {
-        cssClass: 'table-cell',
-
-        text: {
-          cssClass: 'table-cell--text'
-        },
-
-        currency: {
-          cssClass: 'table-cell--currency'
-        },
-
-        number: {
-          cssClass: 'table-cell--number'
-        },
-
-        boolean: {
-          cssClass: 'table-cell--boolean'
-        },
-
-        datetime: {
-          cssClass: 'table-cell--datetime'
-        }
-      }
+      cssClass: 'grid__table'
     },
 
     pagination: {
       wrapper: {
         cssClass: 'grid__pagination'
+      }
+    }
+  },
+
+  table: {
+    cssClass: 'striped responsive-table',
+
+    header: {
+      cssClass: 'table-header',
+
+      label: {
+        cssClass: 'table-header__name'
+      }
+    },
+
+    cell: {
+      cssClass: 'table-cell',
+
+      text: {
+        cssClass: 'table-cell--text'
+      },
+
+      currency: {
+        cssClass: 'table-cell--currency'
+      },
+
+      number: {
+        cssClass: 'table-cell--number'
+      },
+
+      boolean: {
+        cssClass: 'table-cell--boolean'
+      },
+
+      datetime: {
+        cssClass: 'table-cell--datetime'
       }
     }
   },
@@ -261,12 +261,26 @@ var CssClassMixin = {
 
   className: function() {
     var className = '';
-    if(!this.props.clearTheme && !!this.state.themeClassKey) {
-      className += WRF.themeClass(this.state.themeClassKey) + ' ';
+    var themeClassKey = this.getThemeClassKey();
+
+    if(!this.props.clearTheme && !!themeClassKey) {
+      className += WRF.themeClass(themeClassKey);
     }
 
-    className += this.props.className;
+    if(!!this.props.className) {
+      className += ' ' + this.props.className;
+    }
+
     return className;
+  },
+
+  getThemeClassKey: function() {
+    var themeClassKey = this.props.themeClassKey;
+    if(!themeClassKey && !!this.state) {
+      themeClassKey = this.state.themeClassKey;
+    }
+
+    return themeClassKey;
   }
 };
 var InputComponentMixin = {
@@ -513,13 +527,12 @@ var Grid = React.createClass({displayName: "Grid",
 
   renderTable: function() {
     return (
-      React.createElement("div", {className: this.props.clearTheme ? '' : WRF.themeClass('grid.table.wrapper grid.row')}, 
-        React.createElement(GridTable, {
-          columns: this.props.columns, 
-          sortConfigs: this.props.sortConfigs, 
-          sortData: this.state.sortData, 
-          dataRows: this.state.dataRows, 
-          onSort: this.onSort})
+      React.createElement(GridTable, {
+        columns: this.props.columns, 
+        sortConfigs: this.props.sortConfigs, 
+        sortData: this.state.sortData, 
+        dataRows: this.state.dataRows, 
+        onSort: this.onSort}
       )
     );
   },
@@ -662,7 +675,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     return(
       React.createElement("div", {className: this.className()}, 
         React.createElement(Form, React.__spread({},  this.props, {ref: "form"}), 
-        this.props.children, 
+          this.props.children, 
 
           React.createElement("div", {className: WRF.themeClass('grid.filter.buttonGroup')}, 
             React.createElement(Button, React.__spread({},  this.props.clearButton, {type: "reset"})), 
@@ -680,6 +693,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 });
 
 var GridTable = React.createClass({displayName: "GridTable",
+  mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
@@ -690,6 +704,7 @@ var GridTable = React.createClass({displayName: "GridTable",
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'grid.table grid.row',
       columns: {},
       sortConfigs: {},
       sortData: {},
@@ -702,241 +717,16 @@ var GridTable = React.createClass({displayName: "GridTable",
 
   render: function() {
     return(
-      React.createElement("table", {className: WRF.themeClass('grid.table')}, 
-        React.createElement("thead", null, 
-          this.renderTableHeaders()
-        ), 
-        React.createElement("tbody", null, 
-          (this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()
+      React.createElement("div", {className: this.className()}, 
+        React.createElement(Table, {
+          columns: this.props.columns, 
+          sortConfigs: this.props.sortConfigs, 
+          sortData: this.props.sortData, 
+          dataRows: this.props.dataRows, 
+          onSort: this.props.onSort}
         )
       )
     );
-  },
-
-  renderTableHeaders: function() {
-    var columns = this.props.columns;
-    var headerComponents = [];
-
-    for(var columnName in columns) {
-      if(columns.hasOwnProperty(columnName)) {
-        var columnProps = columns[columnName];
-        headerComponents.push(
-          React.createElement(GridTableHeader, React.__spread({},  columnProps,  this.props.sortConfigs, 
-            {name: columnName, 
-            key: columnName, 
-            sortDirection: this.sortDirectionForColumn(columnName), 
-            ref: "header_" + columnName, 
-            onSort: this.props.onSort})
-          )
-        );
-      }
-    }
-
-    return (
-      React.createElement("tr", null, 
-        headerComponents
-      )
-    );
-  },
-
-  sortDirectionForColumn: function(columnName) {
-    var sortData = this.props.sortData;
-    if(!!sortData.field && sortData.field == columnName) {
-      return sortData.direction;
-    }
-
-    return null;
-  },
-
-  renderTableRows: function() {
-    var rowComponents = [];
-    var dataRows = this.props.dataRows;
-
-    for(var i = 0; i < dataRows.length; i++) {
-      var dataRow = dataRows[i];
-      rowComponents.push(React.createElement(GridTableRow, {columns: this.props.columns, data: dataRow, key: "table_row_" + i}));
-    }
-
-    return rowComponents;
-  },
-
-  renderEmptyMessage: function() {
-    var columnsCount = 0;
-    for(var key in this.props.columns) {
-      columnsCount++;
-    }
-
-    return (
-      React.createElement("tr", null, 
-        React.createElement("td", {colSpan: columnsCount}, 
-          "Nenhum resultado foi encontrado."
-        )
-      )
-    );
-  }
-});
-
-var GridTableCell = React.createClass({displayName: "GridTableCell",
-  validFormats: ['text', 'currency', 'number', 'boolean', 'datetime'],
-
-  propTypes: {
-    name: React.PropTypes.string,
-    data: React.PropTypes.object,
-    value: React.PropTypes.func,
-    format: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      format: 'text'
-    };
-  },
-
-  render: function() {
-    return React.createElement("td", {className: this.cssClass()}, this.renderValue());
-  },
-
-  cssClass: function() {
-    return  WRF.themeClass('grid.table.cell grid.table.cell.' + this.props.format);
-  },
-
-  renderValue: function() {
-    var format = this.props.format;
-    var customValue = this.props.value;
-
-    if(!!customValue) {
-      return customValue(this.props.data);
-    } else if($.inArray(format, this.validFormats) >= 0) {
-      return this[format + "Value"]();
-    } else {
-      return this.textValue();
-    }
-  },
-
-  textValue: function() {
-    return this.props.data[this.props.name];
-  },
-
-  numberValue: function() {
-    var value = parseFloat(this.props.data[this.props.name]);
-    return numeral(value).format('0,0.[000]');
-  },
-
-  currencyValue: function() {
-    var value = parseFloat(this.props.data[this.props.name]);
-    return numeral(value).format('$ 0,0.00');
-  },
-
-  booleanValue: function() {
-    var value = this.props.data[this.props.name];
-    return value ? "Sim" : "Não";
-  },
-
-  datetimeValue: function() {
-    var value = moment(this.props.data[this.props.name]);
-    return value.format("DD/MM/YYYY HH:mm");
-  }
-});
-
-var GridTableHeader = React.createClass({displayName: "GridTableHeader",
-  propTypes: {
-    name: React.PropTypes.string,
-    label: React.PropTypes.string,
-    sortable: React.PropTypes.bool,
-    sortDirection: React.PropTypes.string,
-    onSort: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      sortable: true,
-      sortDirection: null,
-      onSort: function(sortData) {
-        return true;
-      }
-    };
-  },
-
-  render: function() {
-    return (
-      React.createElement("th", {className: WRF.themeClass('grid.table.header')}, 
-        React.createElement("span", {onClick: this.sortColumn, className: this.className()}, 
-          this.props.label || this.props.name
-        )
-      )
-    );
-  },
-
-  className: function() {
-    var className = WRF.themeClass('grid.table.header.label');
-    if(this.props.sortable) {
-      className += " sortable";
-
-      var sortDirection = this.props.sortDirection;
-      if(sortDirection !== null) {
-        className += " " + sortDirection;
-      }
-    }
-
-    return className;
-  },
-
-  sortColumn: function() {
-    if(!this.props.sortable) {
-      return null;
-    }
-
-    var sortData = this.buildSortData();
-    this.props.onSort(sortData);
-  },
-
-  buildSortData: function() {
-    var sortField = this.props.name;
-    var sortDirection = this.getSortDirection();
-
-    return {
-      field: sortField,
-      direction: sortDirection
-    };
-  },
-
-  getSortDirection: function() {
-    var currentSortDirection = this.props.sortDirection;
-    if(currentSortDirection === null || currentSortDirection == 'desc') {
-      return 'asc';
-    } else if(currentSortDirection == 'asc') {
-      return 'desc';
-    }
-  }
-
-});
-
-var GridTableRow = React.createClass({displayName: "GridTableRow",
-  propTypes: {
-    columns: React.PropTypes.object,
-    data: React.PropTypes.object
-  },
-
-  render: function() {
-    return (
-      React.createElement("tr", null, 
-        this.renderCells()
-      )
-    );
-  },
-
-  renderCells: function() {
-    var columns = this.props.columns;
-    var cellComponents = [];
-
-    for(var columnName in columns) {
-      if(columns.hasOwnProperty(columnName)) {
-        var columnProps = columns[columnName];
-        cellComponents.push(React.createElement(GridTableCell, React.__spread({},  columnProps, {name: columnName, data: this.props.data, key: columnName})));
-      }
-    }
-
-    return cellComponents;
   }
 });
 
@@ -1422,5 +1212,294 @@ var PaginationItem = React.createClass({displayName: "PaginationItem",
     if(!this.props.disabled) {
       this.props.onClick();
     }
+  }
+});
+
+var Table = React.createClass({displayName: "Table",
+  mixins: [CssClassMixin],
+  propTypes: {
+    columns: React.PropTypes.object,
+    sortConfigs: React.PropTypes.object,
+    sortData: React.PropTypes.object,
+    dataRows: React.PropTypes.array,
+    onSort: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'table',
+      columns: {},
+      sortConfigs: {
+        param: 's',
+        valueFormat: '%{field} %{direction}'
+      },
+      sortData: {},
+      dataRows: [],
+      onSort: function(sortData) {
+        return true;
+      }
+    };
+  },
+
+  render: function() {
+    return(
+      React.createElement("table", {className: this.className()}, 
+        React.createElement("thead", null, 
+          this.renderTableHeaders()
+        ), 
+        React.createElement("tbody", null, 
+          (this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()
+        )
+      )
+    );
+  },
+
+  renderTableHeaders: function() {
+    var columns = this.props.columns;
+    var headerComponents = [];
+
+    for(var columnName in columns) {
+      if(columns.hasOwnProperty(columnName)) {
+        var columnProps = columns[columnName];
+        headerComponents.push(
+          React.createElement(TableHeader, React.__spread({},  columnProps,  this.props.sortConfigs, 
+            {name: columnName, 
+            key: columnName, 
+            sortDirection: this.sortDirectionForColumn(columnName), 
+            ref: "header_" + columnName, 
+            onSort: this.props.onSort, 
+            clearTheme: this.props.clearTheme})
+          )
+        );
+      }
+    }
+
+    return (
+      React.createElement("tr", null, 
+        headerComponents
+      )
+    );
+  },
+
+  sortDirectionForColumn: function(columnName) {
+    var sortData = this.props.sortData;
+    if(!!sortData.field && sortData.field == columnName) {
+      return sortData.direction;
+    }
+
+    return null;
+  },
+
+  renderTableRows: function() {
+    var rowComponents = [];
+    var dataRows = this.props.dataRows;
+
+    for(var i = 0; i < dataRows.length; i++) {
+      var dataRow = dataRows[i];
+      rowComponents.push(React.createElement(TableRow, {columns: this.props.columns, data: dataRow, key: "table_row_" + i, clearTheme: this.props.clearTheme}));
+    }
+
+    return rowComponents;
+  },
+
+  renderEmptyMessage: function() {
+    var columnsCount = 0;
+    for(var key in this.props.columns) {
+      columnsCount++;
+    }
+
+    return (
+      React.createElement("tr", null, 
+        React.createElement("td", {colSpan: columnsCount}, 
+          "Nenhum resultado foi encontrado."
+        )
+      )
+    );
+  }
+});
+
+var TableCell = React.createClass({displayName: "TableCell",
+  mixins: [CssClassMixin],
+  validFormats: ['text', 'currency', 'number', 'boolean', 'datetime'],
+
+  propTypes: {
+    name: React.PropTypes.string,
+    data: React.PropTypes.object,
+    value: React.PropTypes.func,
+    format: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      format: 'text'
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'table.cell table.cell.' + this.props.format
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("td", {className: this.className()}, 
+        this.renderValue()
+      )
+    );
+  },
+
+  renderValue: function() {
+    var format = this.props.format;
+    var customValue = this.props.value;
+
+    if(!!customValue) {
+      return customValue(this.props.data);
+    } else if($.inArray(format, this.validFormats) >= 0) {
+      return this[format + "Value"]();
+    } else {
+      return this.textValue();
+    }
+  },
+
+  textValue: function() {
+    return this.props.data[this.props.name];
+  },
+
+  numberValue: function() {
+    var value = parseFloat(this.props.data[this.props.name]);
+    return numeral(value).format('0,0.[000]');
+  },
+
+  currencyValue: function() {
+    var value = parseFloat(this.props.data[this.props.name]);
+    return numeral(value).format('$ 0,0.00');
+  },
+
+  booleanValue: function() {
+    var value = this.props.data[this.props.name];
+    return value ? "Sim" : "Não";
+  },
+
+  datetimeValue: function() {
+    var value = moment(this.props.data[this.props.name]);
+    return value.format("DD/MM/YYYY HH:mm");
+  }
+});
+
+var TableHeader = React.createClass({displayName: "TableHeader",
+  mixins: [CssClassMixin],
+  propTypes: {
+    name: React.PropTypes.string,
+    label: React.PropTypes.string,
+    sortable: React.PropTypes.bool,
+    sortDirection: React.PropTypes.string,
+    onSort: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'table.header',
+      sortable: true,
+      sortDirection: null,
+      onSort: function(sortData) {
+        return true;
+      }
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("th", {className: this.className()}, 
+        React.createElement("span", {onClick: this.sortColumn, className: this.labelClassName()}, 
+          this.props.label || this.props.name
+        )
+      )
+    );
+  },
+
+  labelClassName: function() {
+    var className = '';
+
+    if(!this.props.clearTheme) {
+      className += WRF.themeClass('table.header.label');
+    }
+
+    if(this.props.sortable) {
+      className += " sortable";
+
+      var sortDirection = this.props.sortDirection;
+      if(sortDirection !== null) {
+        className += " " + sortDirection;
+      }
+    }
+
+    return className;
+  },
+
+  sortColumn: function() {
+    if(!this.props.sortable) {
+      return null;
+    }
+
+    var sortData = this.buildSortData();
+    this.props.onSort(sortData);
+  },
+
+  buildSortData: function() {
+    var sortField = this.props.name;
+    var sortDirection = this.getSortDirection();
+
+    return {
+      field: sortField,
+      direction: sortDirection
+    };
+  },
+
+  getSortDirection: function() {
+    var currentSortDirection = this.props.sortDirection;
+    if(currentSortDirection === null || currentSortDirection == 'desc') {
+      return 'asc';
+    } else if(currentSortDirection == 'asc') {
+      return 'desc';
+    }
+  }
+
+});
+
+var TableRow = React.createClass({displayName: "TableRow",
+  mixins: [CssClassMixin],
+  propTypes: {
+    columns: React.PropTypes.object,
+    data: React.PropTypes.object
+  },
+
+  render: function() {
+    return (
+      React.createElement("tr", {className: this.className()}, 
+        this.renderCells()
+      )
+    );
+  },
+
+  renderCells: function() {
+    var columns = this.props.columns;
+    var cellComponents = [];
+
+    for(var columnName in columns) {
+      if(columns.hasOwnProperty(columnName)) {
+        var columnProps = columns[columnName];
+        cellComponents.push(
+          React.createElement(TableCell, React.__spread({},  columnProps, 
+            {name: columnName, 
+            data: this.props.data, 
+            key: columnName, 
+            clearTheme: this.props.clearTheme})
+          )
+        );
+      }
+    }
+
+    return cellComponents;
   }
 });

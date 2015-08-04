@@ -1,4 +1,5 @@
-var GridTableRow = React.createClass({
+var TableRow = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
     data: React.PropTypes.object
@@ -6,7 +7,7 @@ var GridTableRow = React.createClass({
 
   render: function() {
     return (
-      <tr>
+      <tr className={this.className()}>
         {this.renderCells()}
       </tr>
     );
@@ -19,7 +20,14 @@ var GridTableRow = React.createClass({
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
         var columnProps = columns[columnName];
-        cellComponents.push(<GridTableCell {...columnProps} name={columnName} data={this.props.data} key={columnName} />);
+        cellComponents.push(
+          <TableCell {...columnProps}
+            name={columnName}
+            data={this.props.data}
+            key={columnName}
+            clearTheme={this.props.clearTheme}
+          />
+        );
       }
     }
 

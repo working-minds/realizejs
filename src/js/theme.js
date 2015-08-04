@@ -42,5 +42,5 @@ WRF.themeClass = function(keys) {
     themeClass += WRF.themeProp(classKey, theme) + ' ';
   }
 
-  return themeClass;
+  return themeClass.trim();
 };

@@ -1,4 +1,5 @@
 var GridTable = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
@@ -9,6 +10,7 @@ var GridTable = React.createClass({
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'grid.table grid.row',
       columns: {},
       sortConfigs: {},
       sortData: {},
@@ -21,76 +23,15 @@ var GridTable = React.createClass({
 
   render: function() {
     return(
-      <table className={WRF.themeClass('grid.table')}>
-        <thead>
-          {this.renderTableHeaders()}
-        </thead>
-        <tbody>
-          {(this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()}
-        </tbody>
-      </table>
-    );
-  },
-
-  renderTableHeaders: function() {
-    var columns = this.props.columns;
-    var headerComponents = [];
-
-    for(var columnName in columns) {
-      if(columns.hasOwnProperty(columnName)) {
-        var columnProps = columns[columnName];
-        headerComponents.push(
-          <GridTableHeader {...columnProps} {...this.props.sortConfigs}
-            name={columnName}
-            key={columnName}
-            sortDirection={this.sortDirectionForColumn(columnName)}
-            ref={"header_" + columnName}
-            onSort={this.props.onSort}
-          />
-        );
-      }
-    }
-
-    return (
-      <tr>
-        {headerComponents}
-      </tr>
-    );
-  },
-
-  sortDirectionForColumn: function(columnName) {
-    var sortData = this.props.sortData;
-    if(!!sortData.field && sortData.field == columnName) {
-      return sortData.direction;
-    }
-
-    return null;
-  },
-
-  renderTableRows: function() {
-    var rowComponents = [];
-    var dataRows = this.props.dataRows;
-
-    for(var i = 0; i < dataRows.length; i++) {
-      var dataRow = dataRows[i];
-      rowComponents.push(<GridTableRow columns={this.props.columns} data={dataRow} key={"table_row_" + i} />);
-    }
-
-    return rowComponents;
-  },
-
-  renderEmptyMessage: function() {
-    var columnsCount = 0;
-    for(var key in this.props.columns) {
-      columnsCount++;
-    }
-
-    return (
-      <tr>
-        <td colSpan={columnsCount}>
-          Nenhum resultado foi encontrado.
-        </td>
-      </tr>
+      <div className={this.className()}>
+        <Table
+          columns={this.props.columns}
+          sortConfigs={this.props.sortConfigs}
+          sortData={this.props.sortData}
+          dataRows={this.props.dataRows}
+          onSort={this.props.onSort}
+        />
+      </div>
     );
   }
 });

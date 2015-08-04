@@ -1,4 +1,5 @@
-var GridTableHeader = React.createClass({
+var TableHeader = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
     name: React.PropTypes.string,
     label: React.PropTypes.string,
@@ -9,6 +10,7 @@ var GridTableHeader = React.createClass({
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'table.header',
       sortable: true,
       sortDirection: null,
       onSort: function(sortData) {
@@ -19,16 +21,21 @@ var GridTableHeader = React.createClass({
 
   render: function() {
     return (
-      <th className={WRF.themeClass('grid.table.header')}>
-        <span onClick={this.sortColumn} className={this.className()}>
+      <th className={this.className()}>
+        <span onClick={this.sortColumn} className={this.labelClassName()}>
           {this.props.label || this.props.name}
         </span>
       </th>
     );
   },
 
-  className: function() {
-    var className = WRF.themeClass('grid.table.header.label');
+  labelClassName: function() {
+    var className = '';
+
+    if(!this.props.clearTheme) {
+      className += WRF.themeClass('table.header.label');
+    }
+
     if(this.props.sortable) {
       className += " sortable";
 

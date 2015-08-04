@@ -74,14 +74,13 @@ var Grid = React.createClass({
 
   renderTable: function() {
     return (
-      <div className={this.props.clearTheme ? '' : WRF.themeClass('grid.table.wrapper grid.row')}>
-        <GridTable
-          columns={this.props.columns}
-          sortConfigs={this.props.sortConfigs}
-          sortData={this.state.sortData}
-          dataRows={this.state.dataRows}
-          onSort={this.onSort} />
-      </div>
+      <GridTable
+        columns={this.props.columns}
+        sortConfigs={this.props.sortConfigs}
+        sortData={this.state.sortData}
+        dataRows={this.state.dataRows}
+        onSort={this.onSort}
+      />
     );
   },
 

@@ -14,11 +14,25 @@ var CssClassMixin = {
 
   className: function() {
     var className = '';
-    if(!this.props.clearTheme && !!this.state.themeClassKey) {
-      className += WRF.themeClass(this.state.themeClassKey) + ' ';
+    var themeClassKey = this.getThemeClassKey();
+
+    if(!this.props.clearTheme && !!themeClassKey) {
+      className += WRF.themeClass(themeClassKey);
     }
 
-    className += this.props.className;
+    if(!!this.props.className) {
+      className += ' ' + this.props.className;
+    }
+
     return className;
+  },
+
+  getThemeClassKey: function() {
+    var themeClassKey = this.props.themeClassKey;
+    if(!themeClassKey && !!this.state) {
+      themeClassKey = this.state.themeClassKey;
+    }
+
+    return themeClassKey;
   }
 };

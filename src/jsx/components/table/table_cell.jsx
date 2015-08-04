@@ -1,4 +1,5 @@
-var GridTableCell = React.createClass({
+var TableCell = React.createClass({
+  mixins: [CssClassMixin],
   validFormats: ['text', 'currency', 'number', 'boolean', 'datetime'],
 
   propTypes: {
@@ -14,12 +15,18 @@ var GridTableCell = React.createClass({
     };
   },
 
-  render: function() {
-    return <td className={this.cssClass()}>{this.renderValue()}</td>;
+  getInitialState: function() {
+    return {
+      themeClassKey: 'table.cell table.cell.' + this.props.format
+    };
   },
 
-  cssClass: function() {
-    return  WRF.themeClass('grid.table.cell grid.table.cell.' + this.props.format);
+  render: function() {
+    return (
+      <td className={this.className()}>
+        {this.renderValue()}
+      </td>
+    );
   },
 
   renderValue: function() {

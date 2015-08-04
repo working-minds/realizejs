@@ -46,7 +46,7 @@ var GridFilter = React.createClass({
     return(
       <div className={this.className()}>
         <Form {...this.props} ref="form">
-        {this.props.children}
+          {this.props.children}
 
           <div className={WRF.themeClass('grid.filter.buttonGroup')}>
             <Button {...this.props.clearButton} type="reset" />
