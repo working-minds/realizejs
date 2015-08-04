@@ -11,7 +11,8 @@ var TableCell = React.createClass({
 
   getDefaultProps: function() {
     return {
-      format: 'text'
+      format: 'text',
+      data: {}
     };
   },
 

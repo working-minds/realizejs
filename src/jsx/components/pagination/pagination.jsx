@@ -24,7 +24,9 @@ var Pagination = React.createClass({
     return (
       <ul className={this.className()}>
         {this.renderPreviousButton()}
+        {this.renderFirstButton()}
         {this.renderPageButtons()}
+        {this.renderLastButton()}
         {this.renderNextButton()}
       </ul>
     );
@@ -38,11 +40,32 @@ var Pagination = React.createClass({
     );
   },
 
+  renderFirstButton: function() {
+    if(this.props.page <= 1) {
+      return '';
+    }
+
+    return (
+      <PaginationItem text="..." onClick={this.navigateTo.bind(this, 1)} />
+    );
+  },
+
   renderNextButton: function() {
     var disabled = (this.props.page >= this.lastPage());
 
     return (
       <PaginationItem disabled={disabled} iconType="right" onClick={this.navigateToNext} />
+    );
+  },
+
+  renderLastButton: function() {
+    var lastPage = this.lastPage();
+    if(this.props.page >= lastPage) {
+      return '';
+    }
+
+    return (
+      <PaginationItem text="..." onClick={this.navigateTo.bind(this, lastPage)} />
     );
   },
 

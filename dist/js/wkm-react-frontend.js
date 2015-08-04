@@ -1113,7 +1113,9 @@ var Pagination = React.createClass({displayName: "Pagination",
     return (
       React.createElement("ul", {className: this.className()}, 
         this.renderPreviousButton(), 
+        this.renderFirstButton(), 
         this.renderPageButtons(), 
+        this.renderLastButton(), 
         this.renderNextButton()
       )
     );
@@ -1127,11 +1129,32 @@ var Pagination = React.createClass({displayName: "Pagination",
     );
   },
 
+  renderFirstButton: function() {
+    if(this.props.page <= 1) {
+      return '';
+    }
+
+    return (
+      React.createElement(PaginationItem, {text: "...", onClick: this.navigateTo.bind(this, 1)})
+    );
+  },
+
   renderNextButton: function() {
     var disabled = (this.props.page >= this.lastPage());
 
     return (
       React.createElement(PaginationItem, {disabled: disabled, iconType: "right", onClick: this.navigateToNext})
+    );
+  },
+
+  renderLastButton: function() {
+    var lastPage = this.lastPage();
+    if(this.props.page >= lastPage) {
+      return '';
+    }
+
+    return (
+      React.createElement(PaginationItem, {text: "...", onClick: this.navigateTo.bind(this, lastPage)})
     );
   },
 
@@ -1361,7 +1384,8 @@ var TableCell = React.createClass({displayName: "TableCell",
 
   getDefaultProps: function() {
     return {
-      format: 'text'
+      format: 'text',
+      data: {}
     };
   },
 
