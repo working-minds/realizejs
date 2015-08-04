@@ -1,5 +1,5 @@
 var InputSelect = React.createClass({
-  mixins: [InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
     options: React.PropTypes.array,
@@ -125,7 +125,7 @@ var InputSelect = React.createClass({
   listenDependableChanges: function() {
     var dependsOnObj = this.props.dependsOn;
     var dependableId = dependsOnObj.dependableId;
-    var paramName = dependsOnObj.paramName || dependableId;
+    var paramName = dependsOnObj.param || dependableId;
     var dependable = document.getElementById(dependableId);
 
     $(dependable).on('dependable_changed', function(event, dependableValue) {

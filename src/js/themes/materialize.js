@@ -75,7 +75,19 @@ WRF.themes.materialize = {
     },
 
     text: {
-      cssClass: ''
+      cssClass: 'validate'
+    },
+
+    checkbox: {
+      cssClass: 'validate'
+    },
+
+    textarea: {
+      cssClass: 'materialize-textarea',
+
+      wrapper: {
+        cssClass: 'input-field col l12 m12 s12'
+      }
     }
   },
 

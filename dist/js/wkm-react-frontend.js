@@ -218,7 +218,19 @@ WRF.themes.materialize = {
     },
 
     text: {
-      cssClass: ''
+      cssClass: 'validate'
+    },
+
+    checkbox: {
+      cssClass: 'validate'
+    },
+
+    textarea: {
+      cssClass: 'materialize-textarea',
+
+      wrapper: {
+        cssClass: 'input-field col l12 m12 s12'
+      }
     }
   },
 
@@ -289,6 +301,16 @@ var CssClassMixin = {
     }
 
     return themeClassKey;
+  },
+
+  propsWithoutCSS: function() {
+    var cssProps = ['clearTheme', 'className', 'themeClassKey'];
+    var props = $.extend({}, this.props);
+    $.each(cssProps, function(i, cssProp) {
+      delete props[cssProp];
+    }.bind(this));
+
+    return props;
   }
 };
 var InputComponentMixin = {
@@ -821,13 +843,13 @@ var Input = React.createClass({displayName: "Input",
     return {
       value: null,
       component: 'text',
-      themeClassKey: 'input.wrapper',
       onChange: function(event) {
         return true;
       },
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
+          textarea: InputTextarea,
           checkbox: InputCheckbox,
           select: InputSelect,
           hidden: InputHidden,
@@ -841,8 +863,19 @@ var Input = React.createClass({displayName: "Input",
 
   getInitialState: function() {
     return {
-      value: this.props.value
+      value: this.props.value,
+      themeClassKey: this.themeClassKeyByComponent()
     };
+  },
+
+  themeClassKeyByComponent: function() {
+    var component = this.props.component;
+
+    if(component === 'textarea') {
+      return 'input.textarea.wrapper';
+    } else {
+      return 'input.wrapper';
+    }
   },
 
   focus: function() {
@@ -873,18 +906,24 @@ var Input = React.createClass({displayName: "Input",
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
     var componentInputName = this.props.name || this.props.id;
-    var componentInputProps = React.__spread({}, this.props, { name: componentInputName, ref: "inputComponent" });
+    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
   },
 
   labelValue: function() {
-    return this.props.label || this.props.name;
+    return (this.props.label || this.props.name);
   }
 });
 
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
-  mixins: [InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin],
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.checkbox'
+    };
+  },
 
   componentDidMount: function() {
     React.findDOMNode(this.refs.input).indeterminate = true;
@@ -892,7 +931,7 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", ref: "input", className: "validate"}))
+      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), ref: "input"}))
     );
   }
 });
@@ -902,7 +941,7 @@ var InputHidden = React.createClass({displayName: "InputHidden",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "hidden"}))
+      React.createElement("input", React.__spread({},  this.props, {type: "hidden", ref: "input"}))
     );
   }
 });
@@ -921,7 +960,7 @@ var InputPassword = React.createClass({displayName: "InputPassword",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "password", className: this.className}))
+      React.createElement("input", React.__spread({},  this.props, {type: "password", className: this.className(), ref: "input"}))
     );
   }
 });
@@ -941,13 +980,33 @@ var InputText = React.createClass({displayName: "InputText",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {className: this.className}))
+      React.createElement("input", React.__spread({},  this.props, {className: this.className(), ref: "input"}))
+    );
+  }
+});
+
+var InputTextarea = React.createClass({displayName: "InputTextarea",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    rows: React.PropTypes.number
+  },
+
+  getDefaultProps: function() {
+    return {
+      rows: 4,
+      themeClassKey: 'input.textarea'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("textarea", React.__spread({},  this.props, {className: this.className(), ref: "input"}))
     );
   }
 });
 
 var InputSelect = React.createClass({displayName: "InputSelect",
-  mixins: [InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
     options: React.PropTypes.array,
@@ -1073,7 +1132,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   listenDependableChanges: function() {
     var dependsOnObj = this.props.dependsOn;
     var dependableId = dependsOnObj.dependableId;
-    var paramName = dependsOnObj.paramName || dependableId;
+    var paramName = dependsOnObj.param || dependableId;
     var dependable = document.getElementById(dependableId);
 
     $(dependable).on('dependable_changed', function(event, dependableValue) {

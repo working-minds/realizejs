@@ -1,5 +1,11 @@
 var InputCheckbox = React.createClass({
-  mixins: [InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin],
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.checkbox'
+    };
+  },
 
   componentDidMount: function() {
     React.findDOMNode(this.refs.input).indeterminate = true;
@@ -7,7 +13,7 @@ var InputCheckbox = React.createClass({
 
   render: function() {
     return (
-      <input {...this.props} type="checkbox" ref="input" className="validate" />
+      <input {...this.props} type="checkbox" className={this.className()} ref="input"  />
     );
   }
 });

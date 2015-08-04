@@ -14,13 +14,13 @@ var Input = React.createClass({
     return {
       value: null,
       component: 'text',
-      themeClassKey: 'input.wrapper',
       onChange: function(event) {
         return true;
       },
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
+          textarea: InputTextarea,
           checkbox: InputCheckbox,
           select: InputSelect,
           hidden: InputHidden,
@@ -34,8 +34,19 @@ var Input = React.createClass({
 
   getInitialState: function() {
     return {
-      value: this.props.value
+      value: this.props.value,
+      themeClassKey: this.themeClassKeyByComponent()
     };
+  },
+
+  themeClassKeyByComponent: function() {
+    var component = this.props.component;
+
+    if(component === 'textarea') {
+      return 'input.textarea.wrapper';
+    } else {
+      return 'input.wrapper';
+    }
   },
 
   focus: function() {
@@ -66,12 +77,12 @@ var Input = React.createClass({
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
     var componentInputName = this.props.name || this.props.id;
-    var componentInputProps = React.__spread({}, this.props, { name: componentInputName, ref: "inputComponent" });
+    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
   },
 
   labelValue: function() {
-    return this.props.label || this.props.name;
+    return (this.props.label || this.props.name);
   }
 });
