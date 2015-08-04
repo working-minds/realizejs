@@ -1,4 +1,5 @@
 var Input = React.createClass({
+  mixins: [CssClassMixin],
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -12,16 +13,18 @@ var Input = React.createClass({
   getDefaultProps: function() {
     return {
       value: null,
+      component: 'text',
+      themeClassKey: 'input.wrapper',
       onChange: function(event) {
         return true;
       },
-      component: 'text',
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
           checkbox: InputCheckbox,
           select: InputSelect,
-          hidden: InputHidden
+          hidden: InputHidden,
+          password: InputPassword
         };
 
         return mapping[component];
@@ -49,7 +52,7 @@ var Input = React.createClass({
 
   renderVisibleInput: function() {
     return (
-      <div className="input-field col l3 m4 s12">
+      <div className={this.className()}>
         {this.renderComponentInput()}
         <label htmlFor={this.props.id}>{this.labelValue()}</label>
       </div>

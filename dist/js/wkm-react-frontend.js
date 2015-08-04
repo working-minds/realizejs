@@ -212,6 +212,16 @@ WRF.themes.materialize = {
     cssClass: ''
   },
 
+  input: {
+    wrapper: {
+      cssClass: 'input-field col l3 m4 s12'
+    },
+
+    text: {
+      cssClass: ''
+    }
+  },
+
   button: {
     cssClass: 'btn waves-effect waves-light',
 
@@ -287,6 +297,7 @@ var InputComponentMixin = {
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     disabled: React.PropTypes.bool,
+    placeholder: React.PropTypes.string,
     onChange: React.PropTypes.func
   },
 
@@ -795,6 +806,7 @@ var Icon = React.createClass({displayName: "Icon",
 });
 
 var Input = React.createClass({displayName: "Input",
+  mixins: [CssClassMixin],
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -808,16 +820,18 @@ var Input = React.createClass({displayName: "Input",
   getDefaultProps: function() {
     return {
       value: null,
+      component: 'text',
+      themeClassKey: 'input.wrapper',
       onChange: function(event) {
         return true;
       },
-      component: 'text',
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
           checkbox: InputCheckbox,
           select: InputSelect,
-          hidden: InputHidden
+          hidden: InputHidden,
+          password: InputPassword
         };
 
         return mapping[component];
@@ -845,7 +859,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderVisibleInput: function() {
     return (
-      React.createElement("div", {className: "input-field col l3 m4 s12"}, 
+      React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
         React.createElement("label", {htmlFor: this.props.id}, this.labelValue())
       )
@@ -888,20 +902,46 @@ var InputHidden = React.createClass({displayName: "InputHidden",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "hidden", ref: "input"}))
+      React.createElement("input", React.__spread({},  this.props, {type: "hidden"}))
+    );
+  }
+});
+
+var InputPassword = React.createClass({displayName: "InputPassword",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    confirms: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.text'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("input", React.__spread({},  this.props, {type: "password", className: this.className}))
     );
   }
 });
 
 var InputText = React.createClass({displayName: "InputText",
-  mixins: [InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    placeholder: React.PropTypes.string
+    type: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      type: 'text',
+      themeClassKey: 'input.text'
+    };
   },
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "text", ref: "input", className: "validate"}))
+      React.createElement("input", React.__spread({},  this.props, {className: this.className}))
     );
   }
 });

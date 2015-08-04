@@ -69,6 +69,16 @@ WRF.themes.materialize = {
     cssClass: ''
   },
 
+  input: {
+    wrapper: {
+      cssClass: 'input-field col l3 m4 s12'
+    },
+
+    text: {
+      cssClass: ''
+    }
+  },
+
   button: {
     cssClass: 'btn waves-effect waves-light',
 
