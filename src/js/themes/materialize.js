@@ -82,6 +82,14 @@ WRF.themes.materialize = {
       cssClass: 'validate'
     },
 
+    datepicker: {
+      cssClass: 'datepicker'
+    },
+
+    select: {
+      cssClass: ''
+    },
+
     textarea: {
       cssClass: 'materialize-textarea',
 

@@ -225,6 +225,14 @@ WRF.themes.materialize = {
       cssClass: 'validate'
     },
 
+    datepicker: {
+      cssClass: 'datepicker'
+    },
+
+    select: {
+      cssClass: ''
+    },
+
     textarea: {
       cssClass: 'materialize-textarea',
 
@@ -339,6 +347,148 @@ var InputComponentMixin = {
     }
   }
 };
+var MaterializeSelectMixin = {
+  componentDidMount: function() {
+    this.applyMaterialize();
+  },
+
+  componentDidUpdate: function(previousProps, previousState) {
+    if(this.state.options != previousState.options) {
+      this.applyMaterialize();
+    }
+  },
+
+  applyMaterialize: function() {
+    var selectElement = React.findDOMNode(this.refs.select);
+
+    $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
+    this.handleChangeMaterialize(selectElement);
+  },
+
+  handleChangeMaterialize: function(selectElement) {
+    var $selectElement = $(selectElement);
+    var fakeEvent = { currentTarget: selectElement };
+
+    //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
+    $selectElement.parent().parent().find('> .caret').remove();
+
+    $selectElement.trigger('dependable_changed', [selectElement.value]);
+    this.props.onChange(fakeEvent);
+  }
+};
+var SelectComponentMixin = {
+  propTypes: {
+    options: React.PropTypes.array,
+    dependsOn: React.PropTypes.object,
+    optionsUrl: React.PropTypes.string,
+    nameField: React.PropTypes.string,
+    valueField: React.PropTypes.string,
+    onLoad: React.PropTypes.func,
+    onLoadError: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      dependsOn: null,
+      nameField: 'name',
+      valueField: 'id',
+      onLoad: function(data) {
+        return true;
+      },
+      onLoadError: function(xhr, status, error) {
+        console.log('Select Load error:' + error);
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      options: this.props.options,
+      disabled: this.props.disabled,
+      loadParams: {}
+    };
+  },
+
+  componentWillMount: function() {
+    if(!!this.props.dependsOn) {
+      this.state.disabled = true;
+    }
+  },
+
+  componentDidMount: function() {
+    if(this.props.optionsUrl) {
+      if(!!this.props.dependsOn) {
+        this.listenToDependableChange();
+      } else {
+        this.loadOptions();
+      }
+    }
+  },
+
+  handleChange: function(event) {
+    var selectElement = React.findDOMNode(this.refs.select);
+    var $selectElement = $(selectElement);
+
+    $selectElement.trigger('dependable_changed', [selectElement.value]);
+    this.props.onChange(event);
+  },
+
+  loadOptions: function() {
+    $.ajax({
+      url: this.props.optionsUrl,
+      method: 'GET',
+      dataType: 'json',
+      data: this.state.loadParams,
+      success: this.handleLoad,
+      error: this.onLoadError
+    });
+  },
+
+  handleLoad: function(data) {
+    var options = [];
+
+    for(var i = 0; i < data.length; i++) {
+      var dataItem = data[i];
+      var option = {
+        name: String(dataItem[this.props.nameField]),
+        value: String(dataItem[this.props.valueField])
+      };
+
+      options.push(option);
+    }
+
+    this.setState({
+      options: options,
+      disabled: (!!this.props.dependsOn && options.length <= 0)
+    });
+
+    this.props.onLoad(data);
+  },
+
+  listenToDependableChange: function() {
+    var dependsOnObj = this.props.dependsOn;
+    var dependableId = dependsOnObj.dependableId;
+    var paramName = dependsOnObj.param || dependableId;
+    var dependable = document.getElementById(dependableId);
+
+    $(dependable).on('dependable_changed', function(event, dependableValue) {
+      if(!dependableValue) {
+        this.emptyAndDisable();
+        return false;
+      }
+
+      this.state.loadParams[paramName] = dependableValue;
+      this.loadOptions();
+    }.bind(this));
+  },
+
+  emptyAndDisable: function() {
+    this.setState({
+      options: [],
+      disabled: true
+    });
+  }
+};
 var Button = React.createClass({displayName: "Button",
   mixins: [CssClassMixin],
   propTypes: {
@@ -352,7 +502,7 @@ var Button = React.createClass({displayName: "Button",
   getDefaultProps: function() {
     return {
       additionalThemeClassKeys: ''
-    }
+    };
   },
 
   getInitialState: function() {
@@ -849,11 +999,12 @@ var Input = React.createClass({displayName: "Input",
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
-          textarea: InputTextarea,
           checkbox: InputCheckbox,
-          select: InputSelect,
+          datepicker: InputDatepicker,
           hidden: InputHidden,
-          password: InputPassword
+          password: InputPassword,
+          select: InputSelect,
+          textarea: InputTextarea
         };
 
         return mapping[component];
@@ -936,6 +1087,31 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   }
 });
 
+var InputDatepicker = React.createClass({displayName: "InputDatepicker",
+  mixins: [CssClassMixin, InputComponentMixin],
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.datepicker'
+    };
+  },
+
+  componentDidMount: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    $(inputNode).pickadate({
+      selectMonths: true,
+      selectYears: 15,
+      format: 'dd/mm/yyyy'
+    });
+  },
+
+  render: function() {
+    return (
+      React.createElement("input", React.__spread({},  this.props, {type: "date", className: this.className(), ref: "input"}))
+    );
+  }
+});
+
 var InputHidden = React.createClass({displayName: "InputHidden",
   mixins: [InputComponentMixin],
 
@@ -963,6 +1139,58 @@ var InputPassword = React.createClass({displayName: "InputPassword",
       React.createElement("input", React.__spread({},  this.props, {type: "password", className: this.className(), ref: "input"}))
     );
   }
+});
+
+var InputSearchSelect = React.createClass({displayName: "InputSearchSelect",
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    SelectComponentMixin
+  ],
+
+  propTypes: {
+    includeBlank: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      includeBlank: true,
+      options: [],
+      themeClassKey: 'input.select'
+    };
+  },
+
+  render: function() {
+    return (
+        React.createElement("select", {
+            id: this.props.id, 
+            name: this.props.name, 
+            value: this.props.value, 
+            onChange: this.handleChange, 
+            disabled: this.state.disabled, 
+            className: this.className(), 
+            ref: "select"}, 
+        this.renderOptions()
+        )
+    );
+  },
+
+  renderOptions: function() {
+    var selectOptions = [];
+    var options = this.state.options;
+
+    if(this.props.includeBlank) {
+      selectOptions.push(React.createElement(InputSelectOption, {name: "Selecione", value: "", key: "empty_option"}));
+    }
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+      selectOptions.push(React.createElement(InputSelectOption, React.__spread({},  optionProps, {key: optionProps.name})));
+    }
+
+    return selectOptions;
+  }
+
 });
 
 var InputText = React.createClass({displayName: "InputText",
@@ -1006,57 +1234,23 @@ var InputTextarea = React.createClass({displayName: "InputTextarea",
 });
 
 var InputSelect = React.createClass({displayName: "InputSelect",
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    SelectComponentMixin,
+    MaterializeSelectMixin
+  ],
 
   propTypes: {
-    options: React.PropTypes.array,
-    optionsUrl: React.PropTypes.string,
-    dependsOn: React.PropTypes.object,
-    includeBlank: React.PropTypes.bool,
-    nameField: React.PropTypes.string,
-    valueField: React.PropTypes.string
+    includeBlank: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      dependsOn: null,
       options: [],
-      nameField: 'name',
-      valueField: 'id'
+      themeClassKey: 'input.select'
     };
-  },
-
-  getInitialState: function() {
-    return {
-      options: this.props.options,
-      disabled: this.props.disabled
-    };
-  },
-
-  componentWillMount: function() {
-    if(!!this.props.dependsOn) {
-      this.state.disabled = true;
-    }
-  },
-
-  componentDidMount: function() {
-    this.applyMaterialize();
-
-    if(this.props.optionsUrl) {
-      if(!!this.props.dependsOn) {
-        this.listenDependableChanges();
-      } else {
-        this.loadOptions();
-      }
-    }
-  },
-
-  componentDidUpdate: function(previousProps, previousState) {
-    var state = this.state;
-    if(state.options != previousState.options) {
-      this.applyMaterialize();
-    }
   },
 
   render: function() {
@@ -1065,20 +1259,13 @@ var InputSelect = React.createClass({displayName: "InputSelect",
         id: this.props.id, 
         name: this.props.name, 
         value: this.props.value, 
-        onChange: this.props.onChange, 
+        onChange: this.handleChange, 
         disabled: this.state.disabled, 
+        className: this.className(), 
         ref: "select"}, 
         this.renderOptions()
       )
     );
-  },
-
-  handleChange: function(event) {
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
-
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(event);
   },
 
   renderOptions: function() {
@@ -1095,84 +1282,8 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     }
 
     return selectOptions;
-  },
-
-  loadOptions: function(params) {
-    $.ajax({
-      url: this.props.optionsUrl,
-      method: 'GET',
-      dataType: 'json',
-      data: params,
-      success: this.loadOptionsCallback,
-      error: function(xhr, status, error) {
-        console.log('InputSelect Load error:' + error);
-      }.bind(this)
-    });
-  },
-
-  loadOptionsCallback: function(data) {
-    var options = [];
-
-    for(var i = 0; i < data.length; i++) {
-      var dataItem = data[i];
-      var option = {
-        name: String(dataItem[this.props.nameField]),
-        value: String(dataItem[this.props.valueField])
-      };
-
-      options.push(option);
-    }
-
-    this.setState({
-      options: options,
-      disabled: (!!this.props.dependsOn && options.length <= 0)
-    });
-  },
-
-  listenDependableChanges: function() {
-    var dependsOnObj = this.props.dependsOn;
-    var dependableId = dependsOnObj.dependableId;
-    var paramName = dependsOnObj.param || dependableId;
-    var dependable = document.getElementById(dependableId);
-
-    $(dependable).on('dependable_changed', function(event, dependableValue) {
-      if(!dependableValue) {
-        this.emptyAndDisable();
-        return false;
-      }
-
-      var loadParams = {};
-      loadParams[paramName] = dependableValue;
-      this.loadOptions(loadParams);
-    }.bind(this));
-  },
-
-  emptyAndDisable: function() {
-    this.setState({
-      options: [],
-      disabled: true
-    });
-  },
-
-  // Funcoes especificas para o Materialize
-
-  applyMaterialize: function() {
-    var selectElement = React.findDOMNode(this.refs.select);
-
-    $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
-    this.handleChangeMaterialize(selectElement);
-  },
-
-  handleChangeMaterialize: function(selectElement) {
-    var $selectElement = $(selectElement);
-    var fakeEvent = { currentTarget: selectElement };
-
-    //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
-    $selectElement.parent().parent().find('> .caret').remove();
-
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(fakeEvent);
   }
+
 });
 
 var InputSelectOption = React.createClass({displayName: "InputSelectOption",
@@ -1229,7 +1340,7 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderFirstButton: function() {
-    if(this.props.page <= 1) {
+    if(this.firstWindowPage() <= 1) {
       return '';
     }
 
@@ -1248,7 +1359,7 @@ var Pagination = React.createClass({displayName: "Pagination",
 
   renderLastButton: function() {
     var lastPage = this.lastPage();
-    if(this.props.page >= lastPage) {
+    if(this.lastWindowPage() >= lastPage) {
       return '';
     }
 
@@ -1258,12 +1369,8 @@ var Pagination = React.createClass({displayName: "Pagination",
   },
 
   renderPageButtons: function() {
-    var window = this.props.window;
-    var firstWindowPage = Math.max(1, this.props.page - window);
-    var lastWindowPage = Math.min(this.lastPage(), this.props.page + window);
-
     var pageButtons = [];
-    for(var i = firstWindowPage; i <= lastWindowPage; i++) {
+    for(var i = this.firstWindowPage(); i <= this.lastWindowPage(); i++) {
       pageButtons.push(this.renderPageButton(i));
     }
 
@@ -1280,6 +1387,14 @@ var Pagination = React.createClass({displayName: "Pagination",
 
   lastPage: function() {
     return Math.ceil(this.props.count / this.props.perPage);
+  },
+
+  firstWindowPage: function() {
+    return Math.max(1, this.props.page - this.props.window);
+  },
+
+  lastWindowPage: function() {
+    return Math.min(this.lastPage(), this.props.page + this.props.window);
   },
 
   navigateToPrevious: function() {

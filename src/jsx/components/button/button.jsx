@@ -11,7 +11,7 @@ var Button = React.createClass({
   getDefaultProps: function() {
     return {
       additionalThemeClassKeys: ''
-    }
+    };
   },
 
   getInitialState: function() {

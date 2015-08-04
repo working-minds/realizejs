@@ -20,11 +20,12 @@ var Input = React.createClass({
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
-          textarea: InputTextarea,
           checkbox: InputCheckbox,
-          select: InputSelect,
+          datepicker: InputDatepicker,
           hidden: InputHidden,
-          password: InputPassword
+          password: InputPassword,
+          select: InputSelect,
+          textarea: InputTextarea
         };
 
         return mapping[component];

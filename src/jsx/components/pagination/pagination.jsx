@@ -41,7 +41,7 @@ var Pagination = React.createClass({
   },
 
   renderFirstButton: function() {
-    if(this.props.page <= 1) {
+    if(this.firstWindowPage() <= 1) {
       return '';
     }
 
@@ -60,7 +60,7 @@ var Pagination = React.createClass({
 
   renderLastButton: function() {
     var lastPage = this.lastPage();
-    if(this.props.page >= lastPage) {
+    if(this.lastWindowPage() >= lastPage) {
       return '';
     }
 
@@ -70,12 +70,8 @@ var Pagination = React.createClass({
   },
 
   renderPageButtons: function() {
-    var window = this.props.window;
-    var firstWindowPage = Math.max(1, this.props.page - window);
-    var lastWindowPage = Math.min(this.lastPage(), this.props.page + window);
-
     var pageButtons = [];
-    for(var i = firstWindowPage; i <= lastWindowPage; i++) {
+    for(var i = this.firstWindowPage(); i <= this.lastWindowPage(); i++) {
       pageButtons.push(this.renderPageButton(i));
     }
 
@@ -92,6 +88,14 @@ var Pagination = React.createClass({
 
   lastPage: function() {
     return Math.ceil(this.props.count / this.props.perPage);
+  },
+
+  firstWindowPage: function() {
+    return Math.max(1, this.props.page - this.props.window);
+  },
+
+  lastWindowPage: function() {
+    return Math.min(this.lastPage(), this.props.page + this.props.window);
   },
 
   navigateToPrevious: function() {
