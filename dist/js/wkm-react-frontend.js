@@ -948,6 +948,162 @@ var GridTable = React.createClass({displayName: "GridTable",
   }
 });
 
+var Header = React.createClass({displayName: "Header",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      className: ''
+    };
+  },
+
+  render: function() {
+    return (
+        React.createElement("nav", {className: 'blue-grey darken-2 ' + this.props.className, role: "navigation"}, 
+          React.createElement("div", {className: "nav-wrapper"}, 
+          this.props.children
+          )
+        )
+    );
+  }
+
+});
+var HeaderButton = React.createClass({displayName: "HeaderButton",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    imgSrc: React.PropTypes.string,
+    imgAlt: React.PropTypes.string,
+    icon: React.PropTypes.string,
+    iconAlign: React.PropTypes.string,
+    text: React.PropTypes.string,
+    href: React.PropTypes.string,
+    target: React.PropTypes.string,
+    onClick: React.PropTypes.object,
+    ref: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      iconAlign: ' '
+    };
+  },
+
+  render: function () {
+    var button = '';
+    if(this.props.imgSrc)
+      button = this.renderImage();
+    else
+      button = this.renderButton();
+
+    return (
+      button
+    );
+  },
+
+  renderButton: function() {
+    return (
+      React.createElement("a", {href: this.props.href, ref: this.props.ref, onClick: this.props.onClick, target: this.props.target}, 
+        React.createElement("i", {className: 'material-icons ' + this.props.iconAlign}, this.props.icon), this.props.text
+      )
+    );
+  },
+
+  renderImage: function(){
+    return (
+      React.createElement("a", {className: "brand-logo", href: this.props.href}, 
+        React.createElement("img", {src: this.props.imgSrc, alt: this.props.imgAlt})
+      ));
+  }
+
+});
+
+var HeaderMenu = React.createClass({displayName: "HeaderMenu",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    items: React.PropTypes.array,
+    leftIcon: React.PropTypes.string,
+    rightIcon: React.PropTypes.string,
+    text: React.PropTypes.string,
+    href: React.PropTypes.string,
+    ref_id:React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      items: [],
+      leftIcon: '',
+      rightIcon: '',
+      ref_id: 'headerMenu'
+    };
+  },
+
+  render: function () {
+    var leftIcon =  (this.props.leftIcon !== '')? React.createElement("i", {className: 'material-icons left'}, this.props.leftIcon) : '';
+    var rightIcon =  (this.props.rightIcon !== '')? React.createElement("i", {className: 'material-icons right'}, this.props.rightIcon) : '';
+
+    return (
+        React.createElement("div", null, 
+          React.createElement("a", {href: this.props.href, ref: "readerMenu", onClick: this.props.onClick, target: this.props.target, "data-activates": this.props.ref_id}, 
+            leftIcon, 
+            this.props.text, 
+            rightIcon
+          ), 
+          this.renderMenu()
+        )
+    );
+  },
+
+  renderMenu: function(){
+    return (
+        React.createElement(Menu, {ref_id: this.props.ref_id, className: "dropdown-content", items: this.props.items}, 
+          this.props.children
+        )
+    );
+  },
+
+  componentDidMount: function(){
+    $(React.findDOMNode(this.refs.readerMenu)).dropdown();
+  }
+
+});
+
+var HeaderSection = React.createClass({displayName: "HeaderSection",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    align: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      align: 'left',
+      className: 'hide-on-med-and-down'
+    };
+  },
+
+  render: function () {
+
+    return (
+      React.createElement("ul", {className: this.props.className + ' ' + this.props.align}, 
+        this.renderChildren()
+      )
+    );
+  },
+
+  renderChildren: function () {
+    return React.Children.map(this.props.children, function(child, i) {
+      return React.createElement("li", {key: "item_" + i}, child);
+    });
+  }
+
+});
+
 var Icon = React.createClass({displayName: "Icon",
   mixins: [CssClassMixin],
   propTypes: {
@@ -1141,58 +1297,6 @@ var InputPassword = React.createClass({displayName: "InputPassword",
   }
 });
 
-var InputSearchSelect = React.createClass({displayName: "InputSearchSelect",
-  mixins: [
-    CssClassMixin,
-    InputComponentMixin,
-    SelectComponentMixin
-  ],
-
-  propTypes: {
-    includeBlank: React.PropTypes.bool
-  },
-
-  getDefaultProps: function() {
-    return {
-      includeBlank: true,
-      options: [],
-      themeClassKey: 'input.select'
-    };
-  },
-
-  render: function() {
-    return (
-        React.createElement("select", {
-            id: this.props.id, 
-            name: this.props.name, 
-            value: this.props.value, 
-            onChange: this.handleChange, 
-            disabled: this.state.disabled, 
-            className: this.className(), 
-            ref: "select"}, 
-        this.renderOptions()
-        )
-    );
-  },
-
-  renderOptions: function() {
-    var selectOptions = [];
-    var options = this.state.options;
-
-    if(this.props.includeBlank) {
-      selectOptions.push(React.createElement(InputSelectOption, {name: "Selecione", value: "", key: "empty_option"}));
-    }
-
-    for(var i = 0; i < options.length; i++) {
-      var optionProps = options[i];
-      selectOptions.push(React.createElement(InputSelectOption, React.__spread({},  optionProps, {key: optionProps.name})));
-    }
-
-    return selectOptions;
-  }
-
-});
-
 var InputText = React.createClass({displayName: "InputText",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
@@ -1296,6 +1400,84 @@ var InputSelectOption = React.createClass({displayName: "InputSelectOption",
     return React.createElement("option", {value: this.props.value}, this.props.name);
   }
 });
+
+var Menu = React.createClass({displayName: "Menu",
+  propTypes: {
+    ref_id: React.PropTypes.string,
+    items: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      ref_id:'',
+      items: []
+    };
+  },
+
+  componentWillMount: function() {
+    if(!Array.isArray(this.props.children))
+      this.props.children = [this.props.children];
+
+    var items = this.renderItems();
+    $(items).each(function (i, element) {
+      this.props.children.push(element);
+    }.bind(this));
+  },
+
+  render: function() {
+    return (
+      React.createElement("ul", {id: this.props.ref_id, className: this.props.className}, 
+        this.renderChildren()
+      )
+    );
+  },
+
+  renderItems: function(){
+    var menuItems = this.props.items.map(function ( item ) {
+      return React.createElement(MenuItem, React.__spread({},  item ));
+    },this);
+    return menuItems;
+  },
+
+  renderChildren:function(){
+    var menuItems = React.Children.map(this.props.children, function(item) {
+      if((item !== null) && (item.type.displayName = "MenuItem"))
+        return item;
+    });
+    return menuItems;
+  }
+});
+
+
+var MenuItem = React.createClass({displayName: "MenuItem",
+  propTypes: {
+    icon: React.PropTypes.string,
+    iconAlign: React.PropTypes.string,
+    href: React.PropTypes.string,
+    target: React.PropTypes.string,
+    onClick: React.PropTypes.object,
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      iconAlign: 'left'
+    };
+  },
+
+  render: function() {
+    var icon = (this.props.icon !== undefined)? React.createElement("i", {className: 'material-icons ' + (this.props.iconAlign || this.props.iconAlign)}, this.props.icon) : '';
+    return (
+      React.createElement("li", null, 
+        React.createElement("a", {href: this.props.onClick? '#': this.props.href, onClick: this.props.onClick, target: this.props.target, className: this.props.className}, 
+             icon, 
+             this.props.text
+        )
+      )
+    );
+  }
+});
+
 
 var Pagination = React.createClass({displayName: "Pagination",
   mixins: [CssClassMixin],
@@ -1480,6 +1662,48 @@ var PaginationItem = React.createClass({displayName: "PaginationItem",
       this.props.onClick();
     }
   }
+});
+
+var SideNav = React.createClass({displayName: "SideNav",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    items: React.PropTypes.array,
+    icon: React.PropTypes.string,
+    iconAlign: React.PropTypes.string,
+    text: React.PropTypes.string,
+    ref_id:React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      items: [],
+      icon: 'view_headline',
+      iconAlign: '',
+      ref_id: 'sideNav',
+      text: ''
+    };
+  },
+
+  render: function () {
+    var iconAlign = this.props.text? 'left':'';
+    return (React.createElement("div", null, 
+      React.createElement("a", {href: this.props.href, ref: "sideNav", onClick: this.props.onClick, target: this.props.target, "data-activates": this.props.ref_id}, 
+        React.createElement("i", {className: 'material-icons ' + iconAlign}, this.props.icon), 
+        this.props.text
+      ), 
+      this.renderMenu()
+    ));
+  },
+
+  renderMenu: function(){
+    return (React.createElement(Menu, {ref_id: this.props.ref_id, className: "side-nav full", items: this.props.items}, this.props.children));
+  },
+
+  componentDidMount: function(){
+    $(React.findDOMNode(this.refs.sideNav)).sideNav();
+  }
+
 });
 
 var Table = React.createClass({displayName: "Table",
@@ -1769,5 +1993,52 @@ var TableRow = React.createClass({displayName: "TableRow",
     }
 
     return cellComponents;
+  }
+});
+
+var Tabs = React.createClass({displayName: "Tabs",
+
+  render: function(){
+    return (
+        React.createElement("span", null, 
+          React.createElement("ul", {className: "tabs", ref: "tabsContainer"}, 
+            this.renderTabs()
+          ), 
+          React.createElement("div", {class: "row"}, 
+            this.props.children
+          )
+        )
+    );
+  },
+
+  componentDidMount: function(){
+    $(React.findDOMNode(this.refs.tabsContainer)).tabs();
+  },
+
+  renderTabs: function() {
+    var tabs = [];
+    for(var i = 0; i < this.props.children.length; i++) {
+      var isActive = i === 0 ? "active" : "";
+      tabs[i] = (
+          React.createElement("li", {className: "tab col s1"}, 
+            React.createElement("a", {href: '#'+this.props.children[i].props.id, className: isActive}, 
+              this.props.children[i].props.title
+            )
+          )
+      );
+    }
+
+    return tabs;
+  }
+
+});
+
+var Tab = React.createClass({displayName: "Tab",
+  render: function(){
+    return(
+        React.createElement("div", {id: this.props.id}, 
+			    this.props.children
+        )
+    );
   }
 });
