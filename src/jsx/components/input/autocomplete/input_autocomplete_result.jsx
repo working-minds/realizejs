@@ -3,8 +3,7 @@ var InputAutocompleteResult = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     options: React.PropTypes.array,
-    onFocus: React.PropTypes.func,
-    onBlur: React.PropTypes.func,
+    onKeyUp: React.PropTypes.func,
     onSelect: React.PropTypes.func
   },
 
@@ -19,8 +18,7 @@ var InputAutocompleteResult = React.createClass({
       <div className={this.className()}>
         <Icon type="search" className="prefix" />
         <InputText
-          onFocus={this.props.onFocus}
-          onBlur={this.props.onBlur}
+          onKeyUp={this.props.onKeyUp}
           autoComplete="off"
         />
 

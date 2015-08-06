@@ -1141,13 +1141,15 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   propTypes: {
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
+    searchParam: React.PropTypes.string,
     multiple: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
-      maxOptions: 10,
+      maxOptions: 20,
       maxOptionsParam: 'limit',
+      searchParam: 'query',
       themeClassKey: 'input.autocomplete',
       multiple: false
     };
@@ -1184,6 +1186,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
           id: this.props.id, 
           options: this.optionsWithSelection(), 
           onSelect: this.handleSelect, 
+          onKeyUp: this.searchOptions, 
           ref: "result"}
         )
       )
@@ -1200,6 +1203,14 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
         selected: (selectedOptionsValues.indexOf(option.value) >= 0)
       });
     });
+  },
+
+  searchOptions: function(event) {
+    var keyCode = event.keyCode;
+    var $searchInput = $(event.currentTarget);
+
+    this.state.loadParams[this.props.searchParam] = $searchInput.val();
+    this.loadOptions();
   },
 
   displayResult: function() {
@@ -1357,8 +1368,7 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
   propTypes: {
     id: React.PropTypes.string,
     options: React.PropTypes.array,
-    onFocus: React.PropTypes.func,
-    onBlur: React.PropTypes.func,
+    onKeyUp: React.PropTypes.func,
     onSelect: React.PropTypes.func
   },
 
@@ -1373,8 +1383,7 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
       React.createElement("div", {className: this.className()}, 
         React.createElement(Icon, {type: "search", className: "prefix"}), 
         React.createElement(InputText, {
-          onFocus: this.props.onFocus, 
-          onBlur: this.props.onBlur, 
+          onKeyUp: this.props.onKeyUp, 
           autoComplete: "off"}
         ), 
 
