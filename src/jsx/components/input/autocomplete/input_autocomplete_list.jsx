@@ -22,13 +22,31 @@ var InputAutocompleteList = React.createClass({
   render: function() {
     return (
       <ul className={this.className()}>
-        {this.renderOnTopSelectedOptions()}
-        {this.renderOtherOptions()}
+        {this.renderOptions()}
       </ul>
     );
   },
 
-  renderOnTopSelectedOptions: function() {
+  renderOptions: function() {
+    var options = [].concat(this.onTopSelectedOptions(), this.otherOptions());
+    var listOptions = [];
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+      listOptions.push(
+        <InputAutocompleteOption {...optionProps}
+          onSelect={this.props.onSelect}
+          active={i == this.props.active}
+          id={this.props.id}
+          key={optionProps.name}
+        />
+      );
+    }
+
+    return listOptions;
+  },
+
+  onTopSelectedOptions: function() {
     var selectedOptions = $.map(this.props.selectedOptions, function(selectedOption) {
       var option = $.extend({}, selectedOption);
 
@@ -36,12 +54,12 @@ var InputAutocompleteList = React.createClass({
       return option;
     });
 
-    return this.renderOptions($.grep(selectedOptions, function(option) {
+    return $.grep(selectedOptions, function(option) {
       return !!option.showOnTop;
-    }));
+    });
   },
 
-  renderOtherOptions: function() {
+  otherOptions: function() {
     var otherOptions = $.map(this.props.options, function(option) {
       var otherOption = $.extend({}, option);
       var relatedSelectedOption = $.grep(this.props.selectedOptions, function(selectedOption) {
@@ -56,25 +74,8 @@ var InputAutocompleteList = React.createClass({
       return otherOption;
     }.bind(this));
 
-    return this.renderOptions($.grep(otherOptions, function(option) {
+    return $.grep(otherOptions, function(option) {
       return !option.showOnTop;
-    }));
-  },
-
-  renderOptions: function(options) {
-    var listOptions = [];
-
-    for(var i = 0; i < options.length; i++) {
-      var optionProps = options[i];
-      listOptions.push(
-        <InputAutocompleteOption {...optionProps}
-          onSelect={this.props.onSelect}
-          id={this.props.id}
-          key={optionProps.name}
-        />
-      );
-    }
-
-    return listOptions;
+    });
   }
 });

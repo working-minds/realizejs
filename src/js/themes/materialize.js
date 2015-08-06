@@ -90,7 +90,10 @@ WRF.themes.materialize = {
       },
 
       option: {
-        cssClass: 'input-autocomplete__option'
+        cssClass: 'input-autocomplete__option',
+        active: {
+          cssClass: 'active'
+        }
       },
 
       select: {

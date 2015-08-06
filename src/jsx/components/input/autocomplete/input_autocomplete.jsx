@@ -125,9 +125,10 @@ var InputAutocomplete = React.createClass({
     var keyCode = event.keyCode;
 
     if(keyCode == 38) {
-      this.state.active--;
+      Math.max(0, this.state.active - 1);
       this.forceUpdate();
     } else if(keyCode == 40) {
+      Math.max(0, this.state.active - 1);
       this.state.active++;
       this.forceUpdate();
     }

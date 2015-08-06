@@ -5,17 +5,38 @@ var InputAutocompleteOption = React.createClass({
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     selected: React.PropTypes.bool,
+    active: React.PropTypes.bool,
     onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.autocomplete.option',
       selected: false,
       onSelect: function() {
         return true;
       }
     };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: this.parseThemeClassKey(this.props.active)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.parseThemeClassKey(nextProps.active)
+    });
+  },
+
+  parseThemeClassKey: function(active) {
+    var themeClassKey = 'input.autocomplete.option';
+    if(active) {
+      themeClassKey += ' input.autocomplete.option.active';
+    }
+
+    return themeClassKey;
   },
 
   render: function() {

@@ -233,7 +233,10 @@ WRF.themes.materialize = {
       },
 
       option: {
-        cssClass: 'input-autocomplete__option'
+        cssClass: 'input-autocomplete__option',
+        active: {
+          cssClass: 'active'
+        }
       },
 
       select: {
@@ -1258,9 +1261,10 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
     var keyCode = event.keyCode;
 
     if(keyCode == 38) {
-      this.state.active--;
+      Math.max(0, this.state.active - 1);
       this.forceUpdate();
     } else if(keyCode == 40) {
+      Math.max(0, this.state.active - 1);
       this.state.active++;
       this.forceUpdate();
     }
@@ -1339,13 +1343,31 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
   render: function() {
     return (
       React.createElement("ul", {className: this.className()}, 
-        this.renderOnTopSelectedOptions(), 
-        this.renderOtherOptions()
+        this.renderOptions()
       )
     );
   },
 
-  renderOnTopSelectedOptions: function() {
+  renderOptions: function() {
+    var options = [].concat(this.onTopSelectedOptions(), this.otherOptions());
+    var listOptions = [];
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+      listOptions.push(
+        React.createElement(InputAutocompleteOption, React.__spread({},  optionProps, 
+          {onSelect: this.props.onSelect, 
+          active: i == this.props.active, 
+          id: this.props.id, 
+          key: optionProps.name})
+        )
+      );
+    }
+
+    return listOptions;
+  },
+
+  onTopSelectedOptions: function() {
     var selectedOptions = $.map(this.props.selectedOptions, function(selectedOption) {
       var option = $.extend({}, selectedOption);
 
@@ -1353,12 +1375,12 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
       return option;
     });
 
-    return this.renderOptions($.grep(selectedOptions, function(option) {
+    return $.grep(selectedOptions, function(option) {
       return !!option.showOnTop;
-    }));
+    });
   },
 
-  renderOtherOptions: function() {
+  otherOptions: function() {
     var otherOptions = $.map(this.props.options, function(option) {
       var otherOption = $.extend({}, option);
       var relatedSelectedOption = $.grep(this.props.selectedOptions, function(selectedOption) {
@@ -1373,26 +1395,9 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
       return otherOption;
     }.bind(this));
 
-    return this.renderOptions($.grep(otherOptions, function(option) {
+    return $.grep(otherOptions, function(option) {
       return !option.showOnTop;
-    }));
-  },
-
-  renderOptions: function(options) {
-    var listOptions = [];
-
-    for(var i = 0; i < options.length; i++) {
-      var optionProps = options[i];
-      listOptions.push(
-        React.createElement(InputAutocompleteOption, React.__spread({},  optionProps, 
-          {onSelect: this.props.onSelect, 
-          id: this.props.id, 
-          key: optionProps.name})
-        )
-      );
-    }
-
-    return listOptions;
+    });
   }
 });
 
@@ -1403,17 +1408,38 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     selected: React.PropTypes.bool,
+    active: React.PropTypes.bool,
     onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.autocomplete.option',
       selected: false,
       onSelect: function() {
         return true;
       }
     };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: this.parseThemeClassKey(this.props.active)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.parseThemeClassKey(nextProps.active)
+    });
+  },
+
+  parseThemeClassKey: function(active) {
+    var themeClassKey = 'input.autocomplete.option';
+    if(active) {
+      themeClassKey += ' input.autocomplete.option.active';
+    }
+
+    return themeClassKey;
   },
 
   render: function() {
