@@ -3,23 +3,16 @@ var InputMasked = React.createClass({
 
   propTypes: {
     mask: React.PropTypes.string,
+    typeMask: React.PropTypes.string,
     predefinedMasks: React.PropTypes.object,
-    regex:React.PropTypes.string,
-    //Base properties Plugin
-    clearmaskonlostfocus: React.PropTypes.boolean,
-    clearIncomplete: React.PropTypes.boolean,
-    showMaskOnHover: React.PropTypes.boolean,
-    showMaskOnFocus: React.PropTypes.boolean
+    regex:React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.text',
       mask:'',
-      clearmaskonlostfocus: true,
-      clearIncomplete:false,
-      showMaskOnHover: false,
-      showMaskOnFocus: false,
+      typeMask:'',
       regex:'',
       predefinedMasks: {
         cpf: '999.999.999-99',
@@ -39,46 +32,38 @@ var InputMasked = React.createClass({
   },
 
   componentDidMount: function(){
-    if(this.props.regex != '')
+    if(this.isRegexMask())
       this.renderRegexMask();
-    if(this.isAPredefinedMask(this.props.mask))
+    if(this.isAPredefinedMask())
       this.renderPredefinedMask();
     else
       this.renderCustomMask();
   },
 
   renderRegexMask: function(){
-    var params = this.getDefaultConfigPlugin();
+    var params = {};
     params['regex'] = this.props.regex;
     this.renderBaseMask('Regex',params);
   },
   renderCustomMask: function(){
-    var params = this.getDefaultConfigPlugin();
-    params['mask'] = this.props.mask;
+    var params = {};
+    if(this.props.mask!='')
+      params['mask'] = this.props.mask;
 
-    this.renderBaseMask(params)
+    this.renderBaseMask(this.props.typeMask,params)
   },
   renderPredefinedMask: function(){
-    var params = this.getDefaultConfigPlugin();
+    var params = {};
     params['mask'] = this.maskMapping(this.props.mask);
 
-    this.renderBaseMask(params);
+    this.renderBaseMask(this.props.typeMask,params);
   },
 
   renderBaseMask: function(type,params){
-    if(type != undefined)
+    if(type != undefined && type != '')
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(type,params);
     else
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
-  },
-
-  //Functions Utils
-  getDefaultConfigPlugin : function(){
-    return {
-      clearIncomplete: this.props.clearIncomplete,
-      showMaskOnHover: this.props.showMaskOnHover,
-      showMaskOnFocus: this.props.showMaskOnFocus
-    }
   },
 
   maskMapping: function(type) {
@@ -86,8 +71,12 @@ var InputMasked = React.createClass({
     return maskTypes[type] == undefined ? type : maskTypes[type];
   },
 
-  isAPredefinedMask: function(value){
-    return value in this.props.predefinedMasks
+  isAPredefinedMask: function(){
+    return this.props.mask in this.props.predefinedMasks;
+  },
+
+  isRegexMask: function(){
+    return this.props.regex != '';
   }
 
 });
