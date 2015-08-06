@@ -1864,23 +1864,24 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   propTypes: {
     mask: React.PropTypes.string,
+    predefinedMasks: React.PropTypes.object,
+    regex:React.PropTypes.string,
+    //Base properties Plugin
     clearmaskonlostfocus: React.PropTypes.boolean,
     clearIncomplete: React.PropTypes.boolean,
     showMaskOnHover: React.PropTypes.boolean,
-    showMaskOnFocus: React.PropTypes.boolean,
-    isRegex: React.PropTypes.boolean,
-    predefinedMasks: React.PropTypes.object
+    showMaskOnFocus: React.PropTypes.boolean
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.text',
       mask:'',
-      isRegex: false,
       clearmaskonlostfocus: true,
       clearIncomplete:false,
       showMaskOnHover: false,
       showMaskOnFocus: false,
+      regex:'',
       predefinedMasks: {
         cpf: '999.999.999-99',
         cnpj: '99.999.999/9999-99',
@@ -1894,12 +1895,12 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   render: function() {
     return (
-        React.createElement("input", React.__spread({},  this.props, {className: this.className(), ref: "inputMasked", type: "text"}))
+      React.createElement("input", React.__spread({},  this.props, {className: this.className(), ref: "inputMasked", type: "text"}))
     );
   },
 
   componentDidMount: function(){
-    if(this.props.isRegex)
+    if(this.props.regex != '')
       this.renderRegexMask();
     if(this.isAPredefinedMask(this.props.mask))
       this.renderPredefinedMask();
@@ -1909,9 +1910,8 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   renderRegexMask: function(){
     var params = this.getDefaultConfigPlugin();
-    params['regex'] = this.props.mask;
-
-    this.renderBaseMask('Regex',params)
+    params['regex'] = this.props.regex;
+    this.renderBaseMask('Regex',params);
   },
   renderCustomMask: function(){
     var params = this.getDefaultConfigPlugin();
@@ -1923,7 +1923,7 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     var params = this.getDefaultConfigPlugin();
     params['mask'] = this.maskMapping(this.props.mask);
 
-    this.renderBaseMask(params)
+    this.renderBaseMask(params);
   },
 
   renderBaseMask: function(type,params){
