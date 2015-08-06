@@ -13,19 +13,3 @@
 .filter__button-group .filter__button--clear {
   color: black;
 }
-
-.table-header .table-header__name.sortable {
-  cursor: pointer;
-}
-
-.table-header .table-header__name.sortable.asc:after {
-  content: ' \25B4';
-}
-
-.table-header .table-header__name.sortable.desc:after {
-  content: ' \25BE';
-}
-
-.table-cell--currency, .table-cell--number, .table-cell--datetime {
-  white-space: nowrap;
-}

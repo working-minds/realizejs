@@ -14,7 +14,8 @@ module.exports = function(grunt) {
           'src/js/serializer.js',
           'src/js/theme.js',
           'src/js/themes/**/*.js',
-          'src/jsx/**/*.jsx'
+          'src/jsx/**/*.jsx',
+          'src/css/**/*.css'
         ],
         tasks: ['build'],
         options: {

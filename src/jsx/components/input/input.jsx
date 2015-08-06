@@ -20,6 +20,7 @@ var Input = React.createClass({
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
+          autocomplete: InputAutocomplete,
           checkbox: InputCheckbox,
           datepicker: InputDatepicker,
           hidden: InputHidden,
@@ -50,23 +51,28 @@ var Input = React.createClass({
     }
   },
 
-  focus: function() {
-    var inputComponentRef = this.refs.inputComponent;
-    inputComponentRef.focus();
-  },
-
   render: function() {
-    if(this.props.component === 'hidden')
-      return this.renderHiddenInput();
-    else
+    var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
+    if(this.hasOwnProperty(renderFunction)) {
+      return this[renderFunction]();
+    } else {
       return this.renderVisibleInput();
+    }
   },
 
   renderVisibleInput: function() {
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
-        <label htmlFor={this.props.id}>{this.labelValue()}</label>
+        <Label {...this.propsWithoutCSS()} />
+      </div>
+    );
+  },
+
+  renderAutocompleteInput: function() {
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
       </div>
     );
   },
@@ -81,9 +87,5 @@ var Input = React.createClass({
     var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
-  },
-
-  labelValue: function() {
-    return (this.props.label || this.props.name);
   }
 });

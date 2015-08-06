@@ -221,6 +221,26 @@ WRF.themes.materialize = {
       cssClass: 'validate'
     },
 
+    autocomplete: {
+      cssClass: 'input-autocomplete',
+
+      result: {
+        cssClass: 'input-autocomplete__result z-depth-1'
+      },
+
+      list: {
+        cssClass: 'input-autocomplete__list'
+      },
+
+      option: {
+        cssClass: 'input-autocomplete__option'
+      },
+
+      select: {
+        cssClass: 'select-wrapper initialized'
+      }
+    },
+
     checkbox: {
       cssClass: 'validate'
     },
@@ -338,13 +358,6 @@ var InputComponentMixin = {
         return true;
       }
     };
-  },
-
-  focus: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    if(!!inputNode) {
-      inputNode.focus();
-    }
   }
 };
 var MaterializeSelectMixin = {
@@ -392,6 +405,7 @@ var SelectComponentMixin = {
       dependsOn: null,
       nameField: 'name',
       valueField: 'id',
+      options: [],
       onLoad: function(data) {
         return true;
       },
@@ -423,14 +437,6 @@ var SelectComponentMixin = {
         this.loadOptions();
       }
     }
-  },
-
-  handleChange: function(event) {
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
-
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(event);
   },
 
   loadOptions: function() {
@@ -561,14 +567,6 @@ var Form = React.createClass({displayName: "Form",
         return true;
       }
     };
-  },
-
-  componentDidMount: function() {
-    var firstInputRef = this.refs.input_0;
-
-    if(!!firstInputRef && this.props.focus) {
-      firstInputRef.focus();
-    }
   },
 
   render: function() {
@@ -1133,6 +1131,325 @@ var Icon = React.createClass({displayName: "Icon",
   }
 });
 
+var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    SelectComponentMixin
+  ],
+
+  propTypes: {
+    maxOptions: React.PropTypes.number,
+    maxOptionsParam: React.PropTypes.string,
+    multiple: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      maxOptions: 10,
+      maxOptionsParam: 'limit',
+      themeClassKey: 'input.autocomplete',
+      multiple: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      selectedOptions: []
+    }
+  },
+
+  componentWillMount: function() {
+    this.state.loadParams[this.props.maxOptionsParam] = this.props.maxOptions;
+  },
+
+  componentDidMount: function() {
+    $(document).on('click', this.handleDocumentClick);
+  },
+
+  componentWillUnmount: function() {
+    $(document).off('click', this.handleDocumentClick);
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className(), ref: "container"}, 
+        React.createElement(InputAutocompleteSelect, React.__spread({}, 
+          this.propsWithoutCSS(), 
+          {selectedOptions: this.state.selectedOptions, 
+          onFocus: this.displayResult})
+        ), 
+
+        React.createElement(InputAutocompleteResult, {
+          id: this.props.id, 
+          options: this.optionsWithSelection(), 
+          onSelect: this.handleSelect, 
+          ref: "result"}
+        )
+      )
+    );
+  },
+
+  optionsWithSelection: function() {
+    var selectedOptionsValues = $.map(this.state.selectedOptions, function(option) {
+      return option.value;
+    });
+
+    return $.map(this.state.options, function(option) {
+      return $.extend({}, option, {
+        selected: (selectedOptionsValues.indexOf(option.value) >= 0)
+      });
+    });
+  },
+
+  displayResult: function() {
+    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var searchInput = $resultNode.find('input[type=text]')[0];
+
+    $resultNode.show();
+    searchInput.focus();
+  },
+
+  handleDocumentClick: function(event) {
+    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $containerNode = $(React.findDOMNode(this.refs.container));
+    var searchInput = $resultNode.find('input[type=text]')[0];
+
+    if($containerNode.find(event.target).length === 0) {
+      $resultNode.hide();
+    } else {
+      searchInput.focus();
+    }
+  },
+
+  handleSelect: function(option) {
+    if(this.props.multiple) {
+      this.handleMultipleSelect(option);
+    } else {
+      this.handleSingleSelect(option);
+    }
+  },
+
+  handleMultipleSelect: function(option) {
+    var optionIndex = this.selectedOptionIndex(option);
+
+    if(optionIndex < 0) {
+      this.state.selectedOptions.push(option);
+    } else {
+      this.state.selectedOptions.splice(optionIndex, 1);
+    }
+
+    this.forceUpdate();
+  },
+
+  handleSingleSelect: function(option) {
+    var optionIndex = this.selectedOptionIndex(option);
+    var newSelectedOptions = [];
+
+    if(optionIndex < 0) {
+      newSelectedOptions.push(option);
+    }
+
+    this.setState({
+      selectedOptions: newSelectedOptions
+    });
+  },
+
+  selectedOptionIndex: function(option) {
+    var optionValues = $.map(this.state.selectedOptions, function(option) {
+      return option.value;
+    });
+
+    return optionValues.indexOf(option.value);
+  }
+
+});
+
+var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteList",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    options: React.PropTypes.array,
+    onSelect: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.autocomplete.list',
+      onSelect: function() {
+        return true;
+      }
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("ul", {className: this.className()}, 
+        this.renderOptions()
+      )
+    );
+  },
+
+  renderOptions: function() {
+    var listOptions = [];
+    var options = this.props.options;
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+      listOptions.push(
+        React.createElement(InputAutocompleteOption, React.__spread({},  optionProps, 
+          {onSelect: this.props.onSelect, 
+          id: this.props.id, 
+          key: optionProps.name})
+        )
+      );
+    }
+
+    return listOptions;
+  }
+});
+
+var InputAutocompleteOption = React.createClass({displayName: "InputAutocompleteOption",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    value: React.PropTypes.string,
+    selected: React.PropTypes.bool,
+    onSelect: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.autocomplete.option',
+      selected: false,
+      onSelect: function() {
+        return true;
+      }
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("li", {className: this.className()}, 
+        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected}), 
+        React.createElement(Label, {id: this.parseOptionId(), name: this.props.name, onClick: this.handleSelect})
+      )
+    );
+  },
+
+  handleSelect: function(event) {
+    var option = {
+      name: this.props.name,
+      value: this.props.value
+    };
+
+    this.props.onSelect(option);
+  },
+
+  parseOptionId: function() {
+    return 'autocomplete_option_' + this.props.id + '_' + this.props.value;
+  }
+});
+
+var InputAutocompleteResult = React.createClass({displayName: "InputAutocompleteResult",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    options: React.PropTypes.array,
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func,
+    onSelect: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.autocomplete.result'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement(Icon, {type: "search", className: "prefix"}), 
+        React.createElement(InputText, {
+          onFocus: this.props.onFocus, 
+          onBlur: this.props.onBlur, 
+          autoComplete: "off"}
+        ), 
+
+        React.createElement(InputAutocompleteList, {
+          id: this.props.id, 
+          options: this.props.options, 
+          onSelect: this.props.onSelect}
+        )
+      )
+    );
+  }
+});
+
+
+var InputAutocompleteSelect = React.createClass({displayName: "InputAutocompleteSelect",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    selectedOptions: React.PropTypes.array,
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      selectedOptions: [],
+      themeClassKey: 'input.autocomplete.select',
+      placeholder: "Selecione",
+      onFocus: function() {
+        return true;
+      },
+      onBlur: function() {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      options: []
+    };
+  },
+
+  //TODO: este e um componente do materialize. Tornar este componente generico.
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement("div", {className: this.className()}, 
+          React.createElement("span", {className: "caret"}, "▼"), 
+          React.createElement(InputText, {
+            id: this.prefixSelectProp(this.props.id), 
+            name: this.prefixSelectProp(this.props.name), 
+            value: this.renderSelectedOptions(), 
+            placeholder: this.props.placeholder, 
+            onFocus: this.props.onFocus, 
+            className: "select-dropdown"}
+          )
+        ), 
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.prefixSelectProp(this.props.id)}))
+      )
+    );
+  },
+
+  prefixSelectProp: function(prop) {
+    return 'autocomplete_select_' + prop;
+  },
+
+  renderSelectedOptions: function() {
+    var options = this.props.selectedOptions;
+
+    return $.map(options, function(option){
+      return option.name;
+    }).join(', ');
+  }
+});
+
 var Input = React.createClass({displayName: "Input",
   mixins: [CssClassMixin],
   propTypes: {
@@ -1155,6 +1472,7 @@ var Input = React.createClass({displayName: "Input",
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
+          autocomplete: InputAutocomplete,
           checkbox: InputCheckbox,
           datepicker: InputDatepicker,
           hidden: InputHidden,
@@ -1185,23 +1503,28 @@ var Input = React.createClass({displayName: "Input",
     }
   },
 
-  focus: function() {
-    var inputComponentRef = this.refs.inputComponent;
-    inputComponentRef.focus();
-  },
-
   render: function() {
-    if(this.props.component === 'hidden')
-      return this.renderHiddenInput();
-    else
+    var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
+    if(this.hasOwnProperty(renderFunction)) {
+      return this[renderFunction]();
+    } else {
       return this.renderVisibleInput();
+    }
   },
 
   renderVisibleInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
-        React.createElement("label", {htmlFor: this.props.id}, this.labelValue())
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  },
+
+  renderAutocompleteInput: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput()
       )
     );
   },
@@ -1216,24 +1539,24 @@ var Input = React.createClass({displayName: "Input",
     var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
-  },
-
-  labelValue: function() {
-    return (this.props.label || this.props.name);
   }
 });
 
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    renderAsIndeterminate: React.PropTypes.bool
+  },
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.checkbox'
+      themeClassKey: 'input.checkbox',
+      renderAsIndeterminate: false
     };
   },
 
   componentDidMount: function() {
-    React.findDOMNode(this.refs.input).indeterminate = true;
+    React.findDOMNode(this.refs.input).indeterminate = this.props.renderAsIndeterminate;
   },
 
   render: function() {
@@ -1352,7 +1675,6 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      options: [],
       themeClassKey: 'input.select'
     };
   },
@@ -1386,6 +1708,14 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     }
 
     return selectOptions;
+  },
+
+  handleChange: function(event) {
+    var selectElement = React.findDOMNode(this.refs.select);
+    var $selectElement = $(selectElement);
+
+    $selectElement.trigger('dependable_changed', [selectElement.value]);
+    this.props.onChange(event);
   }
 
 });
@@ -1398,6 +1728,31 @@ var InputSelectOption = React.createClass({displayName: "InputSelectOption",
 
   render: function() {
     return React.createElement("option", {value: this.props.value}, this.props.name);
+  }
+});
+
+var Label = React.createClass({displayName: "Label",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    label: React.PropTypes.string,
+    onClick: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      name: '',
+      label: ''
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("label", {htmlFor: this.props.id, onClick: this.props.onClick}, 
+        (this.props.label || this.props.name)
+      )
+    );
   }
 });
 
@@ -1846,7 +2201,7 @@ var TableCell = React.createClass({displayName: "TableCell",
     var customValue = this.props.value;
 
     if(!!customValue) {
-      return customValue(this.props.data);
+      return customValue(this.props.data, this.props);
     } else if($.inArray(format, this.validFormats) >= 0) {
       return this[format + "Value"]();
     } else {
