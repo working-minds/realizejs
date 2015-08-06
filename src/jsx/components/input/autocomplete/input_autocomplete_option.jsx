@@ -20,9 +20,9 @@ var InputAutocompleteOption = React.createClass({
 
   render: function() {
     return (
-      <li className={this.className()}>
-        <InputCheckbox id={this.parseOptionId()} checked={this.props.selected} />
-        <Label id={this.parseOptionId()} name={this.props.name} onClick={this.handleSelect} />
+      <li className={this.className()} onClick={this.handleSelect}>
+        <InputCheckbox id={this.parseOptionId()} checked={this.props.selected} onClick={this.disableEvent} />
+        <Label id={this.parseOptionId()} name={this.props.name}/>
       </li>
     );
   },
@@ -34,6 +34,10 @@ var InputAutocompleteOption = React.createClass({
     };
 
     this.props.onSelect(option);
+  },
+
+  disableEvent: function(event) {
+    event.stopPropagation();
   },
 
   parseOptionId: function() {

@@ -2,6 +2,7 @@ var InputAutocompleteList = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     id: React.PropTypes.string,
+    selectedOptions: React.PropTypes.array,
     options: React.PropTypes.array,
     onSelect: React.PropTypes.func
   },
@@ -9,6 +10,8 @@ var InputAutocompleteList = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.autocomplete.list',
+      options: [],
+      selectedOptions: [],
       onSelect: function() {
         return true;
       }
@@ -18,14 +21,30 @@ var InputAutocompleteList = React.createClass({
   render: function() {
     return (
       <ul className={this.className()}>
-        {this.renderOptions()}
+        {this.renderSelectedOptions()}
+        {this.renderUnselectedOptions()}
       </ul>
     );
   },
 
-  renderOptions: function() {
+  renderSelectedOptions: function() {
+    return this.renderOptions(this.props.selectedOptions, true);
+  },
+
+  renderUnselectedOptions: function() {
+    var selectedOptionsValues = $.map(this.props.selectedOptions, function(option) {
+      return option.value;
+    });
+
+    var unselectedOptions = $.grep(this.props.options, function(option) {
+      return (selectedOptionsValues.indexOf(option.value) < 0);
+    });
+
+    return this.renderOptions(unselectedOptions, false);
+  },
+
+  renderOptions: function(options, selected) {
     var listOptions = [];
-    var options = this.props.options;
 
     for(var i = 0; i < options.length; i++) {
       var optionProps = options[i];
@@ -33,6 +52,7 @@ var InputAutocompleteList = React.createClass({
         <InputAutocompleteOption {...optionProps}
           onSelect={this.props.onSelect}
           id={this.props.id}
+          selected={selected}
           key={optionProps.name}
         />
       );

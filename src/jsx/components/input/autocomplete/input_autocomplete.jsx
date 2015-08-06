@@ -14,7 +14,7 @@ var InputAutocomplete = React.createClass({
 
   getDefaultProps: function() {
     return {
-      maxOptions: 20,
+      maxOptions: 99,
       maxOptionsParam: 'limit',
       searchParam: 'query',
       themeClassKey: 'input.autocomplete',
@@ -25,7 +25,7 @@ var InputAutocomplete = React.createClass({
   getInitialState: function() {
     return {
       selectedOptions: []
-    }
+    };
   },
 
   componentWillMount: function() {
@@ -51,41 +51,23 @@ var InputAutocomplete = React.createClass({
 
         <InputAutocompleteResult
           id={this.props.id}
-          options={this.optionsWithSelection()}
-          onSelect={this.handleSelect}
+          selectedOptions={this.state.selectedOptions}
+          options={this.state.options}
+          onKeyDown={this.handleSearchNavigation}
           onKeyUp={this.searchOptions}
+          onSelect={this.handleSelect}
+          onClear={this.clearSelection}
           ref="result"
+        />
+
+        <InputAutocompleteValues
+          id={this.props.id}
+          name={this.props.name}
+          multiple={this.props.multiple}
+          selectedOptions={this.state.selectedOptions}
         />
       </div>
     );
-  },
-
-  optionsWithSelection: function() {
-    var selectedOptionsValues = $.map(this.state.selectedOptions, function(option) {
-      return option.value;
-    });
-
-    return $.map(this.state.options, function(option) {
-      return $.extend({}, option, {
-        selected: (selectedOptionsValues.indexOf(option.value) >= 0)
-      });
-    });
-  },
-
-  searchOptions: function(event) {
-    var keyCode = event.keyCode;
-    var $searchInput = $(event.currentTarget);
-
-    this.state.loadParams[this.props.searchParam] = $searchInput.val();
-    this.loadOptions();
-  },
-
-  displayResult: function() {
-    var $resultNode = $(React.findDOMNode(this.refs.result));
-    var searchInput = $resultNode.find('input[type=text]')[0];
-
-    $resultNode.show();
-    searchInput.focus();
   },
 
   handleDocumentClick: function(event) {
@@ -98,6 +80,33 @@ var InputAutocomplete = React.createClass({
     } else {
       searchInput.focus();
     }
+  },
+
+  displayResult: function() {
+    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var searchInput = $resultNode.find('input[type=text]')[0];
+
+    $resultNode.show();
+    searchInput.focus();
+  },
+
+  searchOptions: function(event) {
+    var $searchInput = $(event.currentTarget);
+
+    this.state.loadParams[this.props.searchParam] = $searchInput.val();
+    this.loadOptions();
+  },
+
+  handleSearchNavigation: function(event) {
+    var keyCode = event.keyCode;
+
+
+  },
+
+  clearSelection: function() {
+    this.setState({
+      selectedOptions: []
+    });
   },
 
   handleSelect: function(option) {
