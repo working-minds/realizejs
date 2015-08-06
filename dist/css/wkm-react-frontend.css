@@ -71,7 +71,7 @@
   padding: 10px 15px;
 }
 
-.input-autocomplete__option:hover {
+.input-autocomplete__option:hover, .input-autocomplete__option.active {
   background-color: #D3D3D3;
 }
 .table-header .table-header__name.sortable {

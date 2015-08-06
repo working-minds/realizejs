@@ -30,7 +30,8 @@ var InputAutocompleteOption = React.createClass({
   handleSelect: function(event) {
     var option = {
       name: this.props.name,
-      value: this.props.value
+      value: this.props.value,
+      showOnTop: false
     };
 
     this.props.onSelect(option);

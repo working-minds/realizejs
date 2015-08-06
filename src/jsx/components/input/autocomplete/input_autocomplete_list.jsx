@@ -4,6 +4,7 @@ var InputAutocompleteList = React.createClass({
     id: React.PropTypes.string,
     selectedOptions: React.PropTypes.array,
     options: React.PropTypes.array,
+    active: React.PropTypes.number,
     onSelect: React.PropTypes.func
   },
 
@@ -21,29 +22,46 @@ var InputAutocompleteList = React.createClass({
   render: function() {
     return (
       <ul className={this.className()}>
-        {this.renderSelectedOptions()}
-        {this.renderUnselectedOptions()}
+        {this.renderOnTopSelectedOptions()}
+        {this.renderOtherOptions()}
       </ul>
     );
   },
 
-  renderSelectedOptions: function() {
-    return this.renderOptions(this.props.selectedOptions, true);
-  },
+  renderOnTopSelectedOptions: function() {
+    var selectedOptions = $.map(this.props.selectedOptions, function(selectedOption) {
+      var option = $.extend({}, selectedOption);
 
-  renderUnselectedOptions: function() {
-    var selectedOptionsValues = $.map(this.props.selectedOptions, function(option) {
-      return option.value;
+      option.selected = true;
+      return option;
     });
 
-    var unselectedOptions = $.grep(this.props.options, function(option) {
-      return (selectedOptionsValues.indexOf(option.value) < 0);
-    });
-
-    return this.renderOptions(unselectedOptions, false);
+    return this.renderOptions($.grep(selectedOptions, function(option) {
+      return !!option.showOnTop;
+    }));
   },
 
-  renderOptions: function(options, selected) {
+  renderOtherOptions: function() {
+    var otherOptions = $.map(this.props.options, function(option) {
+      var otherOption = $.extend({}, option);
+      var relatedSelectedOption = $.grep(this.props.selectedOptions, function(selectedOption) {
+        return selectedOption.value == otherOption.value;
+      })[0];
+
+      if(!!relatedSelectedOption) {
+        otherOption.selected = true;
+        otherOption.showOnTop = relatedSelectedOption.showOnTop;
+      }
+
+      return otherOption;
+    }.bind(this));
+
+    return this.renderOptions($.grep(otherOptions, function(option) {
+      return !option.showOnTop;
+    }));
+  },
+
+  renderOptions: function(options) {
     var listOptions = [];
 
     for(var i = 0; i < options.length; i++) {
@@ -52,7 +70,6 @@ var InputAutocompleteList = React.createClass({
         <InputAutocompleteOption {...optionProps}
           onSelect={this.props.onSelect}
           id={this.props.id}
-          selected={selected}
           key={optionProps.name}
         />
       );

@@ -4,6 +4,8 @@ var InputAutocompleteResult = React.createClass({
     id: React.PropTypes.string,
     options: React.PropTypes.array,
     selectedOptions: React.PropTypes.array,
+    active: React.PropTypes.number,
+    onKeyDown: React.PropTypes.func,
     onKeyUp: React.PropTypes.func,
     onSelect: React.PropTypes.func,
     onClear: React.PropTypes.func
@@ -22,7 +24,7 @@ var InputAutocompleteResult = React.createClass({
       <div className={this.className()}>
         <div className="input-autocomplete__search">
           <Icon type="search" className="prefix" />
-          <InputText onKeyUp={this.props.onKeyUp} autoComplete="off" />
+          <InputText onKeyDown={this.props.onKeyDown} onKeyUp={this.props.onKeyUp} autoComplete="off" />
         </div>
 
         <a href="#!" className="input-autocomplete__clear-button" onClick={this.props.onClear}>
@@ -33,6 +35,7 @@ var InputAutocompleteResult = React.createClass({
           id={this.props.id}
           selectedOptions={this.props.selectedOptions}
           options={this.props.options}
+          active={this.props.active}
           onSelect={this.props.onSelect}
         />
       </div>
