@@ -83,6 +83,7 @@ button .preloader-wrapper.small {
 
 .input-datepicker__button {
   padding: 0;
+  right: 1rem;
 }
 .table-header .table-header__name.sortable {
   cursor: pointer;

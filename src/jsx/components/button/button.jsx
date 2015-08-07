@@ -3,7 +3,7 @@ var Button = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
-    iconProps: React.PropTypes.object,
+    icon: React.PropTypes.object,
     onClick: React.PropTypes.func,
     disabled: React.PropTypes.bool,
     isLoading: React.PropTypes.bool,
@@ -15,7 +15,8 @@ var Button = React.createClass({
       additionalThemeClassKeys: '',
       disabled: false,
       isLoading: false,
-      iconProps: null
+      icon: null,
+      disableWith: 'Carregando...'
     };
   },
 
@@ -38,15 +39,15 @@ var Button = React.createClass({
   },
 
   renderIcon: function() {
-    if(!this.props.iconProps) {
+    if(!this.props.icon) {
       return '';
     }
     
-    return <Icon {...this.props.iconProps} key="icon" />;
+    return <Icon {...this.props.icon} key="icon" />;
   },
 
   renderLoadingIndicator: function() {
-    return "Carregando...";
+    return this.props.disableWith;
   }
   
 });

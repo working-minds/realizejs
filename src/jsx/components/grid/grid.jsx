@@ -106,6 +106,7 @@ var Grid = React.createClass({
   },
 
   onPagination: function(page) {
+    this.setState({isLoading: true});
     this.state.page = page;
     this.loadData();
   },

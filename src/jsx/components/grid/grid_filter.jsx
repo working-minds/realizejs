@@ -19,7 +19,10 @@ var GridFilter = React.createClass({
       method: "GET",
       submitButton: {
         name: 'Filtrar',
-        icon: 'search'
+        icon: {
+          type: 'search',
+          className: 'right'
+        }
       },
       clearButton: {
         name: 'Limpar',

@@ -151,6 +151,7 @@ WRF.themes.materialize = {
     left: 'chevron_left',
     right: 'chevron_right',
     search: 'search',
+    calendar: 'today',
     more_horiz: 'more_horiz'
   }
 };
