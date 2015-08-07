@@ -487,6 +487,7 @@ var SelectComponentMixin = {
       }
 
       this.state.loadParams[paramName] = dependableValue;
+      this.state.selectedOptions = [];
       this.loadOptions();
     }.bind(this));
   },
@@ -1184,7 +1185,8 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
       React.createElement("div", {className: this.className(), ref: "container"}, 
         React.createElement(InputAutocompleteSelect, React.__spread({}, 
           this.propsWithoutCSS(), 
-          {selectedOptions: this.state.selectedOptions, 
+          {disabled: this.state.disabled, 
+          selectedOptions: this.state.selectedOptions, 
           onFocus: this.showResult})
         ), 
 
@@ -1197,6 +1199,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
           onKeyUp: this.searchOptions, 
           onSelect: this.handleSelect, 
           onClear: this.clearSelection, 
+          onOptionMouseEnter: this.handleOptionMouseEnter, 
           ref: "result"}
         ), 
 
@@ -1242,6 +1245,10 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   },
 
   showResult: function(event) {
+    if(this.state.disabled) {
+      return;
+    }
+
     $(document).on('click', this.handleDocumentClick);
     var $resultNode = $(React.findDOMNode(this.refs.result));
     var searchInput = $resultNode.find('input[type=text]')[0];
@@ -1269,8 +1276,6 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
       this.selectOption();
     } else if(keyCode == 27 || keyCode == 9) {
       this.hideResult();
-    } else {
-      this.showSelectedOptionsOnTop();
     }
   },
 
@@ -1301,16 +1306,15 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
     });
   },
 
-  showSelectedOptionsOnTop: function() {
-    $.map(this.state.selectedOptions, function(option) {
-      option.showOnTop = true;
-      return option;
-    });
-  },
-
   clearSelection: function() {
     this.setState({
       selectedOptions: []
+    });
+  },
+
+  handleOptionMouseEnter: function(position) {
+    this.setState({
+      active: position
     });
   },
 
@@ -1320,6 +1324,8 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
     } else {
       this.handleSingleSelect(option);
     }
+
+    this.triggerDependableChanged();
   },
 
   handleMultipleSelect: function(option) {
@@ -1342,9 +1348,8 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
       newSelectedOptions.push(option);
     }
 
-    this.setState({
-      selectedOptions: newSelectedOptions
-    });
+    this.state.selectedOptions = newSelectedOptions;
+    this.forceUpdate();
   },
 
   selectedOptionIndex: function(option) {
@@ -1353,6 +1358,19 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
     });
 
     return optionValues.indexOf(option.value);
+  },
+
+  triggerDependableChanged: function() {
+    var $valuesElement = $(React.findDOMNode(this.refs.valuesField));
+    var optionValues = $.map(this.state.selectedOptions, function(option) {
+      return option.value;
+    });
+
+    if(optionValues.length == 1) {
+      optionValues = optionValues[0];
+    }
+
+    $valuesElement.trigger('dependable_changed', [optionValues]);
   }
 
 });
@@ -1364,7 +1382,8 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
     selectedOptions: React.PropTypes.array,
     options: React.PropTypes.array,
     active: React.PropTypes.number,
-    onSelect: React.PropTypes.func
+    onSelect: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -1373,6 +1392,9 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
       options: [],
       selectedOptions: [],
       onSelect: function() {
+        return true;
+      },
+      onOptionMouseEnter: function() {
         return true;
       }
     };
@@ -1395,7 +1417,9 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
       listOptions.push(
         React.createElement(InputAutocompleteOption, React.__spread({},  optionProps, 
           {onSelect: this.props.onSelect, 
-          active: i == this.props.active, 
+          onOptionMouseEnter: this.props.onOptionMouseEnter, 
+          position: i, 
+          isActive: i == this.props.active, 
           id: this.props.id, 
           key: optionProps.name, 
           ref: "option_" + i})
@@ -1447,8 +1471,10 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     selected: React.PropTypes.bool,
-    active: React.PropTypes.bool,
-    onSelect: React.PropTypes.func
+    position: React.PropTypes.number,
+    isActive: React.PropTypes.bool,
+    onSelect: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -1456,25 +1482,28 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
       selected: false,
       onSelect: function() {
         return true;
+      },
+      onOptionMouseEnter: function() {
+        return true;
       }
     };
   },
 
   getInitialState: function() {
     return {
-      themeClassKey: this.parseThemeClassKey(this.props.active)
+      themeClassKey: this.parseThemeClassKey(this.props.isActive)
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
     this.setState({
-      themeClassKey: this.parseThemeClassKey(nextProps.active)
+      themeClassKey: this.parseThemeClassKey(nextProps.isActive)
     });
   },
 
-  parseThemeClassKey: function(active) {
+  parseThemeClassKey: function(isActive) {
     var themeClassKey = 'input.autocomplete.option';
-    if(active) {
+    if(isActive) {
       themeClassKey += ' input.autocomplete.option.active';
     }
 
@@ -1483,14 +1512,14 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
 
   render: function() {
     return (
-      React.createElement("li", {className: this.className(), onClick: this.handleSelect}, 
+      React.createElement("li", {className: this.className(), onClick: this.handleSelect, onMouseEnter: this.handleMouseEnter}, 
         React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent}), 
         React.createElement(Label, {id: this.parseOptionId(), name: this.props.name})
       )
     );
   },
 
-  handleSelect: function(event) {
+  handleSelect: function() {
     var option = {
       name: this.props.name,
       value: this.props.value,
@@ -1498,6 +1527,10 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
     };
 
     this.props.onSelect(option);
+  },
+
+  handleMouseEnter: function() {
+    this.props.onOptionMouseEnter(this.props.position);
   },
 
   disableEvent: function(event) {
@@ -1519,7 +1552,8 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
     onKeyDown: React.PropTypes.func,
     onKeyUp: React.PropTypes.func,
     onSelect: React.PropTypes.func,
-    onClear: React.PropTypes.func
+    onClear: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -1548,6 +1582,7 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
           options: this.props.options, 
           active: this.props.active, 
           onSelect: this.props.onSelect, 
+          onOptionMouseEnter: this.props.onOptionMouseEnter, 
           ref: "list"}
         )
       )
@@ -1594,6 +1629,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
             id: this.prefixSelectProp(this.props.id), 
             name: this.prefixSelectProp(this.props.name), 
             value: this.renderSelectedOptions(), 
+            disabled: this.props.disabled, 
             placeholder: this.props.placeholder, 
             onFocus: this.props.onFocus, 
             className: "select-dropdown"}
@@ -1634,7 +1670,12 @@ var InputAutocompleteValues = React.createClass({displayName: "InputAutocomplete
 
   render: function() {
     return (
-      React.createElement("select", {name: this.valueInputName(), multiple: true, value: this.selectedOptionsValues(), style: {display: "none"}}, 
+      React.createElement("select", {
+        multiple: true, 
+        id: this.props.id, 
+        name: this.valueInputName(), 
+        value: this.selectedOptionsValues(), 
+        style: {display: "none"}}, 
         this.renderValueInputs()
       )
     );

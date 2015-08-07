@@ -5,8 +5,10 @@ var InputAutocompleteOption = React.createClass({
     name: React.PropTypes.string,
     value: React.PropTypes.string,
     selected: React.PropTypes.bool,
-    active: React.PropTypes.bool,
-    onSelect: React.PropTypes.func
+    position: React.PropTypes.number,
+    isActive: React.PropTypes.bool,
+    onSelect: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -14,25 +16,28 @@ var InputAutocompleteOption = React.createClass({
       selected: false,
       onSelect: function() {
         return true;
+      },
+      onOptionMouseEnter: function() {
+        return true;
       }
     };
   },
 
   getInitialState: function() {
     return {
-      themeClassKey: this.parseThemeClassKey(this.props.active)
+      themeClassKey: this.parseThemeClassKey(this.props.isActive)
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
     this.setState({
-      themeClassKey: this.parseThemeClassKey(nextProps.active)
+      themeClassKey: this.parseThemeClassKey(nextProps.isActive)
     });
   },
 
-  parseThemeClassKey: function(active) {
+  parseThemeClassKey: function(isActive) {
     var themeClassKey = 'input.autocomplete.option';
-    if(active) {
+    if(isActive) {
       themeClassKey += ' input.autocomplete.option.active';
     }
 
@@ -41,14 +46,14 @@ var InputAutocompleteOption = React.createClass({
 
   render: function() {
     return (
-      <li className={this.className()} onClick={this.handleSelect}>
+      <li className={this.className()} onClick={this.handleSelect} onMouseEnter={this.handleMouseEnter}>
         <InputCheckbox id={this.parseOptionId()} checked={this.props.selected} onClick={this.disableEvent} />
         <Label id={this.parseOptionId()} name={this.props.name}/>
       </li>
     );
   },
 
-  handleSelect: function(event) {
+  handleSelect: function() {
     var option = {
       name: this.props.name,
       value: this.props.value,
@@ -56,6 +61,10 @@ var InputAutocompleteOption = React.createClass({
     };
 
     this.props.onSelect(option);
+  },
+
+  handleMouseEnter: function() {
+    this.props.onOptionMouseEnter(this.props.position);
   },
 
   disableEvent: function(event) {

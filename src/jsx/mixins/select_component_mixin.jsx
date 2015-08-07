@@ -93,6 +93,7 @@ var SelectComponentMixin = {
       }
 
       this.state.loadParams[paramName] = dependableValue;
+      this.state.selectedOptions = [];
       this.loadOptions();
     }.bind(this));
   },

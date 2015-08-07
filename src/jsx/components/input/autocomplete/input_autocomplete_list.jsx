@@ -5,7 +5,8 @@ var InputAutocompleteList = React.createClass({
     selectedOptions: React.PropTypes.array,
     options: React.PropTypes.array,
     active: React.PropTypes.number,
-    onSelect: React.PropTypes.func
+    onSelect: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -14,6 +15,9 @@ var InputAutocompleteList = React.createClass({
       options: [],
       selectedOptions: [],
       onSelect: function() {
+        return true;
+      },
+      onOptionMouseEnter: function() {
         return true;
       }
     };
@@ -36,7 +40,9 @@ var InputAutocompleteList = React.createClass({
       listOptions.push(
         <InputAutocompleteOption {...optionProps}
           onSelect={this.props.onSelect}
-          active={i == this.props.active}
+          onOptionMouseEnter={this.props.onOptionMouseEnter}
+          position={i}
+          isActive={i == this.props.active}
           id={this.props.id}
           key={optionProps.name}
           ref={"option_" + i}

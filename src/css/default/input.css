@@ -42,6 +42,8 @@
 .input-autocomplete__list {
   margin-top: 0;
   margin-bottom: 0;
+  max-height: 450px;
+  overflow: scroll;
 }
 
 .input-autocomplete__option {
@@ -51,6 +53,6 @@
   padding: 10px 15px;
 }
 
-.input-autocomplete__option:hover, .input-autocomplete__option.active {
-  background-color: #D3D3D3;
+.input-autocomplete__option.active {
+  background-color: #E3E3E3;
 }

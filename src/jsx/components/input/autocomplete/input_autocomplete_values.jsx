@@ -15,7 +15,12 @@ var InputAutocompleteValues = React.createClass({
 
   render: function() {
     return (
-      <select name={this.valueInputName()} multiple={true} value={this.selectedOptionsValues()} style={{display: "none"}} >
+      <select
+        multiple={true}
+        id={this.props.id}
+        name={this.valueInputName()}
+        value={this.selectedOptionsValues()}
+        style={{display: "none"}}>
         {this.renderValueInputs()}
       </select>
     );

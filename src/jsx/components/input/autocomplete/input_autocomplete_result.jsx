@@ -8,7 +8,8 @@ var InputAutocompleteResult = React.createClass({
     onKeyDown: React.PropTypes.func,
     onKeyUp: React.PropTypes.func,
     onSelect: React.PropTypes.func,
-    onClear: React.PropTypes.func
+    onClear: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -37,6 +38,7 @@ var InputAutocompleteResult = React.createClass({
           options={this.props.options}
           active={this.props.active}
           onSelect={this.props.onSelect}
+          onOptionMouseEnter={this.props.onOptionMouseEnter}
           ref="list"
         />
       </div>

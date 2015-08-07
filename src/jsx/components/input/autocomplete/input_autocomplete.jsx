@@ -48,6 +48,7 @@ var InputAutocomplete = React.createClass({
       <div className={this.className()} ref="container">
         <InputAutocompleteSelect
           {...this.propsWithoutCSS()}
+          disabled={this.state.disabled}
           selectedOptions={this.state.selectedOptions}
           onFocus={this.showResult}
         />
@@ -61,6 +62,7 @@ var InputAutocomplete = React.createClass({
           onKeyUp={this.searchOptions}
           onSelect={this.handleSelect}
           onClear={this.clearSelection}
+          onOptionMouseEnter={this.handleOptionMouseEnter}
           ref="result"
         />
 
@@ -106,6 +108,10 @@ var InputAutocomplete = React.createClass({
   },
 
   showResult: function(event) {
+    if(this.state.disabled) {
+      return;
+    }
+
     $(document).on('click', this.handleDocumentClick);
     var $resultNode = $(React.findDOMNode(this.refs.result));
     var searchInput = $resultNode.find('input[type=text]')[0];
@@ -133,8 +139,6 @@ var InputAutocomplete = React.createClass({
       this.selectOption();
     } else if(keyCode == 27 || keyCode == 9) {
       this.hideResult();
-    } else {
-      this.showSelectedOptionsOnTop();
     }
   },
 
@@ -165,16 +169,15 @@ var InputAutocomplete = React.createClass({
     });
   },
 
-  showSelectedOptionsOnTop: function() {
-    $.map(this.state.selectedOptions, function(option) {
-      option.showOnTop = true;
-      return option;
-    });
-  },
-
   clearSelection: function() {
     this.setState({
       selectedOptions: []
+    });
+  },
+
+  handleOptionMouseEnter: function(position) {
+    this.setState({
+      active: position
     });
   },
 
@@ -184,6 +187,8 @@ var InputAutocomplete = React.createClass({
     } else {
       this.handleSingleSelect(option);
     }
+
+    this.triggerDependableChanged();
   },
 
   handleMultipleSelect: function(option) {
@@ -206,9 +211,8 @@ var InputAutocomplete = React.createClass({
       newSelectedOptions.push(option);
     }
 
-    this.setState({
-      selectedOptions: newSelectedOptions
-    });
+    this.state.selectedOptions = newSelectedOptions;
+    this.forceUpdate();
   },
 
   selectedOptionIndex: function(option) {
@@ -217,6 +221,19 @@ var InputAutocomplete = React.createClass({
     });
 
     return optionValues.indexOf(option.value);
+  },
+
+  triggerDependableChanged: function() {
+    var $valuesElement = $(React.findDOMNode(this.refs.valuesField));
+    var optionValues = $.map(this.state.selectedOptions, function(option) {
+      return option.value;
+    });
+
+    if(optionValues.length == 1) {
+      optionValues = optionValues[0];
+    }
+
+    $valuesElement.trigger('dependable_changed', [optionValues]);
   }
 
 });
