@@ -28,6 +28,7 @@
     "materialize": "~0.97.0",
     "moment": "~2.10.3",
     "numeral": "~1.5.3",
-    "jquery-serialize-object": "~2.5.0"
+    "jquery-serialize-object": "~2.5.0",
+    "string": "~3.3.0"
   }
 }

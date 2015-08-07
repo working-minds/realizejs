@@ -221,6 +221,29 @@ WRF.themes.materialize = {
       cssClass: 'validate'
     },
 
+    autocomplete: {
+      cssClass: 'input-autocomplete',
+
+      result: {
+        cssClass: 'input-autocomplete__result z-depth-1'
+      },
+
+      list: {
+        cssClass: 'input-autocomplete__list'
+      },
+
+      option: {
+        cssClass: 'input-autocomplete__option',
+        active: {
+          cssClass: 'active'
+        }
+      },
+
+      select: {
+        cssClass: 'select-wrapper initialized'
+      }
+    },
+
     checkbox: {
       cssClass: 'validate'
     },
@@ -338,13 +361,6 @@ var InputComponentMixin = {
         return true;
       }
     };
-  },
-
-  focus: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    if(!!inputNode) {
-      inputNode.focus();
-    }
   }
 };
 var MaterializeSelectMixin = {
@@ -392,6 +408,7 @@ var SelectComponentMixin = {
       dependsOn: null,
       nameField: 'name',
       valueField: 'id',
+      options: [],
       onLoad: function(data) {
         return true;
       },
@@ -423,14 +440,6 @@ var SelectComponentMixin = {
         this.loadOptions();
       }
     }
-  },
-
-  handleChange: function(event) {
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
-
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(event);
   },
 
   loadOptions: function() {
@@ -478,6 +487,7 @@ var SelectComponentMixin = {
       }
 
       this.state.loadParams[paramName] = dependableValue;
+      this.state.selectedOptions = [];
       this.loadOptions();
     }.bind(this));
   },
@@ -561,14 +571,6 @@ var Form = React.createClass({displayName: "Form",
         return true;
       }
     };
-  },
-
-  componentDidMount: function() {
-    var firstInputRef = this.refs.input_0;
-
-    if(!!firstInputRef && this.props.focus) {
-      firstInputRef.focus();
-    }
   },
 
   render: function() {
@@ -948,6 +950,162 @@ var GridTable = React.createClass({displayName: "GridTable",
   }
 });
 
+var Header = React.createClass({displayName: "Header",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      className: ''
+    };
+  },
+
+  render: function() {
+    return (
+        React.createElement("nav", {className: 'blue-grey darken-2 ' + this.props.className, role: "navigation"}, 
+          React.createElement("div", {className: "nav-wrapper"}, 
+          this.props.children
+          )
+        )
+    );
+  }
+
+});
+var HeaderButton = React.createClass({displayName: "HeaderButton",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    imgSrc: React.PropTypes.string,
+    imgAlt: React.PropTypes.string,
+    icon: React.PropTypes.string,
+    iconAlign: React.PropTypes.string,
+    text: React.PropTypes.string,
+    href: React.PropTypes.string,
+    target: React.PropTypes.string,
+    onClick: React.PropTypes.object,
+    ref: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      iconAlign: ' '
+    };
+  },
+
+  render: function () {
+    var button = '';
+    if(this.props.imgSrc)
+      button = this.renderImage();
+    else
+      button = this.renderButton();
+
+    return (
+      button
+    );
+  },
+
+  renderButton: function() {
+    return (
+      React.createElement("a", {href: this.props.href, ref: this.props.ref, onClick: this.props.onClick, target: this.props.target}, 
+        React.createElement("i", {className: 'material-icons ' + this.props.iconAlign}, this.props.icon), this.props.text
+      )
+    );
+  },
+
+  renderImage: function(){
+    return (
+      React.createElement("a", {className: "brand-logo", href: this.props.href}, 
+        React.createElement("img", {src: this.props.imgSrc, alt: this.props.imgAlt})
+      ));
+  }
+
+});
+
+var HeaderMenu = React.createClass({displayName: "HeaderMenu",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    items: React.PropTypes.array,
+    leftIcon: React.PropTypes.string,
+    rightIcon: React.PropTypes.string,
+    text: React.PropTypes.string,
+    href: React.PropTypes.string,
+    ref_id:React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      items: [],
+      leftIcon: '',
+      rightIcon: '',
+      ref_id: 'headerMenu'
+    };
+  },
+
+  render: function () {
+    var leftIcon =  (this.props.leftIcon !== '')? React.createElement("i", {className: 'material-icons left'}, this.props.leftIcon) : '';
+    var rightIcon =  (this.props.rightIcon !== '')? React.createElement("i", {className: 'material-icons right'}, this.props.rightIcon) : '';
+
+    return (
+        React.createElement("div", null, 
+          React.createElement("a", {href: this.props.href, ref: "readerMenu", onClick: this.props.onClick, target: this.props.target, "data-activates": this.props.ref_id}, 
+            leftIcon, 
+            this.props.text, 
+            rightIcon
+          ), 
+          this.renderMenu()
+        )
+    );
+  },
+
+  renderMenu: function(){
+    return (
+        React.createElement(Menu, {ref_id: this.props.ref_id, className: "dropdown-content", items: this.props.items}, 
+          this.props.children
+        )
+    );
+  },
+
+  componentDidMount: function(){
+    $(React.findDOMNode(this.refs.readerMenu)).dropdown();
+  }
+
+});
+
+var HeaderSection = React.createClass({displayName: "HeaderSection",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    align: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      align: 'left',
+      className: 'hide-on-med-and-down'
+    };
+  },
+
+  render: function () {
+
+    return (
+      React.createElement("ul", {className: this.props.className + ' ' + this.props.align}, 
+        this.renderChildren()
+      )
+    );
+  },
+
+  renderChildren: function () {
+    return React.Children.map(this.props.children, function(child, i) {
+      return React.createElement("li", {key: "item_" + i}, child);
+    });
+  }
+
+});
+
 var Icon = React.createClass({displayName: "Icon",
   mixins: [CssClassMixin],
   propTypes: {
@@ -977,6 +1135,580 @@ var Icon = React.createClass({displayName: "Icon",
   }
 });
 
+var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    SelectComponentMixin
+  ],
+
+  propTypes: {
+    maxOptions: React.PropTypes.number,
+    maxOptionsParam: React.PropTypes.string,
+    searchParam: React.PropTypes.string,
+    multiple: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      maxOptions: 99,
+      maxOptionsParam: 'limit',
+      searchParam: 'query',
+      themeClassKey: 'input.autocomplete',
+      multiple: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      selectedOptions: [],
+      active: 0
+    };
+  },
+
+  componentWillMount: function() {
+    this.state.loadParams[this.props.maxOptionsParam] = this.props.maxOptions;
+  },
+
+  componentDidMount: function() {
+    var valuesField = React.findDOMNode(this.refs.valuesField);
+    var $form = $(valuesField.form);
+    $form.on('reset', function(){
+      this.setState({
+        selectedOptions: []
+      });
+    }.bind(this));
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className(), ref: "container"}, 
+        React.createElement(InputAutocompleteSelect, React.__spread({}, 
+          this.propsWithoutCSS(), 
+          {disabled: this.state.disabled, 
+          selectedOptions: this.state.selectedOptions, 
+          onFocus: this.showResult})
+        ), 
+
+        React.createElement(InputAutocompleteResult, {
+          id: this.props.id, 
+          selectedOptions: this.state.selectedOptions, 
+          options: this.state.options, 
+          active: this.state.active, 
+          onKeyDown: this.handleSearchNavigation, 
+          onKeyUp: this.searchOptions, 
+          onSelect: this.handleSelect, 
+          onClear: this.clearSelection, 
+          onOptionMouseEnter: this.handleOptionMouseEnter, 
+          ref: "result"}
+        ), 
+
+        React.createElement(InputAutocompleteValues, {
+          id: this.props.id, 
+          name: this.props.name, 
+          multiple: this.props.multiple, 
+          selectedOptions: this.state.selectedOptions, 
+          ref: "valuesField"}
+        )
+      )
+    );
+  },
+
+  handleDocumentClick: function(event) {
+    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $containerNode = $(React.findDOMNode(this.refs.container));
+    var searchInput = $resultNode.find('input[type=text]')[0];
+
+    if($containerNode.find(event.target).length === 0) {
+      this.hideResult();
+    } else {
+      searchInput.focus();
+    }
+  },
+
+  hideResult: function() {
+    $(document).off('click', this.handleDocumentClick);
+    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $searchInput = $resultNode.find('input[type=text]');
+    $resultNode.hide();
+    $searchInput.val('');
+
+    this.state.loadParams[this.props.searchParam] = '';
+    this.setState({
+      active: 0,
+      selectedOptions: $.map(this.state.selectedOptions, function(option) {
+        option.showOnTop = true;
+        return option;
+      })
+    });
+    this.loadOptions();
+  },
+
+  showResult: function(event) {
+    if(this.state.disabled) {
+      return;
+    }
+
+    $(document).on('click', this.handleDocumentClick);
+    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var searchInput = $resultNode.find('input[type=text]')[0];
+
+    $resultNode.show();
+    searchInput.focus();
+  },
+
+  searchOptions: function(event) {
+    var $searchInput = $(event.currentTarget);
+
+    this.state.loadParams[this.props.searchParam] = $searchInput.val();
+    this.loadOptions();
+  },
+
+  handleSearchNavigation: function(event) {
+    var keyCode = event.keyCode;
+
+    if(keyCode == 38) {
+      this.moveActiveUp();
+    } else if(keyCode == 40) {
+      this.moveActiveDown();
+    } else if(keyCode == 13) {
+      event.preventDefault();
+      this.selectOption();
+    } else if(keyCode == 27 || keyCode == 9) {
+      this.hideResult();
+    }
+  },
+
+  moveActiveUp: function() {
+    this.setState({
+      active: Math.max(0, this.state.active - 1)
+    });
+  },
+
+  moveActiveDown: function() {
+    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var resultListCount = $resultNode.find('li').length;
+
+    this.setState({
+      active: Math.min(resultListCount - 1, this.state.active + 1)
+    });
+  },
+
+  selectOption: function() {
+    var resultRef = this.refs.result;
+    var resultListRef = resultRef.refs.list;
+    var activeOptionRef = resultListRef.refs["option_" + this.state.active];
+
+    this.handleSelect({
+      name: activeOptionRef.props.name,
+      value: activeOptionRef.props.value,
+      showOnTop: false
+    });
+  },
+
+  clearSelection: function() {
+    this.setState({
+      selectedOptions: []
+    });
+  },
+
+  handleOptionMouseEnter: function(position) {
+    this.setState({
+      active: position
+    });
+  },
+
+  handleSelect: function(option) {
+    if(this.props.multiple) {
+      this.handleMultipleSelect(option);
+    } else {
+      this.handleSingleSelect(option);
+    }
+
+    this.triggerDependableChanged();
+  },
+
+  handleMultipleSelect: function(option) {
+    var optionIndex = this.selectedOptionIndex(option);
+
+    if(optionIndex < 0) {
+      this.state.selectedOptions.push(option);
+    } else {
+      this.state.selectedOptions.splice(optionIndex, 1);
+    }
+
+    this.forceUpdate();
+  },
+
+  handleSingleSelect: function(option) {
+    var optionIndex = this.selectedOptionIndex(option);
+    var newSelectedOptions = [];
+
+    if(optionIndex < 0) {
+      newSelectedOptions.push(option);
+    }
+
+    this.state.selectedOptions = newSelectedOptions;
+    this.forceUpdate();
+  },
+
+  selectedOptionIndex: function(option) {
+    var optionValues = $.map(this.state.selectedOptions, function(option) {
+      return option.value;
+    });
+
+    return optionValues.indexOf(option.value);
+  },
+
+  triggerDependableChanged: function() {
+    var $valuesElement = $(React.findDOMNode(this.refs.valuesField));
+    var optionValues = $.map(this.state.selectedOptions, function(option) {
+      return option.value;
+    });
+
+    if(optionValues.length == 1) {
+      optionValues = optionValues[0];
+    }
+
+    $valuesElement.trigger('dependable_changed', [optionValues]);
+  }
+
+});
+
+var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteList",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    selectedOptions: React.PropTypes.array,
+    options: React.PropTypes.array,
+    active: React.PropTypes.number,
+    onSelect: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.autocomplete.list',
+      options: [],
+      selectedOptions: [],
+      onSelect: function() {
+        return true;
+      },
+      onOptionMouseEnter: function() {
+        return true;
+      }
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("ul", {className: this.className()}, 
+        this.renderOptions()
+      )
+    );
+  },
+
+  renderOptions: function() {
+    var options = [].concat(this.onTopSelectedOptions(), this.otherOptions());
+    var listOptions = [];
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+      listOptions.push(
+        React.createElement(InputAutocompleteOption, React.__spread({},  optionProps, 
+          {onSelect: this.props.onSelect, 
+          onOptionMouseEnter: this.props.onOptionMouseEnter, 
+          position: i, 
+          isActive: i == this.props.active, 
+          id: this.props.id, 
+          key: optionProps.name, 
+          ref: "option_" + i})
+        )
+      );
+    }
+
+    return listOptions;
+  },
+
+  onTopSelectedOptions: function() {
+    var selectedOptions = $.map(this.props.selectedOptions, function(selectedOption) {
+      var option = $.extend({}, selectedOption);
+
+      option.selected = true;
+      return option;
+    });
+
+    return $.grep(selectedOptions, function(option) {
+      return !!option.showOnTop;
+    });
+  },
+
+  otherOptions: function() {
+    var otherOptions = $.map(this.props.options, function(option) {
+      var otherOption = $.extend({}, option);
+      var relatedSelectedOption = $.grep(this.props.selectedOptions, function(selectedOption) {
+        return selectedOption.value == otherOption.value;
+      })[0];
+
+      if(!!relatedSelectedOption) {
+        otherOption.selected = true;
+        otherOption.showOnTop = relatedSelectedOption.showOnTop;
+      }
+
+      return otherOption;
+    }.bind(this));
+
+    return $.grep(otherOptions, function(option) {
+      return !option.showOnTop;
+    });
+  }
+});
+
+var InputAutocompleteOption = React.createClass({displayName: "InputAutocompleteOption",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    value: React.PropTypes.string,
+    selected: React.PropTypes.bool,
+    position: React.PropTypes.number,
+    isActive: React.PropTypes.bool,
+    onSelect: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      selected: false,
+      onSelect: function() {
+        return true;
+      },
+      onOptionMouseEnter: function() {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: this.parseThemeClassKey(this.props.isActive)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.parseThemeClassKey(nextProps.isActive)
+    });
+  },
+
+  parseThemeClassKey: function(isActive) {
+    var themeClassKey = 'input.autocomplete.option';
+    if(isActive) {
+      themeClassKey += ' input.autocomplete.option.active';
+    }
+
+    return themeClassKey;
+  },
+
+  render: function() {
+    return (
+      React.createElement("li", {className: this.className(), onClick: this.handleSelect, onMouseEnter: this.handleMouseEnter}, 
+        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent}), 
+        React.createElement(Label, {id: this.parseOptionId(), name: this.props.name})
+      )
+    );
+  },
+
+  handleSelect: function() {
+    var option = {
+      name: this.props.name,
+      value: this.props.value,
+      showOnTop: false
+    };
+
+    this.props.onSelect(option);
+  },
+
+  handleMouseEnter: function() {
+    this.props.onOptionMouseEnter(this.props.position);
+  },
+
+  disableEvent: function(event) {
+    event.stopPropagation();
+  },
+
+  parseOptionId: function() {
+    return 'autocomplete_option_' + this.props.id + '_' + this.props.value;
+  }
+});
+
+var InputAutocompleteResult = React.createClass({displayName: "InputAutocompleteResult",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    options: React.PropTypes.array,
+    selectedOptions: React.PropTypes.array,
+    active: React.PropTypes.number,
+    onKeyDown: React.PropTypes.func,
+    onKeyUp: React.PropTypes.func,
+    onSelect: React.PropTypes.func,
+    onClear: React.PropTypes.func,
+    onOptionMouseEnter: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.autocomplete.result',
+      options: [],
+      selectedOptions: []
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement("div", {className: "input-autocomplete__search"}, 
+          React.createElement(Icon, {type: "search", className: "prefix"}), 
+          React.createElement(InputText, {onKeyDown: this.props.onKeyDown, onKeyUp: this.props.onKeyUp, autoComplete: "off"})
+        ), 
+
+        React.createElement("a", {href: "#!", className: "input-autocomplete__clear-button", onClick: this.props.onClear}, 
+          "Limpar itens selecionados"
+        ), 
+
+        React.createElement(InputAutocompleteList, {
+          id: this.props.id, 
+          selectedOptions: this.props.selectedOptions, 
+          options: this.props.options, 
+          active: this.props.active, 
+          onSelect: this.props.onSelect, 
+          onOptionMouseEnter: this.props.onOptionMouseEnter, 
+          ref: "list"}
+        )
+      )
+    );
+  }
+});
+
+
+var InputAutocompleteSelect = React.createClass({displayName: "InputAutocompleteSelect",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    selectedOptions: React.PropTypes.array,
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      selectedOptions: [],
+      themeClassKey: 'input.autocomplete.select',
+      placeholder: "Selecione",
+      onFocus: function() {
+        return true;
+      },
+      onBlur: function() {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      options: []
+    };
+  },
+
+  //TODO: este e um componente do materialize. Tornar este componente generico.
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement("div", {className: this.className()}, 
+          React.createElement("span", {className: "caret"}, "▼"), 
+          React.createElement(InputText, {
+            id: this.prefixSelectProp(this.props.id), 
+            name: this.prefixSelectProp(this.props.name), 
+            value: this.renderSelectedOptions(), 
+            disabled: this.props.disabled, 
+            placeholder: this.props.placeholder, 
+            onFocus: this.props.onFocus, 
+            className: "select-dropdown"}
+          )
+        ), 
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.prefixSelectProp(this.props.id)}))
+      )
+    );
+  },
+
+  prefixSelectProp: function(prop) {
+    return 'autocomplete_select_' + prop;
+  },
+
+  renderSelectedOptions: function() {
+    var options = this.props.selectedOptions;
+
+    return $.map(options, function(option){
+      return option.name;
+    }).join(', ');
+  }
+});
+
+var InputAutocompleteValues = React.createClass({displayName: "InputAutocompleteValues",
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    multiple: React.PropTypes.bool,
+    selectedOptions: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      multiple: false,
+      selectedOptions: []
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("select", {
+        multiple: true, 
+        id: this.props.id, 
+        name: this.valueInputName(), 
+        value: this.selectedOptionsValues(), 
+        style: {display: "none"}}, 
+        this.renderValueInputs()
+      )
+    );
+  },
+
+  selectedOptionsValues: function() {
+    return $.map(this.props.selectedOptions, function(selectedOption){
+      return selectedOption.value;
+    });
+  },
+
+  renderValueInputs: function() {
+    var valueInputs = [];
+    var selectedOptions = this.props.selectedOptions;
+
+    for(var i = 0; i < selectedOptions.length; i++) {
+      var option = selectedOptions[i];
+      valueInputs.push(React.createElement("option", {value: option.value, key: option.name}));
+    }
+
+    return valueInputs;
+  },
+
+  valueInputName: function() {
+    var inputName = this.props.name;
+    if(this.props.multiple) {
+      inputName += '[]';
+    }
+
+    return inputName;
+  }
+});
+
 var Input = React.createClass({displayName: "Input",
   mixins: [CssClassMixin],
   propTypes: {
@@ -999,6 +1731,7 @@ var Input = React.createClass({displayName: "Input",
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
+          autocomplete: InputAutocomplete,
           checkbox: InputCheckbox,
           datepicker: InputDatepicker,
           hidden: InputHidden,
@@ -1029,23 +1762,28 @@ var Input = React.createClass({displayName: "Input",
     }
   },
 
-  focus: function() {
-    var inputComponentRef = this.refs.inputComponent;
-    inputComponentRef.focus();
-  },
-
   render: function() {
-    if(this.props.component === 'hidden')
-      return this.renderHiddenInput();
-    else
+    var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
+    if(this.hasOwnProperty(renderFunction)) {
+      return this[renderFunction]();
+    } else {
       return this.renderVisibleInput();
+    }
   },
 
   renderVisibleInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
-        React.createElement("label", {htmlFor: this.props.id}, this.labelValue())
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  },
+
+  renderAutocompleteInput: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput()
       )
     );
   },
@@ -1060,24 +1798,24 @@ var Input = React.createClass({displayName: "Input",
     var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
-  },
-
-  labelValue: function() {
-    return (this.props.label || this.props.name);
   }
 });
 
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    renderAsIndeterminate: React.PropTypes.bool
+  },
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.checkbox'
+      themeClassKey: 'input.checkbox',
+      renderAsIndeterminate: false
     };
   },
 
   componentDidMount: function() {
-    React.findDOMNode(this.refs.input).indeterminate = true;
+    React.findDOMNode(this.refs.input).indeterminate = this.props.renderAsIndeterminate;
   },
 
   render: function() {
@@ -1141,58 +1879,6 @@ var InputPassword = React.createClass({displayName: "InputPassword",
   }
 });
 
-var InputSearchSelect = React.createClass({displayName: "InputSearchSelect",
-  mixins: [
-    CssClassMixin,
-    InputComponentMixin,
-    SelectComponentMixin
-  ],
-
-  propTypes: {
-    includeBlank: React.PropTypes.bool
-  },
-
-  getDefaultProps: function() {
-    return {
-      includeBlank: true,
-      options: [],
-      themeClassKey: 'input.select'
-    };
-  },
-
-  render: function() {
-    return (
-        React.createElement("select", {
-            id: this.props.id, 
-            name: this.props.name, 
-            value: this.props.value, 
-            onChange: this.handleChange, 
-            disabled: this.state.disabled, 
-            className: this.className(), 
-            ref: "select"}, 
-        this.renderOptions()
-        )
-    );
-  },
-
-  renderOptions: function() {
-    var selectOptions = [];
-    var options = this.state.options;
-
-    if(this.props.includeBlank) {
-      selectOptions.push(React.createElement(InputSelectOption, {name: "Selecione", value: "", key: "empty_option"}));
-    }
-
-    for(var i = 0; i < options.length; i++) {
-      var optionProps = options[i];
-      selectOptions.push(React.createElement(InputSelectOption, React.__spread({},  optionProps, {key: optionProps.name})));
-    }
-
-    return selectOptions;
-  }
-
-});
-
 var InputText = React.createClass({displayName: "InputText",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
@@ -1248,7 +1934,6 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      options: [],
       themeClassKey: 'input.select'
     };
   },
@@ -1282,6 +1967,14 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     }
 
     return selectOptions;
+  },
+
+  handleChange: function(event) {
+    var selectElement = React.findDOMNode(this.refs.select);
+    var $selectElement = $(selectElement);
+
+    $selectElement.trigger('dependable_changed', [selectElement.value]);
+    this.props.onChange(event);
   }
 
 });
@@ -1296,6 +1989,109 @@ var InputSelectOption = React.createClass({displayName: "InputSelectOption",
     return React.createElement("option", {value: this.props.value}, this.props.name);
   }
 });
+
+var Label = React.createClass({displayName: "Label",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    label: React.PropTypes.string,
+    onClick: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      name: '',
+      label: ''
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("label", {htmlFor: this.props.id, onClick: this.props.onClick}, 
+        (this.props.label || this.props.name)
+      )
+    );
+  }
+});
+
+var Menu = React.createClass({displayName: "Menu",
+  propTypes: {
+    ref_id: React.PropTypes.string,
+    items: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      ref_id:'',
+      items: []
+    };
+  },
+
+  componentWillMount: function() {
+    if(!Array.isArray(this.props.children))
+      this.props.children = [this.props.children];
+
+    var items = this.renderItems();
+    $(items).each(function (i, element) {
+      this.props.children.push(element);
+    }.bind(this));
+  },
+
+  render: function() {
+    return (
+      React.createElement("ul", {id: this.props.ref_id, className: this.props.className}, 
+        this.renderChildren()
+      )
+    );
+  },
+
+  renderItems: function(){
+    var menuItems = this.props.items.map(function ( item ) {
+      return React.createElement(MenuItem, React.__spread({},  item ));
+    },this);
+    return menuItems;
+  },
+
+  renderChildren:function(){
+    var menuItems = React.Children.map(this.props.children, function(item) {
+      if((item !== null) && (item.type.displayName = "MenuItem"))
+        return item;
+    });
+    return menuItems;
+  }
+});
+
+
+var MenuItem = React.createClass({displayName: "MenuItem",
+  propTypes: {
+    icon: React.PropTypes.string,
+    iconAlign: React.PropTypes.string,
+    href: React.PropTypes.string,
+    target: React.PropTypes.string,
+    onClick: React.PropTypes.object,
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      iconAlign: 'left'
+    };
+  },
+
+  render: function() {
+    var icon = (this.props.icon !== undefined)? React.createElement("i", {className: 'material-icons ' + (this.props.iconAlign || this.props.iconAlign)}, this.props.icon) : '';
+    return (
+      React.createElement("li", null, 
+        React.createElement("a", {href: this.props.onClick? '#': this.props.href, onClick: this.props.onClick, target: this.props.target, className: this.props.className}, 
+             icon, 
+             this.props.text
+        )
+      )
+    );
+  }
+});
+
 
 var Pagination = React.createClass({displayName: "Pagination",
   mixins: [CssClassMixin],
@@ -1482,6 +2278,48 @@ var PaginationItem = React.createClass({displayName: "PaginationItem",
   }
 });
 
+var SideNav = React.createClass({displayName: "SideNav",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    items: React.PropTypes.array,
+    icon: React.PropTypes.string,
+    iconAlign: React.PropTypes.string,
+    text: React.PropTypes.string,
+    ref_id:React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      items: [],
+      icon: 'view_headline',
+      iconAlign: '',
+      ref_id: 'sideNav',
+      text: ''
+    };
+  },
+
+  render: function () {
+    var iconAlign = this.props.text? 'left':'';
+    return (React.createElement("div", null, 
+      React.createElement("a", {href: this.props.href, ref: "sideNav", onClick: this.props.onClick, target: this.props.target, "data-activates": this.props.ref_id}, 
+        React.createElement("i", {className: 'material-icons ' + iconAlign}, this.props.icon), 
+        this.props.text
+      ), 
+      this.renderMenu()
+    ));
+  },
+
+  renderMenu: function(){
+    return (React.createElement(Menu, {ref_id: this.props.ref_id, className: "side-nav full", items: this.props.items}, this.props.children));
+  },
+
+  componentDidMount: function(){
+    $(React.findDOMNode(this.refs.sideNav)).sideNav();
+  }
+
+});
+
 var Table = React.createClass({displayName: "Table",
   mixins: [CssClassMixin],
   propTypes: {
@@ -1622,7 +2460,7 @@ var TableCell = React.createClass({displayName: "TableCell",
     var customValue = this.props.value;
 
     if(!!customValue) {
-      return customValue(this.props.data);
+      return customValue(this.props.data, this.props);
     } else if($.inArray(format, this.validFormats) >= 0) {
       return this[format + "Value"]();
     } else {
@@ -1769,5 +2607,52 @@ var TableRow = React.createClass({displayName: "TableRow",
     }
 
     return cellComponents;
+  }
+});
+
+var Tabs = React.createClass({displayName: "Tabs",
+
+  render: function(){
+    return (
+        React.createElement("span", null, 
+          React.createElement("ul", {className: "tabs", ref: "tabsContainer"}, 
+            this.renderTabs()
+          ), 
+          React.createElement("div", {class: "row"}, 
+            this.props.children
+          )
+        )
+    );
+  },
+
+  componentDidMount: function(){
+    $(React.findDOMNode(this.refs.tabsContainer)).tabs();
+  },
+
+  renderTabs: function() {
+    var tabs = [];
+    for(var i = 0; i < this.props.children.length; i++) {
+      var isActive = i === 0 ? "active" : "";
+      tabs[i] = (
+          React.createElement("li", {className: "tab col s1"}, 
+            React.createElement("a", {href: '#'+this.props.children[i].props.id, className: isActive}, 
+              this.props.children[i].props.title
+            )
+          )
+      );
+    }
+
+    return tabs;
+  }
+
+});
+
+var Tab = React.createClass({displayName: "Tab",
+  render: function(){
+    return(
+        React.createElement("div", {id: this.props.id}, 
+			    this.props.children
+        )
+    );
   }
 });

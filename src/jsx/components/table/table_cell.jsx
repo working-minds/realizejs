@@ -35,7 +35,7 @@ var TableCell = React.createClass({
     var customValue = this.props.value;
 
     if(!!customValue) {
-      return customValue(this.props.data);
+      return customValue(this.props.data, this.props);
     } else if($.inArray(format, this.validFormats) >= 0) {
       return this[format + "Value"]();
     } else {

@@ -13,7 +13,6 @@ var InputSelect = React.createClass({
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      options: [],
       themeClassKey: 'input.select'
     };
   },
@@ -47,6 +46,14 @@ var InputSelect = React.createClass({
     }
 
     return selectOptions;
+  },
+
+  handleChange: function(event) {
+    var selectElement = React.findDOMNode(this.refs.select);
+    var $selectElement = $(selectElement);
+
+    $selectElement.trigger('dependable_changed', [selectElement.value]);
+    this.props.onChange(event);
   }
 
 });
