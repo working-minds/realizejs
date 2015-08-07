@@ -4,7 +4,9 @@ var Form = React.createClass({
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
-    focus: React.PropTypes.bool,
+    submitButton: React.PropTypes.object,
+    otherButtons: React.PropTypes.array,
+    isLoading: React.PropTypes.bool,
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
@@ -16,7 +18,11 @@ var Form = React.createClass({
       action: '',
       method: 'POST',
       dataType: 'json',
-      focus: true,
+      submitButton: {
+        name: 'Enviar'
+      },
+      otherButtons: [],
+      isLoading: false,
       onSuccess: function(data) {
         return true;
       },
@@ -32,6 +38,12 @@ var Form = React.createClass({
     };
   },
 
+  getInitialState: function() {
+    return {
+      isLoading: null
+    };
+  },
+
   render: function() {
     return (
       <form action={this.props.action}
@@ -42,6 +54,11 @@ var Form = React.createClass({
 
         {this.renderInputs()}
         {this.props.children}
+
+        <div className={WRF.themeClass('form.buttonGroup')}>
+          {this.renderOtherButtons()}
+          <Button {...this.submitButtonProps()} ref="submitButton" />
+        </div>
       </form>
     );
   },
@@ -62,9 +79,25 @@ var Form = React.createClass({
     return inputComponents;
   },
 
-  serialize : function() {
-    var form = React.findDOMNode(this.refs.form);
-    return $(form).serializeObject();
+  renderOtherButtons: function() {
+    var otherButtonsProps = this.props.otherButtons;
+    var otherButtons = [];
+
+    for(var i = 0; i < otherButtonsProps.length; i++) {
+      var otherButtonProps = otherButtonsProps[i];
+      otherButtons.push(<Button {...otherButtonProps} key={otherButtonProps.name} />);
+    }
+
+    return otherButtons;
+  },
+
+  submitButtonProps: function() {
+    var isLoading = this.isLoading();
+    return $.extend({}, this.props.submitButton, {
+      type: "submit",
+      disabled: isLoading,
+      isLoading: isLoading
+    });
   },
 
   handleSubmit: function(event) {
@@ -72,8 +105,14 @@ var Form = React.createClass({
     var postData = this.serialize();
 
     if(this.props.onSubmit(event, postData)) {
+      this.setState({isLoading: true});
       this.submit(postData);
     }
+  },
+
+  serialize : function() {
+    var form = React.findDOMNode(this.refs.form);
+    return $(form).serializeObject();
   },
 
   submit: function(postData) {
@@ -83,12 +122,22 @@ var Form = React.createClass({
       dataType: this.props.dataType,
       data: postData,
       success: function(data) {
+        this.setState({isLoading: false});
         this.props.onSuccess(data);
       }.bind(this),
       error: function(xhr, status, error) {
+        this.setState({isLoading: false});
         this.props.onError(xhr, status, error);
       }.bind(this)
     });
-  }
+  },
 
+  isLoading: function() {
+    var isLoading = this.state.isLoading;
+    if(isLoading === null) {
+      isLoading = this.props.isLoading;
+    }
+
+    return isLoading;
+  }
 });

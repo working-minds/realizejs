@@ -48,7 +48,8 @@ var Grid = React.createClass({
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      themeClassKey: 'grid'
+      themeClassKey: 'grid',
+      isLoading: false
     };
   },
 
@@ -69,6 +70,7 @@ var Grid = React.createClass({
       <GridFilter
         {...this.props.filterForm}
         url={this.props.url}
+        isLoading={this.state.isLoading}
         onSubmit={this.onFilterSubmit}
       />
     );
@@ -109,6 +111,7 @@ var Grid = React.createClass({
   },
 
   onFilterSubmit: function(event, postData) {
+    this.setState({isLoading: true});
     this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
@@ -131,19 +134,25 @@ var Grid = React.createClass({
       dataType: 'json',
       data: postData,
       success: function(data) {
-        this.dataLoaded(data);
+        this.setState({isLoading: false});
+        this.handleLoad(data);
       }.bind(this),
       error: function(xhr, status, error) {
-        console.log('Grid Load error:' + error);
+        this.setState({isLoading: false});
+        this.handleLoadError(xhr, status, error);
       }.bind(this)
     });
   },
 
-  dataLoaded: function(data) {
+  handleLoad: function(data) {
     this.setState({
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
     });
+  },
+
+  handleLoadError: function(xhr, status, error) {
+    console.log('Grid Load error:' + error);
   },
 
   buildPostData: function() {

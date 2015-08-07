@@ -9,7 +9,8 @@ var GridFilter = React.createClass({
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func
+    onReset: React.PropTypes.func,
+    isLoading: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -22,6 +23,7 @@ var GridFilter = React.createClass({
       },
       clearButton: {
         name: 'Limpar',
+        type: 'reset',
         additionalThemeClassKeys: 'grid.filter.clearButton button.cancel'
       },
       onSuccess: function(data) {
@@ -45,14 +47,7 @@ var GridFilter = React.createClass({
   render: function() {
     return(
       <div className={this.className()}>
-        <Form {...this.props} ref="form">
-          {this.props.children}
-
-          <div className={WRF.themeClass('grid.filter.buttonGroup')}>
-            <Button {...this.props.clearButton} type="reset" />
-            <Button {...this.props.submitButton} type="submit" />
-          </div>
-        </Form>
+        <Form {...this.props} otherButtons={[this.props.clearButton]} ref="form" />
       </div>
     );
   },

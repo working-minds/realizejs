@@ -154,10 +154,6 @@ WRF.themes.materialize = {
         cssClass: 'grid__filter'
       },
 
-      buttonGroup: {
-        cssClass: 'filter__button-group col s12 m12 l12 right-align'
-      },
-
       clearButton: {
         cssClass: 'filter__button--clear'
       }
@@ -209,7 +205,11 @@ WRF.themes.materialize = {
   },
 
   form: {
-    cssClass: ''
+    cssClass: '',
+
+    buttonGroup: {
+      cssClass: 'form__button-group col s12 m12 l12 right-align'
+    }
   },
 
   input: {
