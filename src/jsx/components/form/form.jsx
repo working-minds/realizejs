@@ -32,14 +32,6 @@ var Form = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    var firstInputRef = this.refs.input_0;
-
-    if(!!firstInputRef && this.props.focus) {
-      firstInputRef.focus();
-    }
-  },
-
   render: function() {
     return (
       <form action={this.props.action}

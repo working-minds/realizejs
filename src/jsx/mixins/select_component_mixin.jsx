@@ -14,6 +14,7 @@ var SelectComponentMixin = {
       dependsOn: null,
       nameField: 'name',
       valueField: 'id',
+      options: [],
       onLoad: function(data) {
         return true;
       },
@@ -45,14 +46,6 @@ var SelectComponentMixin = {
         this.loadOptions();
       }
     }
-  },
-
-  handleChange: function(event) {
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
-
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(event);
   },
 
   loadOptions: function() {
@@ -100,6 +93,7 @@ var SelectComponentMixin = {
       }
 
       this.state.loadParams[paramName] = dependableValue;
+      this.state.selectedOptions = [];
       this.loadOptions();
     }.bind(this));
   },

@@ -78,6 +78,29 @@ WRF.themes.materialize = {
       cssClass: 'validate'
     },
 
+    autocomplete: {
+      cssClass: 'input-autocomplete',
+
+      result: {
+        cssClass: 'input-autocomplete__result z-depth-1'
+      },
+
+      list: {
+        cssClass: 'input-autocomplete__list'
+      },
+
+      option: {
+        cssClass: 'input-autocomplete__option',
+        active: {
+          cssClass: 'active'
+        }
+      },
+
+      select: {
+        cssClass: 'select-wrapper initialized'
+      }
+    },
+
     checkbox: {
       cssClass: 'validate'
     },

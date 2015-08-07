@@ -15,12 +15,5 @@ var InputComponentMixin = {
         return true;
       }
     };
-  },
-
-  focus: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    if(!!inputNode) {
-      inputNode.focus();
-    }
   }
 };

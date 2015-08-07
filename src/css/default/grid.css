@@ -1,0 +1,15 @@
+.grid__pagination {
+  text-align: center;
+}
+
+.grid__pagination .pagination {
+  display: inline-block;
+}
+
+.filter__button-group button {
+  margin-left: 1.5em;
+}
+
+.filter__button-group .filter__button--clear {
+  color: black;
+}
