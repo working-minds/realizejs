@@ -39,6 +39,7 @@ var InputAutocompleteList = React.createClass({
           active={i == this.props.active}
           id={this.props.id}
           key={optionProps.name}
+          ref={"option_" + i}
         />
       );
     }

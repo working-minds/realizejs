@@ -37,6 +37,7 @@ var InputAutocompleteResult = React.createClass({
           options={this.props.options}
           active={this.props.active}
           onSelect={this.props.onSelect}
+          ref="list"
         />
       </div>
     );

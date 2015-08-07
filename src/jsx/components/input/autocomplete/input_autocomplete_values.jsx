@@ -15,10 +15,16 @@ var InputAutocompleteValues = React.createClass({
 
   render: function() {
     return (
-      <select name={this.valueInputName()} style={{display: "none"}} multiple="true">
+      <select name={this.valueInputName()} multiple={true} value={this.selectedOptionsValues()} style={{display: "none"}} >
         {this.renderValueInputs()}
       </select>
     );
+  },
+
+  selectedOptionsValues: function() {
+    return $.map(this.props.selectedOptions, function(selectedOption){
+      return selectedOption.value;
+    });
   },
 
   renderValueInputs: function() {
@@ -27,7 +33,7 @@ var InputAutocompleteValues = React.createClass({
 
     for(var i = 0; i < selectedOptions.length; i++) {
       var option = selectedOptions[i];
-      valueInputs.push(<option value={option.value} key={option.name} selected="true" />);
+      valueInputs.push(<option value={option.value} key={option.name} />);
     }
 
     return valueInputs;
