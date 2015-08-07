@@ -63,7 +63,8 @@
   margin-top: 0;
   margin-bottom: 0;
   max-height: 450px;
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .input-autocomplete__option {

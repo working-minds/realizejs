@@ -1626,8 +1626,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
         React.createElement("div", {className: this.className()}, 
           React.createElement("span", {className: "caret"}, "▼"), 
           React.createElement(InputText, {
-            id: this.prefixSelectProp(this.props.id), 
-            name: this.prefixSelectProp(this.props.name), 
+            id: this.selectId(), 
             value: this.renderSelectedOptions(), 
             disabled: this.props.disabled, 
             placeholder: this.props.placeholder, 
@@ -1635,13 +1634,13 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
             className: "select-dropdown"}
           )
         ), 
-        React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.prefixSelectProp(this.props.id)}))
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.selectId()}))
       )
     );
   },
 
-  prefixSelectProp: function(prop) {
-    return 'autocomplete_select_' + prop;
+  selectId: function() {
+    return 'autocomplete_select_' + this.props.id;
   },
 
   renderSelectedOptions: function() {
