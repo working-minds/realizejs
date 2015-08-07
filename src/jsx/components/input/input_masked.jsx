@@ -5,8 +5,7 @@ var InputMasked = React.createClass({
     mask: React.PropTypes.string,
     typeMask: React.PropTypes.string,
     predefinedMasks: React.PropTypes.object,
-    regex: React.PropTypes.string,
-    showMaskOnHover: React.PropTypes.boolean
+    regex: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -15,7 +14,6 @@ var InputMasked = React.createClass({
       mask:'',
       typeMask:'',
       regex:'',
-      showMaskOnHover: false,
       predefinedMasks: {
         cpf: {
           mask:'999.999.999-99'
@@ -39,10 +37,9 @@ var InputMasked = React.createClass({
   },
 
   render: function() {
-
     return (
-      <input {...this.props.field_params} className={this.className()} ref="inputMasked" type="text" >
-      {this.props.children}
+      <input {...this.props} {...this.props.field_params} className={this.className()} ref="inputMasked" type="text" >
+        {this.props.children}
       </input>
     );
   },
@@ -63,29 +60,32 @@ var InputMasked = React.createClass({
     params['regex'] = this.props.plugin_params.regex;
     this.renderBaseMask('Regex',params);
   },
+
   renderCustomMask: function(){
-    var typeMask = this.props.plugin_params.typeMask
+    var typeMask = this.props.plugin_params.typeMask;
     delete this.props.plugin_params["placeholder"];
     delete this.props.plugin_params["typeMask"];
 
     if(typeMask)
-      this.renderBaseMask(typeMask,'')
+      this.renderBaseMask(typeMask, this.props.plugin_params);
     else
-      this.renderBaseMask('',this.props.plugin_params)
+      this.renderBaseMask('', this.props.plugin_params)
   },
+
   renderPredefinedMask: function(){
     var params = this.maskMapping(this.props.plugin_params.mask);
-    var typeMask = this.props.plugin_params.typeMask
+    var typeMask = this.props.plugin_params.typeMask;
     delete this.props.plugin_params["mask"];
     delete this.props.plugin_params["placeholder"];
     delete this.props.plugin_params["typeMask"];
 
-    params = $.extend(params,this.props.plugin_params);
-    this.renderBaseMask(typeMask,params)
+    params = $.extend(params, this.props.plugin_params);
+    this.renderBaseMask(typeMask, params)
   },
-  renderBaseMask: function(type,params){
+
+  renderBaseMask: function(type, params){
     if(type != undefined && type != '')
-      $(React.findDOMNode(this.refs.inputMasked)).inputmask(type,params);
+      $(React.findDOMNode(this.refs.inputMasked)).inputmask(type, params);
     else
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
   },
@@ -104,16 +104,3 @@ var InputMasked = React.createClass({
   }
 
 });
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-////////////////////////EXEMPLO DE USO////////////////////////////////
-
-// react_component('InputMasked', {
-//                    field_params:{
-//                      placeholder:'CPF THIAGO'
-//                    },
-//                    plugin_params:{
-//                      mask:'cpf'
-//                    }
-//                 }
-//);

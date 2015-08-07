@@ -77,6 +77,14 @@ var Input = React.createClass({
     );
   },
 
+  renderDatepickerInput: function() {
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
+      </div>
+    );
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
