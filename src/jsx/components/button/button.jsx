@@ -3,14 +3,15 @@ var Button = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
-    icon: React.PropTypes.string,
+    iconProps: React.PropTypes.object,
     onClick: React.PropTypes.func,
     additionalThemeClassKeys: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      additionalThemeClassKeys: ''
+      additionalThemeClassKeys: '',
+      iconProps: null
     };
   },
 
@@ -30,10 +31,10 @@ var Button = React.createClass({
   },
 
   renderIcon: function() {
-    if(!this.props.icon) {
+    if(!this.props.iconProps) {
       return '';
     }
 
-    return <Icon className="right" type={this.props.icon} />;
+    return <Icon {...this.props.iconProps} />;
   }
 });

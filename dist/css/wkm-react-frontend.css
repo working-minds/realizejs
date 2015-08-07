@@ -77,6 +77,10 @@
 .input-autocomplete__option.active {
   background-color: #E3E3E3;
 }
+
+.input-datepicker__button {
+  padding: 0;
+}
 .table-header .table-header__name.sortable {
   cursor: pointer;
 }

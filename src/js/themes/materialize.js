@@ -150,6 +150,7 @@ WRF.themes.materialize = {
     cssClass: 'material-icons',
     left: 'chevron_left',
     right: 'chevron_right',
-    search: 'search'
+    search: 'search',
+    more_horiz: 'more_horiz'
   }
 };

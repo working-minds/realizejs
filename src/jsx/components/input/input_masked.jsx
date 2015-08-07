@@ -41,7 +41,9 @@ var InputMasked = React.createClass({
   render: function() {
 
     return (
-      <input {...this.props.field_params} className={this.className()} ref="inputMasked" type="text" />
+      <input {...this.props.field_params} className={this.className()} ref="inputMasked" type="text" >
+      {this.props.children}
+      </input>
     );
   },
 

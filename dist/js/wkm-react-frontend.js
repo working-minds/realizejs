@@ -293,7 +293,8 @@ WRF.themes.materialize = {
     cssClass: 'material-icons',
     left: 'chevron_left',
     right: 'chevron_right',
-    search: 'search'
+    search: 'search',
+    more_horiz: 'more_horiz'
   }
 };
 var CssClassMixin = {
@@ -504,14 +505,15 @@ var Button = React.createClass({displayName: "Button",
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
-    icon: React.PropTypes.string,
+    iconProps: React.PropTypes.object,
     onClick: React.PropTypes.func,
     additionalThemeClassKeys: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      additionalThemeClassKeys: ''
+      additionalThemeClassKeys: '',
+      iconProps: null
     };
   },
 
@@ -531,11 +533,11 @@ var Button = React.createClass({displayName: "Button",
   },
 
   renderIcon: function() {
-    if(!this.props.icon) {
+    if(!this.props.iconProps) {
       return '';
     }
 
-    return React.createElement(Icon, {className: "right", type: this.props.icon});
+    return React.createElement(Icon, React.__spread({},  this.props.iconProps));
   }
 });
 
@@ -1835,19 +1837,45 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
 
   componentDidMount: function() {
     var inputNode = React.findDOMNode(this.refs.input);
-    $(inputNode).pickadate({
+    var buttonNode = React.findDOMNode(this.refs.button);
+
+    var input = $(inputNode).pickadate({
+      editable: true,
       selectMonths: true,
-      selectYears: 15,
+      selectYears: true ,
       format: 'dd/mm/yyyy'
+      //A função abaixo fecha o datepicker quando uma data é selecionada.
+      //onSet: function() {
+      //  setTimeout(this.close, 0);
+      //}
+    });
+    var picker = input.pickadate('picker');
+
+    $(inputNode).off('click focus');
+
+    $(buttonNode).on('click', function(e) {
+      if (picker.get('open')) {
+        picker.close()
+      } else {
+        picker.open()
+      }
+      e.stopPropagation()
     });
   },
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "date", className: this.className(), ref: "input"}))
+    React.createElement("div", {className: "row"}, 
+      React.createElement("div", {className: "input-field col m2 s12"}, 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: { 'typeMask':'date'}, className: this.className(), ref: "input"})), 
+        React.createElement(Button, {iconProps: {type: "more_horiz"}, className: "input-datepicker__button  prefix", ref: "button"})
+      )
+    )
     );
   }
 });
+
+
 
 var InputHidden = React.createClass({displayName: "InputHidden",
   mixins: [InputComponentMixin],
@@ -1902,7 +1930,9 @@ var InputMasked = React.createClass({displayName: "InputMasked",
   render: function() {
 
     return (
-      React.createElement("input", React.__spread({},  this.props.field_params, {className: this.className(), ref: "inputMasked", type: "text"}))
+      React.createElement("input", React.__spread({},  this.props.field_params, {className: this.className(), ref: "inputMasked", type: "text"}), 
+      this.props.children
+      )
     );
   },
 
