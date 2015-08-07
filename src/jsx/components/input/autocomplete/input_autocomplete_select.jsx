@@ -33,8 +33,7 @@ var InputAutocompleteSelect = React.createClass({
         <div className={this.className()}>
           <span className="caret">▼</span>
           <InputText
-            id={this.prefixSelectProp(this.props.id)}
-            name={this.prefixSelectProp(this.props.name)}
+            id={this.selectId()}
             value={this.renderSelectedOptions()}
             disabled={this.props.disabled}
             placeholder={this.props.placeholder}
@@ -42,13 +41,13 @@ var InputAutocompleteSelect = React.createClass({
             className="select-dropdown"
           />
         </div>
-        <Label {...this.propsWithoutCSS()} id={this.prefixSelectProp(this.props.id)} />
+        <Label {...this.propsWithoutCSS()} id={this.selectId()} />
       </div>
     );
   },
 
-  prefixSelectProp: function(prop) {
-    return 'autocomplete_select_' + prop;
+  selectId: function() {
+    return 'autocomplete_select_' + this.props.id;
   },
 
   renderSelectedOptions: function() {
