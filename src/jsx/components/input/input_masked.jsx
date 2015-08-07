@@ -5,7 +5,8 @@ var InputMasked = React.createClass({
     mask: React.PropTypes.string,
     typeMask: React.PropTypes.string,
     predefinedMasks: React.PropTypes.object,
-    regex:React.PropTypes.string
+    regex: React.PropTypes.string,
+    showMaskOnHover: React.PropTypes.boolean
   },
 
   getDefaultProps: function() {
@@ -14,13 +15,31 @@ var InputMasked = React.createClass({
       mask:'',
       typeMask:'',
       regex:'',
+      showMaskOnHover: false,
       predefinedMasks: {
-        cpf: '999.999.999-99',
-        cnpj: '99.999.999/9999-99',
-        phone: '(99) 9999[9]-9999',
-        cell_phone: '(99) 9999[9]-9999',
-        date: '99/99/9999',
-        date_time: '99/99/9999 [99:99:99]'
+        cpf: {
+         mask:'999.999.999-99'
+        },
+        cnpj:{
+          mask: '99.999.999/9999-99'
+        },
+        phone:{
+          mask: '(99) 9999[9]-9999'
+        },
+        cell_phone:{
+          mask: '(99) 9999[9]-9999'
+        },
+        date:{
+          mask:'99/99/9999'
+        },
+        date_time:{
+          mask: '99/99/9999 [99:99:99]'
+        },
+        currency:{
+          mask:'999.999.999,99',
+          numericInput: true,
+          rightAlign: true
+        }
       }
     };
   },
@@ -34,10 +53,12 @@ var InputMasked = React.createClass({
   componentDidMount: function(){
     if(this.isRegexMask())
       this.renderRegexMask();
-    if(this.isAPredefinedMask())
-      this.renderPredefinedMask();
-    else
-      this.renderCustomMask();
+    else{
+      if(this.isAPredefinedMask())
+        this.renderPredefinedMask();
+      else
+        this.renderCustomMask();
+    }
   },
 
   renderRegexMask: function(){
@@ -49,16 +70,14 @@ var InputMasked = React.createClass({
     var params = {};
     if(this.props.mask!='')
       params['mask'] = this.props.mask;
-
     this.renderBaseMask(this.props.typeMask,params)
   },
   renderPredefinedMask: function(){
-    var params = {};
-    params['mask'] = this.maskMapping(this.props.mask);
-
-    this.renderBaseMask(this.props.typeMask,params);
+    var params = this.maskMapping(this.props.typeMask);
+    this.stopPropagationProps();
+    params = $.extend(params,this.props);
+    this.renderBaseMask('',params);
   },
-
   renderBaseMask: function(type,params){
     if(type != undefined && type != '')
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(type,params);
@@ -67,16 +86,22 @@ var InputMasked = React.createClass({
   },
 
   maskMapping: function(type) {
-    var maskTypes = this.props.predefinedMasks;
-    return maskTypes[type] == undefined ? type : maskTypes[type];
+    var typesMask = this.props.predefinedMasks;
+    return typesMask[type] == undefined ? type : typesMask[type];
   },
 
   isAPredefinedMask: function(){
-    return this.props.mask in this.props.predefinedMasks;
+    return this.props.typeMask in this.props.predefinedMasks;
   },
 
   isRegexMask: function(){
     return this.props.regex != '';
+  },
+
+  stopPropagationProps: function(){
+    delete this.props["predefinedMasks"];
+    delete this.props["mask"];
+    delete this.props["placeholder"];
   }
 
 });
