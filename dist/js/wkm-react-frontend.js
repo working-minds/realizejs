@@ -1879,7 +1879,7 @@ var InputMasked = React.createClass({displayName: "InputMasked",
       showMaskOnHover: false,
       predefinedMasks: {
         cpf: {
-         mask:'999.999.999-99'
+          mask:'999.999.999-99'
         },
         cnpj:{
           mask: '99.999.999/9999-99'
@@ -1889,9 +1889,6 @@ var InputMasked = React.createClass({displayName: "InputMasked",
         },
         cell_phone:{
           mask: '(99) 9999[9]-9999'
-        },
-        datetime:{
-          mask: 'datetime'
         },
         currency:{
           mask:'999.999.999,99',
@@ -1903,8 +1900,9 @@ var InputMasked = React.createClass({displayName: "InputMasked",
   },
 
   render: function() {
+
     return (
-      React.createElement("input", React.__spread({},  this.props, {className: this.className(), ref: "inputMasked", type: "text"}))
+      React.createElement("input", React.__spread({},  this.props.field_params, {className: this.className(), ref: "inputMasked", type: "text"}))
     );
   },
 
@@ -1921,20 +1919,28 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   renderRegexMask: function(){
     var params = {};
-    params['regex'] = this.props.regex;
+    params['regex'] = this.props.plugin_params.regex;
     this.renderBaseMask('Regex',params);
   },
   renderCustomMask: function(){
-    var params = {};
-    if(this.props.mask!='')
-      params['mask'] = this.props.mask;
-    this.renderBaseMask(this.props.typeMask,params)
+    var typeMask = this.props.plugin_params.typeMask
+    delete this.props.plugin_params["placeholder"];
+    delete this.props.plugin_params["typeMask"];
+
+    if(typeMask)
+      this.renderBaseMask(typeMask,'')
+    else
+      this.renderBaseMask('',this.props.plugin_params)
   },
   renderPredefinedMask: function(){
-    var params = this.maskMapping(this.props.typeMask);
-    this.stopPropagationProps();
-    params = $.extend(params,this.props);
-    this.renderBaseMask('',params)
+    var params = this.maskMapping(this.props.plugin_params.mask);
+    var typeMask = this.props.plugin_params.typeMask
+    delete this.props.plugin_params["mask"];
+    delete this.props.plugin_params["placeholder"];
+    delete this.props.plugin_params["typeMask"];
+
+    params = $.extend(params,this.props.plugin_params);
+    this.renderBaseMask(typeMask,params)
   },
   renderBaseMask: function(type,params){
     if(type != undefined && type != '')
@@ -1949,22 +1955,27 @@ var InputMasked = React.createClass({displayName: "InputMasked",
   },
 
   isAPredefinedMask: function(){
-    return this.props.typeMask in this.props.predefinedMasks;
+    return this.props.plugin_params.mask in this.props.predefinedMasks;
   },
 
   isRegexMask: function(){
-    return this.props.regex != '';
-  },
-
-  stopPropagationProps: function(){
-    delete this.props["predefinedMasks"];
-    delete this.props["mask"];
-    delete this.props["placeholder"];
+    return 'regex' in this.props.plugin_params;
   }
 
 });
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+////////////////////////EXEMPLO DE USO////////////////////////////////
 
-
+// react_component('InputMasked', {
+//                    field_params:{
+//                      placeholder:'CPF THIAGO'
+//                    },
+//                    plugin_params:{
+//                      mask:'cpf'
+//                    }
+//                 }
+//);
 var InputPassword = React.createClass({displayName: "InputPassword",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
