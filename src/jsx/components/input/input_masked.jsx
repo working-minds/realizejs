@@ -29,11 +29,8 @@ var InputMasked = React.createClass({
         cell_phone:{
           mask: '(99) 9999[9]-9999'
         },
-        date:{
-          mask:'99/99/9999'
-        },
-        date_time:{
-          mask: '99/99/9999 [99:99:99]'
+        datetime:{
+          mask: 'datetime'
         },
         currency:{
           mask:'999.999.999,99',
@@ -76,7 +73,7 @@ var InputMasked = React.createClass({
     var params = this.maskMapping(this.props.typeMask);
     this.stopPropagationProps();
     params = $.extend(params,this.props);
-    this.renderBaseMask('',params);
+    this.renderBaseMask('',params)
   },
   renderBaseMask: function(type,params){
     if(type != undefined && type != '')
