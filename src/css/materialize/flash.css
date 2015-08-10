@@ -1,0 +1,22 @@
+.flash {
+  position: relative;
+  opacity: 1.0;
+}
+
+.flash.dismissed {
+  transition: opacity 0.5s ease;
+  opacity: 0.0;
+}
+
+.flash__dismiss {
+  cursor: pointer;
+  border-top-width: 0 !important;
+  padding: 0 !important;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+}
+
+.flash__content p {
+  padding-right: 30px;
+}

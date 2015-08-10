@@ -156,12 +156,56 @@ WRF.themes.materialize = {
     }
   },
 
+  flash: {
+    cssClass: 'flash card z-depth-0',
+
+    content: {
+      cssClass: 'flash__content card-content'
+    },
+
+    dismiss: {
+      cssClass: 'flash__dismiss card-action'
+    },
+
+    info: {
+      cssClass: 'blue lighten-4',
+
+      content: {
+        cssClass: 'blue-text darken-4'
+      }
+    },
+
+    warning: {
+      cssClass: 'amber lighten-4',
+
+      content: {
+        cssClass: 'orange-text darken-4'
+      }
+    },
+
+    error: {
+      cssClass: 'red lighten-4',
+
+      content: {
+        cssClass: 'red-text darken-4'
+      }
+    },
+
+    success: {
+      cssClass: 'green lighten-4',
+
+      content: {
+        cssClass: 'green-text darken-4'
+      }
+    }
+  },
+
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',
     right: 'chevron_right',
     search: 'search',
     calendar: 'today',
-    more_horiz: 'more_horiz'
+    close: 'clear'
   }
 };

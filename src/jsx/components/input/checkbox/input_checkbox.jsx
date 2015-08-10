@@ -2,7 +2,7 @@ var InputCheckbox = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
     renderAsIndeterminate: React.PropTypes.bool,
-    isChecked:React.PropTypes.boolean
+    isChecked:React.PropTypes.bool
   },
 
   getInitialState: function() {

@@ -299,13 +299,57 @@ WRF.themes.materialize = {
     }
   },
 
+  flash: {
+    cssClass: 'flash card z-depth-0',
+
+    content: {
+      cssClass: 'flash__content card-content'
+    },
+
+    dismiss: {
+      cssClass: 'flash__dismiss card-action'
+    },
+
+    info: {
+      cssClass: 'blue lighten-4',
+
+      content: {
+        cssClass: 'blue-text darken-4'
+      }
+    },
+
+    warning: {
+      cssClass: 'amber lighten-4',
+
+      content: {
+        cssClass: 'orange-text darken-4'
+      }
+    },
+
+    error: {
+      cssClass: 'red lighten-4',
+
+      content: {
+        cssClass: 'red-text darken-4'
+      }
+    },
+
+    success: {
+      cssClass: 'green lighten-4',
+
+      content: {
+        cssClass: 'green-text darken-4'
+      }
+    }
+  },
+
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',
     right: 'chevron_right',
     search: 'search',
     calendar: 'today',
-    more_horiz: 'more_horiz'
+    close: 'clear'
   }
 };
 var CssClassMixin = {
@@ -603,6 +647,115 @@ var Button = React.createClass({displayName: "Button",
     return this.props.disableWith;
   }
   
+});
+
+var Flash = React.createClass({displayName: "Flash",
+  mixins: [CssClassMixin],
+  propTypes: {
+    type: React.PropTypes.oneOf(['info', 'warning', 'error', 'success']),
+    text: React.PropTypes.string,
+    dismissTimeout: React.PropTypes.number,
+    canDismiss: React.PropTypes.bool,
+    onDismiss: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      type: 'info',
+      dismissTimeout: -1,
+      canDismiss: true,
+      text: '',
+      onDismiss: function() {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'flash flash.' + this.props.type
+    }
+  },
+
+  componentDidMount: function() {
+    if(this.props.dismissTimeout > 0) {
+      this.setDismissTimeout();
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className(), ref: "flash"}, 
+        React.createElement(FlashContent, React.__spread({},  this.props)), 
+        this.props.canDismiss ? React.createElement(FlashDismiss, React.__spread({},  this.props, {onClick: this.handleDismissClick})): ''
+      )
+    );
+  },
+
+  handleDismissClick: function() {
+    this.dismiss(200);
+  },
+
+  dismiss: function(duration) {
+    var $flashNode = $(React.findDOMNode(this.refs.flash));
+    $flashNode.slideUp(duration, function() {
+      $flashNode.remove();
+      this.props.onDismiss();
+    });
+  },
+
+  setDismissTimeout: function() {
+    setTimeout(function() {
+      this.dismiss(800);
+    }.bind(this), this.props.dismissTimeout);
+  }
+});
+
+var FlashContent = React.createClass({displayName: "FlashContent",
+  mixins: [CssClassMixin],
+  propTypes: {
+    type: React.PropTypes.string,
+    text: React.PropTypes.string
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'flash.content flash.' + this.props.type + '.content'
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement("p", null, 
+          this.props.text
+        )
+      )
+    );
+  }
+});
+
+var FlashDismiss = React.createClass({displayName: "FlashDismiss",
+  mixins: [CssClassMixin],
+  propTypes: {
+    type: React.PropTypes.string,
+    text: React.PropTypes.string,
+    onClick: React.PropTypes.func
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'flash.dismiss flash.' + this.props.type + '.content'
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className(), onClick: this.props.onClick}, 
+        React.createElement(Icon, {type: "close"})
+      )
+    );
+  }
 });
 
 var Form = React.createClass({displayName: "Form",
@@ -1286,12 +1439,17 @@ var Icon = React.createClass({displayName: "Icon",
 
   render: function() {
     return (
-      React.createElement("i", {className: this.className()}, this.themeIconType())
+      React.createElement("i", {className: this.className()}, this.iconType())
     );
   },
 
-  themeIconType: function() {
-    return WRF.themeProp('icon.' + this.props.type);
+  iconType: function() {
+    var iconType = WRF.themeProp('icon.' + this.props.type);
+    if(!iconType) {
+      iconType = this.props.type;
+    }
+
+    return iconType;
   }
 });
 
@@ -1924,7 +2082,7 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
     renderAsIndeterminate: React.PropTypes.bool,
-    isChecked:React.PropTypes.boolean
+    isChecked:React.PropTypes.bool
   },
 
   getInitialState: function() {
