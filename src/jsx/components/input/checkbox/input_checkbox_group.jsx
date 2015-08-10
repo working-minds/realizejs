@@ -3,7 +3,7 @@ var InputCheckboxGroup = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
-    items: React.PropTypes.array
+    options: React.PropTypes.array
   },
 
   getDefaultProps: function() {
@@ -11,7 +11,7 @@ var InputCheckboxGroup = React.createClass({
       themeClassKey: 'input.checkbox',
       name:'',
       align: 'vertical',
-      items: []
+      options: []
     };
   },
 
@@ -34,14 +34,17 @@ var InputCheckboxGroup = React.createClass({
   },
 
   renderItems: function(){
-    var items = this.props.items.map(function ( item,i ) {
-      var filledClass =  item.filled? 'filled-in' : '';
-      return <p>
-        <InputCheckbox {...item } id={this.props.name + '_' + i}  name={this.props.name} className={filledClass} isChecked={item.isChecked} />
-        <label htmlFor={this.props.name + '_' + i}>{item.label}</label>
-      </p>
-    },this);
-    return items;
+    return this.props.options.map(function (optionProps, i) {
+      var filledClass =  optionProps.filled? 'filled-in' : '';
+      optionProps.id = this.props.name + '_' + i;
+
+      return (
+        <p>
+          <InputCheckbox {...optionProps } name={this.props.name} className={filledClass} isChecked={optionProps.isChecked} />
+          <Label {...optionProps} />
+        </p>
+      );
+    }, this);
   },
 
   render: function() {

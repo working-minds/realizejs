@@ -1879,7 +1879,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
   propTypes: {
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
-    items: React.PropTypes.array
+    options: React.PropTypes.array
   },
 
   getDefaultProps: function() {
@@ -1887,7 +1887,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
       themeClassKey: 'input.checkbox',
       name:'',
       align: 'vertical',
-      items: []
+      options: []
     };
   },
 
@@ -1910,14 +1910,17 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
   },
 
   renderItems: function(){
-    var items = this.props.items.map(function ( item,i ) {
-      var filledClass =  item.filled? 'filled-in' : '';
-      return React.createElement("p", null, 
-        React.createElement(InputCheckbox, React.__spread({},  item , {id: this.props.name + '_' + i, name: this.props.name, className: filledClass, isChecked: item.isChecked})), 
-        React.createElement("label", {htmlFor: this.props.name + '_' + i}, item.label)
-      )
-    },this);
-    return items;
+    return this.props.options.map(function (optionProps, i) {
+      var filledClass =  optionProps.filled? 'filled-in' : '';
+      optionProps.id = this.props.name + '_' + i;
+
+      return (
+        React.createElement("p", null, 
+          React.createElement(InputCheckbox, React.__spread({},  optionProps , {name: this.props.name, className: filledClass, isChecked: optionProps.isChecked})), 
+          React.createElement(Label, React.__spread({},  optionProps))
+        )
+      );
+    }, this);
   },
 
   render: function() {
@@ -1958,7 +1961,8 @@ var Input = React.createClass({displayName: "Input",
           hidden: InputHidden,
           password: InputPassword,
           select: InputSelect,
-          textarea: InputTextarea
+          textarea: InputTextarea,
+          checkbox_group: InputCheckboxGroup
         };
 
         return mapping[component];

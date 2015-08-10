@@ -26,7 +26,8 @@ var Input = React.createClass({
           hidden: InputHidden,
           password: InputPassword,
           select: InputSelect,
-          textarea: InputTextarea
+          textarea: InputTextarea,
+          checkbox_group: InputCheckboxGroup
         };
 
         return mapping[component];
