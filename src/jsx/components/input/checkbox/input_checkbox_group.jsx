@@ -26,11 +26,11 @@ var InputCheckboxGroup = React.createClass({
   },
 
   renderChildren:function(){
-    var menuItems = React.Children.map(this.props.children, function(item) {
+    var items = React.Children.map(this.props.children, function(item) {
       if((item !== null) && (item.props.children[0].type.displayName == "InputCheckbox"))
         return item;
     });
-    return menuItems;
+    return items;
   },
 
   renderItems: function(){
