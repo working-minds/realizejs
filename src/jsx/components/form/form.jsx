@@ -1,9 +1,12 @@
 var Form = React.createClass({
+  mixins: [CssClassMixin, FormErrorHandlerMixin],
   propTypes: {
     inputs: React.PropTypes.object,
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
+    style: React.PropTypes.string,
+    postObject: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
@@ -23,6 +26,9 @@ var Form = React.createClass({
       },
       otherButtons: [],
       isLoading: false,
+      themeClassKey: 'form',
+      style: 'default',
+      postObject: null,
       onSuccess: function(data) {
         return true;
       },
@@ -44,12 +50,19 @@ var Form = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    if(this.props.postObject !== null) {
+      this.applyPostObjectToInputsProps();
+    }
+  },
+
   render: function() {
     return (
       <form action={this.props.action}
         id={this.props.id}
         onSubmit={this.handleSubmit}
         onReset={this.props.onReset}
+        className={this.className()}
         ref="form">
 
         {this.renderInputs()}
@@ -68,10 +81,19 @@ var Form = React.createClass({
     var inputComponents = [];
     var inputIndex = 0;
 
-    for(var inputName in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputName)) {
-        var inputProps = inputsProps[inputName];
-        inputComponents.push(<Input {...inputProps} id={inputName} key={"input_" + inputIndex} ref={"input_" + inputIndex} />);
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputComponents.push(
+          <Input {...inputProps}
+            errors={this.state.errors[inputId]}
+            formStyle={this.props.style}
+            key={"input_" + inputIndex}
+            ref={"input_" + inputIndex}
+          />
+        );
+
         inputIndex++;
       }
     }
@@ -89,6 +111,20 @@ var Form = React.createClass({
     }
 
     return otherButtons;
+  },
+
+  applyPostObjectToInputsProps: function() {
+    var postObject = this.props.postObject;
+    var inputsProps = this.props.inputs;
+
+    for(var inputId in inputsProps) {
+      if (inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
+        inputProps.id = postObject + '_' + inputId;
+      }
+    }
   },
 
   submitButtonProps: function() {
@@ -127,6 +163,7 @@ var Form = React.createClass({
       }.bind(this),
       error: function(xhr, status, error) {
         this.setState({isLoading: false});
+        this.handleError(xhr, status, error);
         this.props.onError(xhr, status, error);
       }.bind(this)
     });
@@ -139,5 +176,5 @@ var Form = React.createClass({
     }
 
     return isLoading;
-  }
+  },
 });

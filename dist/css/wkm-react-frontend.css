@@ -13,6 +13,14 @@ button .preloader-wrapper.small {
 .form__button-group .filter__button--clear {
   color: black;
 }
+
+.form__input {
+  margin-bottom: 10px;
+}
+
+.form--input-error {
+
+}
 .grid__pagination {
   text-align: center;
 }
@@ -104,6 +112,13 @@ button .preloader-wrapper.small {
 
 .table-cell--currency, .table-cell--number, .table-cell--datetime {
   white-space: nowrap;
+}
+.form__input-error {
+  color: #F44336;
+  position: absolute;
+  top: 50px;
+  left: 0.75rem;
+  font-size: 0.8rem;
 }
 .input-autocomplete__option label {
   top: 0;

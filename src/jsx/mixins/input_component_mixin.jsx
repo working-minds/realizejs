@@ -13,7 +13,30 @@ var InputComponentMixin = {
       disabled: false,
       onChange: function(event) {
         return true;
-      }
+      },
+      errors: []
     };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: this.setThemeClassKeyWithErrors(this.props)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.setThemeClassKeyWithErrors(nextProps)
+    });
+  },
+
+  setThemeClassKeyWithErrors: function(props) {
+    var themeClassKey = (props.themeClassKey || '');
+    var errors = props.errors;
+    if(!!errors && errors.length > 0) {
+      themeClassKey += ' input.error';
+    }
+
+    return themeClassKey;
   }
 };

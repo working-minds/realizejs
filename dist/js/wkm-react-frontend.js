@@ -205,7 +205,7 @@ WRF.themes.materialize = {
   },
 
   form: {
-    cssClass: '',
+    cssClass: 'form row',
 
     buttonGroup: {
       cssClass: 'form__button-group col s12 m12 l12 right-align'
@@ -214,7 +214,21 @@ WRF.themes.materialize = {
 
   input: {
     wrapper: {
-      cssClass: 'input-field col l3 m4 s12'
+      default: {
+        cssClass: 'form__input input-field col l6 m6 s12'
+      },
+
+      filter: {
+        cssClass: 'form__input input-field col l3 m4 s12'
+      }
+    },
+
+    error: {
+      cssClass: 'invalid',
+
+      hint: {
+        cssClass: 'form__input-error'
+      }
     },
 
     text: {
@@ -240,7 +254,7 @@ WRF.themes.materialize = {
       },
 
       select: {
-        cssClass: 'select-wrapper initialized'
+        cssClass: 'validate select-wrapper initialized'
       }
     },
 
@@ -249,19 +263,15 @@ WRF.themes.materialize = {
     },
 
     datepicker: {
-      cssClass: 'datepicker'
+      cssClass: 'validate datepicker'
     },
 
     select: {
-      cssClass: ''
+      cssClass: 'validate'
     },
 
     textarea: {
-      cssClass: 'materialize-textarea',
-
-      wrapper: {
-        cssClass: 'input-field col l12 m12 s12'
-      }
+      cssClass: 'materialize-textarea'
     }
   },
 
@@ -329,7 +339,7 @@ var CssClassMixin = {
 
   getThemeClassKey: function() {
     var themeClassKey = this.props.themeClassKey;
-    if(!themeClassKey && !!this.state) {
+    if(!!this.state && !!this.state.themeClassKey) {
       themeClassKey = this.state.themeClassKey;
     }
 
@@ -344,6 +354,23 @@ var CssClassMixin = {
     }.bind(this));
 
     return props;
+  }
+};
+var FormErrorHandlerMixin = {
+  getInitialState: function() {
+    return {
+      errors: {}
+    };
+  },
+
+  handleError: function(xhr, status, error) {
+    if(xhr.status === 422) {
+      this.handleValidationError(xhr);
+    }
+  },
+
+  handleValidationError: function(xhr) {
+    this.setState({errors: xhr.responseJSON});
   }
 };
 var InputComponentMixin = {
@@ -361,8 +388,31 @@ var InputComponentMixin = {
       disabled: false,
       onChange: function(event) {
         return true;
-      }
+      },
+      errors: []
     };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: this.setThemeClassKeyWithErrors(this.props)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.setThemeClassKeyWithErrors(nextProps)
+    });
+  },
+
+  setThemeClassKeyWithErrors: function(props) {
+    var themeClassKey = (props.themeClassKey || '');
+    var errors = props.errors;
+    if(!!errors && errors.length > 0) {
+      themeClassKey += ' input.error';
+    }
+
+    return themeClassKey;
   }
 };
 var MaterializeSelectMixin = {
@@ -556,11 +606,14 @@ var Button = React.createClass({displayName: "Button",
 });
 
 var Form = React.createClass({displayName: "Form",
+  mixins: [CssClassMixin, FormErrorHandlerMixin],
   propTypes: {
     inputs: React.PropTypes.object,
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
+    style: React.PropTypes.string,
+    postObject: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
@@ -580,6 +633,9 @@ var Form = React.createClass({displayName: "Form",
       },
       otherButtons: [],
       isLoading: false,
+      themeClassKey: 'form',
+      style: 'default',
+      postObject: null,
       onSuccess: function(data) {
         return true;
       },
@@ -601,12 +657,19 @@ var Form = React.createClass({displayName: "Form",
     };
   },
 
+  componentWillMount: function() {
+    if(this.props.postObject !== null) {
+      this.applyPostObjectToInputsProps();
+    }
+  },
+
   render: function() {
     return (
       React.createElement("form", {action: this.props.action, 
         id: this.props.id, 
         onSubmit: this.handleSubmit, 
         onReset: this.props.onReset, 
+        className: this.className(), 
         ref: "form"}, 
 
         this.renderInputs(), 
@@ -625,10 +688,19 @@ var Form = React.createClass({displayName: "Form",
     var inputComponents = [];
     var inputIndex = 0;
 
-    for(var inputName in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputName)) {
-        var inputProps = inputsProps[inputName];
-        inputComponents.push(React.createElement(Input, React.__spread({},  inputProps, {id: inputName, key: "input_" + inputIndex, ref: "input_" + inputIndex})));
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputComponents.push(
+          React.createElement(Input, React.__spread({},  inputProps, 
+            {errors: this.state.errors[inputId], 
+            formStyle: this.props.style, 
+            key: "input_" + inputIndex, 
+            ref: "input_" + inputIndex})
+          )
+        );
+
         inputIndex++;
       }
     }
@@ -646,6 +718,20 @@ var Form = React.createClass({displayName: "Form",
     }
 
     return otherButtons;
+  },
+
+  applyPostObjectToInputsProps: function() {
+    var postObject = this.props.postObject;
+    var inputsProps = this.props.inputs;
+
+    for(var inputId in inputsProps) {
+      if (inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
+        inputProps.id = postObject + '_' + inputId;
+      }
+    }
   },
 
   submitButtonProps: function() {
@@ -684,6 +770,7 @@ var Form = React.createClass({displayName: "Form",
       }.bind(this),
       error: function(xhr, status, error) {
         this.setState({isLoading: false});
+        this.handleError(xhr, status, error);
         this.props.onError(xhr, status, error);
       }.bind(this)
     });
@@ -696,7 +783,7 @@ var Form = React.createClass({displayName: "Form",
     }
 
     return isLoading;
-  }
+  },
 });
 
 var Grid = React.createClass({displayName: "Grid",
@@ -937,7 +1024,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Form, React.__spread({},  this.props, {otherButtons: [this.props.clearButton], ref: "form"}))
+        React.createElement(Form, React.__spread({},  this.props, {otherButtons: [this.props.clearButton], style: "filter", ref: "form"}))
       )
     );
   },
@@ -1940,6 +2027,7 @@ var Input = React.createClass({displayName: "Input",
     name: React.PropTypes.string,
     label: React.PropTypes.string,
     value: React.PropTypes.string,
+    formStyle: React.PropTypes.string,
     onChange: React.PropTypes.func,
     component: React.PropTypes.string,
     componentMapping: React.PropTypes.func
@@ -1949,6 +2037,8 @@ var Input = React.createClass({displayName: "Input",
     return {
       value: null,
       component: 'text',
+      formStyle: 'default',
+      errors: [],
       onChange: function(event) {
         return true;
       },
@@ -1973,18 +2063,12 @@ var Input = React.createClass({displayName: "Input",
   getInitialState: function() {
     return {
       value: this.props.value,
-      themeClassKey: this.themeClassKeyByComponent()
+      themeClassKey: this.themeClassKeyByStyle()
     };
   },
 
-  themeClassKeyByComponent: function() {
-    var component = this.props.component;
-
-    if(component === 'textarea') {
-      return 'input.textarea.wrapper';
-    } else {
-      return 'input.wrapper';
-    }
+  themeClassKeyByStyle: function() {
+    return 'input.wrapper.' + this.props.formStyle;
   },
 
   render: function() {
@@ -2000,7 +2084,8 @@ var Input = React.createClass({displayName: "Input",
     return (
       React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
-        React.createElement(Label, React.__spread({},  this.propsWithoutCSS()))
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
+        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
       )
     );
   },
@@ -2008,7 +2093,8 @@ var Input = React.createClass({displayName: "Input",
   renderAutocompleteInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
-        this.renderComponentInput()
+        this.renderComponentInput(), 
+        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
       )
     );
   },
@@ -2082,6 +2168,41 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
 });
 
 
+
+var InputError = React.createClass({displayName: "InputError",
+  mixins: [CssClassMixin],
+
+  getDefaultProps: function() {
+    return {
+      errors: [],
+      themeClassKey: 'input.error.hint'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("span", {className: this.className()}, 
+        this.errorMessages()
+      )
+    );
+  },
+
+  errorMessages: function() {
+    var errors = this.props.errors;
+    var errorMessage = '';
+    if(!$.isArray(errors)) {
+      errors = [errors];
+    }
+
+    for(var i = 0; i < errors.length; i++) {
+      var error = errors[i];
+      errorMessage += error + ' ';
+    }
+
+    return errorMessage.trim();
+  }
+
+});
 
 var InputHidden = React.createClass({displayName: "InputHidden",
   mixins: [InputComponentMixin],

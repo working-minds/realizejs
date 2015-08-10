@@ -5,3 +5,11 @@
 .form__button-group .filter__button--clear {
   color: black;
 }
+
+.form__input {
+  margin-bottom: 10px;
+}
+
+.form--input-error {
+
+}

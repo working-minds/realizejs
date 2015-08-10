@@ -62,7 +62,7 @@ WRF.themes.materialize = {
   },
 
   form: {
-    cssClass: '',
+    cssClass: 'form row',
 
     buttonGroup: {
       cssClass: 'form__button-group col s12 m12 l12 right-align'
@@ -71,7 +71,21 @@ WRF.themes.materialize = {
 
   input: {
     wrapper: {
-      cssClass: 'input-field col l3 m4 s12'
+      default: {
+        cssClass: 'form__input input-field col l6 m6 s12'
+      },
+
+      filter: {
+        cssClass: 'form__input input-field col l3 m4 s12'
+      }
+    },
+
+    error: {
+      cssClass: 'invalid',
+
+      hint: {
+        cssClass: 'form__input-error'
+      }
     },
 
     text: {
@@ -97,7 +111,7 @@ WRF.themes.materialize = {
       },
 
       select: {
-        cssClass: 'select-wrapper initialized'
+        cssClass: 'validate select-wrapper initialized'
       }
     },
 
@@ -106,19 +120,15 @@ WRF.themes.materialize = {
     },
 
     datepicker: {
-      cssClass: 'datepicker'
+      cssClass: 'validate datepicker'
     },
 
     select: {
-      cssClass: ''
+      cssClass: 'validate'
     },
 
     textarea: {
-      cssClass: 'materialize-textarea',
-
-      wrapper: {
-        cssClass: 'input-field col l12 m12 s12'
-      }
+      cssClass: 'materialize-textarea'
     }
   },
 
