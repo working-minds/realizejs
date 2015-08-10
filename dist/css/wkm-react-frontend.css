@@ -85,6 +85,11 @@ button .preloader-wrapper.small {
   padding: 0;
   right: 1rem;
 }
+
+.input-checkbox-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
+}
 .table-header .table-header__name.sortable {
   cursor: pointer;
 }
