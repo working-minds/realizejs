@@ -2,7 +2,7 @@ var InputCheckboxGroup = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
     name: React.PropTypes.string,
-    align: React.PropTypes.string,
+    align: React.PropTypes.oneOf(['vertical', 'horizontal']),
     items: React.PropTypes.array
   },
 
