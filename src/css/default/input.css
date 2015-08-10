@@ -62,3 +62,8 @@
   padding: 0;
   right: 1rem;
 }
+
+.input-checkbox-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
+}

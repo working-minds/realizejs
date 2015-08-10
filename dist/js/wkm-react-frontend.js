@@ -1833,6 +1833,103 @@ var InputAutocompleteValues = React.createClass({displayName: "InputAutocomplete
   }
 });
 
+var InputCheckbox = React.createClass({displayName: "InputCheckbox",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    renderAsIndeterminate: React.PropTypes.bool,
+    isChecked:React.PropTypes.boolean
+  },
+
+  getInitialState: function() {
+    return {
+      isChecked: false
+    };
+  },
+
+  handleChange: function() {
+    this.setState({isChecked: !this.state.isChecked});
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.checkbox',
+      renderAsIndeterminate: false
+    };
+  },
+
+  componentWillMount: function() {
+    this.state.isChecked = this.props.isChecked || this.state.isChecked;
+  },
+
+  componentDidMount: function() {
+    React.findDOMNode(this.refs.input).indeterminate = this.props.renderAsIndeterminate;
+  },
+
+  render: function() {
+    return (
+      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), ref: "input", onChange: this.handleChange, checked: this.state.isChecked}))
+    );
+  }
+
+
+});
+
+var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    name: React.PropTypes.string,
+    align: React.PropTypes.string,
+    items: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.checkbox',
+      name:'',
+      align: 'vertical',
+      items: []
+    };
+  },
+
+  componentWillMount: function() {
+    if(!Array.isArray(this.props.children))
+      this.props.children = [this.props.children];
+
+    var items = this.renderItems();
+    $(items).each(function (i, element) {
+      this.props.children.push(element);
+    }.bind(this));
+  },
+
+  renderChildren:function(){
+    var menuItems = React.Children.map(this.props.children, function(item) {
+      if((item !== null) && (item.props.children[0].type.displayName == "InputCheckbox"))
+        return item;
+    });
+    return menuItems;
+  },
+
+  renderItems: function(){
+    var items = this.props.items.map(function ( item,i ) {
+      var filledClass =  item.filled? 'filled-in' : '';
+      return React.createElement("p", null, 
+        React.createElement(InputCheckbox, React.__spread({},  item , {id: this.props.name + '_' + i, name: this.props.name, className: filledClass, isChecked: item.isChecked})), 
+        React.createElement("label", {htmlFor: this.props.name + '_' + i}, item.label)
+      )
+    },this);
+    return items;
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: 'input-checkbox-group align-'+this.props.align}, 
+        this.renderChildren()
+      )
+    );
+  }
+
+});
+
 var Input = React.createClass({displayName: "Input",
   mixins: [CssClassMixin],
   propTypes: {
@@ -1930,30 +2027,6 @@ var Input = React.createClass({displayName: "Input",
     var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
 
     return React.createElement(componentInputClass, componentInputProps);
-  }
-});
-
-var InputCheckbox = React.createClass({displayName: "InputCheckbox",
-  mixins: [CssClassMixin, InputComponentMixin],
-  propTypes: {
-    renderAsIndeterminate: React.PropTypes.bool
-  },
-
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false
-    };
-  },
-
-  componentDidMount: function() {
-    React.findDOMNode(this.refs.input).indeterminate = this.props.renderAsIndeterminate;
-  },
-
-  render: function() {
-    return (
-      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), ref: "input"}))
-    );
   }
 });
 
