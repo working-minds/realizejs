@@ -65,6 +65,7 @@ var Form = React.createClass({
         className={this.className()}
         ref="form">
 
+        {this.renderFlashErrors()}
         {this.renderInputs()}
         {this.props.children}
 
@@ -158,7 +159,7 @@ var Form = React.createClass({
       dataType: this.props.dataType,
       data: postData,
       success: function(data) {
-        this.setState({isLoading: false});
+        this.setState({isLoading: false, errors: {}});
         this.props.onSuccess(data);
       }.bind(this),
       error: function(xhr, status, error) {

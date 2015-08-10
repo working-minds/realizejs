@@ -50,7 +50,7 @@ var Flash = React.createClass({
     $flashNode.slideUp(duration, function() {
       $flashNode.remove();
       this.props.onDismiss();
-    });
+    }.bind(this));
   },
 
   setDismissTimeout: function() {

@@ -401,10 +401,28 @@ var CssClassMixin = {
   }
 };
 var FormErrorHandlerMixin = {
+  propTypes: {
+    errorMessage: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      errorMessage: 'Por favor, verifique o(s) seguinte(s) campo(s):'
+    };
+  },
+
   getInitialState: function() {
     return {
       errors: {}
     };
+  },
+
+  renderFlashErrors: function() {
+    if($.isEmptyObject(this.state.errors)) {
+      return '';
+    }
+
+    return React.createElement(Flash, {type: "error", text: this.props.errorMessage});
   },
 
   handleError: function(xhr, status, error) {
@@ -701,7 +719,7 @@ var Flash = React.createClass({displayName: "Flash",
     $flashNode.slideUp(duration, function() {
       $flashNode.remove();
       this.props.onDismiss();
-    });
+    }.bind(this));
   },
 
   setDismissTimeout: function() {
@@ -825,6 +843,7 @@ var Form = React.createClass({displayName: "Form",
         className: this.className(), 
         ref: "form"}, 
 
+        this.renderFlashErrors(), 
         this.renderInputs(), 
         this.props.children, 
 
@@ -918,7 +937,7 @@ var Form = React.createClass({displayName: "Form",
       dataType: this.props.dataType,
       data: postData,
       success: function(data) {
-        this.setState({isLoading: false});
+        this.setState({isLoading: false, errors: {}});
         this.props.onSuccess(data);
       }.bind(this),
       error: function(xhr, status, error) {
@@ -2081,18 +2100,7 @@ var InputAutocompleteValues = React.createClass({displayName: "InputAutocomplete
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    renderAsIndeterminate: React.PropTypes.bool,
-    isChecked:React.PropTypes.bool
-  },
-
-  getInitialState: function() {
-    return {
-      isChecked: false
-    };
-  },
-
-  handleChange: function() {
-    this.setState({isChecked: !this.state.isChecked});
+    renderAsIndeterminate: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -2102,17 +2110,13 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
     };
   },
 
-  componentWillMount: function() {
-    this.state.isChecked = this.props.isChecked || this.state.isChecked;
-  },
-
   componentDidMount: function() {
     React.findDOMNode(this.refs.input).indeterminate = this.props.renderAsIndeterminate;
   },
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), ref: "input", onChange: this.handleChange, checked: this.state.isChecked}))
+      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), ref: "input"}))
     );
   }
 
@@ -2234,11 +2238,11 @@ var Input = React.createClass({displayName: "Input",
     if(this.hasOwnProperty(renderFunction)) {
       return this[renderFunction]();
     } else {
-      return this.renderVisibleInput();
+      return this.renderInput();
     }
   },
 
-  renderVisibleInput: function() {
+  renderInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
@@ -2260,7 +2264,8 @@ var Input = React.createClass({displayName: "Input",
   renderDatepickerInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
-        this.renderComponentInput()
+        this.renderComponentInput(), 
+        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
       )
     );
   },

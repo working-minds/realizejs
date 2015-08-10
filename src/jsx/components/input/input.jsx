@@ -54,11 +54,11 @@ var Input = React.createClass({
     if(this.hasOwnProperty(renderFunction)) {
       return this[renderFunction]();
     } else {
-      return this.renderVisibleInput();
+      return this.renderInput();
     }
   },
 
-  renderVisibleInput: function() {
+  renderInput: function() {
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
@@ -81,6 +81,7 @@ var Input = React.createClass({
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
+        <InputError {...this.propsWithoutCSS()} />
       </div>
     );
   },
