@@ -422,7 +422,7 @@ var FormErrorHandlerMixin = {
       return '';
     }
 
-    return React.createElement(Flash, {type: "error", text: this.props.errorMessage});
+    return React.createElement(Flash, {type: "error", text: this.props.errorMessage, dismissed: false});
   },
 
   handleError: function(xhr, status, error) {
@@ -667,6 +667,7 @@ var Button = React.createClass({displayName: "Button",
   
 });
 
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var Flash = React.createClass({displayName: "Flash",
   mixins: [CssClassMixin],
   propTypes: {
@@ -674,7 +675,8 @@ var Flash = React.createClass({displayName: "Flash",
     text: React.PropTypes.string,
     dismissTimeout: React.PropTypes.number,
     canDismiss: React.PropTypes.bool,
-    onDismiss: React.PropTypes.func
+    onDismiss: React.PropTypes.func,
+    dismissed: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -682,6 +684,7 @@ var Flash = React.createClass({displayName: "Flash",
       type: 'info',
       dismissTimeout: -1,
       canDismiss: true,
+      dismissed: false,
       text: '',
       onDismiss: function() {
         return true;
@@ -691,8 +694,13 @@ var Flash = React.createClass({displayName: "Flash",
 
   getInitialState: function() {
     return {
-      themeClassKey: 'flash flash.' + this.props.type
+      themeClassKey: 'flash flash.' + this.props.type,
+      dismissed: this.props.dismissed
     }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({dismissed: nextProps.dismissed});
   },
 
   componentDidMount: function() {
@@ -703,28 +711,29 @@ var Flash = React.createClass({displayName: "Flash",
 
   render: function() {
     return (
-      React.createElement("div", {className: this.className(), ref: "flash"}, 
-        React.createElement(FlashContent, React.__spread({},  this.props)), 
-        this.props.canDismiss ? React.createElement(FlashDismiss, React.__spread({},  this.props, {onClick: this.handleDismissClick})): ''
+      React.createElement(ReactCSSTransitionGroup, {transitionName: "dismiss", transitionAppear: true}, 
+        this.state.dismissed ? '' : this.renderFlash()
       )
     );
   },
 
-  handleDismissClick: function() {
-    this.dismiss(200);
+  renderFlash: function() {
+    return (
+      React.createElement("div", {className: this.className(), ref: "flash"}, 
+        React.createElement(FlashContent, React.__spread({},  this.props)), 
+        this.props.canDismiss ? React.createElement(FlashDismiss, React.__spread({},  this.props, {onClick: this.dismiss})): ''
+      )
+    );
   },
 
-  dismiss: function(duration) {
-    var $flashNode = $(React.findDOMNode(this.refs.flash));
-    $flashNode.slideUp(duration, function() {
-      $flashNode.remove();
-      this.props.onDismiss();
-    }.bind(this));
+  dismiss: function() {
+    this.setState({dismissed: true});
+    this.props.onDismiss();
   },
 
   setDismissTimeout: function() {
     setTimeout(function() {
-      this.dismiss(800);
+      this.dismiss();
     }.bind(this), this.props.dismissTimeout);
   }
 });
@@ -2359,10 +2368,10 @@ var InputError = React.createClass({displayName: "InputError",
 
     for(var i = 0; i < errors.length; i++) {
       var error = errors[i];
-      errorMessage += error + ' ';
+      errorMessage += error + ' / ';
     }
 
-    return errorMessage.trim();
+    return errorMessage.replace(/[\/\s]*$/, '');
   }
 
 });

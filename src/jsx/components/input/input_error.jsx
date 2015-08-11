@@ -25,10 +25,10 @@ var InputError = React.createClass({
 
     for(var i = 0; i < errors.length; i++) {
       var error = errors[i];
-      errorMessage += error + ' ';
+      errorMessage += error + ' / ';
     }
 
-    return errorMessage.trim();
+    return errorMessage.replace(/[\/\s]*$/, '');
   }
 
 });

@@ -1,11 +1,35 @@
 .flash {
   position: relative;
-  opacity: 1.0;
 }
 
-.flash.dismissed {
-  transition: opacity 0.5s ease;
-  opacity: 0.0;
+.dismiss-enter {
+  opacity: 0.01;
+  overflow: hidden;
+}
+
+.dismiss-enter.dismiss-enter-active {
+  opacity: 1;
+  transition: opacity .4s ease-in;
+}
+
+.dismiss-leave {
+  max-height: 9999px;
+}
+
+.dismiss-leave.dismiss-leave-active {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s cubic-bezier(0, 1.05, 0, 1);
+}
+
+.dismiss-appear {
+  opacity: 0.01;
+  transition: opacity .4s ease-out;
+}
+
+.dismiss-appear.dismiss-appear-active {
+  opacity: 1;
+  max-height: 500px;
 }
 
 .flash__dismiss {

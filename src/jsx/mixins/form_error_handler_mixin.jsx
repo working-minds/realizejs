@@ -20,7 +20,7 @@ var FormErrorHandlerMixin = {
       return '';
     }
 
-    return <Flash type="error" text={this.props.errorMessage} />;
+    return <Flash type="error" text={this.props.errorMessage} dismissed={false} />;
   },
 
   handleError: function(xhr, status, error) {
