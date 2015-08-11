@@ -2170,26 +2170,39 @@ var InputAutocompleteValues = React.createClass({displayName: "InputAutocomplete
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    renderAsIndeterminate: React.PropTypes.bool
+    renderAsIndeterminate: React.PropTypes.bool,
+    checked: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false
+      renderAsIndeterminate: false,
+      checked: undefined
     };
   },
 
-  componentDidMount: function() {
-    React.findDOMNode(this.refs.input).indeterminate = this.props.renderAsIndeterminate;
+  getInitialState: function() {
+    return {
+      checked: this.props.checked
+    }
   },
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), ref: "input"}))
+      React.createElement("input", React.__spread({},  this.props,  this.state, {type: "checkbox", className: this.className(), onChange: this.handleChange, ref: "input"}))
     );
-  }
+  },
 
+  handleChange: function() {
+    if(this.props.checked === undefined) {
+      return;
+    }
+
+    this.setState({
+      checked: !this.state.checked
+    });
+  }
 
 });
 
@@ -2220,7 +2233,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
     }.bind(this));
   },
 
-  renderChildren:function(){
+  renderChildren: function() {
     var items = React.Children.map(this.props.children, function(item) {
       if((item !== null) && (item.props.children[0].type.displayName == "InputCheckbox"))
         return item;
@@ -2228,7 +2241,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
     return items;
   },
 
-  renderItems: function(){
+  renderItems: function() {
     return this.props.options.map(function (optionProps, i) {
       var filledClass =  optionProps.filled? 'filled-in' : '';
       optionProps.id = this.props.name + '_' + i;
@@ -2244,7 +2257,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
 
   render: function() {
     return (
-      React.createElement("div", {className: 'input-checkbox-group align-'+this.props.align}, 
+      React.createElement("div", {className: 'input-checkbox-group align-' + this.props.align}, 
         this.renderChildren()
       )
     );
