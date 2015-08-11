@@ -209,6 +209,10 @@ WRF.themes.materialize = {
 
     buttonGroup: {
       cssClass: 'form__button-group col s12 m12 l12 right-align'
+    },
+
+    inputGroup: {
+      cssClass: 'form__input-group col s12'
     }
   },
 
@@ -874,6 +878,7 @@ var Form = React.createClass({displayName: "Form",
 
   getDefaultProps: function() {
     return {
+      inputs: {},
       action: '',
       method: 'POST',
       dataType: undefined,
@@ -892,18 +897,6 @@ var Form = React.createClass({displayName: "Form",
         return true;
       }
     };
-  },
-
-  getInitialState: function() {
-    return {
-      isLoading: null
-    };
-  },
-
-  componentWillMount: function() {
-    if(this.props.postObject !== null) {
-      this.applyPostObjectToInputsProps();
-    }
   },
 
   render: function() {
@@ -928,28 +921,11 @@ var Form = React.createClass({displayName: "Form",
   },
 
   renderInputs: function() {
-    var inputsProps = this.props.inputs;
-    var inputComponents = [];
-    var inputIndex = 0;
-
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputComponents.push(
-          React.createElement(Input, React.__spread({},  inputProps, 
-            {errors: this.state.errors[inputId], 
-            formStyle: this.props.style, 
-            key: "input_" + inputIndex, 
-            ref: "input_" + inputIndex})
-          )
-        );
-
-        inputIndex++;
-      }
+    if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
+      return '';
     }
 
-    return inputComponents;
+    return React.createElement(InputGroup, React.__spread({},  this.propsWithoutCSS(), {errors: this.state.errors}));
   },
 
   renderOtherButtons: function() {
@@ -962,20 +938,6 @@ var Form = React.createClass({displayName: "Form",
     }
 
     return otherButtons;
-  },
-
-  applyPostObjectToInputsProps: function() {
-    var postObject = this.props.postObject;
-    var inputsProps = this.props.inputs;
-
-    for(var inputId in inputsProps) {
-      if (inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
-        inputProps.id = postObject + '_' + inputId;
-      }
-    }
   },
 
   submitButtonProps: function() {
@@ -1025,7 +987,82 @@ var Form = React.createClass({displayName: "Form",
     }
 
     return isLoading;
+  }
+});
+
+var InputGroup = React.createClass({displayName: "InputGroup",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    inputs: React.PropTypes.object,
+    errors: React.PropTypes.object,
+    postObject: React.PropTypes.string,
+    themeClassKey: React.PropTypes.string
   },
+
+  getDefaultProps: function() {
+    return {
+      inputs: {},
+      errors: {},
+      style: 'default',
+      postObject: null,
+      themeClassKey: 'form.inputGroup'
+    };
+  },
+
+  componentWillMount: function() {
+    if(this.props.postObject !== null) {
+      this.applyPostObjectToInputsProps();
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderInputs(), 
+        this.props.children
+      )
+    );
+  },
+
+  renderInputs: function() {
+    var inputsProps = this.props.inputs;
+    var inputComponents = [];
+    var inputIndex = 0;
+
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputComponents.push(
+          React.createElement(Input, React.__spread({},  inputProps, 
+            {errors: this.props.errors[inputId], 
+            formStyle: this.props.style, 
+            key: "input_" + inputIndex, 
+            ref: "input_" + inputIndex})
+          )
+        );
+
+        inputIndex++;
+      }
+    }
+
+    return inputComponents;
+  },
+
+  applyPostObjectToInputsProps: function() {
+    var postObject = this.props.postObject;
+    var inputsProps = this.props.inputs;
+
+    for(var inputId in inputsProps) {
+      if (inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
+        inputProps.id = postObject + '_' + inputId;
+      }
+    }
+  }
 });
 
 var Grid = React.createClass({displayName: "Grid",
@@ -1165,11 +1202,9 @@ var Grid = React.createClass({displayName: "Grid",
       dataType: 'json',
       data: postData,
       success: function(data) {
-        this.setState({isLoading: false});
         this.handleLoad(data);
       }.bind(this),
       error: function(xhr, status, error) {
-        this.setState({isLoading: false});
         this.handleLoadError(xhr, status, error);
       }.bind(this)
     });
@@ -1177,12 +1212,14 @@ var Grid = React.createClass({displayName: "Grid",
 
   handleLoad: function(data) {
     this.setState({
+      isLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
     });
   },
 
   handleLoadError: function(xhr, status, error) {
+    this.setState({isLoading: false});
     console.log('Grid Load error:' + error);
   },
 
@@ -1972,7 +2009,7 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
   render: function() {
     return (
       React.createElement("li", {className: this.className(), onClick: this.handleSelect, onMouseEnter: this.handleMouseEnter}, 
-        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent}), 
+        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent, onChange: this.disableEvent}), 
         React.createElement(Label, {id: this.parseOptionId(), name: this.props.name})
       )
     );
@@ -2170,15 +2207,13 @@ var InputAutocompleteValues = React.createClass({displayName: "InputAutocomplete
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    renderAsIndeterminate: React.PropTypes.bool,
-    checked: React.PropTypes.bool
+    renderAsIndeterminate: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false,
-      checked: undefined
+      renderAsIndeterminate: false
     };
   },
 
@@ -2188,20 +2223,28 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
     }
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    var checked = nextProps.checked;
+    if(checked !== undefined) {
+      this.setState({checked: checked});
+    }
+  },
+
   render: function() {
     return (
       React.createElement("input", React.__spread({},  this.props,  this.state, {type: "checkbox", className: this.className(), onChange: this.handleChange, ref: "input"}))
     );
   },
 
-  handleChange: function() {
-    if(this.props.checked === undefined) {
-      return;
-    }
+  handleChange: function(event) {
+    this.props.onChange(event);
+    if(!event.isPropagationStopped()) {
+      var checkbox = event.currentTarget;
 
-    this.setState({
-      checked: !this.state.checked
-    });
+      this.setState({
+        checked: checkbox.checked
+      });
+    }
   }
 
 });
@@ -2273,7 +2316,6 @@ var Input = React.createClass({displayName: "Input",
     label: React.PropTypes.string,
     value: React.PropTypes.string,
     formStyle: React.PropTypes.string,
-    onChange: React.PropTypes.func,
     component: React.PropTypes.string,
     componentMapping: React.PropTypes.func
   },
@@ -2284,9 +2326,6 @@ var Input = React.createClass({displayName: "Input",
       component: 'text',
       formStyle: 'default',
       errors: [],
-      onChange: function(event) {
-        return true;
-      },
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
@@ -3131,13 +3170,12 @@ var Table = React.createClass({displayName: "Table",
 
 var TableCell = React.createClass({displayName: "TableCell",
   mixins: [CssClassMixin],
-  validFormats: ['text', 'currency', 'number', 'boolean', 'datetime'],
 
   propTypes: {
     name: React.PropTypes.string,
     data: React.PropTypes.object,
     value: React.PropTypes.func,
-    format: React.PropTypes.string
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'datetime'])
   },
 
   getDefaultProps: function() {
@@ -3164,37 +3202,41 @@ var TableCell = React.createClass({displayName: "TableCell",
   renderValue: function() {
     var format = this.props.format;
     var customValue = this.props.value;
+    var dataValue = this.props.data[this.props.name];
 
     if(!!customValue) {
       return customValue(this.props.data, this.props);
-    } else if($.inArray(format, this.validFormats) >= 0) {
-      return this[format + "Value"]();
+    } else if(dataValue === null || dataValue === undefined) {
+      return '-';
     } else {
-      return this.textValue();
+      try {
+        return this[format + "Value"](dataValue);
+      } catch(err) {
+        return this.textValue(dataValue);
+      }
     }
   },
 
-  textValue: function() {
-    return this.props.data[this.props.name];
+  textValue: function(value) {
+    return value;
   },
 
-  numberValue: function() {
-    var value = parseFloat(this.props.data[this.props.name]);
+  numberValue: function(value) {
+    value = parseFloat(value);
     return numeral(value).format('0,0.[000]');
   },
 
-  currencyValue: function() {
-    var value = parseFloat(this.props.data[this.props.name]);
+  currencyValue: function(value) {
+    value = parseFloat(value);
     return numeral(value).format('$ 0,0.00');
   },
 
-  booleanValue: function() {
-    var value = this.props.data[this.props.name];
+  booleanValue: function(value) {
     return value ? "Sim" : "Não";
   },
 
-  datetimeValue: function() {
-    var value = moment(this.props.data[this.props.name]);
+  datetimeValue: function(value) {
+    value = moment(value);
     return value.format("DD/MM/YYYY HH:mm");
   }
 });

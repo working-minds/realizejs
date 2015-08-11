@@ -135,11 +135,9 @@ var Grid = React.createClass({
       dataType: 'json',
       data: postData,
       success: function(data) {
-        this.setState({isLoading: false});
         this.handleLoad(data);
       }.bind(this),
       error: function(xhr, status, error) {
-        this.setState({isLoading: false});
         this.handleLoadError(xhr, status, error);
       }.bind(this)
     });
@@ -147,12 +145,14 @@ var Grid = React.createClass({
 
   handleLoad: function(data) {
     this.setState({
+      isLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
     });
   },
 
   handleLoadError: function(xhr, status, error) {
+    this.setState({isLoading: false});
     console.log('Grid Load error:' + error);
   },
 

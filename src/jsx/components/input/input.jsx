@@ -6,7 +6,6 @@ var Input = React.createClass({
     label: React.PropTypes.string,
     value: React.PropTypes.string,
     formStyle: React.PropTypes.string,
-    onChange: React.PropTypes.func,
     component: React.PropTypes.string,
     componentMapping: React.PropTypes.func
   },
@@ -17,9 +16,6 @@ var Input = React.createClass({
       component: 'text',
       formStyle: 'default',
       errors: [],
-      onChange: function(event) {
-        return true;
-      },
       componentMapping: function(component) {
         var mapping = {
           text: InputText,

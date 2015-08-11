@@ -66,6 +66,10 @@ WRF.themes.materialize = {
 
     buttonGroup: {
       cssClass: 'form__button-group col s12 m12 l12 right-align'
+    },
+
+    inputGroup: {
+      cssClass: 'form__input-group col s12'
     }
   },
 

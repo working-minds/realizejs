@@ -21,6 +21,7 @@ var Form = React.createClass({
 
   getDefaultProps: function() {
     return {
+      inputs: {},
       action: '',
       method: 'POST',
       dataType: undefined,
@@ -39,18 +40,6 @@ var Form = React.createClass({
         return true;
       }
     };
-  },
-
-  getInitialState: function() {
-    return {
-      isLoading: null
-    };
-  },
-
-  componentWillMount: function() {
-    if(this.props.postObject !== null) {
-      this.applyPostObjectToInputsProps();
-    }
   },
 
   render: function() {
@@ -75,28 +64,11 @@ var Form = React.createClass({
   },
 
   renderInputs: function() {
-    var inputsProps = this.props.inputs;
-    var inputComponents = [];
-    var inputIndex = 0;
-
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputComponents.push(
-          <Input {...inputProps}
-            errors={this.state.errors[inputId]}
-            formStyle={this.props.style}
-            key={"input_" + inputIndex}
-            ref={"input_" + inputIndex}
-          />
-        );
-
-        inputIndex++;
-      }
+    if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
+      return '';
     }
 
-    return inputComponents;
+    return <InputGroup {...this.propsWithoutCSS()} errors={this.state.errors} />;
   },
 
   renderOtherButtons: function() {
@@ -109,20 +81,6 @@ var Form = React.createClass({
     }
 
     return otherButtons;
-  },
-
-  applyPostObjectToInputsProps: function() {
-    var postObject = this.props.postObject;
-    var inputsProps = this.props.inputs;
-
-    for(var inputId in inputsProps) {
-      if (inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
-        inputProps.id = postObject + '_' + inputId;
-      }
-    }
   },
 
   submitButtonProps: function() {
@@ -172,5 +130,5 @@ var Form = React.createClass({
     }
 
     return isLoading;
-  },
+  }
 });
