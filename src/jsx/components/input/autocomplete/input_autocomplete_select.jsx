@@ -38,7 +38,7 @@ var InputAutocompleteSelect = React.createClass({
             disabled={this.props.disabled}
             placeholder={this.props.placeholder}
             onFocus={this.props.onFocus}
-            className="select-dropdown"
+            errors={this.props.errors}
           />
         </div>
         <Label {...this.propsWithoutCSS()} id={this.selectId()} />

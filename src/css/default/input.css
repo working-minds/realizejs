@@ -57,3 +57,13 @@
 .input-autocomplete__option.active {
   background-color: #E3E3E3;
 }
+
+.input-datepicker__button {
+  padding: 0;
+  right: 1rem;
+}
+
+.input-checkbox-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
+}

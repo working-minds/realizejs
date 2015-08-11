@@ -11,10 +11,6 @@ WRF.themes.materialize = {
         cssClass: 'grid__filter'
       },
 
-      buttonGroup: {
-        cssClass: 'filter__button-group col s12 m12 l12 right-align'
-      },
-
       clearButton: {
         cssClass: 'filter__button--clear'
       }
@@ -66,16 +62,34 @@ WRF.themes.materialize = {
   },
 
   form: {
-    cssClass: ''
+    cssClass: 'form row',
+
+    buttonGroup: {
+      cssClass: 'form__button-group col s12 m12 l12 right-align'
+    }
   },
 
   input: {
     wrapper: {
-      cssClass: 'input-field col l3 m4 s12'
+      default: {
+        cssClass: 'form__input input-field col l6 m6 s12'
+      },
+
+      filter: {
+        cssClass: 'form__input input-field col l3 m4 s12'
+      }
+    },
+
+    error: {
+      cssClass: 'invalid',
+
+      hint: {
+        cssClass: 'form__input-error'
+      }
     },
 
     text: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     autocomplete: {
@@ -102,7 +116,7 @@ WRF.themes.materialize = {
     },
 
     checkbox: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     datepicker: {
@@ -114,11 +128,7 @@ WRF.themes.materialize = {
     },
 
     textarea: {
-      cssClass: 'materialize-textarea',
-
-      wrapper: {
-        cssClass: 'input-field col l12 m12 s12'
-      }
+      cssClass: 'materialize-textarea'
     }
   },
 
@@ -126,7 +136,7 @@ WRF.themes.materialize = {
     cssClass: 'btn waves-effect waves-light',
 
     cancel: {
-      cssClass: 'grey lighten-4'
+      cssClass: 'black-text grey lighten-4'
     }
   },
 
@@ -146,10 +156,56 @@ WRF.themes.materialize = {
     }
   },
 
+  flash: {
+    cssClass: 'flash card z-depth-0',
+
+    content: {
+      cssClass: 'flash__content card-content'
+    },
+
+    dismiss: {
+      cssClass: 'flash__dismiss card-action'
+    },
+
+    info: {
+      cssClass: 'flash--info blue lighten-4',
+
+      content: {
+        cssClass: 'blue-text darken-4'
+      }
+    },
+
+    warning: {
+      cssClass: 'flash--warning amber lighten-4',
+
+      content: {
+        cssClass: 'orange-text darken-4'
+      }
+    },
+
+    error: {
+      cssClass: 'flash--error red lighten-4',
+
+      content: {
+        cssClass: 'red-text darken-4'
+      }
+    },
+
+    success: {
+      cssClass: 'flash--success green lighten-4',
+
+      content: {
+        cssClass: 'green-text darken-4'
+      }
+    }
+  },
+
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',
     right: 'chevron_right',
-    search: 'search'
+    search: 'search',
+    calendar: 'today',
+    close: 'clear'
   }
 };

@@ -17,7 +17,9 @@ var InputCheckbox = React.createClass({
 
   render: function() {
     return (
-      <input {...this.props} type="checkbox" className={this.className()} ref="input"  />
+      <input {...this.props} type="checkbox" className={this.className()} ref="input"   />
     );
   }
+
+
 });

@@ -1,0 +1,57 @@
+.dismiss-enter {
+  opacity: 0.01;
+  overflow: hidden;
+}
+
+.dismiss-enter.dismiss-enter-active {
+  opacity: 1;
+  transition: opacity .4s ease-in;
+}
+
+.dismiss-leave {
+  max-height: 9999px;
+}
+
+.dismiss-leave.dismiss-leave-active {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s cubic-bezier(0, 1.05, 0, 1);
+}
+
+.dismiss-appear {
+  opacity: 0.01;
+  transition: opacity .4s ease-out;
+}
+
+.dismiss-appear.dismiss-appear-active {
+  opacity: 1;
+  max-height: 500px;
+}
+
+.flash {
+  position: relative;
+}
+
+.flash__dismiss {
+  cursor: pointer;
+  border-top-width: 0 !important;
+  padding: 0 !important;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+}
+
+.flash__content p {
+  padding-right: 30px;
+}
+
+.flash__content ul {
+  list-style: initial;
+  margin-top: 5px;
+  margin-bottom: 0;
+  padding-left: 40px;
+}
+
+.flash__content ul li {
+  list-style: initial;
+}

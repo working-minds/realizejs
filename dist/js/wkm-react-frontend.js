@@ -154,10 +154,6 @@ WRF.themes.materialize = {
         cssClass: 'grid__filter'
       },
 
-      buttonGroup: {
-        cssClass: 'filter__button-group col s12 m12 l12 right-align'
-      },
-
       clearButton: {
         cssClass: 'filter__button--clear'
       }
@@ -209,16 +205,34 @@ WRF.themes.materialize = {
   },
 
   form: {
-    cssClass: ''
+    cssClass: 'form row',
+
+    buttonGroup: {
+      cssClass: 'form__button-group col s12 m12 l12 right-align'
+    }
   },
 
   input: {
     wrapper: {
-      cssClass: 'input-field col l3 m4 s12'
+      default: {
+        cssClass: 'form__input input-field col l6 m6 s12'
+      },
+
+      filter: {
+        cssClass: 'form__input input-field col l3 m4 s12'
+      }
+    },
+
+    error: {
+      cssClass: 'invalid',
+
+      hint: {
+        cssClass: 'form__input-error'
+      }
     },
 
     text: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     autocomplete: {
@@ -245,7 +259,7 @@ WRF.themes.materialize = {
     },
 
     checkbox: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     datepicker: {
@@ -257,11 +271,7 @@ WRF.themes.materialize = {
     },
 
     textarea: {
-      cssClass: 'materialize-textarea',
-
-      wrapper: {
-        cssClass: 'input-field col l12 m12 s12'
-      }
+      cssClass: 'materialize-textarea'
     }
   },
 
@@ -269,7 +279,7 @@ WRF.themes.materialize = {
     cssClass: 'btn waves-effect waves-light',
 
     cancel: {
-      cssClass: 'grey lighten-4'
+      cssClass: 'black-text grey lighten-4'
     }
   },
 
@@ -289,11 +299,57 @@ WRF.themes.materialize = {
     }
   },
 
+  flash: {
+    cssClass: 'flash card z-depth-0',
+
+    content: {
+      cssClass: 'flash__content card-content'
+    },
+
+    dismiss: {
+      cssClass: 'flash__dismiss card-action'
+    },
+
+    info: {
+      cssClass: 'flash--info blue lighten-4',
+
+      content: {
+        cssClass: 'blue-text darken-4'
+      }
+    },
+
+    warning: {
+      cssClass: 'flash--warning amber lighten-4',
+
+      content: {
+        cssClass: 'orange-text darken-4'
+      }
+    },
+
+    error: {
+      cssClass: 'flash--error red lighten-4',
+
+      content: {
+        cssClass: 'red-text darken-4'
+      }
+    },
+
+    success: {
+      cssClass: 'flash--success green lighten-4',
+
+      content: {
+        cssClass: 'green-text darken-4'
+      }
+    }
+  },
+
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',
     right: 'chevron_right',
-    search: 'search'
+    search: 'search',
+    calendar: 'today',
+    close: 'clear'
   }
 };
 var CssClassMixin = {
@@ -327,7 +383,7 @@ var CssClassMixin = {
 
   getThemeClassKey: function() {
     var themeClassKey = this.props.themeClassKey;
-    if(!themeClassKey && !!this.state) {
+    if(!!this.state && !!this.state.themeClassKey) {
       themeClassKey = this.state.themeClassKey;
     }
 
@@ -342,6 +398,107 @@ var CssClassMixin = {
     }.bind(this));
 
     return props;
+  }
+};
+var FormErrorHandlerMixin = {
+  propTypes: {
+    errorMessage: React.PropTypes.string,
+    baseErrorParam: React.PropTypes.string,
+    onError: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      errorMessage: 'Por favor, verifique o(s) erro(s) abaixo.',
+      baseErrorParam: 'base',
+      onError: function(xhr, status, error) {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      errors: {}
+    };
+  },
+
+  renderFlashErrors: function() {
+    if($.isEmptyObject(this.state.errors)) {
+      return '';
+    }
+
+    return React.createElement(Flash, {type: "error", message: this.flashErrorMessage(), dismissed: false});
+  },
+
+  handleError: function(xhr, status, error) {
+    this.setState({isLoading: false});
+    if(this.props.onError(xhr, status, error)) {
+      if(xhr.status === 422) {
+        this.handleValidationError(xhr);
+      }
+    }
+  },
+
+  handleValidationError: function(xhr) {
+    this.setState({errors: xhr.responseJSON});
+  },
+
+  flashErrorMessage: function() {
+    return (
+      React.createElement("div", null, 
+        this.props.errorMessage, 
+        this.baseErrorsList()
+      )
+    );
+  },
+
+  baseErrorsList: function() {
+    var baseErrors = this.state.errors[this.props.baseErrorParam];
+    var baseErrorsListComponents = [];
+    if(!baseErrors) {
+      return '';
+    }
+
+    for(var i = 0; i < baseErrors.length; i++) {
+      var baseError = baseErrors[i];
+      baseErrorsListComponents.push(React.createElement("li", {key: baseError}, baseError));
+    }
+
+    return (
+      React.createElement("ul", null, 
+        baseErrorsListComponents
+      )
+    );
+  }
+};
+var FormSuccessHandlerMixin = {
+  propTypes: {
+    onSuccess: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      onSuccess: function(data, status, xhr) {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+    };
+  },
+
+  handleSuccess: function(data, status, xhr) {
+    this.setState({isLoading: false, errors: {}});
+
+    if(this.props.onSuccess(data, status, xhr)) {
+      if(xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
+        eval(data);
+      }
+
+    }
   }
 };
 var InputComponentMixin = {
@@ -359,8 +516,31 @@ var InputComponentMixin = {
       disabled: false,
       onChange: function(event) {
         return true;
-      }
+      },
+      errors: []
     };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: this.setThemeClassKeyWithErrors(this.props)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.setThemeClassKeyWithErrors(nextProps)
+    });
+  },
+
+  setThemeClassKeyWithErrors: function(props) {
+    var themeClassKey = (props.themeClassKey || '');
+    var errors = props.errors;
+    if(!!errors && errors.length > 0) {
+      themeClassKey += ' input.error';
+    }
+
+    return themeClassKey;
   }
 };
 var MaterializeSelectMixin = {
@@ -504,14 +684,20 @@ var Button = React.createClass({displayName: "Button",
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
-    icon: React.PropTypes.string,
+    icon: React.PropTypes.object,
     onClick: React.PropTypes.func,
+    disabled: React.PropTypes.bool,
+    isLoading: React.PropTypes.bool,
     additionalThemeClassKeys: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      additionalThemeClassKeys: ''
+      additionalThemeClassKeys: '',
+      disabled: false,
+      isLoading: false,
+      icon: null,
+      disableWith: 'Carregando...'
     };
   },
 
@@ -523,31 +709,165 @@ var Button = React.createClass({displayName: "Button",
 
   render: function() {
     return (
-      React.createElement("button", {className: this.className(), type: this.props.type, onClick: this.props.onClick}, 
-        this.props.name, 
-        this.renderIcon()
+      React.createElement("button", {className: this.className(), type: this.props.type, disabled: this.props.disabled, onClick: this.props.onClick}, 
+        this.props.isLoading ? this.renderLoadingIndicator(): this.renderContent()
       )
     );
+  },
+
+  renderContent: function() {
+    return [ this.props.name, this.renderIcon() ];
   },
 
   renderIcon: function() {
     if(!this.props.icon) {
       return '';
     }
+    
+    return React.createElement(Icon, React.__spread({},  this.props.icon, {key: "icon"}));
+  },
 
-    return React.createElement(Icon, {className: "right", type: this.props.icon});
+  renderLoadingIndicator: function() {
+    return this.props.disableWith;
+  }
+  
+});
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var Flash = React.createClass({displayName: "Flash",
+  mixins: [CssClassMixin],
+  propTypes: {
+    type: React.PropTypes.oneOf(['info', 'warning', 'error', 'success']),
+    message: React.PropTypes.string,
+    dismissTimeout: React.PropTypes.number,
+    canDismiss: React.PropTypes.bool,
+    onDismiss: React.PropTypes.func,
+    dismissed: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      type: 'info',
+      dismissTimeout: -1,
+      canDismiss: true,
+      dismissed: false,
+      message: '',
+      onDismiss: function() {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'flash flash.' + this.props.type,
+      dismissed: this.props.dismissed
+    }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({dismissed: nextProps.dismissed});
+  },
+
+  componentDidMount: function() {
+    if(this.props.dismissTimeout > 0) {
+      this.setDismissTimeout();
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement(ReactCSSTransitionGroup, {transitionName: "dismiss", transitionAppear: true}, 
+        this.state.dismissed ? '' : this.renderFlash()
+      )
+    );
+  },
+
+  renderFlash: function() {
+    return (
+      React.createElement("div", {className: this.className(), ref: "flash"}, 
+        React.createElement(FlashContent, React.__spread({},  this.props)), 
+        this.props.canDismiss ? React.createElement(FlashDismiss, React.__spread({},  this.props, {onClick: this.dismiss})): ''
+      )
+    );
+  },
+
+  dismiss: function() {
+    this.setState({dismissed: true});
+    this.props.onDismiss();
+  },
+
+  setDismissTimeout: function() {
+    setTimeout(function() {
+      this.dismiss();
+    }.bind(this), this.props.dismissTimeout);
+  }
+});
+
+var FlashContent = React.createClass({displayName: "FlashContent",
+  mixins: [CssClassMixin],
+  propTypes: {
+    type: React.PropTypes.string,
+    message: React.PropTypes.string
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'flash.content flash.' + this.props.type + '.content'
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement("p", null, 
+          this.props.message
+        )
+      )
+    );
+  }
+});
+
+var FlashDismiss = React.createClass({displayName: "FlashDismiss",
+  mixins: [CssClassMixin],
+  propTypes: {
+    type: React.PropTypes.string,
+    text: React.PropTypes.string,
+    onClick: React.PropTypes.func
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: 'flash.dismiss flash.' + this.props.type + '.content'
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className(), onClick: this.props.onClick}, 
+        React.createElement(Icon, {type: "close"})
+      )
+    );
   }
 });
 
 var Form = React.createClass({displayName: "Form",
+  mixins: [
+    CssClassMixin,
+    FormErrorHandlerMixin,
+    FormSuccessHandlerMixin
+  ],
+
   propTypes: {
     inputs: React.PropTypes.object,
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
-    focus: React.PropTypes.bool,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
+    style: React.PropTypes.string,
+    postObject: React.PropTypes.string,
+    submitButton: React.PropTypes.object,
+    otherButtons: React.PropTypes.array,
+    isLoading: React.PropTypes.bool,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func
   },
@@ -556,14 +876,15 @@ var Form = React.createClass({displayName: "Form",
     return {
       action: '',
       method: 'POST',
-      dataType: 'json',
-      focus: true,
-      onSuccess: function(data) {
-        return true;
+      dataType: undefined,
+      submitButton: {
+        name: 'Enviar'
       },
-      onError: function(xhr, status, error) {
-        return true;
-      },
+      otherButtons: [],
+      isLoading: false,
+      themeClassKey: 'form',
+      style: 'default',
+      postObject: null,
       onSubmit: function(event, postData) {
         return true;
       },
@@ -573,16 +894,35 @@ var Form = React.createClass({displayName: "Form",
     };
   },
 
+  getInitialState: function() {
+    return {
+      isLoading: null
+    };
+  },
+
+  componentWillMount: function() {
+    if(this.props.postObject !== null) {
+      this.applyPostObjectToInputsProps();
+    }
+  },
+
   render: function() {
     return (
       React.createElement("form", {action: this.props.action, 
         id: this.props.id, 
         onSubmit: this.handleSubmit, 
         onReset: this.props.onReset, 
+        className: this.className(), 
         ref: "form"}, 
 
+        this.renderFlashErrors(), 
         this.renderInputs(), 
-        this.props.children
+        this.props.children, 
+
+        React.createElement("div", {className: WRF.themeClass('form.buttonGroup')}, 
+          this.renderOtherButtons(), 
+          React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"}))
+        )
       )
     );
   },
@@ -592,10 +932,19 @@ var Form = React.createClass({displayName: "Form",
     var inputComponents = [];
     var inputIndex = 0;
 
-    for(var inputName in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputName)) {
-        var inputProps = inputsProps[inputName];
-        inputComponents.push(React.createElement(Input, React.__spread({},  inputProps, {id: inputName, key: "input_" + inputIndex, ref: "input_" + inputIndex})));
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputComponents.push(
+          React.createElement(Input, React.__spread({},  inputProps, 
+            {errors: this.state.errors[inputId], 
+            formStyle: this.props.style, 
+            key: "input_" + inputIndex, 
+            ref: "input_" + inputIndex})
+          )
+        );
+
         inputIndex++;
       }
     }
@@ -603,9 +952,39 @@ var Form = React.createClass({displayName: "Form",
     return inputComponents;
   },
 
-  serialize : function() {
-    var form = React.findDOMNode(this.refs.form);
-    return $(form).serializeObject();
+  renderOtherButtons: function() {
+    var otherButtonsProps = this.props.otherButtons;
+    var otherButtons = [];
+
+    for(var i = 0; i < otherButtonsProps.length; i++) {
+      var otherButtonProps = otherButtonsProps[i];
+      otherButtons.push(React.createElement(Button, React.__spread({},  otherButtonProps, {key: otherButtonProps.name})));
+    }
+
+    return otherButtons;
+  },
+
+  applyPostObjectToInputsProps: function() {
+    var postObject = this.props.postObject;
+    var inputsProps = this.props.inputs;
+
+    for(var inputId in inputsProps) {
+      if (inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
+        inputProps.id = postObject + '_' + inputId;
+      }
+    }
+  },
+
+  submitButtonProps: function() {
+    var isLoading = this.isLoading();
+    return $.extend({}, this.props.submitButton, {
+      type: "submit",
+      disabled: isLoading,
+      isLoading: isLoading
+    });
   },
 
   handleSubmit: function(event) {
@@ -613,25 +992,40 @@ var Form = React.createClass({displayName: "Form",
     var postData = this.serialize();
 
     if(this.props.onSubmit(event, postData)) {
+      this.setState({isLoading: true});
       this.submit(postData);
     }
   },
 
+  serialize : function() {
+    var form = React.findDOMNode(this.refs.form);
+    return $(form).serializeObject();
+  },
+
   submit: function(postData) {
-    $.ajax({
+    var submitOptions = {
       url: this.props.action,
       method: this.props.method,
-      dataType: this.props.dataType,
       data: postData,
-      success: function(data) {
-        this.props.onSuccess(data);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        this.props.onError(xhr, status, error);
-      }.bind(this)
-    });
-  }
+      success: this.handleSuccess,
+      error: this.handleError
+    };
 
+    if(!!this.props.dataType) {
+      submitOptions.dataType = this.props.dataType;
+    }
+
+    $.ajax(submitOptions);
+  },
+
+  isLoading: function() {
+    var isLoading = this.state.isLoading;
+    if(isLoading === null) {
+      isLoading = this.props.isLoading;
+    }
+
+    return isLoading;
+  },
 });
 
 var Grid = React.createClass({displayName: "Grid",
@@ -684,7 +1078,8 @@ var Grid = React.createClass({displayName: "Grid",
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      themeClassKey: 'grid'
+      themeClassKey: 'grid',
+      isLoading: false
     };
   },
 
@@ -705,6 +1100,7 @@ var Grid = React.createClass({displayName: "Grid",
       React.createElement(GridFilter, React.__spread({}, 
         this.props.filterForm, 
         {url: this.props.url, 
+        isLoading: this.state.isLoading, 
         onSubmit: this.onFilterSubmit})
       )
     );
@@ -740,11 +1136,13 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   onPagination: function(page) {
+    this.setState({isLoading: true});
     this.state.page = page;
     this.loadData();
   },
 
   onFilterSubmit: function(event, postData) {
+    this.setState({isLoading: true});
     this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
@@ -767,19 +1165,25 @@ var Grid = React.createClass({displayName: "Grid",
       dataType: 'json',
       data: postData,
       success: function(data) {
-        this.dataLoaded(data);
+        this.setState({isLoading: false});
+        this.handleLoad(data);
       }.bind(this),
       error: function(xhr, status, error) {
-        console.log('Grid Load error:' + error);
+        this.setState({isLoading: false});
+        this.handleLoadError(xhr, status, error);
       }.bind(this)
     });
   },
 
-  dataLoaded: function(data) {
+  handleLoad: function(data) {
     this.setState({
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
     });
+  },
+
+  handleLoadError: function(xhr, status, error) {
+    console.log('Grid Load error:' + error);
   },
 
   buildPostData: function() {
@@ -821,7 +1225,8 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func
+    onReset: React.PropTypes.func,
+    isLoading: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -830,10 +1235,14 @@ var GridFilter = React.createClass({displayName: "GridFilter",
       method: "GET",
       submitButton: {
         name: 'Filtrar',
-        icon: 'search'
+        icon: {
+          type: 'search',
+          className: 'right'
+        }
       },
       clearButton: {
         name: 'Limpar',
+        type: 'reset',
         additionalThemeClassKeys: 'grid.filter.clearButton button.cancel'
       },
       onSuccess: function(data) {
@@ -857,14 +1266,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Form, React.__spread({},  this.props, {ref: "form"}), 
-          this.props.children, 
-
-          React.createElement("div", {className: WRF.themeClass('grid.filter.buttonGroup')}, 
-            React.createElement(Button, React.__spread({},  this.props.clearButton, {type: "reset"})), 
-            React.createElement(Button, React.__spread({},  this.props.submitButton, {type: "submit"}))
-          )
-        )
+        React.createElement(Form, React.__spread({},  this.props, {otherButtons: [this.props.clearButton], style: "filter", ref: "form"}))
       )
     );
   },
@@ -1126,12 +1528,69 @@ var Icon = React.createClass({displayName: "Icon",
 
   render: function() {
     return (
-      React.createElement("i", {className: this.className()}, this.themeIconType())
+      React.createElement("i", {className: this.className()}, this.iconType())
     );
   },
 
-  themeIconType: function() {
-    return WRF.themeProp('icon.' + this.props.type);
+  iconType: function() {
+    var iconType = WRF.themeProp('icon.' + this.props.type);
+    if(!iconType) {
+      iconType = this.props.type;
+    }
+
+    return iconType;
+  }
+});
+
+var Spinner = React.createClass({displayName: "Spinner",
+  propTypes: {
+    size: React.PropTypes.string,
+    color: React.PropTypes.string,
+    active: React.PropTypes.bool,
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      size: 'small',
+      color: 'green',
+      active: true,
+      className: ''
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.wrapperClassName()}, 
+        React.createElement("div", {className: this.layerClassName()}, 
+          React.createElement("div", {className: "circle-clipper left"}, 
+            React.createElement("div", {className: "circle"})
+          ), 
+          React.createElement("div", {className: "gap-patch"}, 
+            React.createElement("div", {className: "circle"})
+          ), 
+          React.createElement("div", {className: "circle-clipper right"}, 
+            React.createElement("div", {className: "circle"})
+          )
+        )
+      )
+    ); 
+  },
+
+  wrapperClassName: function() {
+    var className = "spinner preloader-wrapper " + this.props.size;
+    if(this.props.active) {
+      className += " active";
+    }
+
+    className += " " + this.props.className;
+    return className;
+  },
+
+  layerClassName: function() {
+    var className = "spinner-layer spinner-" + this.props.color + "-only";
+
+    return className;
   }
 });
 
@@ -1631,7 +2090,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
             disabled: this.props.disabled, 
             placeholder: this.props.placeholder, 
             onFocus: this.props.onFocus, 
-            className: "select-dropdown"}
+            errors: this.props.errors}
           )
         ), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.selectId()}))
@@ -1708,98 +2167,6 @@ var InputAutocompleteValues = React.createClass({displayName: "InputAutocomplete
   }
 });
 
-var Input = React.createClass({displayName: "Input",
-  mixins: [CssClassMixin],
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    label: React.PropTypes.string,
-    value: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    component: React.PropTypes.string,
-    componentMapping: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      value: null,
-      component: 'text',
-      onChange: function(event) {
-        return true;
-      },
-      componentMapping: function(component) {
-        var mapping = {
-          text: InputText,
-          autocomplete: InputAutocomplete,
-          checkbox: InputCheckbox,
-          datepicker: InputDatepicker,
-          hidden: InputHidden,
-          password: InputPassword,
-          select: InputSelect,
-          textarea: InputTextarea
-        };
-
-        return mapping[component];
-      }
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      value: this.props.value,
-      themeClassKey: this.themeClassKeyByComponent()
-    };
-  },
-
-  themeClassKeyByComponent: function() {
-    var component = this.props.component;
-
-    if(component === 'textarea') {
-      return 'input.textarea.wrapper';
-    } else {
-      return 'input.wrapper';
-    }
-  },
-
-  render: function() {
-    var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
-    if(this.hasOwnProperty(renderFunction)) {
-      return this[renderFunction]();
-    } else {
-      return this.renderVisibleInput();
-    }
-  },
-
-  renderVisibleInput: function() {
-    return (
-      React.createElement("div", {className: this.className()}, 
-        this.renderComponentInput(), 
-        React.createElement(Label, React.__spread({},  this.propsWithoutCSS()))
-      )
-    );
-  },
-
-  renderAutocompleteInput: function() {
-    return (
-      React.createElement("div", {className: this.className()}, 
-        this.renderComponentInput()
-      )
-    );
-  },
-
-  renderHiddenInput: function() {
-    return this.renderComponentInput();
-  },
-
-  renderComponentInput: function() {
-    var componentInputClass = this.props.componentMapping(this.props.component);
-    var componentInputName = this.props.name || this.props.id;
-    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
-
-    return React.createElement(componentInputClass, componentInputProps);
-  }
-});
-
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
@@ -1822,6 +2189,168 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
       React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), ref: "input"}))
     );
   }
+
+
+});
+
+var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    name: React.PropTypes.string,
+    align: React.PropTypes.oneOf(['vertical', 'horizontal']),
+    options: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.checkbox',
+      name:'',
+      align: 'vertical',
+      options: []
+    };
+  },
+
+  componentWillMount: function() {
+    if(!Array.isArray(this.props.children))
+      this.props.children = [this.props.children];
+
+    var items = this.renderItems();
+    $(items).each(function (i, element) {
+      this.props.children.push(element);
+    }.bind(this));
+  },
+
+  renderChildren:function(){
+    var items = React.Children.map(this.props.children, function(item) {
+      if((item !== null) && (item.props.children[0].type.displayName == "InputCheckbox"))
+        return item;
+    });
+    return items;
+  },
+
+  renderItems: function(){
+    return this.props.options.map(function (optionProps, i) {
+      var filledClass =  optionProps.filled? 'filled-in' : '';
+      optionProps.id = this.props.name + '_' + i;
+
+      return (
+        React.createElement("p", null, 
+          React.createElement(InputCheckbox, React.__spread({},  optionProps , {name: this.props.name, className: filledClass, isChecked: optionProps.isChecked})), 
+          React.createElement(Label, React.__spread({},  optionProps))
+        )
+      );
+    }, this);
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: 'input-checkbox-group align-'+this.props.align}, 
+        this.renderChildren()
+      )
+    );
+  }
+
+});
+
+var Input = React.createClass({displayName: "Input",
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    label: React.PropTypes.string,
+    value: React.PropTypes.string,
+    formStyle: React.PropTypes.string,
+    onChange: React.PropTypes.func,
+    component: React.PropTypes.string,
+    componentMapping: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      value: null,
+      component: 'text',
+      formStyle: 'default',
+      errors: [],
+      onChange: function(event) {
+        return true;
+      },
+      componentMapping: function(component) {
+        var mapping = {
+          text: InputText,
+          autocomplete: InputAutocomplete,
+          checkbox: InputCheckbox,
+          datepicker: InputDatepicker,
+          hidden: InputHidden,
+          password: InputPassword,
+          select: InputSelect,
+          textarea: InputTextarea,
+          checkbox_group: InputCheckboxGroup
+        };
+
+        return mapping[component];
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      value: this.props.value,
+      themeClassKey: this.themeClassKeyByStyle()
+    };
+  },
+
+  themeClassKeyByStyle: function() {
+    return 'input.wrapper.' + this.props.formStyle;
+  },
+
+  render: function() {
+    var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
+    if(this.hasOwnProperty(renderFunction)) {
+      return this[renderFunction]();
+    } else {
+      return this.renderInput();
+    }
+  },
+
+  renderInput: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
+        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  },
+
+  renderAutocompleteInput: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  },
+
+  renderDatepickerInput: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  },
+
+  renderHiddenInput: function() {
+    return this.renderComponentInput();
+  },
+
+  renderComponentInput: function() {
+    var componentInputClass = this.props.componentMapping(this.props.component);
+    var componentInputName = this.props.name || this.props.id;
+    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
+
+    return React.createElement(componentInputClass, componentInputProps);
+  }
 });
 
 var InputDatepicker = React.createClass({displayName: "InputDatepicker",
@@ -1835,18 +2364,77 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
 
   componentDidMount: function() {
     var inputNode = React.findDOMNode(this.refs.input);
-    $(inputNode).pickadate({
+    var buttonNode = React.findDOMNode(this.refs.button);
+
+
+
+    var input = $(inputNode).pickadate({
+      editable: true,
       selectMonths: true,
-      selectYears: 15,
+      selectYears: true ,
       format: 'dd/mm/yyyy'
+    });
+
+    var picker = input.pickadate('picker');
+
+    // TODO: should close on date click - materialize currently broke it
+
+    $(buttonNode).on('click', function(e) {
+      if (picker.get('open')) {
+        picker.close()
+      } else {
+        picker.open()
+      }
+      e.stopPropagation()
     });
   },
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "date", className: this.className(), ref: "input"}))
+      React.createElement("span", null, 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, className: this.className(), ref: "input"})), 
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
+        React.createElement(Button, {icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
+      )
     );
   }
+});
+
+
+
+var InputError = React.createClass({displayName: "InputError",
+  mixins: [CssClassMixin],
+
+  getDefaultProps: function() {
+    return {
+      errors: [],
+      themeClassKey: 'input.error.hint'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("span", {className: this.className()}, 
+        this.errorMessages()
+      )
+    );
+  },
+
+  errorMessages: function() {
+    var errors = this.props.errors;
+    var errorMessage = '';
+    if(!$.isArray(errors)) {
+      errors = [errors];
+    }
+
+    for(var i = 0; i < errors.length; i++) {
+      var error = errors[i];
+      errorMessage += error + ' / ';
+    }
+
+    return errorMessage.replace(/[\/\s]*$/, '');
+  }
+
 });
 
 var InputHidden = React.createClass({displayName: "InputHidden",
@@ -1859,6 +2447,112 @@ var InputHidden = React.createClass({displayName: "InputHidden",
   }
 });
 
+var InputMasked = React.createClass({displayName: "InputMasked",
+  mixins: [CssClassMixin, InputComponentMixin],
+
+  propTypes: {
+    mask: React.PropTypes.string,
+    typeMask: React.PropTypes.string,
+    predefinedMasks: React.PropTypes.object,
+    regex: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.text',
+      mask:'',
+      typeMask:'',
+      regex:'',
+      predefinedMasks: {
+        cpf: {
+          mask:'999.999.999-99'
+        },
+        cnpj:{
+          mask: '99.999.999/9999-99'
+        },
+        phone:{
+          mask: '(99) 9999[9]-9999'
+        },
+        cell_phone:{
+          mask: '(99) 9999[9]-9999'
+        },
+        currency:{
+          mask:'999.999.999,99',
+          numericInput: true,
+          rightAlign: true
+        }
+      }
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {className: this.className(), ref: "inputMasked", type: "text"}), 
+        this.props.children
+      )
+    );
+  },
+
+  componentDidMount: function(){
+    if(this.isRegexMask())
+      this.renderRegexMask();
+    else{
+      if(this.isAPredefinedMask())
+        this.renderPredefinedMask();
+      else
+        this.renderCustomMask();
+    }
+  },
+
+  renderRegexMask: function(){
+    var params = {};
+    params['regex'] = this.props.plugin_params.regex;
+    this.renderBaseMask('Regex',params);
+  },
+
+  renderCustomMask: function(){
+    var typeMask = this.props.plugin_params.typeMask;
+    delete this.props.plugin_params["placeholder"];
+    delete this.props.plugin_params["typeMask"];
+
+    if(typeMask)
+      this.renderBaseMask(typeMask, this.props.plugin_params);
+    else
+      this.renderBaseMask('', this.props.plugin_params)
+  },
+
+  renderPredefinedMask: function(){
+    var params = this.maskMapping(this.props.plugin_params.mask);
+    var typeMask = this.props.plugin_params.typeMask;
+    delete this.props.plugin_params["mask"];
+    delete this.props.plugin_params["placeholder"];
+    delete this.props.plugin_params["typeMask"];
+
+    params = $.extend(params, this.props.plugin_params);
+    this.renderBaseMask(typeMask, params)
+  },
+
+  renderBaseMask: function(type, params){
+    if(type != undefined && type != '')
+      $(React.findDOMNode(this.refs.inputMasked)).inputmask(type, params);
+    else
+      $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
+  },
+
+  maskMapping: function(type) {
+    var typesMask = this.props.predefinedMasks;
+    return typesMask[type] == undefined ? type : typesMask[type];
+  },
+
+  isAPredefinedMask: function(){
+    return this.props.plugin_params.mask in this.props.predefinedMasks;
+  },
+
+  isRegexMask: function(){
+    return 'regex' in this.props.plugin_params;
+  }
+
+});
 var InputPassword = React.createClass({displayName: "InputPassword",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {

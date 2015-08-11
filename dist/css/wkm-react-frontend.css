@@ -2,20 +2,27 @@
  * WKM Frontend v0.0.0 (http://www.wkm.com.br)
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
+button .preloader-wrapper.small {
+  width: 24px;
+  height: 24px;
+}
+.form__button-group button {
+  margin-left: 1.5em;
+}
+
+.form__input {
+  margin-bottom: 10px;
+}
+
+.form--input-error {
+
+}
 .grid__pagination {
   text-align: center;
 }
 
 .grid__pagination .pagination {
   display: inline-block;
-}
-
-.filter__button-group button {
-  margin-left: 1.5em;
-}
-
-.filter__button-group .filter__button--clear {
-  color: black;
 }
 
 .input-field {
@@ -77,6 +84,16 @@
 .input-autocomplete__option.active {
   background-color: #E3E3E3;
 }
+
+.input-datepicker__button {
+  padding: 0;
+  right: 1rem;
+}
+
+.input-checkbox-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
+}
 .table-header .table-header__name.sortable {
   cursor: pointer;
 }
@@ -92,6 +109,74 @@
 .table-cell--currency, .table-cell--number, .table-cell--datetime {
   white-space: nowrap;
 }
+.dismiss-enter {
+  opacity: 0.01;
+  overflow: hidden;
+}
+
+.dismiss-enter.dismiss-enter-active {
+  opacity: 1;
+  transition: opacity .4s ease-in;
+}
+
+.dismiss-leave {
+  max-height: 9999px;
+}
+
+.dismiss-leave.dismiss-leave-active {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s cubic-bezier(0, 1.05, 0, 1);
+}
+
+.dismiss-appear {
+  opacity: 0.01;
+  transition: opacity .4s ease-out;
+}
+
+.dismiss-appear.dismiss-appear-active {
+  opacity: 1;
+  max-height: 500px;
+}
+
+.flash {
+  position: relative;
+}
+
+.flash__dismiss {
+  cursor: pointer;
+  border-top-width: 0 !important;
+  padding: 0 !important;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+}
+
+.flash__content p {
+  padding-right: 30px;
+}
+
+.flash__content ul {
+  list-style: initial;
+  margin-top: 5px;
+  margin-bottom: 0;
+  padding-left: 40px;
+}
+
+.flash__content ul li {
+  list-style: initial;
+}
+.form__input-error {
+  color: #F44336;
+  position: absolute;
+  top: 50px;
+  left: 0.75rem;
+  font-size: 0.8rem;
+}
+.select-wrapper > input[type=text] {
+  cursor: pointer;
+}
+
 .input-autocomplete__option label {
   top: 0;
   left: 0;
