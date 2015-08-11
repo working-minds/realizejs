@@ -29,7 +29,7 @@ var CssClassMixin = {
 
   getThemeClassKey: function() {
     var themeClassKey = this.props.themeClassKey;
-    if(!themeClassKey && !!this.state) {
+    if(!!this.state && !!this.state.themeClassKey) {
       themeClassKey = this.state.themeClassKey;
     }
 

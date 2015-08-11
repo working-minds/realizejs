@@ -50,7 +50,7 @@ var GridFilter = React.createClass({
   render: function() {
     return(
       <div className={this.className()}>
-        <Form {...this.props} otherButtons={[this.props.clearButton]} ref="form" />
+        <Form {...this.props} otherButtons={[this.props.clearButton]} style="filter" ref="form" />
       </div>
     );
   },

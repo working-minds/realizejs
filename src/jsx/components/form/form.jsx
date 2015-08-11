@@ -1,14 +1,20 @@
 var Form = React.createClass({
+  mixins: [
+    CssClassMixin,
+    FormErrorHandlerMixin,
+    FormSuccessHandlerMixin
+  ],
+
   propTypes: {
     inputs: React.PropTypes.object,
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
+    style: React.PropTypes.string,
+    postObject: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func
   },
@@ -17,18 +23,15 @@ var Form = React.createClass({
     return {
       action: '',
       method: 'POST',
-      dataType: 'json',
+      dataType: undefined,
       submitButton: {
         name: 'Enviar'
       },
       otherButtons: [],
       isLoading: false,
-      onSuccess: function(data) {
-        return true;
-      },
-      onError: function(xhr, status, error) {
-        return true;
-      },
+      themeClassKey: 'form',
+      style: 'default',
+      postObject: null,
       onSubmit: function(event, postData) {
         return true;
       },
@@ -44,14 +47,22 @@ var Form = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    if(this.props.postObject !== null) {
+      this.applyPostObjectToInputsProps();
+    }
+  },
+
   render: function() {
     return (
       <form action={this.props.action}
         id={this.props.id}
         onSubmit={this.handleSubmit}
         onReset={this.props.onReset}
+        className={this.className()}
         ref="form">
 
+        {this.renderFlashErrors()}
         {this.renderInputs()}
         {this.props.children}
 
@@ -68,10 +79,19 @@ var Form = React.createClass({
     var inputComponents = [];
     var inputIndex = 0;
 
-    for(var inputName in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputName)) {
-        var inputProps = inputsProps[inputName];
-        inputComponents.push(<Input {...inputProps} id={inputName} key={"input_" + inputIndex} ref={"input_" + inputIndex} />);
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputComponents.push(
+          <Input {...inputProps}
+            errors={this.state.errors[inputId]}
+            formStyle={this.props.style}
+            key={"input_" + inputIndex}
+            ref={"input_" + inputIndex}
+          />
+        );
+
         inputIndex++;
       }
     }
@@ -89,6 +109,20 @@ var Form = React.createClass({
     }
 
     return otherButtons;
+  },
+
+  applyPostObjectToInputsProps: function() {
+    var postObject = this.props.postObject;
+    var inputsProps = this.props.inputs;
+
+    for(var inputId in inputsProps) {
+      if (inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+
+        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
+        inputProps.id = postObject + '_' + inputId;
+      }
+    }
   },
 
   submitButtonProps: function() {
@@ -116,20 +150,19 @@ var Form = React.createClass({
   },
 
   submit: function(postData) {
-    $.ajax({
+    var submitOptions = {
       url: this.props.action,
       method: this.props.method,
-      dataType: this.props.dataType,
       data: postData,
-      success: function(data) {
-        this.setState({isLoading: false});
-        this.props.onSuccess(data);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        this.setState({isLoading: false});
-        this.props.onError(xhr, status, error);
-      }.bind(this)
-    });
+      success: this.handleSuccess,
+      error: this.handleError
+    };
+
+    if(!!this.props.dataType) {
+      submitOptions.dataType = this.props.dataType;
+    }
+
+    $.ajax(submitOptions);
   },
 
   isLoading: function() {
@@ -139,5 +172,5 @@ var Form = React.createClass({
     }
 
     return isLoading;
-  }
+  },
 });

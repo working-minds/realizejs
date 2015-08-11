@@ -5,6 +5,7 @@ var Input = React.createClass({
     name: React.PropTypes.string,
     label: React.PropTypes.string,
     value: React.PropTypes.string,
+    formStyle: React.PropTypes.string,
     onChange: React.PropTypes.func,
     component: React.PropTypes.string,
     componentMapping: React.PropTypes.func
@@ -14,6 +15,8 @@ var Input = React.createClass({
     return {
       value: null,
       component: 'text',
+      formStyle: 'default',
+      errors: [],
       onChange: function(event) {
         return true;
       },
@@ -38,18 +41,12 @@ var Input = React.createClass({
   getInitialState: function() {
     return {
       value: this.props.value,
-      themeClassKey: this.themeClassKeyByComponent()
+      themeClassKey: this.themeClassKeyByStyle()
     };
   },
 
-  themeClassKeyByComponent: function() {
-    var component = this.props.component;
-
-    if(component === 'textarea') {
-      return 'input.textarea.wrapper';
-    } else {
-      return 'input.wrapper';
-    }
+  themeClassKeyByStyle: function() {
+    return 'input.wrapper.' + this.props.formStyle;
   },
 
   render: function() {
@@ -57,15 +54,16 @@ var Input = React.createClass({
     if(this.hasOwnProperty(renderFunction)) {
       return this[renderFunction]();
     } else {
-      return this.renderVisibleInput();
+      return this.renderInput();
     }
   },
 
-  renderVisibleInput: function() {
+  renderInput: function() {
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
         <Label {...this.propsWithoutCSS()} />
+        <InputError {...this.propsWithoutCSS()} />
       </div>
     );
   },
@@ -74,6 +72,7 @@ var Input = React.createClass({
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
+        <InputError {...this.propsWithoutCSS()} />
       </div>
     );
   },
@@ -82,6 +81,7 @@ var Input = React.createClass({
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
+        <InputError {...this.propsWithoutCSS()} />
       </div>
     );
   },
