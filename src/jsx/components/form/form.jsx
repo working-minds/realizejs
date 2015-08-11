@@ -33,12 +33,14 @@ var Form = React.createClass({
       themeClassKey: 'form',
       style: 'default',
       postObject: null,
-      onSubmit: function(event, postData) {
-        return true;
-      },
-      onReset: function(event) {
-        return true;
-      }
+      onSubmit: function(event, postData) {},
+      onReset: function(event) {}
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      isLoading: null
     };
   },
 
@@ -93,11 +95,12 @@ var Form = React.createClass({
   },
 
   handleSubmit: function(event) {
-    event.preventDefault();
+    event.nativeEvent.preventDefault();
     var postData = this.serialize();
+    this.props.onSubmit(event, postData);
 
-    if(this.props.onSubmit(event, postData)) {
-      this.setState({isLoading: true});
+    if(!event.isDefaultPrevented()) {
+      this.setState({isLoading: true, errors: {}});
       this.submit(postData);
     }
   },

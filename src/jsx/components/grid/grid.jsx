@@ -112,12 +112,12 @@ var Grid = React.createClass({
   },
 
   onFilterSubmit: function(event, postData) {
+    event.preventDefault();
+
     this.setState({isLoading: true});
     this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
-
-    return false;
   },
 
   onSort: function(sortData) {

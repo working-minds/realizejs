@@ -10,7 +10,7 @@ var GridPagination = React.createClass({
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'grid.pagination grid.row',
+      themeClassKey: 'grid.pagination',
       page: 1,
       perPage: 20,
       window: 4,

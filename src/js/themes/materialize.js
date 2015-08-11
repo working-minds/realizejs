@@ -1,14 +1,10 @@
 WRF.themes.materialize = {
   grid: {
-    cssClass: 'grid',
-
-    row: {
-      cssClass: 'row'
-    },
+    cssClass: 'grid row',
 
     filter: {
       wrapper: {
-        cssClass: 'grid__filter'
+        cssClass: 'grid__filter col s12'
       },
 
       clearButton: {
@@ -17,11 +13,11 @@ WRF.themes.materialize = {
     },
 
     table: {
-      cssClass: 'grid__table'
+      cssClass: 'grid__table col s12'
     },
 
     pagination: {
-      cssClass: 'grid__pagination'
+      cssClass: 'grid__pagination col s12'
     }
   },
 
@@ -69,7 +65,7 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group col s12'
+      cssClass: 'form__input-group'
     }
   },
 

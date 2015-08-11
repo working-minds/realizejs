@@ -143,15 +143,11 @@ WRF.themes.default = {
 };
 WRF.themes.materialize = {
   grid: {
-    cssClass: 'grid',
-
-    row: {
-      cssClass: 'row'
-    },
+    cssClass: 'grid row',
 
     filter: {
       wrapper: {
-        cssClass: 'grid__filter'
+        cssClass: 'grid__filter col s12'
       },
 
       clearButton: {
@@ -160,11 +156,11 @@ WRF.themes.materialize = {
     },
 
     table: {
-      cssClass: 'grid__table'
+      cssClass: 'grid__table col s12'
     },
 
     pagination: {
-      cssClass: 'grid__pagination'
+      cssClass: 'grid__pagination col s12'
     }
   },
 
@@ -212,7 +208,7 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group col s12'
+      cssClass: 'form__input-group'
     }
   },
 
@@ -890,12 +886,14 @@ var Form = React.createClass({displayName: "Form",
       themeClassKey: 'form',
       style: 'default',
       postObject: null,
-      onSubmit: function(event, postData) {
-        return true;
-      },
-      onReset: function(event) {
-        return true;
-      }
+      onSubmit: function(event, postData) {},
+      onReset: function(event) {}
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      isLoading: null
     };
   },
 
@@ -950,11 +948,12 @@ var Form = React.createClass({displayName: "Form",
   },
 
   handleSubmit: function(event) {
-    event.preventDefault();
+    event.nativeEvent.preventDefault();
     var postData = this.serialize();
+    this.props.onSubmit(event, postData);
 
-    if(this.props.onSubmit(event, postData)) {
-      this.setState({isLoading: true});
+    if(!event.isDefaultPrevented()) {
+      this.setState({isLoading: true, errors: {}});
       this.submit(postData);
     }
   },
@@ -1179,12 +1178,12 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   onFilterSubmit: function(event, postData) {
+    event.preventDefault();
+
     this.setState({isLoading: true});
     this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
-
-    return false;
   },
 
   onSort: function(sortData) {
@@ -1296,7 +1295,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
   getInitialState: function() {
     return {
-      themeClassKey: 'grid.filter.wrapper grid.row'
+      themeClassKey: 'grid.filter.wrapper'
     };
   },
 
@@ -1326,7 +1325,7 @@ var GridPagination = React.createClass({displayName: "GridPagination",
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'grid.pagination grid.row',
+      themeClassKey: 'grid.pagination',
       page: 1,
       perPage: 20,
       window: 4,
@@ -1363,7 +1362,7 @@ var GridTable = React.createClass({displayName: "GridTable",
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'grid.table grid.row',
+      themeClassKey: 'grid.table',
       columns: {},
       sortConfigs: {},
       sortData: {},
