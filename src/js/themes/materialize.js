@@ -89,7 +89,7 @@ WRF.themes.materialize = {
     },
 
     text: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     autocomplete: {
@@ -111,20 +111,20 @@ WRF.themes.materialize = {
       },
 
       select: {
-        cssClass: 'validate select-wrapper initialized'
+        cssClass: 'select-wrapper initialized'
       }
     },
 
     checkbox: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     datepicker: {
-      cssClass: 'validate datepicker'
+      cssClass: 'datepicker'
     },
 
     select: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     textarea: {
@@ -136,7 +136,7 @@ WRF.themes.materialize = {
     cssClass: 'btn waves-effect waves-light',
 
     cancel: {
-      cssClass: 'grey lighten-4'
+      cssClass: 'black-text grey lighten-4'
     }
   },
 
@@ -168,7 +168,7 @@ WRF.themes.materialize = {
     },
 
     info: {
-      cssClass: 'blue lighten-4',
+      cssClass: 'flash--info blue lighten-4',
 
       content: {
         cssClass: 'blue-text darken-4'
@@ -176,7 +176,7 @@ WRF.themes.materialize = {
     },
 
     warning: {
-      cssClass: 'amber lighten-4',
+      cssClass: 'flash--warning amber lighten-4',
 
       content: {
         cssClass: 'orange-text darken-4'
@@ -184,7 +184,7 @@ WRF.themes.materialize = {
     },
 
     error: {
-      cssClass: 'red lighten-4',
+      cssClass: 'flash--error red lighten-4',
 
       content: {
         cssClass: 'red-text darken-4'
@@ -192,7 +192,7 @@ WRF.themes.materialize = {
     },
 
     success: {
-      cssClass: 'green lighten-4',
+      cssClass: 'flash--success green lighten-4',
 
       content: {
         cssClass: 'green-text darken-4'

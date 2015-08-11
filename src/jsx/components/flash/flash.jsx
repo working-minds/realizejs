@@ -3,7 +3,7 @@ var Flash = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.oneOf(['info', 'warning', 'error', 'success']),
-    text: React.PropTypes.string,
+    message: React.PropTypes.string,
     dismissTimeout: React.PropTypes.number,
     canDismiss: React.PropTypes.bool,
     onDismiss: React.PropTypes.func,
@@ -16,7 +16,7 @@ var Flash = React.createClass({
       dismissTimeout: -1,
       canDismiss: true,
       dismissed: false,
-      text: '',
+      message: '',
       onDismiss: function() {
         return true;
       }

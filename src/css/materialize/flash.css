@@ -1,7 +1,3 @@
-.flash {
-  position: relative;
-}
-
 .dismiss-enter {
   opacity: 0.01;
   overflow: hidden;
@@ -32,6 +28,10 @@
   max-height: 500px;
 }
 
+.flash {
+  position: relative;
+}
+
 .flash__dismiss {
   cursor: pointer;
   border-top-width: 0 !important;
@@ -43,4 +43,15 @@
 
 .flash__content p {
   padding-right: 30px;
+}
+
+.flash__content ul {
+  list-style: initial;
+  margin-top: 5px;
+  margin-bottom: 0;
+  padding-left: 40px;
+}
+
+.flash__content ul li {
+  list-style: initial;
 }

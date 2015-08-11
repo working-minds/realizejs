@@ -1,5 +1,10 @@
 var Form = React.createClass({
-  mixins: [CssClassMixin, FormErrorHandlerMixin],
+  mixins: [
+    CssClassMixin,
+    FormErrorHandlerMixin,
+    FormSuccessHandlerMixin
+  ],
+
   propTypes: {
     inputs: React.PropTypes.object,
     action: React.PropTypes.string,
@@ -10,8 +15,6 @@ var Form = React.createClass({
     submitButton: React.PropTypes.object,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func
   },
@@ -20,7 +23,7 @@ var Form = React.createClass({
     return {
       action: '',
       method: 'POST',
-      dataType: 'json',
+      dataType: undefined,
       submitButton: {
         name: 'Enviar'
       },
@@ -29,12 +32,6 @@ var Form = React.createClass({
       themeClassKey: 'form',
       style: 'default',
       postObject: null,
-      onSuccess: function(data) {
-        return true;
-      },
-      onError: function(xhr, status, error) {
-        return true;
-      },
       onSubmit: function(event, postData) {
         return true;
       },
@@ -153,21 +150,19 @@ var Form = React.createClass({
   },
 
   submit: function(postData) {
-    $.ajax({
+    var submitOptions = {
       url: this.props.action,
       method: this.props.method,
-      dataType: this.props.dataType,
       data: postData,
-      success: function(data) {
-        this.setState({isLoading: false, errors: {}});
-        this.props.onSuccess(data);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        this.setState({isLoading: false});
-        this.handleError(xhr, status, error);
-        this.props.onError(xhr, status, error);
-      }.bind(this)
-    });
+      success: this.handleSuccess,
+      error: this.handleError
+    };
+
+    if(!!this.props.dataType) {
+      submitOptions.dataType = this.props.dataType;
+    }
+
+    $.ajax(submitOptions);
   },
 
   isLoading: function() {

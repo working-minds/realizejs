@@ -2,7 +2,7 @@ var FlashContent = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.string,
-    text: React.PropTypes.string
+    message: React.PropTypes.string
   },
 
   getInitialState: function() {
@@ -15,7 +15,7 @@ var FlashContent = React.createClass({
     return (
       <div className={this.className()}>
         <p>
-          {this.props.text}
+          {this.props.message}
         </p>
       </div>
     );

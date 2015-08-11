@@ -10,10 +10,6 @@ button .preloader-wrapper.small {
   margin-left: 1.5em;
 }
 
-.form__button-group .filter__button--clear {
-  color: black;
-}
-
 .form__input {
   margin-bottom: 10px;
 }
@@ -113,10 +109,6 @@ button .preloader-wrapper.small {
 .table-cell--currency, .table-cell--number, .table-cell--datetime {
   white-space: nowrap;
 }
-.flash {
-  position: relative;
-}
-
 .dismiss-enter {
   opacity: 0.01;
   overflow: hidden;
@@ -147,6 +139,10 @@ button .preloader-wrapper.small {
   max-height: 500px;
 }
 
+.flash {
+  position: relative;
+}
+
 .flash__dismiss {
   cursor: pointer;
   border-top-width: 0 !important;
@@ -159,6 +155,17 @@ button .preloader-wrapper.small {
 .flash__content p {
   padding-right: 30px;
 }
+
+.flash__content ul {
+  list-style: initial;
+  margin-top: 5px;
+  margin-bottom: 0;
+  padding-left: 40px;
+}
+
+.flash__content ul li {
+  list-style: initial;
+}
 .form__input-error {
   color: #F44336;
   position: absolute;
@@ -166,6 +173,10 @@ button .preloader-wrapper.small {
   left: 0.75rem;
   font-size: 0.8rem;
 }
+.select-wrapper > input[type=text] {
+  cursor: pointer;
+}
+
 .input-autocomplete__option label {
   top: 0;
   left: 0;

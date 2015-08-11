@@ -232,7 +232,7 @@ WRF.themes.materialize = {
     },
 
     text: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     autocomplete: {
@@ -254,20 +254,20 @@ WRF.themes.materialize = {
       },
 
       select: {
-        cssClass: 'validate select-wrapper initialized'
+        cssClass: 'select-wrapper initialized'
       }
     },
 
     checkbox: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     datepicker: {
-      cssClass: 'validate datepicker'
+      cssClass: 'datepicker'
     },
 
     select: {
-      cssClass: 'validate'
+      cssClass: ''
     },
 
     textarea: {
@@ -279,7 +279,7 @@ WRF.themes.materialize = {
     cssClass: 'btn waves-effect waves-light',
 
     cancel: {
-      cssClass: 'grey lighten-4'
+      cssClass: 'black-text grey lighten-4'
     }
   },
 
@@ -311,7 +311,7 @@ WRF.themes.materialize = {
     },
 
     info: {
-      cssClass: 'blue lighten-4',
+      cssClass: 'flash--info blue lighten-4',
 
       content: {
         cssClass: 'blue-text darken-4'
@@ -319,7 +319,7 @@ WRF.themes.materialize = {
     },
 
     warning: {
-      cssClass: 'amber lighten-4',
+      cssClass: 'flash--warning amber lighten-4',
 
       content: {
         cssClass: 'orange-text darken-4'
@@ -327,7 +327,7 @@ WRF.themes.materialize = {
     },
 
     error: {
-      cssClass: 'red lighten-4',
+      cssClass: 'flash--error red lighten-4',
 
       content: {
         cssClass: 'red-text darken-4'
@@ -335,7 +335,7 @@ WRF.themes.materialize = {
     },
 
     success: {
-      cssClass: 'green lighten-4',
+      cssClass: 'flash--success green lighten-4',
 
       content: {
         cssClass: 'green-text darken-4'
@@ -402,12 +402,18 @@ var CssClassMixin = {
 };
 var FormErrorHandlerMixin = {
   propTypes: {
-    errorMessage: React.PropTypes.string
+    errorMessage: React.PropTypes.string,
+    baseErrorParam: React.PropTypes.string,
+    onError: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
-      errorMessage: 'Por favor, verifique o(s) seguinte(s) campo(s):'
+      errorMessage: 'Por favor, verifique o(s) erro(s) abaixo.',
+      baseErrorParam: 'base',
+      onError: function(xhr, status, error) {
+        return true;
+      }
     };
   },
 
@@ -422,17 +428,77 @@ var FormErrorHandlerMixin = {
       return '';
     }
 
-    return React.createElement(Flash, {type: "error", text: this.props.errorMessage, dismissed: false});
+    return React.createElement(Flash, {type: "error", message: this.flashErrorMessage(), dismissed: false});
   },
 
   handleError: function(xhr, status, error) {
-    if(xhr.status === 422) {
-      this.handleValidationError(xhr);
+    this.setState({isLoading: false});
+    if(this.props.onError(xhr, status, error)) {
+      if(xhr.status === 422) {
+        this.handleValidationError(xhr);
+      }
     }
   },
 
   handleValidationError: function(xhr) {
     this.setState({errors: xhr.responseJSON});
+  },
+
+  flashErrorMessage: function() {
+    return (
+      React.createElement("div", null, 
+        this.props.errorMessage, 
+        this.baseErrorsList()
+      )
+    );
+  },
+
+  baseErrorsList: function() {
+    var baseErrors = this.state.errors[this.props.baseErrorParam];
+    var baseErrorsListComponents = [];
+    if(!baseErrors) {
+      return '';
+    }
+
+    for(var i = 0; i < baseErrors.length; i++) {
+      var baseError = baseErrors[i];
+      baseErrorsListComponents.push(React.createElement("li", {key: baseError}, baseError));
+    }
+
+    return (
+      React.createElement("ul", null, 
+        baseErrorsListComponents
+      )
+    );
+  }
+};
+var FormSuccessHandlerMixin = {
+  propTypes: {
+    onSuccess: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      onSuccess: function(data, status, xhr) {
+        return true;
+      }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+    };
+  },
+
+  handleSuccess: function(data, status, xhr) {
+    this.setState({isLoading: false, errors: {}});
+
+    if(this.props.onSuccess(data, status, xhr)) {
+      if(xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
+        eval(data);
+      }
+
+    }
   }
 };
 var InputComponentMixin = {
@@ -672,7 +738,7 @@ var Flash = React.createClass({displayName: "Flash",
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.oneOf(['info', 'warning', 'error', 'success']),
-    text: React.PropTypes.string,
+    message: React.PropTypes.string,
     dismissTimeout: React.PropTypes.number,
     canDismiss: React.PropTypes.bool,
     onDismiss: React.PropTypes.func,
@@ -685,7 +751,7 @@ var Flash = React.createClass({displayName: "Flash",
       dismissTimeout: -1,
       canDismiss: true,
       dismissed: false,
-      text: '',
+      message: '',
       onDismiss: function() {
         return true;
       }
@@ -742,7 +808,7 @@ var FlashContent = React.createClass({displayName: "FlashContent",
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.string,
-    text: React.PropTypes.string
+    message: React.PropTypes.string
   },
 
   getInitialState: function() {
@@ -755,7 +821,7 @@ var FlashContent = React.createClass({displayName: "FlashContent",
     return (
       React.createElement("div", {className: this.className()}, 
         React.createElement("p", null, 
-          this.props.text
+          this.props.message
         )
       )
     );
@@ -786,7 +852,12 @@ var FlashDismiss = React.createClass({displayName: "FlashDismiss",
 });
 
 var Form = React.createClass({displayName: "Form",
-  mixins: [CssClassMixin, FormErrorHandlerMixin],
+  mixins: [
+    CssClassMixin,
+    FormErrorHandlerMixin,
+    FormSuccessHandlerMixin
+  ],
+
   propTypes: {
     inputs: React.PropTypes.object,
     action: React.PropTypes.string,
@@ -797,8 +868,6 @@ var Form = React.createClass({displayName: "Form",
     submitButton: React.PropTypes.object,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func
   },
@@ -807,7 +876,7 @@ var Form = React.createClass({displayName: "Form",
     return {
       action: '',
       method: 'POST',
-      dataType: 'json',
+      dataType: undefined,
       submitButton: {
         name: 'Enviar'
       },
@@ -816,12 +885,6 @@ var Form = React.createClass({displayName: "Form",
       themeClassKey: 'form',
       style: 'default',
       postObject: null,
-      onSuccess: function(data) {
-        return true;
-      },
-      onError: function(xhr, status, error) {
-        return true;
-      },
       onSubmit: function(event, postData) {
         return true;
       },
@@ -940,21 +1003,19 @@ var Form = React.createClass({displayName: "Form",
   },
 
   submit: function(postData) {
-    $.ajax({
+    var submitOptions = {
       url: this.props.action,
       method: this.props.method,
-      dataType: this.props.dataType,
       data: postData,
-      success: function(data) {
-        this.setState({isLoading: false, errors: {}});
-        this.props.onSuccess(data);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        this.setState({isLoading: false});
-        this.handleError(xhr, status, error);
-        this.props.onError(xhr, status, error);
-      }.bind(this)
-    });
+      success: this.handleSuccess,
+      error: this.handleError
+    };
+
+    if(!!this.props.dataType) {
+      submitOptions.dataType = this.props.dataType;
+    }
+
+    $.ajax(submitOptions);
   },
 
   isLoading: function() {
@@ -2029,7 +2090,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
             disabled: this.props.disabled, 
             placeholder: this.props.placeholder, 
             onFocus: this.props.onFocus, 
-            className: "select-dropdown"}
+            errors: this.props.errors}
           )
         ), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.selectId()}))
