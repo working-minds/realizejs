@@ -2991,6 +2991,10 @@ var ModalButton = React.createClass({displayName: "ModalButton",
   },
 
   componentDidMount: function(){
+    $(React.findDOMNode(this.refs.modalButton)).click(function(e){
+      e.stopPropagation();
+      e.preventDefault();
+    });
     $(React.findDOMNode(this.refs.modalButton)).leanModal({
         top:this.props.top,
         dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
