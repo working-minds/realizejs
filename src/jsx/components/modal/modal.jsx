@@ -2,48 +2,104 @@ var Modal = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    top: React.PropTypes.string,
-    bottom: React.PropTypes.string,
-    left: React.PropTypes.string,
-    right: React.PropTypes.string,
-    footerFixed:React.PropTypes.boolean
+    id:React.PropTypes.string,
+    headerSize:React.PropTypes.integer,
+    footerSize:React.PropTypes.integer,
+    marginHedaerFooter:React.PropTypes.integer
   },
 
   getDefaultProps: function() {
     return {
-      id:'',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      footerFixed:false
+      headerSize:50,
+      footerSize:50,
+      marginHedaerFooter:100
+    }
+  },
+
+  headerConfig: function () {
+    return {
+      height: this.props.headerSize + "px"
+    }
+  },
+
+  contentConfig: function () {
+    return {
+      overflow: 'auto',
+      'overflow-y': 'scroll'
+    }
+  },
+
+  footerConfig: function () {
+    return {
+      height: this.props.footerSize + "px"
     }
   },
 
   render: function() {
+    var header = this.filterChildren('header')? this.renderHeader() : '';
+    var footer = this.filterChildren('footer')? this.renderFooter() : '';
     return (
       <div id={this.props.id} className={this.themeStyle()} ref="modal">
-        {this.props.children}
+        {header}
+        {this.renderContent()}
+        {footer}
       </div>
     );
   },
 
-  themeStyle: function(){
-    var className = 'modal '+this.props.className;
-    className = this.props.footerFixed? (className += ' modal-fixed-footer ') : className;
-    return className;
+  renderHeader: function(){
+    return (
+      <div ref="headerContainer" style={this.headerConfig()}>
+        {this.filterChildren('header')}
+      </div>
+    );
+  },
+
+  renderContent: function(){
+    return (
+      <div ref="contentContainer" style={this.contentConfig()}>
+        {this.filterChildren('content')}
+      </div>
+    );
+  },
+
+  renderFooter: function(){
+    return (
+      <div ref="footerContainer" style={this.footerConfig()}>
+        {this.filterChildren('footer')}
+      </div>
+    );
   },
 
   componentDidMount: function(){
-    this.applyDimension();
+    this.resizeContent($(window).height());
+
+    $(window).bind('resize', function () {
+      this.resizeContent($(window).height());
+    },this);
   },
 
-  applyDimension: function(){
-    var modal = $(React.findDOMNode(this.refs.modal));
-    modal.css('top',this.props.top+'px');
-    modal.css('left',this.props.left+'px');
-    modal.css('right',this.props.right+'px');
-    modal.css('bottom',this.props.bottom+'px');
+  resizeContent: function(windowHeight){
+    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    $(contentContainer).css("height", windowHeight - (this.props.headerSize+this.props.footerSize+(this.props.marginHedaerFooter * 2)) );
+  },
+
+  themeStyle: function(){
+    var className = 'card wkm-modal '+this.props.className;
+    return className;
+  },
+
+  filterChildren : function(area) {
+    var result = null;
+    React.Children.map(this.props.children, function(x) {
+      if (x.props.area == area)
+        result =  x;
+    });
+    return result;
   }
 });
+
+
+
+
 

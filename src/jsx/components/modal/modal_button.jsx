@@ -2,6 +2,7 @@ var ModalButton = React.createClass({
   //mixins: [CssClassMixin],
 
   propTypes: {
+    top:React.PropTypes.integer,
     text: React.PropTypes.string,
     modal_id: React.PropTypes.string,
     dismissible: React.PropTypes.boolean,
@@ -14,6 +15,7 @@ var ModalButton = React.createClass({
 
   getDefaultProps: function() {
     return {
+      top:0,
       dismissible: true,
       text:'Modal',
       className: 'btn',
@@ -33,12 +35,13 @@ var ModalButton = React.createClass({
 
   componentDidMount: function(){
     $(React.findDOMNode(this.refs.modalButton)).leanModal({
+          top:this.props.top,
           dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
           opacity: this.props.opacity, // Opacity of modal background
           in_duration: this.props.in_duration, // Transition in duration
           out_duration: this.props.out_duration, // Transition out duration
           ready: this.props.ready, // Callback for Modal open
-          complete: this.props.complete // Callback for Modal close
+          complete: this.props.complete // Callback for Modal close,
         }
     );
   }
