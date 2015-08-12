@@ -1,6 +1,7 @@
 var Form = React.createClass({
   mixins: [
     CssClassMixin,
+    ContainerMixin,
     FormErrorHandlerMixin,
     FormSuccessHandlerMixin
   ],
@@ -11,7 +12,7 @@ var Form = React.createClass({
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
     style: React.PropTypes.string,
-    postObject: React.PropTypes.string,
+    resource: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
@@ -32,7 +33,7 @@ var Form = React.createClass({
       isLoading: false,
       themeClassKey: 'form',
       style: 'default',
-      postObject: null,
+      resource: null,
       onSubmit: function(event, postData) {},
       onReset: function(event) {}
     };
@@ -40,7 +41,22 @@ var Form = React.createClass({
 
   getInitialState: function() {
     return {
-      isLoading: null
+      isLoading: null,
+      propsToForward: ['errors', 'resource', 'style'],
+      forwardMapping: {
+        style: 'formStyle'
+      }
+    };
+  },
+
+  propsToForward: function() {
+    return ['resource'];
+  },
+
+  propsToForwardMapping: function() {
+    return {
+      errors: this.state.errors,
+      formStyle: this.props.style
     };
   },
 
@@ -55,7 +71,7 @@ var Form = React.createClass({
 
         {this.renderFlashErrors()}
         {this.renderInputs()}
-        {this.props.children}
+        {this.renderChildren()}
 
         <div className={WRF.themeClass('form.buttonGroup')}>
           {this.renderOtherButtons()}
@@ -70,7 +86,7 @@ var Form = React.createClass({
       return '';
     }
 
-    return <InputGroup {...this.propsWithoutCSS()} errors={this.state.errors} />;
+    return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} />;
   },
 
   renderOtherButtons: function() {

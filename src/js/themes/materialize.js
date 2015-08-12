@@ -200,6 +200,10 @@ WRF.themes.materialize = {
     }
   },
 
+  tabs: {
+    cssClass: 'tabs'
+  },
+
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',
