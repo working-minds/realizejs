@@ -2837,6 +2837,185 @@ var MenuItem = React.createClass({displayName: "MenuItem",
 });
 
 
+var Modal = React.createClass({displayName: "Modal",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    top: React.PropTypes.string,
+    bottom: React.PropTypes.string,
+    left: React.PropTypes.string,
+    right: React.PropTypes.string,
+    footerFixed:React.PropTypes.boolean
+  },
+
+  getDefaultProps: function() {
+    return {
+      id:'',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      footerFixed:false
+    }
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {id: this.props.id, className: this.themeStyle(), ref: "modal"}, 
+        this.props.children
+      )
+    );
+  },
+
+  themeStyle: function(){
+    var className = 'modal '+this.props.className;
+    className = this.props.footerFixed? (className += ' modal-fixed-footer ') : className;
+    return className;
+  },
+
+  componentDidMount: function(){
+    this.applyDimension();
+  },
+
+  applyDimension: function(){
+    var modal = $(React.findDOMNode(this.refs.modal));
+    modal.css('top',this.props.top+'px');
+    modal.css('left',this.props.left+'px');
+    modal.css('right',this.props.right+'px');
+    modal.css('bottom',this.props.bottom+'px');
+  }
+});
+
+
+var ModalButton = React.createClass({displayName: "ModalButton",
+  //mixins: [CssClassMixin],
+
+  propTypes: {
+    text: React.PropTypes.string,
+    modal_id: React.PropTypes.string,
+    dismissible: React.PropTypes.boolean,
+    opacity: React.PropTypes.float,
+    in_duration: React.PropTypes.integer,
+    out_duration: React.PropTypes.integer,
+    ready: React.PropTypes.func,
+    complete: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      dismissible: true,
+      text:'Modal',
+      className: 'btn',
+      opacity: 0,
+      in_duration: 300,
+      out_duration: 200,
+      ready: function(){return true},
+      complete: function(){return true}
+    }
+  },
+
+  render: function() {
+    return (
+        React.createElement("button", {"data-target": this.props.modal_id, className: this.props.className, ref: "modalButton"}, this.props.text)
+    );
+  },
+
+  componentDidMount: function(){
+    $(React.findDOMNode(this.refs.modalButton)).leanModal({
+          dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
+          opacity: this.props.opacity, // Opacity of modal background
+          in_duration: this.props.in_duration, // Transition in duration
+          out_duration: this.props.out_duration, // Transition out duration
+          ready: this.props.ready, // Callback for Modal open
+          complete: this.props.complete // Callback for Modal close
+        }
+    );
+  }
+
+});
+
+var ModalContent = React.createClass({displayName: "ModalContent",
+  mixins: [CssClassMixin],
+
+  getDefaultProps: function() {
+    return {
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {id: this.props.id, className: 'modal-content '+this.props.className}, 
+        this.props.children
+      )
+    );
+  }
+
+});
+
+var ModalFooter = React.createClass({displayName: "ModalFooter",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    height: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      height:'50px',
+      width:'100%'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {id: this.props.id, className: 'modal-footer '+this.props.className, ref: "modalFooter"}, 
+        this.props.children
+      )
+    );
+  },
+
+  componentDidMount: function(){
+    this.applyDimension();
+  },
+
+  applyDimension: function(){
+    var modalFooter = $(React.findDOMNode(this.refs.modalFooter));
+    modalFooter.css('height',this.props.height);
+  }
+
+});
+var ModalHeader = React.createClass({displayName: "ModalHeader",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    height: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      height:'50px',
+      width:'100%'
+    };
+  },
+
+  render: function() {
+    return (
+        React.createElement("div", {id: this.props.id, className: 'modal-header '+this.props.className, ref: "modalHeader"}, 
+          this.props.children
+        )
+    );
+  },
+
+  componentDidMount: function(){
+    this.applyDimension();
+  },
+
+  applyDimension: function(){
+    var modalHeader = $(React.findDOMNode(this.refs.modalHeader));
+    modalHeader.css('height',this.props.height);
+  }
+
+});
 var Pagination = React.createClass({displayName: "Pagination",
   mixins: [CssClassMixin],
   propTypes: {
