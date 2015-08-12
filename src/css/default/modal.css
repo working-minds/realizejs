@@ -1,7 +1,7 @@
 .wkm-modal{
   background-color: white;
   display: none;
-  max-height: calc(100% - 100px)!important;
+  /*max-height: calc(100% - 100px)!important;*/
   position: fixed;
   top: 50%!important;
   left: 50%;

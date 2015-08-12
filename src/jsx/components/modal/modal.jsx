@@ -18,7 +18,8 @@ var Modal = React.createClass({
 
   headerConfig: function () {
     return {
-      height: this.props.headerSize + "px"
+      height: this.props.headerSize + "px",
+      overflow: 'hidden'
     }
   },
 
@@ -31,7 +32,8 @@ var Modal = React.createClass({
 
   footerConfig: function () {
     return {
-      height: this.props.footerSize + "px"
+      height: this.props.footerSize + "px",
+      overflow: 'hidden'
     }
   },
 
@@ -72,16 +74,23 @@ var Modal = React.createClass({
   },
 
   componentDidMount: function(){
-    this.resizeContent($(window).height());
-
-    $(window).bind('resize', function () {
-      this.resizeContent($(window).height());
-    },this);
+    this.resizeAll();
+    $(window).bind('resize',this.resizeAll);
   },
 
-  resizeContent: function(windowHeight){
+  resizeAll: function(){
+    this.resizeModal();
+    this.resizeContent();
+  },
+
+  resizeModal: function(){
+    var modal = React.findDOMNode(this.refs.modal);
+    $(modal).css("height", $(window).height() - (this.props.marginHedaerFooter) );
+  },
+
+  resizeContent: function(){
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
-    $(contentContainer).css("height", windowHeight - (this.props.headerSize+this.props.footerSize+(this.props.marginHedaerFooter * 2)) );
+    $(contentContainer).css("height", $(window).height() - (this.props.marginHedaerFooter) - (this.props.headerSize+ this.props.footerSize) );
   },
 
   themeStyle: function(){
