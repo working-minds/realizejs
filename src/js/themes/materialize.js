@@ -201,7 +201,7 @@ WRF.themes.materialize = {
   },
 
   tabs: {
-    cssClass: 'tabs'
+    cssClass: 'tabs-container col'
   },
 
   icon: {

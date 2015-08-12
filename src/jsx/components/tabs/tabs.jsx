@@ -6,7 +6,8 @@ var Tabs = React.createClass({
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'tabs'
+      themeClassKey: 'tabs',
+      className: 's12'
     };
   },
 
@@ -16,14 +17,14 @@ var Tabs = React.createClass({
 
   render: function () {
     return (
-      <span>
-        <ul className={this.className()} ref="tabsContainer">
+      <div className={this.className()} >
+        <ul className="tabs z-depth-1" ref="tabsContainer">
           {this.renderTabs()}
         </ul>
         <div class="row">
           {this.renderChildren()}
         </div>
-      </span>
+      </div>
     );
   },
 

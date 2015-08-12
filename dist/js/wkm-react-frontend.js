@@ -344,7 +344,7 @@ WRF.themes.materialize = {
   },
 
   tabs: {
-    cssClass: 'tabs'
+    cssClass: 'tabs-container col'
   },
 
   icon: {
@@ -410,8 +410,7 @@ var CssClassMixin = {
 
   getDefaultProps: function() {
     return {
-      clearTheme: false,
-      className: ''
+      clearTheme: false
     };
   },
 
@@ -943,11 +942,7 @@ var Form = React.createClass({displayName: "Form",
 
   getInitialState: function() {
     return {
-      isLoading: null,
-      propsToForward: ['errors', 'resource', 'style'],
-      forwardMapping: {
-        style: 'formStyle'
-      }
+      isLoading: null
     };
   },
 
@@ -3624,7 +3619,8 @@ var Tabs = React.createClass({displayName: "Tabs",
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'tabs'
+      themeClassKey: 'tabs',
+      className: 's12'
     };
   },
 
@@ -3634,8 +3630,8 @@ var Tabs = React.createClass({displayName: "Tabs",
 
   render: function () {
     return (
-      React.createElement("span", null, 
-        React.createElement("ul", {className: this.className(), ref: "tabsContainer"}, 
+      React.createElement("div", {className: this.className()}, 
+        React.createElement("ul", {className: "tabs z-depth-1", ref: "tabsContainer"}, 
           this.renderTabs()
         ), 
         React.createElement("div", {class: "row"}, 

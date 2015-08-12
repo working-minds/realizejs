@@ -2,6 +2,9 @@
  * WKM Frontend v0.0.0 (http://www.wkm.com.br)
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
+body {
+  background: red !important; }
+
 button .preloader-wrapper.small {
   width: 24px;
   height: 24px;
@@ -195,4 +198,7 @@ button .preloader-wrapper.small {
   left: 0;
   color: black;
   padding-left: 30px;
+}
+.tabs-container .tabs {
+  margin: 15px 0;
 }

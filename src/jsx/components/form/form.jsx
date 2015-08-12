@@ -41,11 +41,7 @@ var Form = React.createClass({
 
   getInitialState: function() {
     return {
-      isLoading: null,
-      propsToForward: ['errors', 'resource', 'style'],
-      forwardMapping: {
-        style: 'formStyle'
-      }
+      isLoading: null
     };
   },
 

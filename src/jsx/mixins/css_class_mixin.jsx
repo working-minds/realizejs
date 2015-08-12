@@ -7,8 +7,7 @@ var CssClassMixin = {
 
   getDefaultProps: function() {
     return {
-      clearTheme: false,
-      className: ''
+      clearTheme: false
     };
   },
 
