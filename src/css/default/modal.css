@@ -8,18 +8,5 @@
   right: auto;
   bottom: auto;
   transform: translate(-50%, -50%)!important;
-  width: 55%;
-}
-.wkm-modal .modal-header{
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  width: 100%;
-}
-.wkm-modal .modal-content{
-  overflow: auto;
-  overflow-y: scroll;
-  height: calc(100% - 200px)!important;
-}
-.wkm-modal .modal-footer{
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  width: 100%;
+  /*width: 40%;*/
 }

@@ -2841,17 +2841,19 @@ var Modal = React.createClass({displayName: "Modal",
   mixins: [CssClassMixin],
 
   propTypes: {
-    id:React.PropTypes.string,
+    id: React.PropTypes.string,
     headerSize:React.PropTypes.integer,
     footerSize:React.PropTypes.integer,
-    marginHedaerFooter:React.PropTypes.integer
+    marginHeaderFooter:React.PropTypes.integer,
+    width: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       headerSize:50,
       footerSize:50,
-      marginHedaerFooter:100
+      marginHeaderFooter:100,
+      width: '40%'
     }
   },
 
@@ -2864,8 +2866,8 @@ var Modal = React.createClass({displayName: "Modal",
 
   contentConfig: function () {
     return {
-      overflow: 'auto',
-      'overflow-y': 'scroll'
+      'overflow-x': 'hidden',
+      'overflow-y': 'auto'
     }
   },
 
@@ -2924,12 +2926,13 @@ var Modal = React.createClass({displayName: "Modal",
 
   resizeModal: function(){
     var modal = React.findDOMNode(this.refs.modal);
-    $(modal).css("height", $(window).height() - (this.props.marginHedaerFooter) );
+    $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter) );
+    $(modal).css("width", this.props.width);
   },
 
   resizeContent: function(){
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
-    $(contentContainer).css("height", $(window).height() - (this.props.marginHedaerFooter) - (this.props.headerSize+ this.props.footerSize) );
+    $(contentContainer).css("max-height", $(window).height() - (this.props.marginHeaderFooter) - (this.props.headerSize+ this.props.footerSize) );
   },
 
   themeStyle: function(){
@@ -2989,14 +2992,14 @@ var ModalButton = React.createClass({displayName: "ModalButton",
 
   componentDidMount: function(){
     $(React.findDOMNode(this.refs.modalButton)).leanModal({
-          top:this.props.top,
-          dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
-          opacity: this.props.opacity, // Opacity of modal background
-          in_duration: this.props.in_duration, // Transition in duration
-          out_duration: this.props.out_duration, // Transition out duration
-          ready: this.props.ready, // Callback for Modal open
-          complete: this.props.complete // Callback for Modal close,
-        }
+        top:this.props.top,
+        dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
+        opacity: this.props.opacity, // Opacity of modal background
+        in_duration: this.props.in_duration, // Transition in duration
+        out_duration: this.props.out_duration, // Transition out duration
+        ready: this.props.ready, // Callback for Modal open
+        complete: this.props.complete // Callback for Modal close,
+      }
     );
   }
 

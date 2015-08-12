@@ -35,14 +35,14 @@ var ModalButton = React.createClass({
 
   componentDidMount: function(){
     $(React.findDOMNode(this.refs.modalButton)).leanModal({
-          top:this.props.top,
-          dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
-          opacity: this.props.opacity, // Opacity of modal background
-          in_duration: this.props.in_duration, // Transition in duration
-          out_duration: this.props.out_duration, // Transition out duration
-          ready: this.props.ready, // Callback for Modal open
-          complete: this.props.complete // Callback for Modal close,
-        }
+        top:this.props.top,
+        dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
+        opacity: this.props.opacity, // Opacity of modal background
+        in_duration: this.props.in_duration, // Transition in duration
+        out_duration: this.props.out_duration, // Transition out duration
+        ready: this.props.ready, // Callback for Modal open
+        complete: this.props.complete // Callback for Modal close,
+      }
     );
   }
 
