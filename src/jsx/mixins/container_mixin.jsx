@@ -15,6 +15,10 @@ var ContainerMixin = {
     return {};
   },
 
+  getChildren: function() {
+    return this.cloneChildrenWithProps();
+  },
+
   renderChildren: function() {
     return this.cloneChildrenWithProps();
   },

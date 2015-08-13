@@ -17,7 +17,7 @@ var Tabs = React.createClass({
 
   render: function () {
     return (
-      <div className={this.className()} >
+      <div className={this.className()}>
         <ul className="tabs z-depth-1" ref="tabsContainer">
           {this.renderTabs()}
         </ul>
@@ -30,6 +30,12 @@ var Tabs = React.createClass({
 
   renderTabs: function () {
     var tabs = [];
+    var children = this.getChildren();
+
+    React.Children.forEach(children, function(child) {
+
+    });
+
     for (var i = 0; i < this.props.children.length; i++) {
       var isActive = i === 0 ? "active" : "";
       tabs[i] = (

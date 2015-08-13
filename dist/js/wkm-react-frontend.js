@@ -373,6 +373,10 @@ var ContainerMixin = {
     return {};
   },
 
+  getChildren: function() {
+    return this.cloneChildrenWithProps();
+  },
+
   renderChildren: function() {
     return this.cloneChildrenWithProps();
   },
@@ -3643,6 +3647,12 @@ var Tabs = React.createClass({displayName: "Tabs",
 
   renderTabs: function () {
     var tabs = [];
+    var children = this.getChildren();
+
+    React.Children.forEach(children, function(child) {
+
+    });
+
     for (var i = 0; i < this.props.children.length; i++) {
       var isActive = i === 0 ? "active" : "";
       tabs[i] = (
