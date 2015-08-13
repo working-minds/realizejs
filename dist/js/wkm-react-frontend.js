@@ -2451,8 +2451,9 @@ var Input = React.createClass({displayName: "Input",
           password: InputPassword,
           select: InputSelect,
           textarea: InputTextarea,
-          checkbox_group: InputCheckboxGroup
-        };
+          checkbox_group: InputCheckboxGroup,
+          radio_group: InputRadioGroup
+        }; 
 
         return mapping[component];
       }
@@ -2815,6 +2816,121 @@ var InputTextarea = React.createClass({displayName: "InputTextarea",
       React.createElement("textarea", React.__spread({},  this.props, {className: this.className(), ref: "input"}))
     );
   }
+});
+
+var InputRadio = React.createClass({displayName: "InputRadio",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    renderAsIndeterminate: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.radio',
+      renderAsIndeterminate: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      checked: this.props.checked
+    }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var checked = nextProps.checked;
+    if(checked !== undefined) {
+      this.setState({checked: checked});
+    }
+  },
+
+  render: function() {
+    alert(this.props.value);
+    alert(this.state.checked);
+    return (
+        React.createElement("input", React.__spread({},  this.props,  this.state, {type: "radio", className: this.className(), onChange: this.handleChange, ref: "input"}))
+    );
+  },
+
+  handleChange: function(event) {
+    this.props.onChange(event);
+
+    alert(this.props.value);
+
+    if(!event.isPropagationStopped()) {
+      var checkbox = event.currentTarget;
+      alert(checkbox.checked);
+
+
+      this.setState({
+        checked: checkbox.checked
+      });
+    }
+  }
+
+});
+
+var InputRadioGroup = React.createClass({displayName: "InputRadioGroup",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    name: React.PropTypes.string,
+    align: React.PropTypes.oneOf(['vertical', 'horizontal']),
+    options: React.PropTypes.array,
+    currentValue: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      name:'',
+      align: 'vertical',
+      options: [],
+      currentValue: null
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      currentValue: this.props.currentValue
+    }
+  },
+
+  renderItems: function() {
+    return this.props.options.map(function (item, i) {
+
+      var optionsInput = {
+        type:'radio',
+        id: this.props.name + '_' + i,
+        name: this.props.name,
+        value: item.value
+      };
+      if (this.state.currentValue === item.value)
+        optionsInput['defaultChecked'] = "checked";
+
+      return (
+        React.createElement("p", null, 
+          React.createElement("input", React.__spread({},  optionsInput )), 
+          React.createElement(Label, {id: optionsInput.id, label: item.name})
+        )
+      );
+    }, this);
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: 'input-checkbox-group align-' + this.props.align, ref: "radioGroup"}, 
+        this.renderItems()
+      )
+    );
+  },
+
+  handleClick: function(event) {
+    $label = $(event.currentTarget);
+    $radio = $(React.findDOMNode(this.refs.radioGroup)).find("#"+$label.attr('for'));
+
+    this.setState({currentValue: $radio.val()});
+
+  }
+
 });
 
 var InputSelect = React.createClass({displayName: "InputSelect",

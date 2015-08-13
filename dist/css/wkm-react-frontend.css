@@ -169,6 +169,7 @@ button .preloader-wrapper.small {
   margin-left: 15px;
 }
 
+
 .select-wrapper > input[type=text] {
   cursor: pointer;
 }
@@ -178,6 +179,10 @@ button .preloader-wrapper.small {
   left: 0;
   color: black;
   padding-left: 30px;
+}
+.input-radio-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
 }
 .table-header .table-header__name.sortable {
   cursor: pointer;
