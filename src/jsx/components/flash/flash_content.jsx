@@ -2,7 +2,7 @@ var FlashContent = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.string,
-    message: React.PropTypes.string
+    message: React.PropTypes.node
   },
 
   getInitialState: function() {

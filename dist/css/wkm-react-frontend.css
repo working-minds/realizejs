@@ -200,3 +200,7 @@ button .preloader-wrapper.small {
 .tabs-container .tabs {
   margin: 15px 0;
 }
+
+.tabs-container .tabs .tab--error {
+
+}

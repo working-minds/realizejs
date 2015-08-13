@@ -19,35 +19,24 @@ var Tabs = React.createClass({
     return (
       <div className={this.className()}>
         <ul className="tabs z-depth-1" ref="tabsContainer">
-          {this.renderTabs()}
+          {this.renderTabButtons()}
         </ul>
-        <div class="row">
+        <div className="row">
           {this.renderChildren()}
         </div>
       </div>
     );
   },
 
-  renderTabs: function () {
+  renderTabButtons: function () {
     var tabs = [];
     var children = this.getChildren();
 
-    React.Children.forEach(children, function(child) {
-
-    });
-
-    for (var i = 0; i < this.props.children.length; i++) {
-      var isActive = i === 0 ? "active" : "";
-      tabs[i] = (
-        <li className="tab col s1">
-          <a href={'#' + this.props.children[i].props.id} className={isActive}>
-            {this.props.children[i].props.title}
-          </a>
-        </li>
-      );
-    }
+    React.Children.forEach(children, function(child, i) {
+      var isActive = (i === 0);
+      tabs.push(<TabButton {...child.props} active={isActive} key={"tab_" + i} />);
+    }.bind(this));
 
     return tabs;
   }
-
 });

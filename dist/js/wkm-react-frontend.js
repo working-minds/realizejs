@@ -344,7 +344,16 @@ WRF.themes.materialize = {
   },
 
   tabs: {
-    cssClass: 'tabs-container col'
+    cssClass: 'tabs-container col',
+
+    tabButton: {
+      cssClass: 'tab col',
+
+      error: {
+        cssClass: 'tab--error red lighten-4'
+      }
+    }
+
   },
 
   icon: {
@@ -358,19 +367,13 @@ WRF.themes.materialize = {
 };
 var ContainerMixin = {
   propTypes: {
-    forwardedProps: React.PropTypes.object,
+    forwardedProps: React.PropTypes.object
   },
-
-  clonedChildren: null,
 
   getDefaultProps: function() {
     return {
       forwardedProps: {}
     };
-  },
-
-  getInitialState: function() {
-    return {};
   },
 
   getChildren: function() {
@@ -379,6 +382,10 @@ var ContainerMixin = {
 
   renderChildren: function() {
     return this.cloneChildrenWithProps();
+  },
+
+  getAllDescendants: function() {
+
   },
 
   cloneChildrenWithProps: function() {
@@ -451,6 +458,72 @@ var CssClassMixin = {
 
     return props;
   }
+};
+var FormContainerMixin = {
+  propTypes: {
+    errors: React.PropTypes.object,
+    errorThemeClassKey: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      errors: {}
+    };
+  },
+
+  formContainerClassName: function() {
+    var className = this.className();
+    if(this.inputChildrenHaveErrors()) {
+      className += ' ' + WRF.themeClass(this.props.errorThemeClassKey);
+    }
+
+    return className;
+  },
+
+  inputChildrenHaveErrors: function() {
+    var errorIds = $.map(this.props.errors, function(error, errorId) {
+      return errorId;
+    });
+
+    return this.checkInputChildrenForErrors(errorIds, this.props.children);
+  },
+
+  checkInputChildrenForErrors: function(errorIds, children) {
+    var inputChildrenHaveErrors = false;
+
+    React.Children.forEach(children, function(child) {
+      if(child.type == Input && $.inArray(child.props.id, errorIds) >= 0) {
+        inputChildrenHaveErrors = true;
+      } else if(child.type == InputGroup) {
+        inputChildrenHaveErrors = this.checkInputGroupForErrors(errorIds, child);
+      } else if(React.Children.count(child.children) > 0) {
+        inputChildrenHaveErrors = this.checkInputChildrenForErrors(errorIds, child.children);
+      }
+
+      if(inputChildrenHaveErrors) {
+        return false;
+      }
+    }.bind(this));
+
+    return inputChildrenHaveErrors;
+  },
+
+  checkInputGroupForErrors: function (errorIds, inputGroup) {
+    var inputGroupHaveErrors = false;
+    var inputsIds = $.map(inputGroup.props.inputs, function(inputProps) {
+      return inputProps.id;
+    });
+
+    $.each(inputsIds, function(i, inputId) {
+      if($.inArray(inputId, errorIds) >= 0) {
+        inputGroupHaveErrors = true;
+        return false;
+      }
+    });
+
+    return inputGroupHaveErrors;
+  }
+
 };
 var FormErrorHandlerMixin = {
   propTypes: {
@@ -560,6 +633,7 @@ var InputComponentMixin = {
     value: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     placeholder: React.PropTypes.string,
+    errors: React.PropTypes.node,
     onChange: React.PropTypes.func
   },
 
@@ -790,7 +864,7 @@ var Flash = React.createClass({displayName: "Flash",
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.oneOf(['info', 'warning', 'error', 'success']),
-    message: React.PropTypes.string,
+    message: React.PropTypes.node,
     dismissTimeout: React.PropTypes.number,
     canDismiss: React.PropTypes.bool,
     onDismiss: React.PropTypes.func,
@@ -860,7 +934,7 @@ var FlashContent = React.createClass({displayName: "FlashContent",
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.string,
-    message: React.PropTypes.string
+    message: React.PropTypes.node
   },
 
   getInitialState: function() {
@@ -1074,12 +1148,6 @@ var InputGroup = React.createClass({displayName: "InputGroup",
     };
   },
 
-  componentWillMount: function() {
-    if(this.props.resource !== null) {
-      this.applyResourceToInputsProps();
-    }
-  },
-
   render: function() {
     return (
       React.createElement("div", {className: this.className()}, 
@@ -1103,7 +1171,8 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 
         inputComponents.push(
           React.createElement(Input, React.__spread({},  inputProps, 
-            {errors: this.props.errors[inputId], 
+            {errors: this.props.errors, 
+            resource: this.props.resource, 
             formStyle: this.props.formStyle, 
             key: "input_" + inputIndex, 
             ref: "input_" + inputIndex})
@@ -1115,20 +1184,6 @@ var InputGroup = React.createClass({displayName: "InputGroup",
     }
 
     return inputComponents;
-  },
-
-  applyResourceToInputsProps: function() {
-    var resource = this.props.resource;
-    var inputsProps = this.props.inputs;
-
-    for(var inputId in inputsProps) {
-      if (inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputProps.name = resource + '[' + (inputProps.name || inputId) + ']';
-        inputProps.id = resource + '_' + inputId;
-      }
-    }
   }
 });
 
@@ -2383,6 +2438,8 @@ var Input = React.createClass({displayName: "Input",
     label: React.PropTypes.string,
     value: React.PropTypes.string,
     formStyle: React.PropTypes.string,
+    errors: React.PropTypes.object,
+    resource: React.PropTypes.string,
     component: React.PropTypes.string,
     componentMapping: React.PropTypes.func
   },
@@ -2392,7 +2449,8 @@ var Input = React.createClass({displayName: "Input",
       value: null,
       component: 'text',
       formStyle: 'default',
-      errors: [],
+      errors: {},
+      resource: null,
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
@@ -2435,8 +2493,8 @@ var Input = React.createClass({displayName: "Input",
     return (
       React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
-        React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
-        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
+        this.renderLabel(), 
+        this.renderInputErrors()
       )
     );
   },
@@ -2445,7 +2503,7 @@ var Input = React.createClass({displayName: "Input",
     return (
       React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
-        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
+        this.renderInputErrors()
       )
     );
   },
@@ -2454,7 +2512,7 @@ var Input = React.createClass({displayName: "Input",
     return (
       React.createElement("div", {className: this.className()}, 
         this.renderComponentInput(), 
-        React.createElement(InputError, React.__spread({},  this.propsWithoutCSS()))
+        this.renderInputErrors()
       )
     );
   },
@@ -2465,10 +2523,46 @@ var Input = React.createClass({displayName: "Input",
 
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
-    var componentInputName = this.props.name || this.props.id;
-    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
+    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), {
+      id: this.getInputComponentId(),
+      name: this.getInputComponentName(),
+      errors: this.getInputErrors(),
+      ref: "inputComponent"
+    });
 
     return React.createElement(componentInputClass, componentInputProps);
+  },
+
+  renderLabel: function() {
+    return (
+      React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.getInputComponentId()}))
+    );
+  },
+
+  renderInputErrors: function() {
+    return (React.createElement(InputError, {errors: this.getInputErrors()}));
+  },
+
+  getInputComponentId: function() {
+    var inputId = this.props.id;
+    if(this.props.resource !== null) {
+      inputId = this.props.resource + '_' + inputId;
+    }
+
+    return inputId;
+  },
+
+  getInputComponentName: function() {
+    var inputName = (this.props.name || this.props.id);
+    if(this.props.resource !== null) {
+      inputName = this.props.resource + '[' + inputName + ']';
+    }
+
+    return inputName;
+  },
+
+  getInputErrors: function() {
+    return this.props.errors[this.props.id];
   }
 });
 
@@ -2523,6 +2617,10 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
 
 var InputError = React.createClass({displayName: "InputError",
   mixins: [CssClassMixin],
+
+  propTypes: {
+    errors: React.PropTypes.node
+  },
 
   getDefaultProps: function() {
     return {
@@ -3615,6 +3713,39 @@ var Tab = React.createClass({displayName: "Tab",
     );
   }
 });
+var TabButton = React.createClass({displayName: "TabButton",
+  mixins: [
+    CssClassMixin,
+    ContainerMixin,
+    FormContainerMixin
+  ],
+
+  propTypes: {
+    id: React.PropTypes.string,
+    title: React.PropTypes.string,
+    active: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'tabs.tabButton',
+      errorThemeClassKey: 'tabs.tabButton.error',
+      className: 's1',
+      active: false
+    };
+  },
+
+  render: function () {
+    return (
+      React.createElement("li", {className: this.formContainerClassName()}, 
+        React.createElement("a", {href: '#' + this.props.id, className: this.props.active ? "active" : ""}, 
+          this.props.title
+        )
+      )
+    );
+  }
+
+});
 var Tabs = React.createClass({displayName: "Tabs",
   mixins: [
     CssClassMixin,
@@ -3636,35 +3767,24 @@ var Tabs = React.createClass({displayName: "Tabs",
     return (
       React.createElement("div", {className: this.className()}, 
         React.createElement("ul", {className: "tabs z-depth-1", ref: "tabsContainer"}, 
-          this.renderTabs()
+          this.renderTabButtons()
         ), 
-        React.createElement("div", {class: "row"}, 
+        React.createElement("div", {className: "row"}, 
           this.renderChildren()
         )
       )
     );
   },
 
-  renderTabs: function () {
+  renderTabButtons: function () {
     var tabs = [];
     var children = this.getChildren();
 
-    React.Children.forEach(children, function(child) {
-
-    });
-
-    for (var i = 0; i < this.props.children.length; i++) {
-      var isActive = i === 0 ? "active" : "";
-      tabs[i] = (
-        React.createElement("li", {className: "tab col s1"}, 
-          React.createElement("a", {href: '#' + this.props.children[i].props.id, className: isActive}, 
-            this.props.children[i].props.title
-          )
-        )
-      );
-    }
+    React.Children.forEach(children, function(child, i) {
+      var isActive = (i === 0);
+      tabs.push(React.createElement(TabButton, React.__spread({},  child.props, {active: isActive, key: "tab_" + i})));
+    }.bind(this));
 
     return tabs;
   }
-
 });

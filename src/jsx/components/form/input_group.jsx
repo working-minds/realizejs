@@ -19,12 +19,6 @@ var InputGroup = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    if(this.props.resource !== null) {
-      this.applyResourceToInputsProps();
-    }
-  },
-
   render: function() {
     return (
       <div className={this.className()}>
@@ -48,7 +42,8 @@ var InputGroup = React.createClass({
 
         inputComponents.push(
           <Input {...inputProps}
-            errors={this.props.errors[inputId]}
+            errors={this.props.errors}
+            resource={this.props.resource}
             formStyle={this.props.formStyle}
             key={"input_" + inputIndex}
             ref={"input_" + inputIndex}
@@ -60,19 +55,5 @@ var InputGroup = React.createClass({
     }
 
     return inputComponents;
-  },
-
-  applyResourceToInputsProps: function() {
-    var resource = this.props.resource;
-    var inputsProps = this.props.inputs;
-
-    for(var inputId in inputsProps) {
-      if (inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputProps.name = resource + '[' + (inputProps.name || inputId) + ']';
-        inputProps.id = resource + '_' + inputId;
-      }
-    }
   }
 });

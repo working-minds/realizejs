@@ -1,18 +1,12 @@
 var ContainerMixin = {
   propTypes: {
-    forwardedProps: React.PropTypes.object,
+    forwardedProps: React.PropTypes.object
   },
-
-  clonedChildren: null,
 
   getDefaultProps: function() {
     return {
       forwardedProps: {}
     };
-  },
-
-  getInitialState: function() {
-    return {};
   },
 
   getChildren: function() {
@@ -21,6 +15,10 @@ var ContainerMixin = {
 
   renderChildren: function() {
     return this.cloneChildrenWithProps();
+  },
+
+  getAllDescendants: function() {
+
   },
 
   cloneChildrenWithProps: function() {
