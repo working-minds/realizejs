@@ -200,6 +200,19 @@ WRF.themes.materialize = {
     }
   },
 
+  tabs: {
+    cssClass: 'tabs-container col',
+
+    tabButton: {
+      cssClass: 'tab col',
+
+      error: {
+        cssClass: 'tab--error red lighten-4'
+      }
+    }
+
+  },
+
   icon: {
     cssClass: 'material-icons',
     left: 'chevron_left',

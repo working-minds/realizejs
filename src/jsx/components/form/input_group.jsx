@@ -4,24 +4,19 @@ var InputGroup = React.createClass({
   propTypes: {
     inputs: React.PropTypes.object,
     errors: React.PropTypes.object,
-    postObject: React.PropTypes.string,
-    themeClassKey: React.PropTypes.string
+    resource: React.PropTypes.string,
+    themeClassKey: React.PropTypes.string,
+    formStyle: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       inputs: {},
       errors: {},
-      style: 'default',
-      postObject: null,
+      formStyle: 'default',
+      resource: null,
       themeClassKey: 'form.inputGroup'
     };
-  },
-
-  componentWillMount: function() {
-    if(this.props.postObject !== null) {
-      this.applyPostObjectToInputsProps();
-    }
   },
 
   render: function() {
@@ -41,11 +36,15 @@ var InputGroup = React.createClass({
     for(var inputId in inputsProps) {
       if(inputsProps.hasOwnProperty(inputId)) {
         var inputProps = inputsProps[inputId];
+        if(!inputProps.id) {
+          inputProps.id = inputId;
+        }
 
         inputComponents.push(
           <Input {...inputProps}
-            errors={this.props.errors[inputId]}
-            formStyle={this.props.style}
+            errors={this.props.errors}
+            resource={this.props.resource}
+            formStyle={this.props.formStyle}
             key={"input_" + inputIndex}
             ref={"input_" + inputIndex}
           />
@@ -56,19 +55,5 @@ var InputGroup = React.createClass({
     }
 
     return inputComponents;
-  },
-
-  applyPostObjectToInputsProps: function() {
-    var postObject = this.props.postObject;
-    var inputsProps = this.props.inputs;
-
-    for(var inputId in inputsProps) {
-      if (inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
-        inputProps.id = postObject + '_' + inputId;
-      }
-    }
   }
 });

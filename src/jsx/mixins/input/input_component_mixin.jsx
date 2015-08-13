@@ -5,6 +5,7 @@ var InputComponentMixin = {
     value: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     placeholder: React.PropTypes.string,
+    errors: React.PropTypes.node,
     onChange: React.PropTypes.func
   },
 

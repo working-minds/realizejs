@@ -67,3 +67,14 @@
   float: left;
   margin-left: 15px;
 }
+
+.select-wrapper > input[type=text] {
+  cursor: pointer;
+}
+
+.input-autocomplete__option label {
+  top: 0;
+  left: 0;
+  color: black;
+  padding-left: 30px;
+}
