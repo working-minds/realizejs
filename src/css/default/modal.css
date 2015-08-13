@@ -1,0 +1,12 @@
+.wkm-modal{
+  background-color: white;
+  display: none;
+  /*max-height: calc(100% - 100px)!important;*/
+  position: fixed;
+  top: 50%!important;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%)!important;
+  /*width: 40%;*/
+}
