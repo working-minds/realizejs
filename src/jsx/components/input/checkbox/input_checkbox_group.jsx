@@ -1,21 +1,27 @@
 var InputCheckboxGroup = React.createClass({
   mixins: [
     CssClassMixin,
-    InputComponentMixin
+    InputComponentMixin,
+    SelectComponentMixin
   ],
 
   propTypes: {
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
-    options: React.PropTypes.array
+    currentValues: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.checkbox',
       name:'',
-      align: 'vertical',
-      options: []
+      align: 'vertical'
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      currentValues: this.props.currentValues
     };
   },
 
@@ -28,18 +34,23 @@ var InputCheckboxGroup = React.createClass({
   },
 
   renderPropItems: function() {
-    var items = this.props.options.map(function (optionProps, i) {
+    var selectOptions = [];
+    var options = this.state.options;
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+
       var filledClass =  optionProps.filled? 'filled-in' : '';
       optionProps.id = this.props.name + '_' + i;
 
-      return (
+      selectOptions.push(
         <p key={'p_input'+i}>
-          <InputCheckbox {...optionProps } name={this.props.name} className={filledClass} isChecked={optionProps.isChecked} />
+          <InputCheckbox {...optionProps } name={this.props.name} className={filledClass} checked={this.isChecked(optionProps)}/>
           <Label {...optionProps} />
         </p>
-      );
-    }, this);
-    return items;
+      )
+    }
+    return selectOptions;
   },
 
   render: function() {
@@ -49,6 +60,14 @@ var InputCheckboxGroup = React.createClass({
         {this.renderPropItems()}
       </div>
     );
+  },
+
+  isChecked: function(item){
+    var currentValues = this.state.currentValues;
+    if(!$.isArray(currentValues))
+      currentValues = [currentValues];
+    return ($.inArray( item.value , currentValues ) !== -1);
   }
 
 });
+ 

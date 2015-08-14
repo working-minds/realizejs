@@ -2395,21 +2395,27 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
 var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
   mixins: [
     CssClassMixin,
-    InputComponentMixin
+    InputComponentMixin,
+    SelectComponentMixin
   ],
 
   propTypes: {
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
-    options: React.PropTypes.array
+    currentValues: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.checkbox',
       name:'',
-      align: 'vertical',
-      options: []
+      align: 'vertical'
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      currentValues: this.props.currentValues
     };
   },
 
@@ -2422,18 +2428,23 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
   },
 
   renderPropItems: function() {
-    var items = this.props.options.map(function (optionProps, i) {
+    var selectOptions = [];
+    var options = this.state.options;
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+
       var filledClass =  optionProps.filled? 'filled-in' : '';
       optionProps.id = this.props.name + '_' + i;
 
-      return (
+      selectOptions.push(
         React.createElement("p", {key: 'p_input'+i}, 
-          React.createElement(InputCheckbox, React.__spread({},  optionProps , {name: this.props.name, className: filledClass, isChecked: optionProps.isChecked})), 
+          React.createElement(InputCheckbox, React.__spread({},  optionProps , {name: this.props.name, className: filledClass, checked: this.isChecked(optionProps)})), 
           React.createElement(Label, React.__spread({},  optionProps))
         )
-      );
-    }, this);
-    return items;
+      )
+    }
+    return selectOptions;
   },
 
   render: function() {
@@ -2443,10 +2454,17 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
         this.renderPropItems()
       )
     );
+  },
+
+  isChecked: function(item){
+    var currentValues = this.state.currentValues;
+    if(!$.isArray(currentValues))
+      currentValues = [currentValues];
+    return ($.inArray( item.value , currentValues ) !== -1);
   }
 
 });
-
+ 
 var Input = React.createClass({displayName: "Input",
   mixins: [CssClassMixin],
   propTypes: {
