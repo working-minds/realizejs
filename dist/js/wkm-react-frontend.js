@@ -1135,6 +1135,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
+    label: React.PropTypes.string,
     formStyle: React.PropTypes.string
   },
 
@@ -1144,15 +1145,20 @@ var InputGroup = React.createClass({displayName: "InputGroup",
       errors: {},
       formStyle: 'default',
       resource: null,
+      label: null,
       themeClassKey: 'form.inputGroup'
     };
   },
 
   render: function() {
     return (
-      React.createElement("div", {className: this.className()}, 
-        this.renderInputs(), 
-        this.props.children
+      React.createElement("div", null, 
+        React.createElement("div", {className: this.className()}, 
+          this.renderLabel(), 
+          this.renderInputs(), 
+          this.props.children
+        ), 
+        this.renderDivider()
       )
     );
   },
@@ -1184,6 +1190,27 @@ var InputGroup = React.createClass({displayName: "InputGroup",
     }
 
     return inputComponents;
+  },
+
+  renderLabel: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    return (React.createElement("h5", {className: "col s12"}, this.props.label));
+  },
+
+  renderDivider: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    //TODO: refatorar para um componente
+    return (
+      React.createElement("div", {className: "col s12"}, 
+        React.createElement("hr", null)
+      )
+    );
   }
 });
 
