@@ -1,14 +1,10 @@
 WRF.themes.materialize = {
   grid: {
-    cssClass: 'grid',
-
-    row: {
-      cssClass: 'row'
-    },
+    cssClass: 'grid row',
 
     filter: {
       wrapper: {
-        cssClass: 'grid__filter'
+        cssClass: 'grid__filter col s12'
       },
 
       clearButton: {
@@ -17,11 +13,11 @@ WRF.themes.materialize = {
     },
 
     table: {
-      cssClass: 'grid__table'
+      cssClass: 'grid__table col s12'
     },
 
     pagination: {
-      cssClass: 'grid__pagination'
+      cssClass: 'grid__pagination col s12'
     }
   },
 
@@ -66,6 +62,10 @@ WRF.themes.materialize = {
 
     buttonGroup: {
       cssClass: 'form__button-group col s12 m12 l12 right-align'
+    },
+
+    inputGroup: {
+      cssClass: 'form__input-group'
     }
   },
 
@@ -198,6 +198,19 @@ WRF.themes.materialize = {
         cssClass: 'green-text darken-4'
       }
     }
+  },
+
+  tabs: {
+    cssClass: 'tabs-container col',
+
+    tabButton: {
+      cssClass: 'tab col',
+
+      error: {
+        cssClass: 'tab--error red lighten-4'
+      }
+    }
+
   },
 
   icon: {

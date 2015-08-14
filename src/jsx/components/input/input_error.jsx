@@ -1,6 +1,10 @@
 var InputError = React.createClass({
   mixins: [CssClassMixin],
 
+  propTypes: {
+    errors: React.PropTypes.node
+  },
+
   getDefaultProps: function() {
     return {
       errors: [],

@@ -43,7 +43,7 @@ var GridFilter = React.createClass({
 
   getInitialState: function() {
     return {
-      themeClassKey: 'grid.filter.wrapper grid.row'
+      themeClassKey: 'grid.filter.wrapper'
     };
   },
 

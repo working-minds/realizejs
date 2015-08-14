@@ -25,7 +25,7 @@ var InputCheckboxGroup = React.createClass({
     }.bind(this));
   },
 
-  renderChildren:function(){
+  renderChildren: function() {
     var items = React.Children.map(this.props.children, function(item) {
       if((item !== null) && (item.props.children[0].type.displayName == "InputCheckbox"))
         return item;
@@ -33,7 +33,7 @@ var InputCheckboxGroup = React.createClass({
     return items;
   },
 
-  renderItems: function(){
+  renderItems: function() {
     return this.props.options.map(function (optionProps, i) {
       var filledClass =  optionProps.filled? 'filled-in' : '';
       optionProps.id = this.props.name + '_' + i;
@@ -49,7 +49,7 @@ var InputCheckboxGroup = React.createClass({
 
   render: function() {
     return (
-      <div className={'input-checkbox-group align-'+this.props.align}>
+      <div className={'input-checkbox-group align-' + this.props.align}>
         {this.renderChildren()}
       </div>
     );

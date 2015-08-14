@@ -1,6 +1,7 @@
 var Form = React.createClass({
   mixins: [
     CssClassMixin,
+    ContainerMixin,
     FormErrorHandlerMixin,
     FormSuccessHandlerMixin
   ],
@@ -11,7 +12,7 @@ var Form = React.createClass({
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
     style: React.PropTypes.string,
-    postObject: React.PropTypes.string,
+    resource: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
@@ -21,6 +22,7 @@ var Form = React.createClass({
 
   getDefaultProps: function() {
     return {
+      inputs: {},
       action: '',
       method: 'POST',
       dataType: undefined,
@@ -31,13 +33,9 @@ var Form = React.createClass({
       isLoading: false,
       themeClassKey: 'form',
       style: 'default',
-      postObject: null,
-      onSubmit: function(event, postData) {
-        return true;
-      },
-      onReset: function(event) {
-        return true;
-      }
+      resource: null,
+      onSubmit: function(event, postData) {},
+      onReset: function(event) {}
     };
   },
 
@@ -47,10 +45,15 @@ var Form = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    if(this.props.postObject !== null) {
-      this.applyPostObjectToInputsProps();
-    }
+  propsToForward: function() {
+    return ['resource'];
+  },
+
+  propsToForwardMapping: function() {
+    return {
+      errors: this.state.errors,
+      formStyle: this.props.style
+    };
   },
 
   render: function() {
@@ -64,7 +67,7 @@ var Form = React.createClass({
 
         {this.renderFlashErrors()}
         {this.renderInputs()}
-        {this.props.children}
+        {this.renderChildren()}
 
         <div className={WRF.themeClass('form.buttonGroup')}>
           {this.renderOtherButtons()}
@@ -75,28 +78,11 @@ var Form = React.createClass({
   },
 
   renderInputs: function() {
-    var inputsProps = this.props.inputs;
-    var inputComponents = [];
-    var inputIndex = 0;
-
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputComponents.push(
-          <Input {...inputProps}
-            errors={this.state.errors[inputId]}
-            formStyle={this.props.style}
-            key={"input_" + inputIndex}
-            ref={"input_" + inputIndex}
-          />
-        );
-
-        inputIndex++;
-      }
+    if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
+      return '';
     }
 
-    return inputComponents;
+    return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} />;
   },
 
   renderOtherButtons: function() {
@@ -111,20 +97,6 @@ var Form = React.createClass({
     return otherButtons;
   },
 
-  applyPostObjectToInputsProps: function() {
-    var postObject = this.props.postObject;
-    var inputsProps = this.props.inputs;
-
-    for(var inputId in inputsProps) {
-      if (inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-
-        inputProps.name = postObject + '[' + (inputProps.name || inputId) + ']';
-        inputProps.id = postObject + '_' + inputId;
-      }
-    }
-  },
-
   submitButtonProps: function() {
     var isLoading = this.isLoading();
     return $.extend({}, this.props.submitButton, {
@@ -135,11 +107,12 @@ var Form = React.createClass({
   },
 
   handleSubmit: function(event) {
-    event.preventDefault();
+    event.nativeEvent.preventDefault();
     var postData = this.serialize();
+    this.props.onSubmit(event, postData);
 
-    if(this.props.onSubmit(event, postData)) {
-      this.setState({isLoading: true});
+    if(!event.isDefaultPrevented()) {
+      this.setState({isLoading: true, errors: {}});
       this.submit(postData);
     }
   },
@@ -172,5 +145,5 @@ var Form = React.createClass({
     }
 
     return isLoading;
-  },
+  }
 });

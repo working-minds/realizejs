@@ -15,7 +15,8 @@ module.exports = function(grunt) {
           'src/js/theme.js',
           'src/js/themes/**/*.js',
           'src/jsx/**/*.jsx',
-          'src/css/**/*.css'
+          'src/css/**/*.css',
+          'src/scss/**/*.scss'
         ],
         tasks: ['build'],
         options: {
@@ -35,8 +36,22 @@ module.exports = function(grunt) {
             expand: true,
             cwd: 'src/jsx',
             src: ['**/*.jsx'],
-            dest: 'src/js',
+            dest: 'tmp/js',
             ext: '.js'
+          }
+        ]
+      }
+    },
+
+    sass: {
+      build: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/scss',
+            src: ['**/*.scss'],
+            dest: 'tmp/css',
+            ext: '.css'
           }
         ]
       }
@@ -53,13 +68,16 @@ module.exports = function(grunt) {
           'src/js/config.js',
           'src/js/theme.js',
           'src/js/themes/**/*.js',
-          'src/js/mixins/**/*.js',
-          'src/js/components/**/*.js'
+          'tmp/js/mixins/**/*.js',
+          'tmp/js/components/**/*.js'
         ],
         dest: 'dist/js/<%= pkg.name %>.js'
       },
       css: {
-        src: ['src/css/**/*.css'],
+        src: [
+          'tmp/css/**/*.css',
+          'src/css/**/*.css'
+        ],
         dest: 'dist/css/<%= pkg.name %>.css'
       }
     },
@@ -90,7 +108,7 @@ module.exports = function(grunt) {
 
     clean: {
       build: {
-        src: ["src/js/components", "src/js/mixins"]
+        src: ["tmp"]
       }
     }
   });
@@ -102,10 +120,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-react');
 
 
-  grunt.registerTask('build', ['react:build', 'concat:js', 'concat:css', 'uglify', 'cssmin', 'clean']);
+  grunt.registerTask('build', ['react:build', 'sass:build', 'concat:js', 'concat:css', 'uglify', 'cssmin', 'clean']);
   grunt.registerTask('default', ['build']);
 };

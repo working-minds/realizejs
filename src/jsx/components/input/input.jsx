@@ -6,7 +6,8 @@ var Input = React.createClass({
     label: React.PropTypes.string,
     value: React.PropTypes.string,
     formStyle: React.PropTypes.string,
-    onChange: React.PropTypes.func,
+    errors: React.PropTypes.object,
+    resource: React.PropTypes.string,
     component: React.PropTypes.string,
     componentMapping: React.PropTypes.func
   },
@@ -16,10 +17,8 @@ var Input = React.createClass({
       value: null,
       component: 'text',
       formStyle: 'default',
-      errors: [],
-      onChange: function(event) {
-        return true;
-      },
+      errors: {},
+      resource: null,
       componentMapping: function(component) {
         var mapping = {
           text: InputText,
@@ -62,8 +61,8 @@ var Input = React.createClass({
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
-        <Label {...this.propsWithoutCSS()} />
-        <InputError {...this.propsWithoutCSS()} />
+        {this.renderLabel()}
+        {this.renderInputErrors()}
       </div>
     );
   },
@@ -72,7 +71,7 @@ var Input = React.createClass({
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
-        <InputError {...this.propsWithoutCSS()} />
+        {this.renderInputErrors()}
       </div>
     );
   },
@@ -81,7 +80,7 @@ var Input = React.createClass({
     return (
       <div className={this.className()}>
         {this.renderComponentInput()}
-        <InputError {...this.propsWithoutCSS()} />
+        {this.renderInputErrors()}
       </div>
     );
   },
@@ -92,9 +91,45 @@ var Input = React.createClass({
 
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
-    var componentInputName = this.props.name || this.props.id;
-    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), { name: componentInputName, ref: "inputComponent" });
+    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), {
+      id: this.getInputComponentId(),
+      name: this.getInputComponentName(),
+      errors: this.getInputErrors(),
+      ref: "inputComponent"
+    });
 
     return React.createElement(componentInputClass, componentInputProps);
+  },
+
+  renderLabel: function() {
+    return (
+      <Label {...this.propsWithoutCSS()} id={this.getInputComponentId()} />
+    );
+  },
+
+  renderInputErrors: function() {
+    return (<InputError errors={this.getInputErrors()} />);
+  },
+
+  getInputComponentId: function() {
+    var inputId = this.props.id;
+    if(this.props.resource !== null) {
+      inputId = this.props.resource + '_' + inputId;
+    }
+
+    return inputId;
+  },
+
+  getInputComponentName: function() {
+    var inputName = (this.props.name || this.props.id);
+    if(this.props.resource !== null) {
+      inputName = this.props.resource + '[' + inputName + ']';
+    }
+
+    return inputName;
+  },
+
+  getInputErrors: function() {
+    return this.props.errors[this.props.id];
   }
 });

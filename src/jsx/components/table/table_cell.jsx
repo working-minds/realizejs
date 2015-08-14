@@ -1,12 +1,11 @@
 var TableCell = React.createClass({
   mixins: [CssClassMixin],
-  validFormats: ['text', 'currency', 'number', 'boolean', 'datetime'],
 
   propTypes: {
     name: React.PropTypes.string,
     data: React.PropTypes.object,
     value: React.PropTypes.func,
-    format: React.PropTypes.string
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'datetime'])
   },
 
   getDefaultProps: function() {
@@ -33,37 +32,41 @@ var TableCell = React.createClass({
   renderValue: function() {
     var format = this.props.format;
     var customValue = this.props.value;
+    var dataValue = this.props.data[this.props.name];
 
     if(!!customValue) {
       return customValue(this.props.data, this.props);
-    } else if($.inArray(format, this.validFormats) >= 0) {
-      return this[format + "Value"]();
+    } else if(dataValue === null || dataValue === undefined) {
+      return '-';
     } else {
-      return this.textValue();
+      try {
+        return this[format + "Value"](dataValue);
+      } catch(err) {
+        return this.textValue(dataValue);
+      }
     }
   },
 
-  textValue: function() {
-    return this.props.data[this.props.name];
+  textValue: function(value) {
+    return value;
   },
 
-  numberValue: function() {
-    var value = parseFloat(this.props.data[this.props.name]);
+  numberValue: function(value) {
+    value = parseFloat(value);
     return numeral(value).format('0,0.[000]');
   },
 
-  currencyValue: function() {
-    var value = parseFloat(this.props.data[this.props.name]);
+  currencyValue: function(value) {
+    value = parseFloat(value);
     return numeral(value).format('$ 0,0.00');
   },
 
-  booleanValue: function() {
-    var value = this.props.data[this.props.name];
+  booleanValue: function(value) {
     return value ? "Sim" : "Não";
   },
 
-  datetimeValue: function() {
-    var value = moment(this.props.data[this.props.name]);
+  datetimeValue: function(value) {
+    value = moment(value);
     return value.format("DD/MM/YYYY HH:mm");
   }
 });

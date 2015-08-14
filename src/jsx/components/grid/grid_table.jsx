@@ -10,7 +10,7 @@ var GridTable = React.createClass({
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'grid.table grid.row',
+      themeClassKey: 'grid.table',
       columns: {},
       sortConfigs: {},
       sortData: {},
