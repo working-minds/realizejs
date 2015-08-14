@@ -11,37 +11,27 @@ var Menu = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    if(!Array.isArray(this.props.children))
-      this.props.children = [this.props.children];
-
-    var items = this.renderItems();
-    $(items).each(function (i, element) {
-      this.props.children.push(element);
-    }.bind(this));
-  },
-
-  render: function() {
-    return (
-      <ul id={this.props.ref_id} className={this.props.className}>
-        {this.renderChildren()}
-      </ul>
-    );
-  },
-
-  renderItems: function(){
-    var menuItems = this.props.items.map(function ( item ) {
-      return <MenuItem {...item }/>;
+  renderPropItems: function(){
+    var menuItems = this.props.items.map(function ( item,i ) {
+      return <MenuItem {...item } key={ 'menu_'+i }/>;
     },this);
     return menuItems;
   },
-
-  renderChildren:function(){
+  renderChildItems: function(){
     var menuItems = React.Children.map(this.props.children, function(item) {
       if((item !== null) && (item.type.displayName = "MenuItem"))
         return item;
     });
     return menuItems;
+  },
+
+  render: function() {
+    return (
+      <ul id={this.props.ref_id} className={this.props.className}>
+        {this.renderPropItems()}
+        {this.renderChildItems()}
+      </ul>
+    );
   }
 });
 
@@ -67,8 +57,8 @@ var MenuItem = React.createClass({
     return (
       <li>
         <a href={this.props.onClick? '#': this.props.href} onClick={this.props.onClick} target={this.props.target} className={this.props.className}>
-             {icon}
-             {this.props.text}
+           {icon}
+           {this.props.text}
         </a>
       </li>
     );

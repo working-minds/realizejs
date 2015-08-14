@@ -3,9 +3,9 @@ var Modal = React.createClass({
 
   propTypes: {
     id: React.PropTypes.string,
-    headerSize:React.PropTypes.integer,
-    footerSize:React.PropTypes.integer,
-    marginHeaderFooter:React.PropTypes.integer,
+    headerSize:React.PropTypes.number,
+    footerSize:React.PropTypes.number,
+    marginHeaderFooter:React.PropTypes.number,
     width: React.PropTypes.string
   },
 
@@ -15,28 +15,28 @@ var Modal = React.createClass({
       footerSize:50,
       marginHeaderFooter:100,
       width: '40%'
-    }
+    };
   },
 
   headerConfig: function () {
     return {
       height: this.props.headerSize + "px",
       overflow: 'hidden'
-    }
+    };
   },
 
   contentConfig: function () {
     return {
-      'overflow-x': 'hidden',
-      'overflow-y': 'auto'
-    }
+      'overflowX': 'hidden',
+      'overflowY': 'auto'
+    };
   },
 
   footerConfig: function () {
     return {
       height: this.props.footerSize + "px",
       overflow: 'hidden'
-    }
+    };
   },
 
   render: function() {

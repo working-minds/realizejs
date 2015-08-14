@@ -6,6 +6,19 @@ button .preloader-wrapper.small {
   width: 24px;
   height: 24px;
 }
+.wkm-modal{
+  background-color: white;
+  display: none;
+  /*max-height: calc(100% - 100px)!important;*/
+  position: fixed;
+  top: 50%!important;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%)!important;
+  /*width: 40%;*/
+}
+
 .dismiss-enter {
   opacity: 0.01;
   overflow: hidden;
@@ -155,21 +168,6 @@ button .preloader-wrapper.small {
   float: left;
   margin-left: 15px;
 }
-<<<<<<< HEAD
-.wkm-modal{
-  background-color: white;
-  display: none;
-  /*max-height: calc(100% - 100px)!important;*/
-  position: fixed;
-  top: 50%!important;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  transform: translate(-50%, -50%)!important;
-  /*width: 40%;*/
-}
-
-=======
 
 .select-wrapper > input[type=text] {
   cursor: pointer;
@@ -181,7 +179,6 @@ button .preloader-wrapper.small {
   color: black;
   padding-left: 30px;
 }
->>>>>>> [WKMRF-59] In Progress
 .table-header .table-header__name.sortable {
   cursor: pointer;
 }

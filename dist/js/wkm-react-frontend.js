@@ -888,7 +888,7 @@ var Flash = React.createClass({displayName: "Flash",
     return {
       themeClassKey: 'flash flash.' + this.props.type,
       dismissed: this.props.dismissed
-    }
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -940,7 +940,7 @@ var FlashContent = React.createClass({displayName: "FlashContent",
   getInitialState: function() {
     return {
       themeClassKey: 'flash.content flash.' + this.props.type + '.content'
-    }
+    };
   },
 
   render: function() {
@@ -965,7 +965,7 @@ var FlashDismiss = React.createClass({displayName: "FlashDismiss",
   getInitialState: function() {
     return {
       themeClassKey: 'flash.dismiss flash.' + this.props.type + '.content'
-    }
+    };
   },
 
   render: function() {
@@ -1512,16 +1512,10 @@ var GridTable = React.createClass({displayName: "GridTable",
 });
 
 var Header = React.createClass({displayName: "Header",
-  //mixins: [CssClassMixin],
+  mixins: [CssClassMixin],
 
   propTypes: {
     className: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      className: ''
-    };
   },
 
   render: function() {
@@ -1546,7 +1540,7 @@ var HeaderButton = React.createClass({displayName: "HeaderButton",
     text: React.PropTypes.string,
     href: React.PropTypes.string,
     target: React.PropTypes.string,
-    onClick: React.PropTypes.object,
+    onClick: React.PropTypes.func,
     ref: React.PropTypes.string
   },
 
@@ -1715,7 +1709,7 @@ var Spinner = React.createClass({displayName: "Spinner",
       color: 'green',
       active: true,
       className: ''
-    }
+    };
   },
 
   render: function() {
@@ -2342,7 +2336,7 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   getInitialState: function() {
     return {
       checked: this.props.checked
-    }
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -2372,7 +2366,11 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
 });
 
 var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin
+  ],
+
   propTypes: {
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
@@ -2388,42 +2386,34 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
     };
   },
 
-  componentWillMount: function() {
-    if(!Array.isArray(this.props.children))
-      this.props.children = [this.props.children];
-
-    var items = this.renderItems();
-    $(items).each(function (i, element) {
-      this.props.children.push(element);
-    }.bind(this));
-  },
-
-  renderChildren: function() {
+  renderChildItems: function() {
     var items = React.Children.map(this.props.children, function(item) {
-      if((item !== null) && (item.props.children[0].type.displayName == "InputCheckbox"))
+      if((item !== null) && (item.props.children[0].type.displayName == "input"))
         return item;
     });
     return items;
   },
 
-  renderItems: function() {
-    return this.props.options.map(function (optionProps, i) {
+  renderPropItems: function() {
+    var items = this.props.options.map(function (optionProps, i) {
       var filledClass =  optionProps.filled? 'filled-in' : '';
       optionProps.id = this.props.name + '_' + i;
 
       return (
-        React.createElement("p", null, 
+        React.createElement("p", {key: 'p_input'+i}, 
           React.createElement(InputCheckbox, React.__spread({},  optionProps , {name: this.props.name, className: filledClass, isChecked: optionProps.isChecked})), 
           React.createElement(Label, React.__spread({},  optionProps))
         )
       );
     }, this);
+    return items;
   },
 
   render: function() {
     return (
       React.createElement("div", {className: 'input-checkbox-group align-' + this.props.align}, 
-        this.renderChildren()
+        this.renderChildItems(), 
+        this.renderPropItems()
       )
     );
   }
@@ -2579,8 +2569,6 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
     var inputNode = React.findDOMNode(this.refs.input);
     var buttonNode = React.findDOMNode(this.refs.button);
 
-
-
     var input = $(inputNode).pickadate({
       editable: true,
       selectMonths: true,
@@ -2594,11 +2582,11 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
 
     $(buttonNode).on('click', function(e) {
       if (picker.get('open')) {
-        picker.close()
+        picker.close();
       } else {
-        picker.open()
+        picker.open();
       }
-      e.stopPropagation()
+      e.stopPropagation();
     });
   },
 
@@ -2723,34 +2711,34 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   renderRegexMask: function(){
     var params = {};
-    params['regex'] = this.props.plugin_params.regex;
+    params.regex = this.props.plugin_params.regex;
     this.renderBaseMask('Regex',params);
   },
 
   renderCustomMask: function(){
     var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params["placeholder"];
-    delete this.props.plugin_params["typeMask"];
+    delete this.props.plugin_params.placeholder;
+    delete this.props.plugin_params.typeMask;
 
     if(typeMask)
       this.renderBaseMask(typeMask, this.props.plugin_params);
     else
-      this.renderBaseMask('', this.props.plugin_params)
+      this.renderBaseMask('', this.props.plugin_params);
   },
 
   renderPredefinedMask: function(){
     var params = this.maskMapping(this.props.plugin_params.mask);
     var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params["mask"];
-    delete this.props.plugin_params["placeholder"];
-    delete this.props.plugin_params["typeMask"];
+    delete this.props.plugin_params.mask;
+    delete this.props.plugin_params.placeholder;
+    delete this.props.plugin_params.typeMask;
 
     params = $.extend(params, this.props.plugin_params);
-    this.renderBaseMask(typeMask, params)
+    this.renderBaseMask(typeMask, params);
   },
 
   renderBaseMask: function(type, params){
-    if(type != undefined && type != '')
+    if(type !== undefined && type !== '')
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(type, params);
     else
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
@@ -2758,7 +2746,7 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   maskMapping: function(type) {
     var typesMask = this.props.predefinedMasks;
-    return typesMask[type] == undefined ? type : typesMask[type];
+    return typesMask[type] === undefined ? type : typesMask[type];
   },
 
   isAPredefinedMask: function(){
@@ -2938,37 +2926,27 @@ var Menu = React.createClass({displayName: "Menu",
     };
   },
 
-  componentWillMount: function() {
-    if(!Array.isArray(this.props.children))
-      this.props.children = [this.props.children];
-
-    var items = this.renderItems();
-    $(items).each(function (i, element) {
-      this.props.children.push(element);
-    }.bind(this));
-  },
-
-  render: function() {
-    return (
-      React.createElement("ul", {id: this.props.ref_id, className: this.props.className}, 
-        this.renderChildren()
-      )
-    );
-  },
-
-  renderItems: function(){
-    var menuItems = this.props.items.map(function ( item ) {
-      return React.createElement(MenuItem, React.__spread({},  item ));
+  renderPropItems: function(){
+    var menuItems = this.props.items.map(function ( item,i ) {
+      return React.createElement(MenuItem, React.__spread({},  item , {key:  'menu_'+i}));
     },this);
     return menuItems;
   },
-
-  renderChildren:function(){
+  renderChildItems: function(){
     var menuItems = React.Children.map(this.props.children, function(item) {
       if((item !== null) && (item.type.displayName = "MenuItem"))
         return item;
     });
     return menuItems;
+  },
+
+  render: function() {
+    return (
+      React.createElement("ul", {id: this.props.ref_id, className: this.props.className}, 
+        this.renderPropItems(), 
+        this.renderChildItems()
+      )
+    );
   }
 });
 
@@ -2994,8 +2972,8 @@ var MenuItem = React.createClass({displayName: "MenuItem",
     return (
       React.createElement("li", null, 
         React.createElement("a", {href: this.props.onClick? '#': this.props.href, onClick: this.props.onClick, target: this.props.target, className: this.props.className}, 
-             icon, 
-             this.props.text
+           icon, 
+           this.props.text
         )
       )
     );
@@ -3008,9 +2986,9 @@ var Modal = React.createClass({displayName: "Modal",
 
   propTypes: {
     id: React.PropTypes.string,
-    headerSize:React.PropTypes.integer,
-    footerSize:React.PropTypes.integer,
-    marginHeaderFooter:React.PropTypes.integer,
+    headerSize:React.PropTypes.number,
+    footerSize:React.PropTypes.number,
+    marginHeaderFooter:React.PropTypes.number,
     width: React.PropTypes.string
   },
 
@@ -3020,28 +2998,28 @@ var Modal = React.createClass({displayName: "Modal",
       footerSize:50,
       marginHeaderFooter:100,
       width: '40%'
-    }
+    };
   },
 
   headerConfig: function () {
     return {
       height: this.props.headerSize + "px",
       overflow: 'hidden'
-    }
+    };
   },
 
   contentConfig: function () {
     return {
-      'overflow-x': 'hidden',
-      'overflow-y': 'auto'
-    }
+      'overflowX': 'hidden',
+      'overflowY': 'auto'
+    };
   },
 
   footerConfig: function () {
     return {
       height: this.props.footerSize + "px",
       overflow: 'hidden'
-    }
+    };
   },
 
   render: function() {
@@ -3125,13 +3103,13 @@ var ModalButton = React.createClass({displayName: "ModalButton",
   //mixins: [CssClassMixin],
 
   propTypes: {
-    top:React.PropTypes.integer,
+    top:React.PropTypes.number,
     text: React.PropTypes.string,
     modal_id: React.PropTypes.string,
-    dismissible: React.PropTypes.boolean,
-    opacity: React.PropTypes.float,
-    in_duration: React.PropTypes.integer,
-    out_duration: React.PropTypes.integer,
+    dismissible: React.PropTypes.bool,
+    opacity: React.PropTypes.number,
+    in_duration: React.PropTypes.number,
+    out_duration: React.PropTypes.number,
     ready: React.PropTypes.func,
     complete: React.PropTypes.func
   },
@@ -3145,9 +3123,9 @@ var ModalButton = React.createClass({displayName: "ModalButton",
       opacity: 0,
       in_duration: 300,
       out_duration: 200,
-      ready: function(){return true},
-      complete: function(){return true}
-    }
+      ready: function(){return true;},
+      complete: function(){return true;}
+    };
   },
 
   render: function() {

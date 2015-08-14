@@ -1,14 +1,8 @@
 var Header = React.createClass({
-  //mixins: [CssClassMixin],
+  mixins: [CssClassMixin],
 
   propTypes: {
     className: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      className: ''
-    };
   },
 
   render: function() {

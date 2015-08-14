@@ -14,7 +14,7 @@ var InputCheckbox = React.createClass({
   getInitialState: function() {
     return {
       checked: this.props.checked
-    }
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {

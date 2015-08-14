@@ -9,7 +9,7 @@ var HeaderButton = React.createClass({
     text: React.PropTypes.string,
     href: React.PropTypes.string,
     target: React.PropTypes.string,
-    onClick: React.PropTypes.object,
+    onClick: React.PropTypes.func,
     ref: React.PropTypes.string
   },
 

@@ -9,7 +9,7 @@ var FlashDismiss = React.createClass({
   getInitialState: function() {
     return {
       themeClassKey: 'flash.dismiss flash.' + this.props.type + '.content'
-    }
+    };
   },
 
   render: function() {

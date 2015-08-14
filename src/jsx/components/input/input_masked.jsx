@@ -57,34 +57,34 @@ var InputMasked = React.createClass({
 
   renderRegexMask: function(){
     var params = {};
-    params['regex'] = this.props.plugin_params.regex;
+    params.regex = this.props.plugin_params.regex;
     this.renderBaseMask('Regex',params);
   },
 
   renderCustomMask: function(){
     var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params["placeholder"];
-    delete this.props.plugin_params["typeMask"];
+    delete this.props.plugin_params.placeholder;
+    delete this.props.plugin_params.typeMask;
 
     if(typeMask)
       this.renderBaseMask(typeMask, this.props.plugin_params);
     else
-      this.renderBaseMask('', this.props.plugin_params)
+      this.renderBaseMask('', this.props.plugin_params);
   },
 
   renderPredefinedMask: function(){
     var params = this.maskMapping(this.props.plugin_params.mask);
     var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params["mask"];
-    delete this.props.plugin_params["placeholder"];
-    delete this.props.plugin_params["typeMask"];
+    delete this.props.plugin_params.mask;
+    delete this.props.plugin_params.placeholder;
+    delete this.props.plugin_params.typeMask;
 
     params = $.extend(params, this.props.plugin_params);
-    this.renderBaseMask(typeMask, params)
+    this.renderBaseMask(typeMask, params);
   },
 
   renderBaseMask: function(type, params){
-    if(type != undefined && type != '')
+    if(type !== undefined && type !== '')
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(type, params);
     else
       $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
@@ -92,7 +92,7 @@ var InputMasked = React.createClass({
 
   maskMapping: function(type) {
     var typesMask = this.props.predefinedMasks;
-    return typesMask[type] == undefined ? type : typesMask[type];
+    return typesMask[type] === undefined ? type : typesMask[type];
   },
 
   isAPredefinedMask: function(){
