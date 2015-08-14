@@ -2451,8 +2451,9 @@ var Input = React.createClass({displayName: "Input",
           password: InputPassword,
           select: InputSelect,
           textarea: InputTextarea,
-          checkbox_group: InputCheckboxGroup
-        };
+          checkbox_group: InputCheckboxGroup,
+          radio_group: InputRadioGroup
+        }; 
 
         return mapping[component];
       }
@@ -2815,6 +2816,69 @@ var InputTextarea = React.createClass({displayName: "InputTextarea",
       React.createElement("textarea", React.__spread({},  this.props, {className: this.className(), ref: "input"}))
     );
   }
+});
+
+var InputRadioGroup = React.createClass({displayName: "InputRadioGroup",
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    SelectComponentMixin
+  ],
+
+  propTypes: {
+    name: React.PropTypes.string,
+    align: React.PropTypes.oneOf(['vertical', 'horizontal']),
+    currentValue: React.PropTypes.string,
+    withGap: React.PropTypes.string
+  }, 
+
+  getDefaultProps: function() {
+    return {
+      name:'',
+      align: 'vertical',
+      currentValue: null,
+      withGap: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      currentValue: this.props.currentValue
+    };
+  },
+
+  renderOptions: function() {
+    var selectOptions = [];
+    var options = this.state.options;
+
+    for(var i = 0; i < options.length; i++) {
+      var optionProps = options[i];
+      optionProps.id = this.props.name + '_' + i;
+      optionProps.type = 'radio';
+
+      if (this.state.currentValue === optionProps.value)
+        optionProps.defaultChecked = optionProps.value;
+      if (this.props.withGap)
+        optionProps.className = 'with-gap';
+
+      selectOptions.push(
+        React.createElement("p", {key: "p_input_" + i}, 
+          React.createElement("input", React.__spread({},  optionProps , {name: this.props.name})), 
+          React.createElement(Label, {id: optionProps.id, label: optionProps.name})
+        )
+      );
+    }
+    return selectOptions;
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: 'input-checkbox-group align-' + this.props.align, ref: "radioGroup"}, 
+        this.renderOptions()
+      )
+    );
+  }
+
 });
 
 var InputSelect = React.createClass({displayName: "InputSelect",

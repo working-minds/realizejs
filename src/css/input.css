@@ -68,6 +68,7 @@
   margin-left: 15px;
 }
 
+
 .select-wrapper > input[type=text] {
   cursor: pointer;
 }
@@ -77,4 +78,8 @@
   left: 0;
   color: black;
   padding-left: 30px;
+}
+.input-radio-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
 }
