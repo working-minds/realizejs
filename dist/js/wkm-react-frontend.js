@@ -175,6 +175,10 @@ WRF.themes.materialize = {
       }
     },
 
+    select: {
+      cssClass: 'table-select'
+    },
+
     cell: {
       cssClass: 'table-cell',
 
@@ -208,7 +212,7 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group'
+      cssClass: 'form__input-group section'
     }
   },
 
@@ -347,7 +351,7 @@ WRF.themes.materialize = {
     cssClass: 'tabs-container col',
 
     tabButton: {
-      cssClass: 'tab col',
+      cssClass: 'tab',
 
       error: {
         cssClass: 'tab--error red lighten-4'
@@ -450,7 +454,7 @@ var CssClassMixin = {
   },
 
   propsWithoutCSS: function() {
-    var cssProps = ['clearTheme', 'className', 'themeClassKey'];
+    var cssProps = ['className', 'themeClassKey'];
     var props = $.extend({}, this.props);
     $.each(cssProps, function(i, cssProp) {
       delete props[cssProp];
@@ -888,7 +892,7 @@ var Flash = React.createClass({displayName: "Flash",
     return {
       themeClassKey: 'flash flash.' + this.props.type,
       dismissed: this.props.dismissed
-    }
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -940,7 +944,7 @@ var FlashContent = React.createClass({displayName: "FlashContent",
   getInitialState: function() {
     return {
       themeClassKey: 'flash.content flash.' + this.props.type + '.content'
-    }
+    };
   },
 
   render: function() {
@@ -965,7 +969,7 @@ var FlashDismiss = React.createClass({displayName: "FlashDismiss",
   getInitialState: function() {
     return {
       themeClassKey: 'flash.dismiss flash.' + this.props.type + '.content'
-    }
+    };
   },
 
   render: function() {
@@ -1135,6 +1139,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
+    label: React.PropTypes.string,
     formStyle: React.PropTypes.string
   },
 
@@ -1144,15 +1149,20 @@ var InputGroup = React.createClass({displayName: "InputGroup",
       errors: {},
       formStyle: 'default',
       resource: null,
+      label: null,
       themeClassKey: 'form.inputGroup'
     };
   },
 
   render: function() {
     return (
-      React.createElement("div", {className: this.className()}, 
-        this.renderInputs(), 
-        this.props.children
+      React.createElement("div", null, 
+        React.createElement("div", {className: this.className()}, 
+          this.renderLabel(), 
+          this.renderInputs(), 
+          this.props.children
+        ), 
+        this.renderDivider()
       )
     );
   },
@@ -1184,6 +1194,27 @@ var InputGroup = React.createClass({displayName: "InputGroup",
     }
 
     return inputComponents;
+  },
+
+  renderLabel: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    return (React.createElement("h5", {className: "col s12"}, this.props.label));
+  },
+
+  renderDivider: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    //TODO: refatorar para um componente
+    return (
+      React.createElement("div", {className: "col s12"}, 
+        React.createElement("hr", null)
+      )
+    );
   }
 });
 
@@ -1715,7 +1746,7 @@ var Spinner = React.createClass({displayName: "Spinner",
       color: 'green',
       active: true,
       className: ''
-    }
+    };
   },
 
   render: function() {
@@ -2342,7 +2373,7 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   getInitialState: function() {
     return {
       checked: this.props.checked
-    }
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -3406,25 +3437,37 @@ var Table = React.createClass({displayName: "Table",
   mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
+    rowIdField: React.PropTypes.string,
+    selectable: React.PropTypes.bool,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
-    onSort: React.PropTypes.func
+    emptyMessage: React.PropTypes.string,
+    onSort: React.PropTypes.func,
+    onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'table',
       columns: {},
+      rowIdField: 'id',
+      selectable: true,
       sortConfigs: {
         param: 's',
         valueFormat: '%{field} %{direction}'
       },
+      emptyMessage: 'Nenhum resultado foi encontrado.',
       sortData: {},
       dataRows: [],
-      onSort: function(sortData) {
-        return true;
-      }
+      onSort: function(sortData) {},
+      onSelect: function(selectedDataRows) {}
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      selectedDataRows: []
     };
   },
 
@@ -3444,6 +3487,18 @@ var Table = React.createClass({displayName: "Table",
   renderTableHeaders: function() {
     var columns = this.props.columns;
     var headerComponents = [];
+
+    if(this.props.selectable) {
+      headerComponents.push(
+        React.createElement(TableSelectCell, {
+          onToggle: this.toggleDataRows, 
+          dataRows: this.props.dataRows, 
+          rowId: "all", 
+          cellElement: "th", 
+          key: "header_select"}
+        )
+      );
+    }
 
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
@@ -3483,7 +3538,14 @@ var Table = React.createClass({displayName: "Table",
 
     for(var i = 0; i < dataRows.length; i++) {
       var dataRow = dataRows[i];
-      rowComponents.push(React.createElement(TableRow, {columns: this.props.columns, data: dataRow, key: "table_row_" + i, clearTheme: this.props.clearTheme}));
+      rowComponents.push(
+        React.createElement(TableRow, React.__spread({}, 
+          this.propsWithoutCSS(), 
+          {onToggle: this.toggleDataRows, 
+          data: dataRow, 
+          key: "table_row_" + i})
+        )
+      );
     }
 
     return rowComponents;
@@ -3495,13 +3557,41 @@ var Table = React.createClass({displayName: "Table",
       columnsCount++;
     }
 
+    if(this.props.selectable) {
+      columnsCount++;
+    }
+
     return (
       React.createElement("tr", null, 
-        React.createElement("td", {colSpan: columnsCount}, 
-          "Nenhum resultado foi encontrado."
-        )
+        React.createElement("td", {colSpan: columnsCount}, this.props.emptyMessage)
       )
     );
+  },
+
+  toggleDataRows: function(dataRows, checked) {
+    if(checked) {
+      this.selectDataRows(dataRows);
+    } else {
+      this.unselectDataRow(dataRows);
+    }
+  },
+
+  selectDataRows: function(dataRows) {
+    var selectedDataRows = this.state.selectedDataRows.concat(dataRows);
+
+    this.setState({
+      selectedDataRows: selectedDataRows
+    });
+  },
+
+  unselectDataRows: function(dataRows) {
+    var dataRowIdsToRemove = $.map(dataRows, function(dataRow) {
+      return dataRow[this.props.rowIdField];
+    });
+
+    this.setState({
+      selectedDataRows: newSelectedDataRows
+    });
   }
 });
 
@@ -3662,7 +3752,22 @@ var TableRow = React.createClass({displayName: "TableRow",
   mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
-    data: React.PropTypes.object
+    data: React.PropTypes.object,
+    rowIdField: React.PropTypes.string,
+    selectable: React.PropTypes.bool,
+    selected: React.PropTypes.bool,
+    onToggle: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      columns: {},
+      data: {},
+      rowIdField: 'id',
+      selectable: true,
+      selected: false,
+      onToggle: function(dataRows, checked) {}
+    };
   },
 
   render: function() {
@@ -3677,6 +3782,17 @@ var TableRow = React.createClass({displayName: "TableRow",
     var columns = this.props.columns;
     var cellComponents = [];
 
+    if(this.props.selectable) {
+      cellComponents.push(
+        React.createElement(TableSelectCell, {
+          onToggle: this.toggleDataRows, 
+          dataRows: this.props.dataRows, 
+          rowId: this.getRowId(), 
+          key: "select"}
+        )
+      );
+    }
+
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
         var columnProps = columns[columnName];
@@ -3684,14 +3800,62 @@ var TableRow = React.createClass({displayName: "TableRow",
           React.createElement(TableCell, React.__spread({},  columnProps, 
             {name: columnName, 
             data: this.props.data, 
-            key: columnName, 
-            clearTheme: this.props.clearTheme})
+            clearTheme: this.props.clearTheme, 
+            key: columnName})
           )
         );
       }
     }
 
     return cellComponents;
+  },
+
+  getRowId: function() {
+    return this.props.data[this.props.rowIdField];
+  }
+});
+
+var TableSelectCell = React.createClass({displayName: "TableSelectCell",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    rowId: React.PropTypes.string,
+    cellElement: React.PropTypes.string,
+    dataRows: React.PropTypes.array,
+    checked: React.PropTypes.bool,
+    onToggle: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'table.select',
+      rowId: '',
+      cellElement: 'td',
+      dataRows: [],
+      checked: undefined,
+      onToggle: function(dataRows, checked) {}
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement(this.props.cellElement,
+        { className: this.className() },
+        [
+          React.createElement(InputCheckbox, {id: this.getCheckboxId(), checked: this.props.checked, onChange: this.handleChange}),
+          React.createElement(Label, {id: this.getCheckboxId()})
+        ]
+      )
+    );
+  },
+
+  getCheckboxId: function() {
+    return "select_" + this.props.rowId;
+  },
+
+  handleChange: function(event) {
+    var checkbox = event.currentTarget;
+    this.props.onToggle(this.props.dataRows, checkbox.checked);
   }
 });
 

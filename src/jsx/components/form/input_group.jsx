@@ -6,6 +6,7 @@ var InputGroup = React.createClass({
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
+    label: React.PropTypes.string,
     formStyle: React.PropTypes.string
   },
 
@@ -15,15 +16,20 @@ var InputGroup = React.createClass({
       errors: {},
       formStyle: 'default',
       resource: null,
+      label: null,
       themeClassKey: 'form.inputGroup'
     };
   },
 
   render: function() {
     return (
-      <div className={this.className()}>
-        {this.renderInputs()}
-        {this.props.children}
+      <div>
+        <div className={this.className()}>
+          {this.renderLabel()}
+          {this.renderInputs()}
+          {this.props.children}
+        </div>
+        {this.renderDivider()}
       </div>
     );
   },
@@ -55,5 +61,26 @@ var InputGroup = React.createClass({
     }
 
     return inputComponents;
+  },
+
+  renderLabel: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    return (<h5 className="col s12">{this.props.label}</h5>);
+  },
+
+  renderDivider: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    //TODO: refatorar para um componente
+    return (
+      <div className="col s12">
+        <hr />
+      </div>
+    );
   }
 });
