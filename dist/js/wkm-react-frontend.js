@@ -2830,7 +2830,7 @@ var InputRadioGroup = React.createClass({displayName: "InputRadioGroup",
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
     currentValue: React.PropTypes.string,
     withGap: React.PropTypes.string
-  },
+  }, 
 
   getDefaultProps: function() {
     return {
