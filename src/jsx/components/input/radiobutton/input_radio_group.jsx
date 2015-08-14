@@ -8,21 +8,23 @@ var InputRadioGroup = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
-    currentValue: React.PropTypes.string
+    currentValue: React.PropTypes.string,
+    withGap: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       name:'',
       align: 'vertical',
-      currentValue: null
+      currentValue: null,
+      withGap: false
     };
   },
 
   getInitialState: function() {
     return {
       currentValue: this.props.currentValue
-    }
+    };
   },
 
   renderOptions: function() {
@@ -31,15 +33,17 @@ var InputRadioGroup = React.createClass({
 
     for(var i = 0; i < options.length; i++) {
       var optionProps = options[i];
-      optionProps['id'] = this.props.name + '_' + i,
-      optionProps['type'] = 'radio';
+      optionProps.id = this.props.name + '_' + i;
+      optionProps.type = 'radio';
 
       if (this.state.currentValue === optionProps.value)
-        optionProps['defaultChecked'] = optionProps.value;
+        optionProps.defaultChecked = optionProps.value;
+      if (this.props.withGap)
+        optionProps.className = 'with-gap';
 
       selectOptions.push(
-        <p>
-          <input {...optionProps } name={this.props.name}/>
+        <p key={"p_input_" + i}>
+          <input {...optionProps } name={this.props.name} />
           <Label id={optionProps.id} label={optionProps.name} />
         </p>
       );

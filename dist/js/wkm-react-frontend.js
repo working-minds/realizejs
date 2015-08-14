@@ -2818,58 +2818,6 @@ var InputTextarea = React.createClass({displayName: "InputTextarea",
   }
 });
 
-var InputRadio = React.createClass({displayName: "InputRadio",
-  mixins: [CssClassMixin, InputComponentMixin],
-  propTypes: {
-    renderAsIndeterminate: React.PropTypes.bool
-  },
-
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.radio',
-      renderAsIndeterminate: false
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      checked: this.props.checked
-    }
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var checked = nextProps.checked;
-    if(checked !== undefined) {
-      this.setState({checked: checked});
-    }
-  },
-
-  render: function() {
-    alert(this.props.value);
-    alert(this.state.checked);
-    return (
-        React.createElement("input", React.__spread({},  this.props,  this.state, {type: "radio", className: this.className(), onChange: this.handleChange, ref: "input"}))
-    );
-  },
-
-  handleChange: function(event) {
-    this.props.onChange(event);
-
-    alert(this.props.value);
-
-    if(!event.isPropagationStopped()) {
-      var checkbox = event.currentTarget;
-      alert(checkbox.checked);
-
-
-      this.setState({
-        checked: checkbox.checked
-      });
-    }
-  }
-
-});
-
 var InputRadioGroup = React.createClass({displayName: "InputRadioGroup",
   mixins: [
     CssClassMixin,
@@ -2880,21 +2828,23 @@ var InputRadioGroup = React.createClass({displayName: "InputRadioGroup",
   propTypes: {
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
-    currentValue: React.PropTypes.string
+    currentValue: React.PropTypes.string,
+    withGap: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       name:'',
       align: 'vertical',
-      currentValue: null
+      currentValue: null,
+      withGap: false
     };
   },
 
   getInitialState: function() {
     return {
       currentValue: this.props.currentValue
-    }
+    };
   },
 
   renderOptions: function() {
@@ -2903,14 +2853,16 @@ var InputRadioGroup = React.createClass({displayName: "InputRadioGroup",
 
     for(var i = 0; i < options.length; i++) {
       var optionProps = options[i];
-      optionProps['id'] = this.props.name + '_' + i,
-      optionProps['type'] = 'radio';
+      optionProps.id = this.props.name + '_' + i;
+      optionProps.type = 'radio';
 
       if (this.state.currentValue === optionProps.value)
-        optionProps['defaultChecked'] = optionProps.value;
+        optionProps.defaultChecked = optionProps.value;
+      if (this.props.withGap)
+        optionProps.className = 'with-gap';
 
       selectOptions.push(
-        React.createElement("p", null, 
+        React.createElement("p", {key: "p_input_" + i}, 
           React.createElement("input", React.__spread({},  optionProps , {name: this.props.name})), 
           React.createElement(Label, {id: optionProps.id, label: optionProps.name})
         )
