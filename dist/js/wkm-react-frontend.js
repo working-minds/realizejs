@@ -2442,7 +2442,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
           React.createElement(InputCheckbox, React.__spread({},  optionProps , {name: this.props.name, className: filledClass, checked: this.isChecked(optionProps)})), 
           React.createElement(Label, React.__spread({},  optionProps))
         )
-      )
+      );
     }
     return selectOptions;
   },
@@ -2464,7 +2464,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
   }
 
 });
- 
+
 var Input = React.createClass({displayName: "Input",
   mixins: [CssClassMixin],
   propTypes: {

@@ -48,7 +48,7 @@ var InputCheckboxGroup = React.createClass({
           <InputCheckbox {...optionProps } name={this.props.name} className={filledClass} checked={this.isChecked(optionProps)}/>
           <Label {...optionProps} />
         </p>
-      )
+      );
     }
     return selectOptions;
   },
@@ -70,4 +70,3 @@ var InputCheckboxGroup = React.createClass({
   }
 
 });
- 
