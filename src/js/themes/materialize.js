@@ -32,6 +32,10 @@ WRF.themes.materialize = {
       }
     },
 
+    select: {
+      cssClass: 'table-select'
+    },
+
     cell: {
       cssClass: 'table-cell',
 
@@ -65,7 +69,7 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group'
+      cssClass: 'form__input-group section'
     }
   },
 
@@ -204,7 +208,7 @@ WRF.themes.materialize = {
     cssClass: 'tabs-container col',
 
     tabButton: {
-      cssClass: 'tab col',
+      cssClass: 'tab',
 
       error: {
         cssClass: 'tab--error red lighten-4'
