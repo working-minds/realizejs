@@ -175,6 +175,10 @@ WRF.themes.materialize = {
       }
     },
 
+    select: {
+      cssClass: 'table-select'
+    },
+
     cell: {
       cssClass: 'table-cell',
 
@@ -208,7 +212,7 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group'
+      cssClass: 'form__input-group section'
     }
   },
 
@@ -347,7 +351,7 @@ WRF.themes.materialize = {
     cssClass: 'tabs-container col',
 
     tabButton: {
-      cssClass: 'tab col',
+      cssClass: 'tab',
 
       error: {
         cssClass: 'tab--error red lighten-4'
@@ -450,7 +454,7 @@ var CssClassMixin = {
   },
 
   propsWithoutCSS: function() {
-    var cssProps = ['clearTheme', 'className', 'themeClassKey'];
+    var cssProps = ['className', 'themeClassKey'];
     var props = $.extend({}, this.props);
     $.each(cssProps, function(i, cssProp) {
       delete props[cssProp];
@@ -1260,6 +1264,7 @@ var Grid = React.createClass({displayName: "Grid",
   getInitialState: function() {
     return {
       dataRows: this.props.data.dataRows,
+      selectedDataRows: [],
       count: this.props.data.count,
       page: 1,
       filterData: {},
@@ -1299,7 +1304,9 @@ var Grid = React.createClass({displayName: "Grid",
         sortConfigs: this.props.sortConfigs, 
         sortData: this.state.sortData, 
         dataRows: this.state.dataRows, 
-        onSort: this.onSort}
+        selectedDataRows: this.state.selectedDataRows, 
+        onSort: this.onSort, 
+        onSelect: this.onSelectDataRow}
       )
     );
   },
@@ -1337,9 +1344,18 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   onSort: function(sortData) {
+    this.setState({isLoading: true});
     this.state.sortData = sortData;
     this.state.page = 1;
     this.loadData();
+  },
+
+  onSelectDataRow: function(event, selectedDataRows) {
+    event.preventDefault();
+
+    this.setState({
+      selectedDataRows: selectedDataRows
+    });
   },
 
   loadData: function() {
@@ -1502,37 +1518,17 @@ var GridPagination = React.createClass({displayName: "GridPagination",
 
 var GridTable = React.createClass({displayName: "GridTable",
   mixins: [CssClassMixin],
-  propTypes: {
-    columns: React.PropTypes.object,
-    sortConfigs: React.PropTypes.object,
-    sortData: React.PropTypes.object,
-    dataRows: React.PropTypes.array,
-    onSort: React.PropTypes.func
-  },
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'grid.table',
-      columns: {},
-      sortConfigs: {},
-      sortData: {},
-      dataRows: [],
-      onSort: function(sortData) {
-        return true;
-      }
+      themeClassKey: 'grid.table'
     };
   },
 
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Table, {
-          columns: this.props.columns, 
-          sortConfigs: this.props.sortConfigs, 
-          sortData: this.props.sortData, 
-          dataRows: this.props.dataRows, 
-          onSort: this.props.onSort}
-        )
+        React.createElement(Table, React.__spread({},  this.propsWithoutCSS()))
       )
     );
   }
@@ -2152,7 +2148,7 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
   render: function() {
     return (
       React.createElement("li", {className: this.className(), onClick: this.handleSelect, onMouseEnter: this.handleMouseEnter}, 
-        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent, onChange: this.disableEvent}), 
+        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent}), 
         React.createElement(Label, {id: this.parseOptionId(), name: this.props.name})
       )
     );
@@ -2360,34 +2356,14 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
     };
   },
 
-  getInitialState: function() {
-    return {
-      checked: this.props.checked
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var checked = nextProps.checked;
-    if(checked !== undefined) {
-      this.setState({checked: checked});
-    }
-  },
-
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props,  this.state, {type: "checkbox", className: this.className(), onChange: this.handleChange, ref: "input"}))
+      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), onChange: this.handleChange, ref: "input"}))
     );
   },
 
   handleChange: function(event) {
     this.props.onChange(event);
-    if(!event.isPropagationStopped()) {
-      var checkbox = event.currentTarget;
-
-      this.setState({
-        checked: checkbox.checked
-      });
-    }
   }
 
 });
@@ -2435,7 +2411,7 @@ var InputCheckboxGroup = React.createClass({displayName: "InputCheckboxGroup",
       var optionProps = options[i];
 
       var filledClass =  optionProps.filled? 'filled-in' : '';
-      optionProps.id = this.props.name + '_' + i;
+      optionProps.id = this.props.id + '_' + i;
 
       selectOptions.push(
         React.createElement("p", {key: 'p_input'+i}, 
@@ -3493,26 +3469,47 @@ var Table = React.createClass({displayName: "Table",
   mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
+    dataRowIdField: React.PropTypes.string,
+    selectable: React.PropTypes.bool,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
-    onSort: React.PropTypes.func
+    selectedDataRows: React.PropTypes.array,
+    emptyMessage: React.PropTypes.string,
+    onSort: React.PropTypes.func,
+    onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'table',
       columns: {},
+      dataRowIdField: 'id',
+      selectable: true,
       sortConfigs: {
         param: 's',
         valueFormat: '%{field} %{direction}'
       },
+      emptyMessage: 'Nenhum resultado foi encontrado.',
       sortData: {},
       dataRows: [],
-      onSort: function(sortData) {
-        return true;
-      }
+      selectedDataRows: [],
+      onSort: function(sortData) {},
+      onSelect: function(event, selectedDataRows) {}
     };
+  },
+
+  getInitialState: function() {
+    return {
+      selectedDataRows: this.props.selectedDataRows
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var selectedDataRows = nextProps.selectedDataRows;
+    if($.isArray(selectedDataRows)) {
+      this.setState({selectedDataRows: selectedDataRows});
+    }
   },
 
   render: function() {
@@ -3531,6 +3528,19 @@ var Table = React.createClass({displayName: "Table",
   renderTableHeaders: function() {
     var columns = this.props.columns;
     var headerComponents = [];
+
+    if(this.props.selectable) {
+      headerComponents.push(
+        React.createElement(TableSelectCell, {
+          onSelectToggle: this.toggleDataRows, 
+          dataRowIds: this.getDataRowIds(), 
+          selected: this.isAllDataRowsSelected(), 
+          rowId: "all", 
+          cellElement: "th", 
+          key: "header_select"}
+        )
+      );
+    }
 
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
@@ -3570,7 +3580,15 @@ var Table = React.createClass({displayName: "Table",
 
     for(var i = 0; i < dataRows.length; i++) {
       var dataRow = dataRows[i];
-      rowComponents.push(React.createElement(TableRow, {columns: this.props.columns, data: dataRow, key: "table_row_" + i, clearTheme: this.props.clearTheme}));
+      rowComponents.push(
+        React.createElement(TableRow, React.__spread({}, 
+          this.propsWithoutCSS(), 
+          {onSelectToggle: this.toggleDataRows, 
+          selected: this.dataRowIsSelected(dataRow), 
+          data: dataRow, 
+          key: "table_row_" + i})
+        )
+      );
     }
 
     return rowComponents;
@@ -3582,13 +3600,66 @@ var Table = React.createClass({displayName: "Table",
       columnsCount++;
     }
 
+    if(this.props.selectable) {
+      columnsCount++;
+    }
+
     return (
       React.createElement("tr", null, 
-        React.createElement("td", {colSpan: columnsCount}, 
-          "Nenhum resultado foi encontrado."
-        )
+        React.createElement("td", {colSpan: columnsCount}, this.props.emptyMessage)
       )
     );
+  },
+
+  getDataRowIds: function() {
+    return $.map(this.props.dataRows, function(dataRow) {
+      return dataRow[this.props.dataRowIdField];
+    }.bind(this));
+  },
+
+  toggleDataRows: function(event, dataRowIds, selected) {
+    var selectedDataRows = [];
+    if(selected) {
+      selectedDataRows = this.addSelectedDataRows(dataRowIds);
+    } else {
+      selectedDataRows = this.removeSelectedDataRows(dataRowIds);
+    }
+
+    this.props.onSelect(event, selectedDataRows);
+    if(!event.isDefaultPrevented()) {
+      this.setState({
+        selectedDataRows: selectedDataRows
+      });
+    }
+  },
+
+  addSelectedDataRows: function(dataRowIds) {
+    var selectedDataRows = this.state.selectedDataRows.slice();
+    $.each(dataRowIds, function(i, dataRowId) {
+      if($.inArray(dataRowId, selectedDataRows) < 0) {
+        selectedDataRows.push(dataRowId);
+      }
+    });
+
+    return selectedDataRows;
+  },
+
+  removeSelectedDataRows: function(dataRowIds) {
+    return $.grep(this.state.selectedDataRows, function(dataRowId) {
+      return ($.inArray(dataRowId, dataRowIds) < 0);
+    }.bind(this));
+  },
+
+  dataRowIsSelected: function(dataRow) {
+    var dataRowId = dataRow[this.props.dataRowIdField];
+    return ($.inArray(dataRowId, this.state.selectedDataRows) >= 0);
+  },
+
+  isAllDataRowsSelected: function() {
+    var dataRows = this.props.dataRows;
+    var selectedDataRows = this.state.selectedDataRows;
+
+    return dataRows.length > 0 && (dataRows.length == selectedDataRows.length);
   }
 });
 
@@ -3749,7 +3820,22 @@ var TableRow = React.createClass({displayName: "TableRow",
   mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
-    data: React.PropTypes.object
+    data: React.PropTypes.object,
+    dataRowIdField: React.PropTypes.string,
+    selectable: React.PropTypes.bool,
+    selected: React.PropTypes.bool,
+    onSelectToggle: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      columns: {},
+      data: {},
+      dataRowIdField: 'id',
+      selectable: true,
+      selected: false,
+      onSelectToggle: function(event, dataRows, selected) {}
+    };
   },
 
   render: function() {
@@ -3764,6 +3850,18 @@ var TableRow = React.createClass({displayName: "TableRow",
     var columns = this.props.columns;
     var cellComponents = [];
 
+    if(this.props.selectable) {
+      cellComponents.push(
+        React.createElement(TableSelectCell, {
+          onSelectToggle: this.props.onSelectToggle, 
+          dataRowIds: [this.getDataRowId()], 
+          rowId: this.getDataRowId(), 
+          selected: this.props.selected, 
+          key: "select"}
+        )
+      );
+    }
+
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
         var columnProps = columns[columnName];
@@ -3771,14 +3869,65 @@ var TableRow = React.createClass({displayName: "TableRow",
           React.createElement(TableCell, React.__spread({},  columnProps, 
             {name: columnName, 
             data: this.props.data, 
-            key: columnName, 
-            clearTheme: this.props.clearTheme})
+            clearTheme: this.props.clearTheme, 
+            key: columnName})
           )
         );
       }
     }
 
     return cellComponents;
+  },
+
+  getDataRowId: function() {
+    return this.props.data[this.props.dataRowIdField];
+  }
+});
+
+var TableSelectCell = React.createClass({displayName: "TableSelectCell",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    rowId: React.PropTypes.string,
+    cellElement: React.PropTypes.string,
+    dataRowIds: React.PropTypes.array,
+    selected: React.PropTypes.bool,
+    onSelectToggle: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'table.select',
+      rowId: '',
+      cellElement: 'td',
+      dataRowIds: [],
+      selected: false,
+      onSelectToggle: function(event, dataRows, selected) {}
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement(this.props.cellElement,
+        { className: this.className() },
+        [
+          React.createElement(InputCheckbox, {id: this.getCheckboxId(), checked: this.props.selected, key: "checkbox"}),
+          React.createElement(Label, {id: this.getCheckboxId(), key: "label", onClick: this.handleChange})
+        ]
+      )
+    );
+  },
+
+  getCheckboxId: function() {
+    return "select_" + String(this.props.rowId);
+  },
+
+  handleChange: function(event) {
+    this.props.onSelectToggle(event, this.props.dataRowIds, !this.props.selected);
+  },
+
+  handleClick: function(event) {
+    event.stopPropagation();
   }
 });
 

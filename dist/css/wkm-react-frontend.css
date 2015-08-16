@@ -205,6 +205,12 @@ hr {
 .table-cell--currency, .table-cell--number, .table-cell--datetime {
   white-space: nowrap;
 }
+
+.table-select {
+  position: relative;
+  top: 4px;
+  left: 0.5rem;
+}
 .tabs-container .tabs {
   margin: 15px 0;
 }

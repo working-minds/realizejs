@@ -44,6 +44,7 @@ var Grid = React.createClass({
   getInitialState: function() {
     return {
       dataRows: this.props.data.dataRows,
+      selectedDataRows: [],
       count: this.props.data.count,
       page: 1,
       filterData: {},
@@ -83,7 +84,9 @@ var Grid = React.createClass({
         sortConfigs={this.props.sortConfigs}
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
+        selectedDataRows={this.state.selectedDataRows}
         onSort={this.onSort}
+        onSelect={this.onSelectDataRow}
       />
     );
   },
@@ -121,9 +124,18 @@ var Grid = React.createClass({
   },
 
   onSort: function(sortData) {
+    this.setState({isLoading: true});
     this.state.sortData = sortData;
     this.state.page = 1;
     this.loadData();
+  },
+
+  onSelectDataRow: function(event, selectedDataRows) {
+    event.preventDefault();
+
+    this.setState({
+      selectedDataRows: selectedDataRows
+    });
   },
 
   loadData: function() {

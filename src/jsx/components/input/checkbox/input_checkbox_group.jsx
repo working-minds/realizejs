@@ -41,7 +41,7 @@ var InputCheckboxGroup = React.createClass({
       var optionProps = options[i];
 
       var filledClass =  optionProps.filled? 'filled-in' : '';
-      optionProps.id = this.props.name + '_' + i;
+      optionProps.id = this.props.id + '_' + i;
 
       selectOptions.push(
         <p key={'p_input'+i}>

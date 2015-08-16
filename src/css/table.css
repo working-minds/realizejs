@@ -13,3 +13,9 @@
 .table-cell--currency, .table-cell--number, .table-cell--datetime {
   white-space: nowrap;
 }
+
+.table-select {
+  position: relative;
+  top: 4px;
+  left: 0.5rem;
+}
