@@ -11,19 +11,6 @@ var InputCheckbox = React.createClass({
     };
   },
 
-  getInitialState: function() {
-    return {
-      checked: this.props.checked
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var checked = nextProps.checked;
-    if(checked !== undefined) {
-      this.setState({checked: checked});
-    }
-  },
-
   render: function() {
     return (
       <input {...this.props} type="checkbox" className={this.className()} onChange={this.handleChange} ref="input" />
@@ -32,15 +19,6 @@ var InputCheckbox = React.createClass({
 
   handleChange: function(event) {
     this.props.onChange(event);
-
-    /*
-    if(!event.isPropagationStopped()) {
-      var checkbox = event.currentTarget;
-
-      this.setState({
-        checked: checkbox.checked
-      });
-    }*/
   }
 
 });

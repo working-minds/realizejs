@@ -124,6 +124,7 @@ var Grid = React.createClass({
   },
 
   onSort: function(sortData) {
+    this.setState({isLoading: true});
     this.state.sortData = sortData;
     this.state.page = 1;
     this.loadData();

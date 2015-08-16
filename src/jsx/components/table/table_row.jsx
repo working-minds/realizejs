@@ -3,7 +3,7 @@ var TableRow = React.createClass({
   propTypes: {
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
-    rowIdField: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     selected: React.PropTypes.bool,
     onSelectToggle: React.PropTypes.func
@@ -13,7 +13,7 @@ var TableRow = React.createClass({
     return {
       columns: {},
       data: {},
-      rowIdField: 'id',
+      dataRowIdField: 'id',
       selectable: true,
       selected: false,
       onSelectToggle: function(event, dataRows, selected) {}
@@ -36,8 +36,8 @@ var TableRow = React.createClass({
       cellComponents.push(
         <TableSelectCell
           onSelectToggle={this.props.onSelectToggle}
-          dataRows={[this.props.data]}
-          rowId={this.getRowId()}
+          dataRowIds={[this.getDataRowId()]}
+          rowId={this.getDataRowId()}
           selected={this.props.selected}
           key="select"
         />
@@ -61,7 +61,7 @@ var TableRow = React.createClass({
     return cellComponents;
   },
 
-  getRowId: function() {
-    return String(this.props.data[this.props.rowIdField]);
+  getDataRowId: function() {
+    return this.props.data[this.props.dataRowIdField];
   }
 });

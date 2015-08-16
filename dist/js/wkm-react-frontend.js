@@ -1344,6 +1344,7 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   onSort: function(sortData) {
+    this.setState({isLoading: true});
     this.state.sortData = sortData;
     this.state.page = 1;
     this.loadData();
@@ -2355,19 +2356,6 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
     };
   },
 
-  getInitialState: function() {
-    return {
-      checked: this.props.checked
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var checked = nextProps.checked;
-    if(checked !== undefined) {
-      this.setState({checked: checked});
-    }
-  },
-
   render: function() {
     return (
       React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), onChange: this.handleChange, ref: "input"}))
@@ -2376,15 +2364,6 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
 
   handleChange: function(event) {
     this.props.onChange(event);
-
-    /*
-    if(!event.isPropagationStopped()) {
-      var checkbox = event.currentTarget;
-
-      this.setState({
-        checked: checkbox.checked
-      });
-    }*/
   }
 
 });
@@ -3490,7 +3469,7 @@ var Table = React.createClass({displayName: "Table",
   mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
-    rowIdField: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
@@ -3505,7 +3484,7 @@ var Table = React.createClass({displayName: "Table",
     return {
       themeClassKey: 'table',
       columns: {},
-      rowIdField: 'id',
+      dataRowIdField: 'id',
       selectable: true,
       sortConfigs: {
         param: 's',
@@ -3534,8 +3513,6 @@ var Table = React.createClass({displayName: "Table",
   },
 
   render: function() {
-    console.log('rendering table...');
-
     return(
       React.createElement("table", {className: this.className()}, 
         React.createElement("thead", null, 
@@ -3556,7 +3533,7 @@ var Table = React.createClass({displayName: "Table",
       headerComponents.push(
         React.createElement(TableSelectCell, {
           onSelectToggle: this.toggleDataRows, 
-          dataRows: this.props.dataRows, 
+          dataRowIds: this.getDataRowIds(), 
           selected: this.isAllDataRowsSelected(), 
           rowId: "all", 
           cellElement: "th", 
@@ -3634,12 +3611,18 @@ var Table = React.createClass({displayName: "Table",
     );
   },
 
-  toggleDataRows: function(event, dataRows, selected) {
+  getDataRowIds: function() {
+    return $.map(this.props.dataRows, function(dataRow) {
+      return dataRow[this.props.dataRowIdField];
+    }.bind(this));
+  },
+
+  toggleDataRows: function(event, dataRowIds, selected) {
     var selectedDataRows = [];
     if(selected) {
-      selectedDataRows = this.selectDataRows(dataRows);
+      selectedDataRows = this.addSelectedDataRows(dataRowIds);
     } else {
-      selectedDataRows = this.unselectDataRows(dataRows);
+      selectedDataRows = this.removeSelectedDataRows(dataRowIds);
     }
 
     this.props.onSelect(event, selectedDataRows);
@@ -3650,28 +3633,26 @@ var Table = React.createClass({displayName: "Table",
     }
   },
 
-  selectDataRows: function(dataRows) {
-    return this.state.selectedDataRows.concat(dataRows);
+  addSelectedDataRows: function(dataRowIds) {
+    var selectedDataRows = this.state.selectedDataRows.slice();
+    $.each(dataRowIds, function(i, dataRowId) {
+      if($.inArray(dataRowId, selectedDataRows) < 0) {
+        selectedDataRows.push(dataRowId);
+      }
+    });
+
+    return selectedDataRows;
   },
 
-  unselectDataRows: function(dataRows) {
-    var dataRowIdsToRemove = $.map(dataRows, function(dataRow) {
-      return dataRow[this.props.rowIdField];
-    }.bind(this));
-
-    return $.grep(this.state.selectedDataRows, function(dataRow) {
-      var dataRowId = dataRow[this.props.rowIdField];
-      return ($.inArray(dataRowId, dataRowIdsToRemove) < 0);
+  removeSelectedDataRows: function(dataRowIds) {
+    return $.grep(this.state.selectedDataRows, function(dataRowId) {
+      return ($.inArray(dataRowId, dataRowIds) < 0);
     }.bind(this));
   },
 
   dataRowIsSelected: function(dataRow) {
-    var dataRowId = dataRow[this.props.rowIdField];
-    var selectedDataRowIds = $.map(this.state.selectedDataRows, function(dataRow) {
-      return dataRow[this.props.rowIdField];
-    }.bind(this));
-
-    return ($.inArray(dataRowId, selectedDataRowIds) >= 0);
+    var dataRowId = dataRow[this.props.dataRowIdField];
+    return ($.inArray(dataRowId, this.state.selectedDataRows) >= 0);
   },
 
   isAllDataRowsSelected: function() {
@@ -3840,7 +3821,7 @@ var TableRow = React.createClass({displayName: "TableRow",
   propTypes: {
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
-    rowIdField: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     selected: React.PropTypes.bool,
     onSelectToggle: React.PropTypes.func
@@ -3850,7 +3831,7 @@ var TableRow = React.createClass({displayName: "TableRow",
     return {
       columns: {},
       data: {},
-      rowIdField: 'id',
+      dataRowIdField: 'id',
       selectable: true,
       selected: false,
       onSelectToggle: function(event, dataRows, selected) {}
@@ -3873,8 +3854,8 @@ var TableRow = React.createClass({displayName: "TableRow",
       cellComponents.push(
         React.createElement(TableSelectCell, {
           onSelectToggle: this.props.onSelectToggle, 
-          dataRows: [this.props.data], 
-          rowId: this.getRowId(), 
+          dataRowIds: [this.getDataRowId()], 
+          rowId: this.getDataRowId(), 
           selected: this.props.selected, 
           key: "select"}
         )
@@ -3898,8 +3879,8 @@ var TableRow = React.createClass({displayName: "TableRow",
     return cellComponents;
   },
 
-  getRowId: function() {
-    return String(this.props.data[this.props.rowIdField]);
+  getDataRowId: function() {
+    return this.props.data[this.props.dataRowIdField];
   }
 });
 
@@ -3909,7 +3890,7 @@ var TableSelectCell = React.createClass({displayName: "TableSelectCell",
   propTypes: {
     rowId: React.PropTypes.string,
     cellElement: React.PropTypes.string,
-    dataRows: React.PropTypes.array,
+    dataRowIds: React.PropTypes.array,
     selected: React.PropTypes.bool,
     onSelectToggle: React.PropTypes.func
   },
@@ -3919,7 +3900,7 @@ var TableSelectCell = React.createClass({displayName: "TableSelectCell",
       themeClassKey: 'table.select',
       rowId: '',
       cellElement: 'td',
-      dataRows: [],
+      dataRowIds: [],
       selected: false,
       onSelectToggle: function(event, dataRows, selected) {}
     };
@@ -3938,11 +3919,11 @@ var TableSelectCell = React.createClass({displayName: "TableSelectCell",
   },
 
   getCheckboxId: function() {
-    return "select_" + this.props.rowId;
+    return "select_" + String(this.props.rowId);
   },
 
   handleChange: function(event) {
-    this.props.onSelectToggle(event, this.props.dataRows, !this.props.selected);
+    this.props.onSelectToggle(event, this.props.dataRowIds, !this.props.selected);
   },
 
   handleClick: function(event) {

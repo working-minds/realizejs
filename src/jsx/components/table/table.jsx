@@ -2,7 +2,7 @@ var Table = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
-    rowIdField: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
@@ -17,7 +17,7 @@ var Table = React.createClass({
     return {
       themeClassKey: 'table',
       columns: {},
-      rowIdField: 'id',
+      dataRowIdField: 'id',
       selectable: true,
       sortConfigs: {
         param: 's',
@@ -46,8 +46,6 @@ var Table = React.createClass({
   },
 
   render: function() {
-    console.log('rendering table...');
-
     return(
       <table className={this.className()}>
         <thead>
@@ -68,7 +66,7 @@ var Table = React.createClass({
       headerComponents.push(
         <TableSelectCell
           onSelectToggle={this.toggleDataRows}
-          dataRows={this.props.dataRows}
+          dataRowIds={this.getDataRowIds()}
           selected={this.isAllDataRowsSelected()}
           rowId={"all"}
           cellElement={"th"}
@@ -146,12 +144,18 @@ var Table = React.createClass({
     );
   },
 
-  toggleDataRows: function(event, dataRows, selected) {
+  getDataRowIds: function() {
+    return $.map(this.props.dataRows, function(dataRow) {
+      return dataRow[this.props.dataRowIdField];
+    }.bind(this));
+  },
+
+  toggleDataRows: function(event, dataRowIds, selected) {
     var selectedDataRows = [];
     if(selected) {
-      selectedDataRows = this.selectDataRows(dataRows);
+      selectedDataRows = this.addSelectedDataRows(dataRowIds);
     } else {
-      selectedDataRows = this.unselectDataRows(dataRows);
+      selectedDataRows = this.removeSelectedDataRows(dataRowIds);
     }
 
     this.props.onSelect(event, selectedDataRows);
@@ -162,28 +166,26 @@ var Table = React.createClass({
     }
   },
 
-  selectDataRows: function(dataRows) {
-    return this.state.selectedDataRows.concat(dataRows);
+  addSelectedDataRows: function(dataRowIds) {
+    var selectedDataRows = this.state.selectedDataRows.slice();
+    $.each(dataRowIds, function(i, dataRowId) {
+      if($.inArray(dataRowId, selectedDataRows) < 0) {
+        selectedDataRows.push(dataRowId);
+      }
+    });
+
+    return selectedDataRows;
   },
 
-  unselectDataRows: function(dataRows) {
-    var dataRowIdsToRemove = $.map(dataRows, function(dataRow) {
-      return dataRow[this.props.rowIdField];
-    }.bind(this));
-
-    return $.grep(this.state.selectedDataRows, function(dataRow) {
-      var dataRowId = dataRow[this.props.rowIdField];
-      return ($.inArray(dataRowId, dataRowIdsToRemove) < 0);
+  removeSelectedDataRows: function(dataRowIds) {
+    return $.grep(this.state.selectedDataRows, function(dataRowId) {
+      return ($.inArray(dataRowId, dataRowIds) < 0);
     }.bind(this));
   },
 
   dataRowIsSelected: function(dataRow) {
-    var dataRowId = dataRow[this.props.rowIdField];
-    var selectedDataRowIds = $.map(this.state.selectedDataRows, function(dataRow) {
-      return dataRow[this.props.rowIdField];
-    }.bind(this));
-
-    return ($.inArray(dataRowId, selectedDataRowIds) >= 0);
+    var dataRowId = dataRow[this.props.dataRowIdField];
+    return ($.inArray(dataRowId, this.state.selectedDataRows) >= 0);
   },
 
   isAllDataRowsSelected: function() {

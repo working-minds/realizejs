@@ -4,7 +4,7 @@ var TableSelectCell = React.createClass({
   propTypes: {
     rowId: React.PropTypes.string,
     cellElement: React.PropTypes.string,
-    dataRows: React.PropTypes.array,
+    dataRowIds: React.PropTypes.array,
     selected: React.PropTypes.bool,
     onSelectToggle: React.PropTypes.func
   },
@@ -14,7 +14,7 @@ var TableSelectCell = React.createClass({
       themeClassKey: 'table.select',
       rowId: '',
       cellElement: 'td',
-      dataRows: [],
+      dataRowIds: [],
       selected: false,
       onSelectToggle: function(event, dataRows, selected) {}
     };
@@ -33,11 +33,11 @@ var TableSelectCell = React.createClass({
   },
 
   getCheckboxId: function() {
-    return "select_" + this.props.rowId;
+    return "select_" + String(this.props.rowId);
   },
 
   handleChange: function(event) {
-    this.props.onSelectToggle(event, this.props.dataRows, !this.props.selected);
+    this.props.onSelectToggle(event, this.props.dataRowIds, !this.props.selected);
   },
 
   handleClick: function(event) {
