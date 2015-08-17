@@ -145,13 +145,13 @@ WRF.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
+    actions: {
+      cssClass: 'grid__actions col s12'
+    },
+
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
-      },
-
-      clearButton: {
-        cssClass: 'filter__button--clear'
       }
     },
 
@@ -177,6 +177,14 @@ WRF.themes.materialize = {
 
     select: {
       cssClass: 'table-select'
+    },
+
+    row: {
+      cssClass: 'table-row',
+
+      actions: {
+        cssClass: 'table-actions'
+      }
     },
 
     cell: {
@@ -280,10 +288,22 @@ WRF.themes.materialize = {
   },
 
   button: {
-    cssClass: 'btn waves-effect waves-light',
+    cssClass: 'button btn waves-effect waves-light',
+
+    floating: {
+      cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
+    },
+
+    iconOnly: {
+      cssClass: 'button--icon'
+    },
 
     cancel: {
-      cssClass: 'black-text grey lighten-4'
+      cssClass: 'button-cancel black-text grey lighten-4'
+    },
+
+    danger: {
+      cssClass: 'button-danger red lighten-1'
     }
   },
 
@@ -362,11 +382,16 @@ WRF.themes.materialize = {
 
   icon: {
     cssClass: 'material-icons',
+
     left: 'chevron_left',
     right: 'chevron_right',
     search: 'search',
     calendar: 'today',
-    close: 'clear'
+    close: 'clear',
+    send: 'send',
+    add: 'add',
+    edit: 'mode_edit',
+    destroy: 'delete'
   }
 };
 var ContainerMixin = {
@@ -570,7 +595,7 @@ var FormErrorHandlerMixin = {
   },
 
   handleValidationError: function(xhr) {
-    this.setState({errors: xhr.responseJSON});
+    this.setState({errors: JSON.parse(xhr.responseText)});
   },
 
   flashErrorMessage: function() {
@@ -629,6 +654,80 @@ var FormSuccessHandlerMixin = {
 
     }
   }
+};
+var GridActionsMixin = {
+  propTypes: {
+    actionButtons: React.PropTypes.object
+  },
+
+  getDefaultProps: function() {
+    return {
+      actionButtons: null
+    };
+  },
+
+  getMemberActionButtons: function() {
+    if($.isPlainObject(this.props.actionButtons)) {
+      return this.props.actionButtons.member;
+    } else {
+      return this.getDefaultMemberActionButtons();
+    }
+  },
+
+  getDefaultMemberActionButtons: function() {
+    return [
+      {
+        icon: 'edit',
+        onClick: this.editAction
+      },
+      {
+        icon: 'destroy',
+        style: 'danger',
+        onClick: this.destroyAction
+      }
+    ]
+  },
+
+  getCollectionActionButtons: function() {
+    if($.isPlainObject(this.props.actionButtons)) {
+      return this.props.actionButtons.collection;
+    } else {
+      return this.getDefaultCollectionActionButtons();
+    }
+  },
+
+  getDefaultCollectionActionButtons: function() {
+    return [
+      {
+        icon: 'add',
+        onClick: this.addAction
+      }
+    ]
+  },
+
+  addAction: function(event) {
+    window.location = this.props.url + '/new';
+  },
+
+  editAction: function(event, id) {
+    window.location = this.props.url + '/' + id + '/edit';
+  },
+
+  destroyAction: function(event, id) {
+    var destroyUrl = this.props.url + '/' + id;
+
+    $.ajax({
+      url: destroyUrl,
+      method: 'DELETE',
+      success: this.loadData,
+      error: this.handleDestroyError
+    });
+  },
+
+  handleDestroyError: function(xhr, status, error) {
+    console.log(error);
+  }
+
 };
 var InputComponentMixin = {
   propTypes: {
@@ -814,32 +913,54 @@ var Button = React.createClass({displayName: "Button",
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
-    icon: React.PropTypes.object,
-    onClick: React.PropTypes.func,
+    icon: React.PropTypes.node,
+    style: React.PropTypes.oneOf(['danger', 'primary', 'warning', 'cancel']),
     disabled: React.PropTypes.bool,
-    isLoading: React.PropTypes.bool,
-    additionalThemeClassKeys: React.PropTypes.string
+    href: React.PropTypes.string,
+    onClick: React.PropTypes.func,
+    isLoading: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
-      additionalThemeClassKeys: '',
+      themeClassKey: 'button',
+      name: '',
       disabled: false,
       isLoading: false,
       icon: null,
-      disableWith: 'Carregando...'
+      href: null,
+      onClick: null,
+      disableWith: 'Carregando...',
     };
   },
 
   getInitialState: function() {
     return {
-      themeClassKey: 'button ' + this.props.additionalThemeClassKeys
+      themeClassKey: this.getButtonThemeClassKey() + this.getStyleThemeClassKey()
     };
+  },
+
+  getButtonThemeClassKey: function() {
+    var themeClassKey = this.props.themeClassKey;
+
+    if(!this.props.name || this.props.name.length === 0) {
+      themeClassKey += ' button.iconOnly';
+    }
+
+    return themeClassKey;
+  },
+
+  getStyleThemeClassKey: function() {
+    if(!this.props.style) {
+      return '';
+    }
+
+    return ' button.' + this.props.style;
   },
 
   render: function() {
     return (
-      React.createElement("button", {className: this.className(), type: this.props.type, disabled: this.props.disabled, onClick: this.props.onClick}, 
+      React.createElement("button", {className: this.className(), type: this.props.type, disabled: this.props.disabled, onClick: this.handleClick}, 
         this.props.isLoading ? this.renderLoadingIndicator(): this.renderContent()
       )
     );
@@ -853,12 +974,35 @@ var Button = React.createClass({displayName: "Button",
     if(!this.props.icon) {
       return '';
     }
+
+    var iconProps = null;
+    if($.isPlainObject(this.props.icon)) {
+      iconProps = this.props.icon;
+    } else {
+      iconProps = { type: this.props.icon };
+    }
     
-    return React.createElement(Icon, React.__spread({},  this.props.icon, {key: "icon"}));
+    return React.createElement(Icon, React.__spread({className: this.getIconClassName()},  iconProps, {key: "icon"}));
   },
 
   renderLoadingIndicator: function() {
     return this.props.disableWith;
+  },
+
+  handleClick: function(event) {
+    if(!!this.props.onClick) {
+      this.props.onClick(event);
+    } else if(!!this.props.href) {
+      window.location = this.props.href;
+    }
+  },
+
+  getIconClassName: function() {
+    if(!this.props.name || this.props.name.length === 0) {
+      return '';
+    } else {
+      return 'right';
+    }
   }
   
 });
@@ -1010,7 +1154,8 @@ var Form = React.createClass({displayName: "Form",
       method: 'POST',
       dataType: undefined,
       submitButton: {
-        name: 'Enviar'
+        name: 'Enviar',
+        icon: 'send'
       },
       otherButtons: [],
       isLoading: false,
@@ -1219,7 +1364,10 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 });
 
 var Grid = React.createClass({displayName: "Grid",
-  mixins: [CssClassMixin],
+  mixins: [
+    CssClassMixin,
+    GridActionsMixin
+  ],
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
@@ -1277,6 +1425,7 @@ var Grid = React.createClass({displayName: "Grid",
   render: function() {
     return (
       React.createElement("div", {className: this.className()}, 
+        this.renderCollectionActionButtons(), 
         this.renderFilter(), 
 
         this.renderPagination(), 
@@ -1284,6 +1433,15 @@ var Grid = React.createClass({displayName: "Grid",
         this.renderPagination()
       )
     );
+  },
+
+  renderCollectionActionButtons: function() {
+    var collectionActionButtons = this.getCollectionActionButtons();
+    if(!collectionActionButtons || collectionActionButtons.length === 0) {
+      return '';
+    }
+
+    return React.createElement(GridActions, {actionButtons: collectionActionButtons});
   },
 
   renderFilter: function() {
@@ -1305,6 +1463,7 @@ var Grid = React.createClass({displayName: "Grid",
         sortData: this.state.sortData, 
         dataRows: this.state.dataRows, 
         selectedDataRows: this.state.selectedDataRows, 
+        actionButtons: this.getMemberActionButtons(), 
         onSort: this.onSort, 
         onSelect: this.onSelectDataRow}
       )
@@ -1366,12 +1525,8 @@ var Grid = React.createClass({displayName: "Grid",
       method: 'GET',
       dataType: 'json',
       data: postData,
-      success: function(data) {
-        this.handleLoad(data);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        this.handleLoadError(xhr, status, error);
-      }.bind(this)
+      success: this.handleLoad,
+      error: this.handleLoadError
     });
   },
 
@@ -1416,6 +1571,41 @@ var Grid = React.createClass({displayName: "Grid",
 
 });
 
+var GridActions = React.createClass({displayName: "GridActions",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    actionButtons: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      actionButtons: [],
+      themeClassKey: 'grid.actions'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderButtons()
+      )
+    );
+  },
+
+  renderButtons: function() {
+    var actionButtons = [];
+    var actionButtonsProps = this.props.actionButtons;
+
+    for(var i = 0; i < actionButtonsProps.length; i++) {
+      var actionButtonProps = actionButtonsProps[i];
+      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {themeClassKey: "button.floating", key: "action_" + i})));
+    }
+
+    return actionButtons;
+  }
+});
+
 var GridFilter = React.createClass({displayName: "GridFilter",
   mixins: [CssClassMixin],
   propTypes: {
@@ -1437,15 +1627,12 @@ var GridFilter = React.createClass({displayName: "GridFilter",
       method: "GET",
       submitButton: {
         name: 'Filtrar',
-        icon: {
-          type: 'search',
-          className: 'right'
-        }
+        icon: 'search'
       },
       clearButton: {
         name: 'Limpar',
         type: 'reset',
-        additionalThemeClassKeys: 'grid.filter.clearButton button.cancel'
+        style: 'cancel'
       },
       onSuccess: function(data) {
         return true;
@@ -3476,6 +3663,7 @@ var Table = React.createClass({displayName: "Table",
     dataRows: React.PropTypes.array,
     selectedDataRows: React.PropTypes.array,
     emptyMessage: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
     onSort: React.PropTypes.func,
     onSelect: React.PropTypes.func
   },
@@ -3494,6 +3682,7 @@ var Table = React.createClass({displayName: "Table",
       sortData: {},
       dataRows: [],
       selectedDataRows: [],
+      actionButtons: [],
       onSort: function(sortData) {},
       onSelect: function(event, selectedDataRows) {}
     };
@@ -3516,7 +3705,10 @@ var Table = React.createClass({displayName: "Table",
     return(
       React.createElement("table", {className: this.className()}, 
         React.createElement("thead", null, 
-          this.renderTableHeaders()
+          React.createElement("tr", null, 
+            this.renderHeaderSelectCell(), 
+            this.renderTableHeaders()
+          )
         ), 
         React.createElement("tbody", null, 
           (this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()
@@ -3525,22 +3717,26 @@ var Table = React.createClass({displayName: "Table",
     );
   },
 
+  renderHeaderSelectCell: function() {
+    if(!this.props.selectable) {
+      return '';
+    }
+
+    return (
+      React.createElement(TableSelectCell, {
+        onSelectToggle: this.toggleDataRows, 
+        dataRowIds: this.getDataRowIds(), 
+        selected: this.isAllDataRowsSelected(), 
+        rowId: "all", 
+        cellElement: "th", 
+        key: "header_select"}
+      )
+    );
+  },
+
   renderTableHeaders: function() {
     var columns = this.props.columns;
     var headerComponents = [];
-
-    if(this.props.selectable) {
-      headerComponents.push(
-        React.createElement(TableSelectCell, {
-          onSelectToggle: this.toggleDataRows, 
-          dataRowIds: this.getDataRowIds(), 
-          selected: this.isAllDataRowsSelected(), 
-          rowId: "all", 
-          cellElement: "th", 
-          key: "header_select"}
-        )
-      );
-    }
 
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
@@ -3558,11 +3754,7 @@ var Table = React.createClass({displayName: "Table",
       }
     }
 
-    return (
-      React.createElement("tr", null, 
-        headerComponents
-      )
-    );
+    return headerComponents;
   },
 
   sortDirectionForColumn: function(columnName) {
@@ -3586,6 +3778,7 @@ var Table = React.createClass({displayName: "Table",
           {onSelectToggle: this.toggleDataRows, 
           selected: this.dataRowIsSelected(dataRow), 
           data: dataRow, 
+          actionButtons: this.props.actionButtons, 
           key: "table_row_" + i})
         )
       );
@@ -3669,6 +3862,9 @@ var TableCell = React.createClass({displayName: "TableCell",
   propTypes: {
     name: React.PropTypes.string,
     data: React.PropTypes.object,
+    dataRowIdField: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
+    firstCell: React.PropTypes.bool,
     value: React.PropTypes.func,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'datetime'])
   },
@@ -3676,6 +3872,7 @@ var TableCell = React.createClass({displayName: "TableCell",
   getDefaultProps: function() {
     return {
       format: 'text',
+      firstCell: false,
       data: {}
     };
   },
@@ -3689,7 +3886,8 @@ var TableCell = React.createClass({displayName: "TableCell",
   render: function() {
     return (
       React.createElement("td", {className: this.className()}, 
-        this.renderValue()
+        this.renderValue(), 
+        this.renderActionButtons()
       )
     );
   },
@@ -3710,6 +3908,14 @@ var TableCell = React.createClass({displayName: "TableCell",
         return this.textValue(dataValue);
       }
     }
+  },
+
+  renderActionButtons: function() {
+    if(!this.props.firstCell || !$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
+      return '';
+    }
+
+    return React.createElement(TableRowActions, React.__spread({},  this.propsWithoutCSS(), {ref: "actions"}));
   },
 
   textValue: function(value) {
@@ -3824,6 +4030,7 @@ var TableRow = React.createClass({displayName: "TableRow",
     dataRowIdField: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     selected: React.PropTypes.bool,
+    actionButtons: React.PropTypes.array,
     onSelectToggle: React.PropTypes.func
   },
 
@@ -3834,14 +4041,33 @@ var TableRow = React.createClass({displayName: "TableRow",
       dataRowIdField: 'id',
       selectable: true,
       selected: false,
+      actionButtons: [],
+      themeClassKey: 'table.row',
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
 
   render: function() {
     return (
-      React.createElement("tr", {className: this.className()}, 
+      React.createElement("tr", {className: this.className(), ref: "row"}, 
+        this.renderSelectCell(), 
         this.renderCells()
+      )
+    );
+  },
+
+  renderSelectCell: function() {
+    if(!this.props.selectable) {
+      return '';
+    }
+
+    return (
+      React.createElement(TableSelectCell, {
+        onSelectToggle: this.props.onSelectToggle, 
+        dataRowIds: [this.getDataRowId()], 
+        rowId: String(this.getDataRowId()), 
+        selected: this.props.selected, 
+        key: "select"}
       )
     );
   },
@@ -3849,38 +4075,75 @@ var TableRow = React.createClass({displayName: "TableRow",
   renderCells: function() {
     var columns = this.props.columns;
     var cellComponents = [];
+    var firstCell = true;
 
-    if(this.props.selectable) {
+    $.each(columns, function(columnName, columnProps) {
       cellComponents.push(
-        React.createElement(TableSelectCell, {
-          onSelectToggle: this.props.onSelectToggle, 
-          dataRowIds: [this.getDataRowId()], 
-          rowId: this.getDataRowId(), 
-          selected: this.props.selected, 
-          key: "select"}
+        React.createElement(TableCell, React.__spread({},  columnProps, 
+          this.propsWithoutCSS(), 
+          {firstCell: firstCell, 
+          name: columnName, 
+          key: columnName})
         )
       );
-    }
 
-    for(var columnName in columns) {
-      if(columns.hasOwnProperty(columnName)) {
-        var columnProps = columns[columnName];
-        cellComponents.push(
-          React.createElement(TableCell, React.__spread({},  columnProps, 
-            {name: columnName, 
-            data: this.props.data, 
-            clearTheme: this.props.clearTheme, 
-            key: columnName})
-          )
-        );
-      }
-    }
+      firstCell = false;
+    }.bind(this));
 
     return cellComponents;
   },
 
   getDataRowId: function() {
     return this.props.data[this.props.dataRowIdField];
+  }
+
+});
+
+var TableRowActions = React.createClass({displayName: "TableRowActions",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    data: React.PropTypes.object,
+    dataRowIdField: React.PropTypes.string,
+    actionButtons: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      data: {},
+      dataRowIdField: 'id',
+      actionButtons: [],
+      themeClassKey: 'table.row.actions'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", React.__spread({className: this.className()},  this.props), 
+        this.renderButtons()
+      )
+    );
+  },
+
+  renderButtons: function() {
+    var actionButtons = [];
+    var actionButtonsProps = this.props.actionButtons;
+
+    for(var i = 0; i < actionButtonsProps.length; i++) {
+      var actionButtonProps = actionButtonsProps[i];
+      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {onClick: this.handleActionClick.bind(this, actionButtonProps), key: "action_" + i})));
+    }
+
+    return actionButtons;
+  },
+
+  handleActionClick: function(actionButtonProps, event) {
+    var buttonOnClick = actionButtonProps.onClick;
+
+    if($.isFunction(buttonOnClick)) {
+      var dataRowId = this.props.data[this.props.dataRowIdField];
+      buttonOnClick(event, dataRowId);
+    }
   }
 });
 

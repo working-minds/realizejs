@@ -4,6 +4,9 @@ var TableCell = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     data: React.PropTypes.object,
+    dataRowIdField: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
+    firstCell: React.PropTypes.bool,
     value: React.PropTypes.func,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'datetime'])
   },
@@ -11,6 +14,7 @@ var TableCell = React.createClass({
   getDefaultProps: function() {
     return {
       format: 'text',
+      firstCell: false,
       data: {}
     };
   },
@@ -25,6 +29,7 @@ var TableCell = React.createClass({
     return (
       <td className={this.className()}>
         {this.renderValue()}
+        {this.renderActionButtons()}
       </td>
     );
   },
@@ -45,6 +50,14 @@ var TableCell = React.createClass({
         return this.textValue(dataValue);
       }
     }
+  },
+
+  renderActionButtons: function() {
+    if(!this.props.firstCell || !$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
+      return '';
+    }
+
+    return <TableRowActions {...this.propsWithoutCSS()} ref="actions" />;
   },
 
   textValue: function(value) {

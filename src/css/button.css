@@ -2,3 +2,12 @@ button .preloader-wrapper.small {
   width: 24px;
   height: 24px;
 }
+
+.button--icon {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.button--floating.button--icon {
+  padding: 0;
+}

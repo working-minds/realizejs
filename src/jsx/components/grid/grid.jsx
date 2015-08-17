@@ -1,5 +1,8 @@
 var Grid = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [
+    CssClassMixin,
+    GridActionsMixin
+  ],
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
@@ -57,6 +60,7 @@ var Grid = React.createClass({
   render: function() {
     return (
       <div className={this.className()}>
+        {this.renderCollectionActionButtons()}
         {this.renderFilter()}
 
         {this.renderPagination()}
@@ -64,6 +68,15 @@ var Grid = React.createClass({
         {this.renderPagination()}
       </div>
     );
+  },
+
+  renderCollectionActionButtons: function() {
+    var collectionActionButtons = this.getCollectionActionButtons();
+    if(!collectionActionButtons || collectionActionButtons.length === 0) {
+      return '';
+    }
+
+    return <GridActions actionButtons={collectionActionButtons} />;
   },
 
   renderFilter: function() {
@@ -85,6 +98,7 @@ var Grid = React.createClass({
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
         selectedDataRows={this.state.selectedDataRows}
+        actionButtons={this.getMemberActionButtons()}
         onSort={this.onSort}
         onSelect={this.onSelectDataRow}
       />
@@ -146,12 +160,8 @@ var Grid = React.createClass({
       method: 'GET',
       dataType: 'json',
       data: postData,
-      success: function(data) {
-        this.handleLoad(data);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        this.handleLoadError(xhr, status, error);
-      }.bind(this)
+      success: this.handleLoad,
+      error: this.handleLoadError
     });
   },
 

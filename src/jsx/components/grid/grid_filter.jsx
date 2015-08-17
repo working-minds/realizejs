@@ -19,15 +19,12 @@ var GridFilter = React.createClass({
       method: "GET",
       submitButton: {
         name: 'Filtrar',
-        icon: {
-          type: 'search',
-          className: 'right'
-        }
+        icon: 'search'
       },
       clearButton: {
         name: 'Limpar',
         type: 'reset',
-        additionalThemeClassKeys: 'grid.filter.clearButton button.cancel'
+        style: 'cancel'
       },
       onSuccess: function(data) {
         return true;

@@ -9,6 +9,7 @@ var Table = React.createClass({
     dataRows: React.PropTypes.array,
     selectedDataRows: React.PropTypes.array,
     emptyMessage: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
     onSort: React.PropTypes.func,
     onSelect: React.PropTypes.func
   },
@@ -27,6 +28,7 @@ var Table = React.createClass({
       sortData: {},
       dataRows: [],
       selectedDataRows: [],
+      actionButtons: [],
       onSort: function(sortData) {},
       onSelect: function(event, selectedDataRows) {}
     };
@@ -49,7 +51,10 @@ var Table = React.createClass({
     return(
       <table className={this.className()}>
         <thead>
-          {this.renderTableHeaders()}
+          <tr>
+            {this.renderHeaderSelectCell()}
+            {this.renderTableHeaders()}
+          </tr>
         </thead>
         <tbody>
           {(this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()}
@@ -58,22 +63,26 @@ var Table = React.createClass({
     );
   },
 
+  renderHeaderSelectCell: function() {
+    if(!this.props.selectable) {
+      return '';
+    }
+
+    return (
+      <TableSelectCell
+        onSelectToggle={this.toggleDataRows}
+        dataRowIds={this.getDataRowIds()}
+        selected={this.isAllDataRowsSelected()}
+        rowId={"all"}
+        cellElement={"th"}
+        key={"header_select"}
+      />
+    );
+  },
+
   renderTableHeaders: function() {
     var columns = this.props.columns;
     var headerComponents = [];
-
-    if(this.props.selectable) {
-      headerComponents.push(
-        <TableSelectCell
-          onSelectToggle={this.toggleDataRows}
-          dataRowIds={this.getDataRowIds()}
-          selected={this.isAllDataRowsSelected()}
-          rowId={"all"}
-          cellElement={"th"}
-          key={"header_select"}
-        />
-      );
-    }
 
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
@@ -91,11 +100,7 @@ var Table = React.createClass({
       }
     }
 
-    return (
-      <tr>
-        {headerComponents}
-      </tr>
-    );
+    return headerComponents;
   },
 
   sortDirectionForColumn: function(columnName) {
@@ -119,6 +124,7 @@ var Table = React.createClass({
           onSelectToggle={this.toggleDataRows}
           selected={this.dataRowIsSelected(dataRow)}
           data={dataRow}
+          actionButtons={this.props.actionButtons}
           key={"table_row_" + i}
         />
       );
