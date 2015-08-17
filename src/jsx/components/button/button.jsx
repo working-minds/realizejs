@@ -4,8 +4,9 @@ var Button = React.createClass({
     name: React.PropTypes.string,
     type: React.PropTypes.string,
     icon: React.PropTypes.object,
-    onClick: React.PropTypes.func,
     disabled: React.PropTypes.bool,
+    href: React.PropTypes.string,
+    onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
     additionalThemeClassKeys: React.PropTypes.string
   },
@@ -16,6 +17,8 @@ var Button = React.createClass({
       disabled: false,
       isLoading: false,
       icon: null,
+      href: null,
+      onClick: null,
       disableWith: 'Carregando...'
     };
   },
@@ -28,7 +31,7 @@ var Button = React.createClass({
 
   render: function() {
     return (
-      <button className={this.className()} type={this.props.type} disabled={this.props.disabled} onClick={this.props.onClick}>
+      <button className={this.className()} type={this.props.type} disabled={this.props.disabled} onClick={this.handleClick}>
         {this.props.isLoading ? this.renderLoadingIndicator(): this.renderContent()}
       </button>
     );
@@ -48,6 +51,14 @@ var Button = React.createClass({
 
   renderLoadingIndicator: function() {
     return this.props.disableWith;
+  },
+
+  handleClick: function(event) {
+    if(!!this.props.onClick) {
+      this.props.onClick(event);
+    } else if(!!this.props.href) {
+      window.location = this.props.href;
+    }
   }
   
 });

@@ -39,7 +39,7 @@ var FormErrorHandlerMixin = {
   },
 
   handleValidationError: function(xhr) {
-    this.setState({errors: xhr.responseJSON});
+    this.setState({errors: JSON.parse(xhr.responseText)});
   },
 
   flashErrorMessage: function() {

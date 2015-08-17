@@ -36,6 +36,10 @@ WRF.themes.materialize = {
       cssClass: 'table-select'
     },
 
+    rowActions: {
+      cssClass: 'table-actions'
+    },
+
     cell: {
       cssClass: 'table-cell',
 

@@ -9,7 +9,8 @@ var Grid = React.createClass({
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
-    countParam: React.PropTypes.string
+    countParam: React.PropTypes.string,
+    actionButtons: React.PropTypes.object
   },
 
   getDefaultProps: function() {
@@ -37,7 +38,8 @@ var Grid = React.createClass({
       data: {
         dataRows: [],
         count: 0
-      }
+      },
+      actionButtons: null
     };
   },
 
@@ -85,6 +87,7 @@ var Grid = React.createClass({
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
         selectedDataRows={this.state.selectedDataRows}
+        actionButtons={this.getMemberActionButtons()}
         onSort={this.onSort}
         onSelect={this.onSelectDataRow}
       />
@@ -106,6 +109,27 @@ var Grid = React.createClass({
         onPagination={this.onPagination}
       />
     );
+  },
+
+  getMemberActionButtons: function() {
+    if($.isPlainObject(this.props.actionButtons)) {
+      return this.props.actionButtons.member;
+    } else {
+      return this.getDefaultMemberActionButtons();
+    }
+  },
+
+  getDefaultMemberActionButtons: function() {
+    return [
+      {
+        name: 'Editar',
+        href: 'http://www.google.com'
+      },
+      {
+        name: 'Remover',
+        href: 'http://www.lipsum.com'
+      }
+    ]
   },
 
   onPagination: function(page) {

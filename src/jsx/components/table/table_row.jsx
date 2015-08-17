@@ -6,6 +6,7 @@ var TableRow = React.createClass({
     dataRowIdField: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     selected: React.PropTypes.bool,
+    actionButtons: React.PropTypes.array,
     onSelectToggle: React.PropTypes.func
   },
 
@@ -16,33 +17,40 @@ var TableRow = React.createClass({
       dataRowIdField: 'id',
       selectable: true,
       selected: false,
+      actionButtons: [],
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
 
   render: function() {
     return (
-      <tr className={this.className()}>
+      <tr className={this.className()} ref="row">
+        {this.renderSelectCell()}
         {this.renderCells()}
+        {this.renderActionButtons()}
       </tr>
+    );
+  },
+
+  renderSelectCell: function() {
+    if(!this.props.selectable) {
+      return '';
+    }
+
+    return (
+      <TableSelectCell
+        onSelectToggle={this.props.onSelectToggle}
+        dataRowIds={[this.getDataRowId()]}
+        rowId={String(this.getDataRowId())}
+        selected={this.props.selected}
+        key="select"
+      />
     );
   },
 
   renderCells: function() {
     var columns = this.props.columns;
     var cellComponents = [];
-
-    if(this.props.selectable) {
-      cellComponents.push(
-        <TableSelectCell
-          onSelectToggle={this.props.onSelectToggle}
-          dataRowIds={[this.getDataRowId()]}
-          rowId={this.getDataRowId()}
-          selected={this.props.selected}
-          key="select"
-        />
-      );
-    }
 
     for(var columnName in columns) {
       if(columns.hasOwnProperty(columnName)) {
@@ -59,6 +67,14 @@ var TableRow = React.createClass({
     }
 
     return cellComponents;
+  },
+
+  renderActionButtons: function() {
+    if(!$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
+      return '';
+    }
+
+    return <TableRowActions {...this.propsWithoutCSS()} key="actions" />;
   },
 
   getDataRowId: function() {
