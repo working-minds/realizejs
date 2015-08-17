@@ -26,7 +26,7 @@ var GridActions = React.createClass({
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(<Button {...actionButtonProps} themeClassKey={"button.floating"} key={"action_" + i} />);
+      actionButtons.push(<Button {...actionButtonProps} key={"action_" + i} />);
     }
 
     return actionButtons;

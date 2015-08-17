@@ -700,6 +700,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'add',
+        themeClassKey: "button.floating",
         onClick: this.addAction
       }
     ]
@@ -1599,7 +1600,7 @@ var GridActions = React.createClass({displayName: "GridActions",
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {themeClassKey: "button.floating", key: "action_" + i})));
+      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {key: "action_" + i})));
     }
 
     return actionButtons;
