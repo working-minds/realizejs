@@ -2,13 +2,13 @@ WRF.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
+    actions: {
+      cssClass: 'grid__actions col s12'
+    },
+
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
-      },
-
-      clearButton: {
-        cssClass: 'filter__button--clear'
       }
     },
 
@@ -29,6 +29,18 @@ WRF.themes.materialize = {
 
       label: {
         cssClass: 'table-header__name'
+      }
+    },
+
+    select: {
+      cssClass: 'table-select'
+    },
+
+    row: {
+      cssClass: 'table-row',
+
+      actions: {
+        cssClass: 'table-actions'
       }
     },
 
@@ -65,7 +77,7 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group'
+      cssClass: 'form__input-group section'
     }
   },
 
@@ -133,10 +145,22 @@ WRF.themes.materialize = {
   },
 
   button: {
-    cssClass: 'btn waves-effect waves-light',
+    cssClass: 'button btn waves-effect waves-light',
+
+    floating: {
+      cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
+    },
+
+    iconOnly: {
+      cssClass: 'button--icon'
+    },
 
     cancel: {
-      cssClass: 'black-text grey lighten-4'
+      cssClass: 'button-cancel black-text grey lighten-4'
+    },
+
+    danger: {
+      cssClass: 'button-danger red lighten-1'
     }
   },
 
@@ -204,7 +228,7 @@ WRF.themes.materialize = {
     cssClass: 'tabs-container col',
 
     tabButton: {
-      cssClass: 'tab col',
+      cssClass: 'tab',
 
       error: {
         cssClass: 'tab--error red lighten-4'
@@ -215,10 +239,15 @@ WRF.themes.materialize = {
 
   icon: {
     cssClass: 'material-icons',
+
     left: 'chevron_left',
     right: 'chevron_right',
     search: 'search',
     calendar: 'today',
-    close: 'clear'
+    close: 'clear',
+    send: 'send',
+    add: 'add',
+    edit: 'mode_edit',
+    destroy: 'delete'
   }
 };

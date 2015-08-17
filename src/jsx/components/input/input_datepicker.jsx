@@ -11,8 +11,6 @@ var InputDatepicker = React.createClass({
     var inputNode = React.findDOMNode(this.refs.input);
     var buttonNode = React.findDOMNode(this.refs.button);
 
-
-
     var input = $(inputNode).pickadate({
       editable: true,
       selectMonths: true,
@@ -26,11 +24,11 @@ var InputDatepicker = React.createClass({
 
     $(buttonNode).on('click', function(e) {
       if (picker.get('open')) {
-        picker.close()
+        picker.close();
       } else {
-        picker.open()
+        picker.open();
       }
-      e.stopPropagation()
+      e.stopPropagation();
     });
   },
 

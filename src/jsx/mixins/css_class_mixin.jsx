@@ -36,7 +36,7 @@ var CssClassMixin = {
   },
 
   propsWithoutCSS: function() {
-    var cssProps = ['clearTheme', 'className', 'themeClassKey'];
+    var cssProps = ['className', 'themeClassKey'];
     var props = $.extend({}, this.props);
     $.each(cssProps, function(i, cssProp) {
       delete props[cssProp];

@@ -27,7 +27,7 @@ var Flash = React.createClass({
     return {
       themeClassKey: 'flash flash.' + this.props.type,
       dismissed: this.props.dismissed
-    }
+    };
   },
 
   componentWillReceiveProps: function(nextProps) {

@@ -12,7 +12,7 @@ var Spinner = React.createClass({
       color: 'green',
       active: true,
       className: ''
-    }
+    };
   },
 
   render: function() {

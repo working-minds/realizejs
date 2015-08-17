@@ -2,38 +2,81 @@ var Table = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     columns: React.PropTypes.object,
+    dataRowIdField: React.PropTypes.string,
+    selectable: React.PropTypes.bool,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
-    onSort: React.PropTypes.func
+    selectedDataRows: React.PropTypes.array,
+    emptyMessage: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
+    onSort: React.PropTypes.func,
+    onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'table',
       columns: {},
+      dataRowIdField: 'id',
+      selectable: true,
       sortConfigs: {
         param: 's',
         valueFormat: '%{field} %{direction}'
       },
+      emptyMessage: 'Nenhum resultado foi encontrado.',
       sortData: {},
       dataRows: [],
-      onSort: function(sortData) {
-        return true;
-      }
+      selectedDataRows: [],
+      actionButtons: [],
+      onSort: function(sortData) {},
+      onSelect: function(event, selectedDataRows) {}
     };
+  },
+
+  getInitialState: function() {
+    return {
+      selectedDataRows: this.props.selectedDataRows
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var selectedDataRows = nextProps.selectedDataRows;
+    if($.isArray(selectedDataRows)) {
+      this.setState({selectedDataRows: selectedDataRows});
+    }
   },
 
   render: function() {
     return(
       <table className={this.className()}>
         <thead>
-          {this.renderTableHeaders()}
+          <tr>
+            {this.renderHeaderSelectCell()}
+            {this.renderTableHeaders()}
+          </tr>
         </thead>
         <tbody>
           {(this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()}
         </tbody>
       </table>
+    );
+  },
+
+  renderHeaderSelectCell: function() {
+    if(!this.props.selectable) {
+      return '';
+    }
+
+    return (
+      <TableSelectCell
+        onSelectToggle={this.toggleDataRows}
+        dataRowIds={this.getDataRowIds()}
+        selected={this.isAllDataRowsSelected()}
+        rowId={"all"}
+        cellElement={"th"}
+        key={"header_select"}
+      />
     );
   },
 
@@ -57,11 +100,7 @@ var Table = React.createClass({
       }
     }
 
-    return (
-      <tr>
-        {headerComponents}
-      </tr>
-    );
+    return headerComponents;
   },
 
   sortDirectionForColumn: function(columnName) {
@@ -79,7 +118,16 @@ var Table = React.createClass({
 
     for(var i = 0; i < dataRows.length; i++) {
       var dataRow = dataRows[i];
-      rowComponents.push(<TableRow columns={this.props.columns} data={dataRow} key={"table_row_" + i} clearTheme={this.props.clearTheme} />);
+      rowComponents.push(
+        <TableRow
+          {...this.propsWithoutCSS()}
+          onSelectToggle={this.toggleDataRows}
+          selected={this.dataRowIsSelected(dataRow)}
+          data={dataRow}
+          actionButtons={this.props.actionButtons}
+          key={"table_row_" + i}
+        />
+      );
     }
 
     return rowComponents;
@@ -91,12 +139,65 @@ var Table = React.createClass({
       columnsCount++;
     }
 
+    if(this.props.selectable) {
+      columnsCount++;
+    }
+
     return (
       <tr>
-        <td colSpan={columnsCount}>
-          Nenhum resultado foi encontrado.
-        </td>
+        <td colSpan={columnsCount}>{this.props.emptyMessage}</td>
       </tr>
     );
+  },
+
+  getDataRowIds: function() {
+    return $.map(this.props.dataRows, function(dataRow) {
+      return dataRow[this.props.dataRowIdField];
+    }.bind(this));
+  },
+
+  toggleDataRows: function(event, dataRowIds, selected) {
+    var selectedDataRows = [];
+    if(selected) {
+      selectedDataRows = this.addSelectedDataRows(dataRowIds);
+    } else {
+      selectedDataRows = this.removeSelectedDataRows(dataRowIds);
+    }
+
+    this.props.onSelect(event, selectedDataRows);
+    if(!event.isDefaultPrevented()) {
+      this.setState({
+        selectedDataRows: selectedDataRows
+      });
+    }
+  },
+
+  addSelectedDataRows: function(dataRowIds) {
+    var selectedDataRows = this.state.selectedDataRows.slice();
+    $.each(dataRowIds, function(i, dataRowId) {
+      if($.inArray(dataRowId, selectedDataRows) < 0) {
+        selectedDataRows.push(dataRowId);
+      }
+    });
+
+    return selectedDataRows;
+  },
+
+  removeSelectedDataRows: function(dataRowIds) {
+    return $.grep(this.state.selectedDataRows, function(dataRowId) {
+      return ($.inArray(dataRowId, dataRowIds) < 0);
+    }.bind(this));
+  },
+
+  dataRowIsSelected: function(dataRow) {
+    var dataRowId = dataRow[this.props.dataRowIdField];
+    return ($.inArray(dataRowId, this.state.selectedDataRows) >= 0);
+  },
+
+  isAllDataRowsSelected: function() {
+    var dataRows = this.props.dataRows;
+    var selectedDataRows = this.state.selectedDataRows;
+
+    return dataRows.length > 0 && (dataRows.length == selectedDataRows.length);
   }
 });

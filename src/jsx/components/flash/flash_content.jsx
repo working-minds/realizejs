@@ -8,7 +8,7 @@ var FlashContent = React.createClass({
   getInitialState: function() {
     return {
       themeClassKey: 'flash.content flash.' + this.props.type + '.content'
-    }
+    };
   },
 
   render: function() {

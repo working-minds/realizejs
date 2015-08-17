@@ -2,13 +2,13 @@ var ModalButton = React.createClass({
   //mixins: [CssClassMixin],
 
   propTypes: {
-    top:React.PropTypes.integer,
+    top:React.PropTypes.number,
     text: React.PropTypes.string,
     modal_id: React.PropTypes.string,
-    dismissible: React.PropTypes.boolean,
-    opacity: React.PropTypes.float,
-    in_duration: React.PropTypes.integer,
-    out_duration: React.PropTypes.integer,
+    dismissible: React.PropTypes.bool,
+    opacity: React.PropTypes.number,
+    in_duration: React.PropTypes.number,
+    out_duration: React.PropTypes.number,
     ready: React.PropTypes.func,
     complete: React.PropTypes.func
   },
@@ -22,9 +22,9 @@ var ModalButton = React.createClass({
       opacity: 0,
       in_duration: 300,
       out_duration: 200,
-      ready: function(){return true},
-      complete: function(){return true}
-    }
+      ready: function(){return true;},
+      complete: function(){return true;}
+    };
   },
 
   render: function() {

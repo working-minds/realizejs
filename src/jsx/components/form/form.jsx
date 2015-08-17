@@ -27,7 +27,8 @@ var Form = React.createClass({
       method: 'POST',
       dataType: undefined,
       submitButton: {
-        name: 'Enviar'
+        name: 'Enviar',
+        icon: 'send'
       },
       otherButtons: [],
       isLoading: false,

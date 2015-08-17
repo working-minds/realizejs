@@ -1,3 +1,12 @@
+.grid__actions .button {
+  float: right;
+  margin-left: 1rem;
+}
+
+.grid__actions .button:last-child {
+  margin-left: 0;
+}
+
 .grid__pagination {
   text-align: center;
 }
