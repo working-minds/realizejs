@@ -43,6 +43,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'add',
+        themeClassKey: "button.floating",
         onClick: this.addAction
       }
     ]
