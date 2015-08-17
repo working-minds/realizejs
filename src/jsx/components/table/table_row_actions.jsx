@@ -38,10 +38,13 @@ var TableRowActions = React.createClass({
 
   handleActionClick: function(actionButtonProps, event) {
     var buttonOnClick = actionButtonProps.onClick;
+    var buttonHref = actionButtonProps.href;
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
       buttonOnClick(event, dataRowId);
+    } else if(!!buttonHref) {
+      window.location = buttonHref;
     }
   }
 });

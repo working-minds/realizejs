@@ -9,6 +9,7 @@ var GridActionsMixin = {
       actionButtons: null,
       actionUrls: {
         index: ':url.json',
+        show: ':url/:id',
         add: ':url/new',
         edit: ':url/:id/edit',
         destroy: ':url/:id'
