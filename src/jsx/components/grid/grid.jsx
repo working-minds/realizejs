@@ -60,6 +60,7 @@ var Grid = React.createClass({
   render: function() {
     return (
       <div className={this.className()}>
+        {this.renderCollectionActionButtons()}
         {this.renderFilter()}
 
         {this.renderPagination()}
@@ -67,6 +68,15 @@ var Grid = React.createClass({
         {this.renderPagination()}
       </div>
     );
+  },
+
+  renderCollectionActionButtons: function() {
+    var collectionActionButtons = this.getCollectionActionButtons();
+    if(!collectionActionButtons || collectionActionButtons.length === 0) {
+      return '';
+    }
+
+    return <GridActions actionButtons={collectionActionButtons} />;
   },
 
   renderFilter: function() {
@@ -110,14 +120,6 @@ var Grid = React.createClass({
         onPagination={this.onPagination}
       />
     );
-  },
-
-  getMemberActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
-      return this.props.actionButtons.member;
-    } else {
-      return this.getDefaultMemberActionButtons();
-    }
   },
 
   onPagination: function(page) {

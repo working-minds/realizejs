@@ -145,13 +145,13 @@ WRF.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
+    actions: {
+      cssClass: 'grid__actions col s12'
+    },
+
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
-      },
-
-      clearButton: {
-        cssClass: 'filter__button--clear'
       }
     },
 
@@ -290,6 +290,10 @@ WRF.themes.materialize = {
   button: {
     cssClass: 'button btn waves-effect waves-light',
 
+    floating: {
+      cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
+    },
+
     iconOnly: {
       cssClass: 'button--icon'
     },
@@ -300,7 +304,7 @@ WRF.themes.materialize = {
 
     danger: {
       cssClass: 'button-danger red lighten-1'
-    },
+    }
   },
 
   pagination: {
@@ -378,12 +382,14 @@ WRF.themes.materialize = {
 
   icon: {
     cssClass: 'material-icons',
+
     left: 'chevron_left',
     right: 'chevron_right',
     search: 'search',
     calendar: 'today',
     close: 'clear',
     send: 'send',
+    add: 'add',
     edit: 'mode_edit',
     destroy: 'delete'
   }
@@ -660,25 +666,54 @@ var GridActionsMixin = {
     };
   },
 
+  getMemberActionButtons: function() {
+    if($.isPlainObject(this.props.actionButtons)) {
+      return this.props.actionButtons.member;
+    } else {
+      return this.getDefaultMemberActionButtons();
+    }
+  },
+
   getDefaultMemberActionButtons: function() {
     return [
       {
         icon: 'edit',
-        onClick: this.getEditActionUrl
+        onClick: this.editAction
       },
       {
         icon: 'destroy',
         style: 'danger',
-        onClick: this.getDestroyActionUrl
+        onClick: this.destroyAction
       }
     ]
   },
 
-  getEditActionUrl: function(event, id) {
+  getCollectionActionButtons: function() {
+    if($.isPlainObject(this.props.actionButtons)) {
+      return this.props.actionButtons.collection;
+    } else {
+      return this.getDefaultCollectionActionButtons();
+    }
+  },
+
+  getDefaultCollectionActionButtons: function() {
+    return [
+      {
+        icon: 'add',
+        onClick: this.addAction
+      }
+    ]
+  },
+
+  addAction: function(event) {
+    window.location = this.props.url + '/new';
+  },
+
+  editAction: function(event, id) {
     window.location = this.props.url + '/' + id + '/edit';
   },
 
-  getDestroyActionUrl: function(event, id) {
+  destroyAction: function(event, id) {
     var destroyUrl = this.props.url + '/' + id;
 
     $.ajax({
@@ -888,13 +923,14 @@ var Button = React.createClass({displayName: "Button",
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'button',
       name: '',
       disabled: false,
       isLoading: false,
       icon: null,
       href: null,
       onClick: null,
-      disableWith: 'Carregando...'
+      disableWith: 'Carregando...',
     };
   },
 
@@ -905,7 +941,7 @@ var Button = React.createClass({displayName: "Button",
   },
 
   getButtonThemeClassKey: function() {
-    var themeClassKey = 'button';
+    var themeClassKey = this.props.themeClassKey;
 
     if(!this.props.name || this.props.name.length === 0) {
       themeClassKey += ' button.iconOnly';
@@ -1389,6 +1425,7 @@ var Grid = React.createClass({displayName: "Grid",
   render: function() {
     return (
       React.createElement("div", {className: this.className()}, 
+        this.renderCollectionActionButtons(), 
         this.renderFilter(), 
 
         this.renderPagination(), 
@@ -1396,6 +1433,15 @@ var Grid = React.createClass({displayName: "Grid",
         this.renderPagination()
       )
     );
+  },
+
+  renderCollectionActionButtons: function() {
+    var collectionActionButtons = this.getCollectionActionButtons();
+    if(!collectionActionButtons || collectionActionButtons.length === 0) {
+      return '';
+    }
+
+    return React.createElement(GridActions, {actionButtons: collectionActionButtons});
   },
 
   renderFilter: function() {
@@ -1439,14 +1485,6 @@ var Grid = React.createClass({displayName: "Grid",
         onPagination: this.onPagination})
       )
     );
-  },
-
-  getMemberActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
-      return this.props.actionButtons.member;
-    } else {
-      return this.getDefaultMemberActionButtons();
-    }
   },
 
   onPagination: function(page) {
@@ -1531,6 +1569,41 @@ var Grid = React.createClass({displayName: "Grid",
     return sortValueFormat.replace(/%\{field}/, field).replace(/%\{direction}/, direction);
   }
 
+});
+
+var GridActions = React.createClass({displayName: "GridActions",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    actionButtons: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      actionButtons: [],
+      themeClassKey: 'grid.actions'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderButtons()
+      )
+    );
+  },
+
+  renderButtons: function() {
+    var actionButtons = [];
+    var actionButtonsProps = this.props.actionButtons;
+
+    for(var i = 0; i < actionButtonsProps.length; i++) {
+      var actionButtonProps = actionButtonsProps[i];
+      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {themeClassKey: "button.floating", key: "action_" + i})));
+    }
+
+    return actionButtons;
+  }
 });
 
 var GridFilter = React.createClass({displayName: "GridFilter",

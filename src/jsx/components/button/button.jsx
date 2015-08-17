@@ -13,13 +13,14 @@ var Button = React.createClass({
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'button',
       name: '',
       disabled: false,
       isLoading: false,
       icon: null,
       href: null,
       onClick: null,
-      disableWith: 'Carregando...'
+      disableWith: 'Carregando...',
     };
   },
 
@@ -30,7 +31,7 @@ var Button = React.createClass({
   },
 
   getButtonThemeClassKey: function() {
-    var themeClassKey = 'button';
+    var themeClassKey = this.props.themeClassKey;
 
     if(!this.props.name || this.props.name.length === 0) {
       themeClassKey += ' button.iconOnly';

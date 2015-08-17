@@ -2,13 +2,13 @@ WRF.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
+    actions: {
+      cssClass: 'grid__actions col s12'
+    },
+
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
-      },
-
-      clearButton: {
-        cssClass: 'filter__button--clear'
       }
     },
 
@@ -147,6 +147,10 @@ WRF.themes.materialize = {
   button: {
     cssClass: 'button btn waves-effect waves-light',
 
+    floating: {
+      cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
+    },
+
     iconOnly: {
       cssClass: 'button--icon'
     },
@@ -157,7 +161,7 @@ WRF.themes.materialize = {
 
     danger: {
       cssClass: 'button-danger red lighten-1'
-    },
+    }
   },
 
   pagination: {
@@ -235,12 +239,14 @@ WRF.themes.materialize = {
 
   icon: {
     cssClass: 'material-icons',
+
     left: 'chevron_left',
     right: 'chevron_right',
     search: 'search',
     calendar: 'today',
     close: 'clear',
     send: 'send',
+    add: 'add',
     edit: 'mode_edit',
     destroy: 'delete'
   }
