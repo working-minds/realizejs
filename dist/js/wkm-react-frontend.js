@@ -666,6 +666,7 @@ var GridActionsMixin = {
       actionButtons: null,
       actionUrls: {
         index: ':url.json',
+        show: ':url/:id',
         add: ':url/new',
         edit: ':url/:id/edit',
         destroy: ':url/:id'
@@ -4161,10 +4162,13 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
 
   handleActionClick: function(actionButtonProps, event) {
     var buttonOnClick = actionButtonProps.onClick;
+    var buttonHref = actionButtonProps.href;
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
       buttonOnClick(event, dataRowId);
+    } else if(!!buttonHref) {
+      window.location = buttonHref;
     }
   }
 });
