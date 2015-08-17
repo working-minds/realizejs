@@ -657,12 +657,19 @@ var FormSuccessHandlerMixin = {
 };
 var GridActionsMixin = {
   propTypes: {
-    actionButtons: React.PropTypes.object
+    actionButtons: React.PropTypes.object,
+    actionUrls: React.PropTypes.object
   },
 
   getDefaultProps: function() {
     return {
-      actionButtons: null
+      actionButtons: null,
+      actionUrls: {
+        index: ':url.json',
+        add: ':url/new',
+        edit: ':url/:id/edit',
+        destroy: ':url/:id'
+      }
     };
   },
 
@@ -707,22 +714,36 @@ var GridActionsMixin = {
   },
 
   addAction: function(event) {
-    window.location = this.props.url + '/new';
+    window.location = this.getActionUrl('add');
   },
 
   editAction: function(event, id) {
-    window.location = this.props.url + '/' + id + '/edit';
+    window.location = this.getActionUrl('edit', id);
   },
 
   destroyAction: function(event, id) {
-    var destroyUrl = this.props.url + '/' + id;
+    var destroyUrl = this.getActionUrl('destroy', id);
 
     $.ajax({
       url: destroyUrl,
       method: 'DELETE',
-      success: this.loadData,
+      success: this.handleDestroy,
       error: this.handleDestroyError
     });
+  },
+
+  getActionUrl: function(action, id) {
+    var actionUrl = this.props.actionUrls[action];
+    actionUrl = actionUrl.replace(/:url/, this.props.url);
+    if(!!id) {
+      actionUrl = actionUrl.replace(/:id/, id);
+    }
+
+    return actionUrl;
+  },
+
+  handleDestroy: function(data) {
+    this.loadData(data);
   },
 
   handleDestroyError: function(xhr, status, error) {
@@ -1522,7 +1543,7 @@ var Grid = React.createClass({displayName: "Grid",
     var postData = this.buildPostData();
 
     $.ajax({
-      url: this.props.url,
+      url: this.getActionUrl('index'),
       method: 'GET',
       dataType: 'json',
       data: postData,
