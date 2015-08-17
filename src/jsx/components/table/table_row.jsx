@@ -18,6 +18,7 @@ var TableRow = React.createClass({
       selectable: true,
       selected: false,
       actionButtons: [],
+      themeClassKey: 'table.row',
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
@@ -27,7 +28,6 @@ var TableRow = React.createClass({
       <tr className={this.className()} ref="row">
         {this.renderSelectCell()}
         {this.renderCells()}
-        {this.renderActionButtons()}
       </tr>
     );
   },
@@ -51,33 +51,26 @@ var TableRow = React.createClass({
   renderCells: function() {
     var columns = this.props.columns;
     var cellComponents = [];
+    var firstCell = true;
 
-    for(var columnName in columns) {
-      if(columns.hasOwnProperty(columnName)) {
-        var columnProps = columns[columnName];
-        cellComponents.push(
-          <TableCell {...columnProps}
-            name={columnName}
-            data={this.props.data}
-            clearTheme={this.props.clearTheme}
-            key={columnName}
-          />
-        );
-      }
-    }
+    $.each(columns, function(columnName, columnProps) {
+      cellComponents.push(
+        <TableCell {...columnProps}
+          {...this.propsWithoutCSS()}
+          firstCell={firstCell}
+          name={columnName}
+          key={columnName}
+        />
+      );
+
+      firstCell = false;
+    }.bind(this));
 
     return cellComponents;
-  },
-
-  renderActionButtons: function() {
-    if(!$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
-      return '';
-    }
-
-    return <TableRowActions {...this.propsWithoutCSS()} key="actions" />;
   },
 
   getDataRowId: function() {
     return this.props.data[this.props.dataRowIdField];
   }
+
 });

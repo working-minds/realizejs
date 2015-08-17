@@ -1,5 +1,8 @@
 var Grid = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [
+    CssClassMixin,
+    GridActionsMixin
+  ],
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
@@ -9,8 +12,7 @@ var Grid = React.createClass({
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
-    countParam: React.PropTypes.string,
-    actionButtons: React.PropTypes.object
+    countParam: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -38,8 +40,7 @@ var Grid = React.createClass({
       data: {
         dataRows: [],
         count: 0
-      },
-      actionButtons: null
+      }
     };
   },
 
@@ -119,19 +120,6 @@ var Grid = React.createClass({
     }
   },
 
-  getDefaultMemberActionButtons: function() {
-    return [
-      {
-        name: 'Editar',
-        href: 'http://www.google.com'
-      },
-      {
-        name: 'Remover',
-        href: 'http://www.lipsum.com'
-      }
-    ]
-  },
-
   onPagination: function(page) {
     this.setState({isLoading: true});
     this.state.page = page;
@@ -170,12 +158,8 @@ var Grid = React.createClass({
       method: 'GET',
       dataType: 'json',
       data: postData,
-      success: function(data) {
-        this.handleLoad(data);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        this.handleLoadError(xhr, status, error);
-      }.bind(this)
+      success: this.handleLoad,
+      error: this.handleLoadError
     });
   },
 

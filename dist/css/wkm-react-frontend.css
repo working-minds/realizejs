@@ -6,6 +6,11 @@ button .preloader-wrapper.small {
   width: 24px;
   height: 24px;
 }
+
+.button--icon {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
 .wkm-modal{
   background-color: white;
   display: none;
@@ -212,8 +217,33 @@ hr {
   left: 0.5rem;
 }
 
-.table-actions {
+.table-cell {
+  position: relative;
+}
 
+.table-row:hover .table-actions {
+  display: block;
+}
+
+.table-actions {
+  display: none;
+  position: absolute;
+  top: 45px;
+  left: 0;
+  z-index: 1;
+  padding: 0.6rem;
+  background-color: white;
+  border: 1px solid #DADADA;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.table-actions > button, .table-actions > a {
+  margin-right: 0.75rem;
+}
+
+.table-actions > button:last-child, .table-actions > a:last-child {
+  margin-right: 0;
 }
 .tabs-container .tabs {
   margin: 15px 0;

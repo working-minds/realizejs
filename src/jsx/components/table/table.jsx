@@ -51,8 +51,10 @@ var Table = React.createClass({
     return(
       <table className={this.className()}>
         <thead>
-          {this.renderHeaderSelectCell()}
-          {this.renderTableHeaders()}
+          <tr>
+            {this.renderHeaderSelectCell()}
+            {this.renderTableHeaders()}
+          </tr>
         </thead>
         <tbody>
           {(this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()}
@@ -98,11 +100,7 @@ var Table = React.createClass({
       }
     }
 
-    return (
-      <tr>
-        {headerComponents}
-      </tr>
-    );
+    return headerComponents;
   },
 
   sortDirectionForColumn: function(columnName) {

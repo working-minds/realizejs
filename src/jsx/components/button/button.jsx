@@ -3,17 +3,17 @@ var Button = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     type: React.PropTypes.string,
-    icon: React.PropTypes.object,
+    icon: React.PropTypes.node,
+    style: React.PropTypes.oneOf(['danger', 'primary', 'warning', 'cancel']),
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
-    isLoading: React.PropTypes.bool,
-    additionalThemeClassKeys: React.PropTypes.string
+    isLoading: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
-      additionalThemeClassKeys: '',
+      name: '',
       disabled: false,
       isLoading: false,
       icon: null,
@@ -25,8 +25,26 @@ var Button = React.createClass({
 
   getInitialState: function() {
     return {
-      themeClassKey: 'button ' + this.props.additionalThemeClassKeys
+      themeClassKey: this.getButtonThemeClassKey() + this.getStyleThemeClassKey()
     };
+  },
+
+  getButtonThemeClassKey: function() {
+    var themeClassKey = 'button';
+
+    if(!this.props.name || this.props.name.length === 0) {
+      themeClassKey += ' button.iconOnly';
+    }
+
+    return themeClassKey;
+  },
+
+  getStyleThemeClassKey: function() {
+    if(!this.props.style) {
+      return '';
+    }
+
+    return ' button.' + this.props.style;
   },
 
   render: function() {
@@ -45,8 +63,15 @@ var Button = React.createClass({
     if(!this.props.icon) {
       return '';
     }
+
+    var iconProps = null;
+    if($.isPlainObject(this.props.icon)) {
+      iconProps = this.props.icon;
+    } else {
+      iconProps = { type: this.props.icon };
+    }
     
-    return <Icon {...this.props.icon} key="icon" />;
+    return <Icon className={this.getIconClassName()} {...iconProps} key="icon" />;
   },
 
   renderLoadingIndicator: function() {
@@ -58,6 +83,14 @@ var Button = React.createClass({
       this.props.onClick(event);
     } else if(!!this.props.href) {
       window.location = this.props.href;
+    }
+  },
+
+  getIconClassName: function() {
+    if(!this.props.name || this.props.name.length === 0) {
+      return '';
+    } else {
+      return 'right';
     }
   }
   

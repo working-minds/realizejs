@@ -36,8 +36,12 @@ WRF.themes.materialize = {
       cssClass: 'table-select'
     },
 
-    rowActions: {
-      cssClass: 'table-actions'
+    row: {
+      cssClass: 'table-row',
+
+      actions: {
+        cssClass: 'table-actions'
+      }
     },
 
     cell: {
@@ -141,11 +145,19 @@ WRF.themes.materialize = {
   },
 
   button: {
-    cssClass: 'btn waves-effect waves-light',
+    cssClass: 'button btn waves-effect waves-light',
+
+    iconOnly: {
+      cssClass: 'button--icon'
+    },
 
     cancel: {
-      cssClass: 'black-text grey lighten-4'
-    }
+      cssClass: 'button-cancel black-text grey lighten-4'
+    },
+
+    danger: {
+      cssClass: 'button-danger red lighten-1'
+    },
   },
 
   pagination: {
@@ -227,6 +239,9 @@ WRF.themes.materialize = {
     right: 'chevron_right',
     search: 'search',
     calendar: 'today',
-    close: 'clear'
+    close: 'clear',
+    send: 'send',
+    edit: 'mode_edit',
+    destroy: 'delete'
   }
 };

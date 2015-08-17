@@ -12,13 +12,13 @@ var TableRowActions = React.createClass({
       data: {},
       dataRowIdField: 'id',
       actionButtons: [],
-      themeClassKey: 'table.rowActions'
+      themeClassKey: 'table.row.actions'
     };
   },
 
   render: function() {
     return (
-      <div className={this.className()}>
+      <div className={this.className()} {...this.props}>
         {this.renderButtons()}
       </div>
     );
@@ -30,9 +30,18 @@ var TableRowActions = React.createClass({
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(<Button {...actionButtonProps} key={"action_" + i} />);
+      actionButtons.push(<Button {...actionButtonProps} onClick={this.handleActionClick.bind(this, actionButtonProps)} key={"action_" + i} />);
     }
 
     return actionButtons;
+  },
+
+  handleActionClick: function(actionButtonProps, event) {
+    var buttonOnClick = actionButtonProps.onClick;
+
+    if($.isFunction(buttonOnClick)) {
+      var dataRowId = this.props.data[this.props.dataRowIdField];
+      buttonOnClick(event, dataRowId);
+    }
   }
 });
