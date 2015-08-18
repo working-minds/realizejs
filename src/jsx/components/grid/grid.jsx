@@ -3,12 +3,13 @@ var Grid = React.createClass({
     CssClassMixin,
     GridActionsMixin
   ],
+
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
-    filterForm: React.PropTypes.object,
+    filter: React.PropTypes.object,
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
@@ -27,11 +28,7 @@ var Grid = React.createClass({
         valueFormat: '%{field} %{direction}'
       },
       sortData: {},
-      filterForm: {
-        inputs: {
-          name: { label: 'Nome' }
-        }
-      },
+      filter: {},
       columns: {
         name: { label: 'Nome' }
       },
@@ -60,10 +57,10 @@ var Grid = React.createClass({
   render: function() {
     return (
       <div className={this.gridClassName()}>
-        {this.renderCollectionActionButtons()}
         {this.renderFilter()}
 
         {this.renderPagination()}
+        {this.renderActions()}
         {this.renderTable()}
         {this.renderPagination()}
       </div>
@@ -80,9 +77,13 @@ var Grid = React.createClass({
   },
 
   renderFilter: function() {
+    if($.isEmptyObject(this.props.filter)) {
+      return '';
+    }
+
     return (
       <GridFilter
-        {...this.props.filterForm}
+        {...this.props.filter}
         url={this.props.url}
         isLoading={this.state.isLoading}
         onSubmit={this.onFilterSubmit}

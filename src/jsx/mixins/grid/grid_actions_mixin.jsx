@@ -52,21 +52,24 @@ var GridActionsMixin = {
   getDefaultCollectionActionButtons: function() {
     return [
       {
-        icon: 'add',
-        themeClassKey: "button.floating",
-        context: '',
+        name: 'Novo',
+        context: 'none',
         onClick: this.addAction
       }
     ]
   },
 
-  renderCollectionActionButtons: function() {
+  renderActions: function() {
     var collectionActionButtons = this.getCollectionActionButtons();
-    if(!collectionActionButtons || collectionActionButtons.length === 0) {
-      return '';
-    }
 
-    return <GridActions actionButtons={collectionActionButtons} />;
+    return (
+      <GridActions
+        dataRows={this.state.dataRows}
+        selectedDataRowIds={this.state.selectedDataRowIds}
+        onRemoveSelection={this.removeSelection}
+        actionButtons={collectionActionButtons}
+      />
+    );
   },
 
   addAction: function(event) {
@@ -90,6 +93,12 @@ var GridActionsMixin = {
         error: this.handleDestroyError
       });
     }
+  },
+
+  removeSelection: function() {
+    this.setState({
+      selectedDataRowIds: []
+    });
   },
 
   getActionUrl: function(action, id) {

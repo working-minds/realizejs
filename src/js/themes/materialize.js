@@ -6,6 +6,10 @@ WRF.themes.materialize = {
       cssClass: 'grid__actions col s12'
     },
 
+    selectionIndicator: {
+      cssClass: 'grid__selection-indicator'
+    },
+
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
@@ -149,6 +153,10 @@ WRF.themes.materialize = {
 
     floating: {
       cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
+    },
+
+    flat: {
+      cssClass: 'button button--flat btn-flat waves-effect waves-light'
     },
 
     iconOnly: {

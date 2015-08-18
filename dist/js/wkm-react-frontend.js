@@ -149,6 +149,10 @@ WRF.themes.materialize = {
       cssClass: 'grid__actions col s12'
     },
 
+    selectionIndicator: {
+      cssClass: 'grid__selection-indicator'
+    },
+
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
@@ -292,6 +296,10 @@ WRF.themes.materialize = {
 
     floating: {
       cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
+    },
+
+    flat: {
+      cssClass: 'button button--flat btn-flat waves-effect waves-light'
     },
 
     iconOnly: {
@@ -709,21 +717,24 @@ var GridActionsMixin = {
   getDefaultCollectionActionButtons: function() {
     return [
       {
-        icon: 'add',
-        themeClassKey: "button.floating",
-        context: '',
+        name: 'Novo',
+        context: 'none',
         onClick: this.addAction
       }
     ]
   },
 
-  renderCollectionActionButtons: function() {
+  renderActions: function() {
     var collectionActionButtons = this.getCollectionActionButtons();
-    if(!collectionActionButtons || collectionActionButtons.length === 0) {
-      return '';
-    }
 
-    return React.createElement(GridActions, {actionButtons: collectionActionButtons});
+    return (
+      React.createElement(GridActions, {
+        dataRows: this.state.dataRows, 
+        selectedDataRowIds: this.state.selectedDataRowIds, 
+        onRemoveSelection: this.removeSelection, 
+        actionButtons: collectionActionButtons}
+      )
+    );
   },
 
   addAction: function(event) {
@@ -747,6 +758,12 @@ var GridActionsMixin = {
         error: this.handleDestroyError
       });
     }
+  },
+
+  removeSelection: function() {
+    this.setState({
+      selectedDataRowIds: []
+    });
   },
 
   getActionUrl: function(action, id) {
@@ -1408,12 +1425,13 @@ var Grid = React.createClass({displayName: "Grid",
     CssClassMixin,
     GridActionsMixin
   ],
+
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
-    filterForm: React.PropTypes.object,
+    filter: React.PropTypes.object,
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
@@ -1432,11 +1450,7 @@ var Grid = React.createClass({displayName: "Grid",
         valueFormat: '%{field} %{direction}'
       },
       sortData: {},
-      filterForm: {
-        inputs: {
-          name: { label: 'Nome' }
-        }
-      },
+      filter: {},
       columns: {
         name: { label: 'Nome' }
       },
@@ -1465,10 +1479,10 @@ var Grid = React.createClass({displayName: "Grid",
   render: function() {
     return (
       React.createElement("div", {className: this.gridClassName()}, 
-        this.renderCollectionActionButtons(), 
         this.renderFilter(), 
 
         this.renderPagination(), 
+        this.renderActions(), 
         this.renderTable(), 
         this.renderPagination()
       )
@@ -1485,9 +1499,13 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   renderFilter: function() {
+    if($.isEmptyObject(this.props.filter)) {
+      return '';
+    }
+
     return (
       React.createElement(GridFilter, React.__spread({}, 
-        this.props.filterForm, 
+        this.props.filter, 
         {url: this.props.url, 
         isLoading: this.state.isLoading, 
         onSubmit: this.onFilterSubmit})
@@ -1616,20 +1634,30 @@ var GridActions = React.createClass({displayName: "GridActions",
   mixins: [CssClassMixin],
 
   propTypes: {
-    actionButtons: React.PropTypes.array
+    dataRows: React.PropTypes.array,
+    selectedDataRowIds: React.PropTypes.array,
+    actionButtons: React.PropTypes.array,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAll: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       actionButtons: [],
-      themeClassKey: 'grid.actions'
+      selectedDataRowIds: [],
+      themeClassKey: 'grid.actions',
+      onRemoveSelection: function(event) {},
+      onSelectAll: function(event) {}
     };
   },
 
   render: function() {
     return (
       React.createElement("div", {className: this.className()}, 
-        this.renderButtons()
+        React.createElement("div", null, 
+          React.createElement(GridSelectionIndicator, React.__spread({},  this.propsWithoutCSS())), 
+          this.renderButtons()
+        )
       )
     );
   },
@@ -1640,7 +1668,7 @@ var GridActions = React.createClass({displayName: "GridActions",
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {key: "action_" + i})));
+      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {themeClassKey: "button.flat", key: "action_" + i})));
     }
 
     return actionButtons;
@@ -1739,6 +1767,84 @@ var GridPagination = React.createClass({displayName: "GridPagination",
           window: this.props.window, 
           onPagination: this.props.onPagination}
         )
+      )
+    );
+  }
+});
+
+var GridSelectionIndicator = React.createClass({displayName: "GridSelectionIndicator",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    dataRows: React.PropTypes.array,
+    selectedDataRowIds: React.PropTypes.array,
+    actionButtons: React.PropTypes.array,
+    message: React.PropTypes.string,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAll: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      actionButtons: [],
+      selectedDataRowIds: [],
+      themeClassKey: 'grid.selectionIndicator',
+      message: {
+        plural: ':count itens selecionados',
+        singular: '1 item selecionado'
+      },
+      removeSelectionButtonName: 'remover seleção',
+      selectAllButtonName: 'selecionar todos',
+      onRemoveSelection: function(event) {},
+      onSelectAll: function(event) {}
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement("span", null, this.renderMessage()), " ", this.renderActions()
+      )
+    );
+  },
+
+  renderMessage: function() {
+    var count = this.props.selectedDataRowIds.length;
+    if(count === 0) {
+      return '';
+    } else if(count === 1) {
+      return this.props.message.singular;
+    } else {
+      var message = this.props.message.plural;
+      return message.replace(/:count/, count);
+    }
+  },
+
+  renderActions: function() {
+    var count = this.props.selectedDataRowIds.length;
+    if(count === 0) {
+      return '';
+    }
+
+    return (
+      React.createElement("span", null, 
+        "(", this.renderRemoveSelectionButton(), " | ", this.renderSelectAllButton(), ")"
+      )
+    );
+  },
+
+  renderRemoveSelectionButton: function() {
+    return (
+      React.createElement("a", {href: "#!", onClick: this.props.onRemoveSelection}, 
+        this.props.removeSelectionButtonName
+      )
+    );
+  },
+
+  renderSelectAllButton: function() {
+    return (
+      React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
+        this.props.selectAllButtonName
       )
     );
   }

@@ -2,20 +2,30 @@ var GridActions = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    actionButtons: React.PropTypes.array
+    dataRows: React.PropTypes.array,
+    selectedDataRowIds: React.PropTypes.array,
+    actionButtons: React.PropTypes.array,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAll: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       actionButtons: [],
-      themeClassKey: 'grid.actions'
+      selectedDataRowIds: [],
+      themeClassKey: 'grid.actions',
+      onRemoveSelection: function(event) {},
+      onSelectAll: function(event) {}
     };
   },
 
   render: function() {
     return (
       <div className={this.className()}>
-        {this.renderButtons()}
+        <div>
+          <GridSelectionIndicator {...this.propsWithoutCSS()} />
+          {this.renderButtons()}
+        </div>
       </div>
     );
   },
@@ -26,7 +36,7 @@ var GridActions = React.createClass({
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(<Button {...actionButtonProps} key={"action_" + i} />);
+      actionButtons.push(<Button {...actionButtonProps} themeClassKey={"button.flat"} key={"action_" + i} />);
     }
 
     return actionButtons;

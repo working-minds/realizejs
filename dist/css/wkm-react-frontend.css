@@ -119,6 +119,11 @@ hr {
   transition: opacity .5s ease-out;
 }
 
+.grid__actions > div {
+  overflow: hidden;
+  border-bottom: 1px solid #D0D0D0;
+}
+
 .grid__actions .button {
   float: right;
   margin-left: 1rem;
@@ -128,12 +133,26 @@ hr {
   margin-left: 0;
 }
 
+.grid__selection-indicator {
+  float: left;
+  padding: 5px;
+  line-height: 25px;
+  font-size: 15px;
+  color: #26A69A;
+}
+
 .grid__pagination {
   text-align: center;
 }
 
 .grid__pagination .pagination {
   display: inline-block;
+}
+
+@media only screen and (min-width : 601px) {
+  .grid__selection-indicator {
+    padding: 5px 10px;
+  }
 }
 
 .input-field {
