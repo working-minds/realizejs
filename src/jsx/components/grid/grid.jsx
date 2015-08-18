@@ -37,6 +37,7 @@ var Grid = React.createClass({
       },
       dataRowsParam: 'data',
       countParam: 'count',
+      themeClassKey: 'grid',
       data: {
         dataRows: [],
         count: 0
@@ -47,19 +48,18 @@ var Grid = React.createClass({
   getInitialState: function() {
     return {
       dataRows: this.props.data.dataRows,
-      selectedDataRows: [],
+      selectedDataRowIds: [],
       count: this.props.data.count,
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      themeClassKey: 'grid',
       isLoading: false
     };
   },
 
   render: function() {
     return (
-      <div className={this.className()}>
+      <div className={this.gridClassName()}>
         {this.renderCollectionActionButtons()}
         {this.renderFilter()}
 
@@ -70,13 +70,13 @@ var Grid = React.createClass({
     );
   },
 
-  renderCollectionActionButtons: function() {
-    var collectionActionButtons = this.getCollectionActionButtons();
-    if(!collectionActionButtons || collectionActionButtons.length === 0) {
-      return '';
+  gridClassName: function() {
+    var className = this.className();
+    if(this.state.isLoading) {
+      className += ' loading';
     }
 
-    return <GridActions actionButtons={collectionActionButtons} />;
+    return className;
   },
 
   renderFilter: function() {
@@ -97,7 +97,7 @@ var Grid = React.createClass({
         sortConfigs={this.props.sortConfigs}
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
-        selectedDataRows={this.state.selectedDataRows}
+        selectedDataRowIds={this.state.selectedDataRowIds}
         actionButtons={this.getMemberActionButtons()}
         onSort={this.onSort}
         onSelect={this.onSelectDataRow}
@@ -132,6 +132,7 @@ var Grid = React.createClass({
     event.preventDefault();
 
     this.setState({isLoading: true});
+    this.state.selectedDataRowIds = [];
     this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
@@ -144,11 +145,11 @@ var Grid = React.createClass({
     this.loadData();
   },
 
-  onSelectDataRow: function(event, selectedDataRows) {
+  onSelectDataRow: function(event, selectedDataRowIds) {
     event.preventDefault();
 
     this.setState({
-      selectedDataRows: selectedDataRows
+      selectedDataRowIds: selectedDataRowIds
     });
   },
 
