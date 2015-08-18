@@ -15,6 +15,9 @@ button .preloader-wrapper.small {
 .button--floating.button--icon {
   padding: 0;
 }
+.grid-form .card {
+  overflow: visible;
+}
 .wkm-modal{
   background-color: white;
   display: none;
@@ -122,6 +125,7 @@ hr {
 .grid__actions > div {
   overflow: hidden;
   border-bottom: 1px solid #D0D0D0;
+  min-height: 37px;
 }
 
 .grid__actions .button {

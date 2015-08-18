@@ -10,7 +10,26 @@ $.extend(FormSerializer.patterns, {
 var WRF = {};
 
 WRF.config = {
-  theme: 'materialize'
+  theme: 'materialize',
+  restUrls: {
+    index: ':url.json',
+    show: ':url/:id',
+    add: ':url/new',
+    create: ':url',
+    edit: ':url/:id/edit',
+    update: ':url/:id',
+    destroy: ':url/:id'
+  },
+
+  restMethods: {
+    index: 'GET',
+    show: 'GET',
+    add: 'GET',
+    create: 'POST',
+    edit: 'GET',
+    update: 'PUT',
+    destroy: 'DELETE'
+  }
 };
 
 WRF.themes = {};
@@ -224,8 +243,16 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group section'
+      cssClass: 'form__input-group',
+
+      section: {
+        cssClass: 'section'
+      }
     }
+  },
+
+  gridForm: {
+    cssClass: 'grid-form'
   },
 
   input: {
@@ -665,27 +692,17 @@ var FormSuccessHandlerMixin = {
 };
 var GridActionsMixin = {
   propTypes: {
-    actionButtons: React.PropTypes.object,
-    actionUrls: React.PropTypes.object,
-    destroyConfirm: React.PropTypes.node
+    actionButtons: React.PropTypes.object
   },
 
   getDefaultProps: function() {
     return {
-      actionButtons: null,
-      actionUrls: {
-        index: ':url.json',
-        show: ':url/:id',
-        add: ':url/new',
-        edit: ':url/:id/edit',
-        destroy: ':url/:id'
-      },
-      destroyConfirm: 'Tem certeza que deseja remover este item?'
+      actionButtons: null
     };
   },
 
   getMemberActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
+    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.member) {
       return this.props.actionButtons.member;
     } else {
       return this.getDefaultMemberActionButtons();
@@ -707,7 +724,7 @@ var GridActionsMixin = {
   },
 
   getCollectionActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
+    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.collection) {
       return this.props.actionButtons.collection;
     } else {
       return this.getDefaultCollectionActionButtons();
@@ -737,54 +754,11 @@ var GridActionsMixin = {
     );
   },
 
-  addAction: function(event) {
-    window.location = this.getActionUrl('add');
-  },
-
-  editAction: function(event, id) {
-    window.location = this.getActionUrl('edit', id);
-  },
-
-  destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-
-      $.ajax({
-        url: destroyUrl,
-        method: 'DELETE',
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
   removeSelection: function() {
     this.setState({
       selectedDataRowIds: []
     });
-  },
-
-  getActionUrl: function(action, id) {
-    var actionUrl = this.props.actionUrls[action];
-    actionUrl = actionUrl.replace(/:url/, this.props.url);
-    if(!!id) {
-      actionUrl = actionUrl.replace(/:id/, id);
-    }
-
-    return actionUrl;
-  },
-
-  handleDestroy: function(data) {
-    this.loadData(data);
-  },
-
-  handleDestroyError: function(xhr, status, error) {
-    this.setState({isLoading: false});
-    console.log(error);
   }
-
 };
 var InputComponentMixin = {
   propTypes: {
@@ -964,6 +938,69 @@ var SelectComponentMixin = {
       disabled: true
     });
   }
+};
+var RestActionsMixin = {
+  propTypes: {
+    actionUrls: React.PropTypes.object,
+    actionMethods: React.PropTypes.object,
+    destroyConfirm: React.PropTypes.node
+  },
+
+  getDefaultProps: function() {
+    return {
+      actionUrls: WRF.config.restUrls,
+      actionMethods: WRF.config.restMethods,
+      destroyConfirm: 'Tem certeza que deseja remover este item?'
+    };
+  },
+
+  addAction: function(event) {
+    window.location = this.getActionUrl('add');
+  },
+
+  editAction: function(event, id) {
+    window.location = this.getActionUrl('edit', id);
+  },
+
+  destroyAction: function(event, id) {
+    var destroyUrl = this.getActionUrl('destroy', id);
+    var destroyMethod = this.getActionMethod('destroy');
+
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: destroyMethod,
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
+  },
+
+  getActionUrl: function(action, id) {
+    var actionUrl = this.props.actionUrls[action];
+    actionUrl = actionUrl.replace(/:url/, this.props.url);
+    if(!!id) {
+      actionUrl = actionUrl.replace(/:id/, id);
+    }
+
+    return actionUrl;
+  },
+
+  getActionMethod: function(action) {
+    return this.props.actionMethods[action];
+  },
+
+  handleDestroy: function(data) {
+    this.loadData(data);
+  },
+
+  handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
+    console.log(error);
+  }
+
 };
 var Button = React.createClass({displayName: "Button",
   mixins: [CssClassMixin],
@@ -1359,7 +1396,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
   render: function() {
     return (
       React.createElement("div", null, 
-        React.createElement("div", {className: this.className()}, 
+        React.createElement("div", {className: this.inputGroupClassName()}, 
           this.renderLabel(), 
           this.renderInputs(), 
           this.props.children
@@ -1367,6 +1404,15 @@ var InputGroup = React.createClass({displayName: "InputGroup",
         this.renderDivider()
       )
     );
+  },
+
+  inputGroupClassName: function() {
+    var className = this.className();
+    if(this.props.label !== null) {
+      className += ' ' + WRF.themeClass('form.inputGroup.section');
+    }
+
+    return className;
   },
 
   renderInputs: function() {
@@ -1423,6 +1469,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 var Grid = React.createClass({displayName: "Grid",
   mixins: [
     CssClassMixin,
+    RestActionsMixin,
     GridActionsMixin
   ],
 
@@ -1435,11 +1482,15 @@ var Grid = React.createClass({displayName: "Grid",
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
-    countParam: React.PropTypes.string
+    countParam: React.PropTypes.string,
+    isLoading: React.PropTypes.bool,
+    onLoadSuccess: React.PropTypes.func,
+    onLoadError: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'grid',
       paginationConfigs: {
         param: 'p',
         perPage: 20,
@@ -1456,11 +1507,13 @@ var Grid = React.createClass({displayName: "Grid",
       },
       dataRowsParam: 'data',
       countParam: 'count',
-      themeClassKey: 'grid',
       data: {
         dataRows: [],
         count: 0
-      }
+      },
+      isLoading: false,
+      onLoadSuccess: function(data) {},
+      onLoadError: function(xhr, status, error) {}
     };
   },
 
@@ -1472,7 +1525,7 @@ var Grid = React.createClass({displayName: "Grid",
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      isLoading: false
+      isLoading: this.props.isLoading
     };
   },
 
@@ -1546,7 +1599,6 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   onPagination: function(page) {
-    this.setState({isLoading: true});
     this.state.page = page;
     this.loadData();
   },
@@ -1554,7 +1606,6 @@ var Grid = React.createClass({displayName: "Grid",
   onFilterSubmit: function(event, postData) {
     event.preventDefault();
 
-    this.setState({isLoading: true});
     this.state.selectedDataRowIds = [];
     this.state.filterData = postData;
     this.state.page = 1;
@@ -1562,7 +1613,6 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   onSort: function(sortData) {
-    this.setState({isLoading: true});
     this.state.sortData = sortData;
     this.state.page = 1;
     this.loadData();
@@ -1577,6 +1627,7 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   loadData: function() {
+    this.setState({isLoading: true});
     var postData = this.buildPostData();
 
     $.ajax({
@@ -1590,6 +1641,7 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   handleLoad: function(data) {
+    this.props.onLoadSuccess(data);
     this.setState({
       isLoading: false,
       dataRows: data[this.props.dataRowsParam],
@@ -1598,6 +1650,7 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   handleLoadError: function(xhr, status, error) {
+    this.props.onLoadError(data);
     this.setState({isLoading: false});
     console.log('Grid Load error:' + error);
   },
@@ -1779,7 +1832,7 @@ var GridSelectionIndicator = React.createClass({displayName: "GridSelectionIndic
     dataRows: React.PropTypes.array,
     selectedDataRowIds: React.PropTypes.array,
     actionButtons: React.PropTypes.array,
-    message: React.PropTypes.string,
+    message: React.PropTypes.object,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func
   },
@@ -1793,7 +1846,7 @@ var GridSelectionIndicator = React.createClass({displayName: "GridSelectionIndic
         plural: ':count itens selecionados',
         singular: '1 item selecionado'
       },
-      removeSelectionButtonName: 'remover seleção',
+      removeSelectionButtonName: 'limpar seleção',
       selectAllButtonName: 'selecionar todos',
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
@@ -1866,6 +1919,107 @@ var GridTable = React.createClass({displayName: "GridTable",
       )
     );
   }
+});
+
+var GridForm = React.createClass({displayName: "GridForm",
+  mixins: [
+    CssClassMixin,
+    RestActionsMixin
+  ],
+
+  propTypes: {
+    url: React.PropTypes.string,
+    actionButtons: React.PropTypes.object,
+    paginationConfigs: React.PropTypes.object,
+    sortConfigs: React.PropTypes.object,
+    sortData: React.PropTypes.object,
+    filter: React.PropTypes.object,
+    columns: React.PropTypes.object,
+    data: React.PropTypes.object,
+    dataRowsParam: React.PropTypes.string,
+    countParam: React.PropTypes.string,
+    actionUrls: React.PropTypes.object,
+    form: React.PropTypes.object,
+    isLoading: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      form: {},
+      themeClassKey: 'gridForm',
+      actionButtons: {
+        collection: []
+      },
+      isLoading: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      formAction: 'create',
+      isLoading: this.props.isLoading
+    };
+  },
+
+  componentDidMount: function() {
+    this.loadGridData();
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+
+        "//TODO: adicionar os divs de card em um componente separado.", 
+        React.createElement("div", {className: "card"}, 
+          React.createElement("div", {className: "card-content"}, 
+            React.createElement(Form, React.__spread({
+              style: "filter"}, 
+              this.props.form, 
+              {action: this.getFormAction(), 
+              method: this.getFormMethod(), 
+              onSubmit: this.onSubmit, 
+              onSuccess: this.onSuccess, 
+              ref: "form"})
+            )
+          )
+        ), 
+        React.createElement("div", {className: "card"}, 
+          React.createElement("div", {className: "card-content"}, 
+            React.createElement(Grid, React.__spread({}, 
+              this.propsWithoutCSS(), 
+              {ref: "grid"})
+            )
+          )
+        )
+      )
+    );
+  },
+
+  getFormAction: function() {
+    return this.getActionUrl(this.state.formAction);
+  },
+
+  getFormMethod: function() {
+    return this.getActionMethod(this.state.formAction);
+  },
+
+  onSuccess: function(data) {
+    this.loadGridData();
+    this.resetForm();
+
+  },
+
+  loadGridData: function() {
+    var gridRef = this.refs.grid;
+    gridRef.loadData();
+  },
+
+  resetForm: function() {
+    var formNode = React.findDOMNode(this.refs.form);
+    formNode.reset();
+  }
+
+
 });
 
 var Header = React.createClass({displayName: "Header",

@@ -1,26 +1,16 @@
 var GridActionsMixin = {
   propTypes: {
-    actionButtons: React.PropTypes.object,
-    actionUrls: React.PropTypes.object,
-    destroyConfirm: React.PropTypes.node
+    actionButtons: React.PropTypes.object
   },
 
   getDefaultProps: function() {
     return {
-      actionButtons: null,
-      actionUrls: {
-        index: ':url.json',
-        show: ':url/:id',
-        add: ':url/new',
-        edit: ':url/:id/edit',
-        destroy: ':url/:id'
-      },
-      destroyConfirm: 'Tem certeza que deseja remover este item?'
+      actionButtons: null
     };
   },
 
   getMemberActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
+    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.member) {
       return this.props.actionButtons.member;
     } else {
       return this.getDefaultMemberActionButtons();
@@ -42,7 +32,7 @@ var GridActionsMixin = {
   },
 
   getCollectionActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
+    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.collection) {
       return this.props.actionButtons.collection;
     } else {
       return this.getDefaultCollectionActionButtons();
@@ -72,52 +62,9 @@ var GridActionsMixin = {
     );
   },
 
-  addAction: function(event) {
-    window.location = this.getActionUrl('add');
-  },
-
-  editAction: function(event, id) {
-    window.location = this.getActionUrl('edit', id);
-  },
-
-  destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-
-      $.ajax({
-        url: destroyUrl,
-        method: 'DELETE',
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
   removeSelection: function() {
     this.setState({
       selectedDataRowIds: []
     });
-  },
-
-  getActionUrl: function(action, id) {
-    var actionUrl = this.props.actionUrls[action];
-    actionUrl = actionUrl.replace(/:url/, this.props.url);
-    if(!!id) {
-      actionUrl = actionUrl.replace(/:id/, id);
-    }
-
-    return actionUrl;
-  },
-
-  handleDestroy: function(data) {
-    this.loadData(data);
-  },
-
-  handleDestroyError: function(xhr, status, error) {
-    this.setState({isLoading: false});
-    console.log(error);
   }
-
 };

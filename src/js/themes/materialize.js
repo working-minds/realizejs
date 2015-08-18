@@ -81,8 +81,16 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group section'
+      cssClass: 'form__input-group',
+
+      section: {
+        cssClass: 'section'
+      }
     }
+  },
+
+  gridForm: {
+    cssClass: 'grid-form'
   },
 
   input: {

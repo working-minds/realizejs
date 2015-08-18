@@ -1,6 +1,7 @@
 var Grid = React.createClass({
   mixins: [
     CssClassMixin,
+    RestActionsMixin,
     GridActionsMixin
   ],
 
@@ -13,11 +14,15 @@ var Grid = React.createClass({
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
-    countParam: React.PropTypes.string
+    countParam: React.PropTypes.string,
+    isLoading: React.PropTypes.bool,
+    onLoadSuccess: React.PropTypes.func,
+    onLoadError: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'grid',
       paginationConfigs: {
         param: 'p',
         perPage: 20,
@@ -34,11 +39,13 @@ var Grid = React.createClass({
       },
       dataRowsParam: 'data',
       countParam: 'count',
-      themeClassKey: 'grid',
       data: {
         dataRows: [],
         count: 0
-      }
+      },
+      isLoading: false,
+      onLoadSuccess: function(data) {},
+      onLoadError: function(xhr, status, error) {}
     };
   },
 
@@ -50,7 +57,7 @@ var Grid = React.createClass({
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      isLoading: false
+      isLoading: this.props.isLoading
     };
   },
 
@@ -124,7 +131,6 @@ var Grid = React.createClass({
   },
 
   onPagination: function(page) {
-    this.setState({isLoading: true});
     this.state.page = page;
     this.loadData();
   },
@@ -132,7 +138,6 @@ var Grid = React.createClass({
   onFilterSubmit: function(event, postData) {
     event.preventDefault();
 
-    this.setState({isLoading: true});
     this.state.selectedDataRowIds = [];
     this.state.filterData = postData;
     this.state.page = 1;
@@ -140,7 +145,6 @@ var Grid = React.createClass({
   },
 
   onSort: function(sortData) {
-    this.setState({isLoading: true});
     this.state.sortData = sortData;
     this.state.page = 1;
     this.loadData();
@@ -155,6 +159,7 @@ var Grid = React.createClass({
   },
 
   loadData: function() {
+    this.setState({isLoading: true});
     var postData = this.buildPostData();
 
     $.ajax({
@@ -168,6 +173,7 @@ var Grid = React.createClass({
   },
 
   handleLoad: function(data) {
+    this.props.onLoadSuccess(data);
     this.setState({
       isLoading: false,
       dataRows: data[this.props.dataRowsParam],
@@ -176,6 +182,7 @@ var Grid = React.createClass({
   },
 
   handleLoadError: function(xhr, status, error) {
+    this.props.onLoadError(data);
     this.setState({isLoading: false});
     console.log('Grid Load error:' + error);
   },

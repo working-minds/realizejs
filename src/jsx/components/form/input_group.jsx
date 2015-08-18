@@ -24,7 +24,7 @@ var InputGroup = React.createClass({
   render: function() {
     return (
       <div>
-        <div className={this.className()}>
+        <div className={this.inputGroupClassName()}>
           {this.renderLabel()}
           {this.renderInputs()}
           {this.props.children}
@@ -32,6 +32,15 @@ var InputGroup = React.createClass({
         {this.renderDivider()}
       </div>
     );
+  },
+
+  inputGroupClassName: function() {
+    var className = this.className();
+    if(this.props.label !== null) {
+      className += ' ' + WRF.themeClass('form.inputGroup.section');
+    }
+
+    return className;
   },
 
   renderInputs: function() {

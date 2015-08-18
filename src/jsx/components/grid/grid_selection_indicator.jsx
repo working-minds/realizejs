@@ -5,7 +5,7 @@ var GridSelectionIndicator = React.createClass({
     dataRows: React.PropTypes.array,
     selectedDataRowIds: React.PropTypes.array,
     actionButtons: React.PropTypes.array,
-    message: React.PropTypes.string,
+    message: React.PropTypes.object,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func
   },
@@ -19,7 +19,7 @@ var GridSelectionIndicator = React.createClass({
         plural: ':count itens selecionados',
         singular: '1 item selecionado'
       },
-      removeSelectionButtonName: 'remover seleção',
+      removeSelectionButtonName: 'limpar seleção',
       selectAllButtonName: 'selecionar todos',
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
