@@ -658,7 +658,8 @@ var FormSuccessHandlerMixin = {
 var GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
-    actionUrls: React.PropTypes.object
+    actionUrls: React.PropTypes.object,
+    destroyConfirm: React.PropTypes.node
   },
 
   getDefaultProps: function() {
@@ -670,7 +671,8 @@ var GridActionsMixin = {
         add: ':url/new',
         edit: ':url/:id/edit',
         destroy: ':url/:id'
-      }
+      },
+      destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
 
@@ -709,9 +711,19 @@ var GridActionsMixin = {
       {
         icon: 'add',
         themeClassKey: "button.floating",
+        context: '',
         onClick: this.addAction
       }
     ]
+  },
+
+  renderCollectionActionButtons: function() {
+    var collectionActionButtons = this.getCollectionActionButtons();
+    if(!collectionActionButtons || collectionActionButtons.length === 0) {
+      return '';
+    }
+
+    return React.createElement(GridActions, {actionButtons: collectionActionButtons});
   },
 
   addAction: function(event) {
@@ -725,12 +737,16 @@ var GridActionsMixin = {
   destroyAction: function(event, id) {
     var destroyUrl = this.getActionUrl('destroy', id);
 
-    $.ajax({
-      url: destroyUrl,
-      method: 'DELETE',
-      success: this.handleDestroy,
-      error: this.handleDestroyError
-    });
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: 'DELETE',
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
   },
 
   getActionUrl: function(action, id) {
@@ -748,6 +764,7 @@ var GridActionsMixin = {
   },
 
   handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
     console.log(error);
   }
 
@@ -1425,6 +1442,7 @@ var Grid = React.createClass({displayName: "Grid",
       },
       dataRowsParam: 'data',
       countParam: 'count',
+      themeClassKey: 'grid',
       data: {
         dataRows: [],
         count: 0
@@ -1435,19 +1453,18 @@ var Grid = React.createClass({displayName: "Grid",
   getInitialState: function() {
     return {
       dataRows: this.props.data.dataRows,
-      selectedDataRows: [],
+      selectedDataRowIds: [],
       count: this.props.data.count,
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      themeClassKey: 'grid',
       isLoading: false
     };
   },
 
   render: function() {
     return (
-      React.createElement("div", {className: this.className()}, 
+      React.createElement("div", {className: this.gridClassName()}, 
         this.renderCollectionActionButtons(), 
         this.renderFilter(), 
 
@@ -1458,13 +1475,13 @@ var Grid = React.createClass({displayName: "Grid",
     );
   },
 
-  renderCollectionActionButtons: function() {
-    var collectionActionButtons = this.getCollectionActionButtons();
-    if(!collectionActionButtons || collectionActionButtons.length === 0) {
-      return '';
+  gridClassName: function() {
+    var className = this.className();
+    if(this.state.isLoading) {
+      className += ' loading';
     }
 
-    return React.createElement(GridActions, {actionButtons: collectionActionButtons});
+    return className;
   },
 
   renderFilter: function() {
@@ -1485,7 +1502,7 @@ var Grid = React.createClass({displayName: "Grid",
         sortConfigs: this.props.sortConfigs, 
         sortData: this.state.sortData, 
         dataRows: this.state.dataRows, 
-        selectedDataRows: this.state.selectedDataRows, 
+        selectedDataRowIds: this.state.selectedDataRowIds, 
         actionButtons: this.getMemberActionButtons(), 
         onSort: this.onSort, 
         onSelect: this.onSelectDataRow}
@@ -1520,6 +1537,7 @@ var Grid = React.createClass({displayName: "Grid",
     event.preventDefault();
 
     this.setState({isLoading: true});
+    this.state.selectedDataRowIds = [];
     this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
@@ -1532,11 +1550,11 @@ var Grid = React.createClass({displayName: "Grid",
     this.loadData();
   },
 
-  onSelectDataRow: function(event, selectedDataRows) {
+  onSelectDataRow: function(event, selectedDataRowIds) {
     event.preventDefault();
 
     this.setState({
-      selectedDataRows: selectedDataRows
+      selectedDataRowIds: selectedDataRowIds
     });
   },
 
@@ -3684,7 +3702,7 @@ var Table = React.createClass({displayName: "Table",
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
-    selectedDataRows: React.PropTypes.array,
+    selectedDataRowIds: React.PropTypes.array,
     emptyMessage: React.PropTypes.string,
     actionButtons: React.PropTypes.array,
     onSort: React.PropTypes.func,
@@ -3704,23 +3722,23 @@ var Table = React.createClass({displayName: "Table",
       emptyMessage: 'Nenhum resultado foi encontrado.',
       sortData: {},
       dataRows: [],
-      selectedDataRows: [],
+      selectedDataRowIds: [],
       actionButtons: [],
       onSort: function(sortData) {},
-      onSelect: function(event, selectedDataRows) {}
+      onSelect: function(event, selectedDataRowIds) {}
     };
   },
 
   getInitialState: function() {
     return {
-      selectedDataRows: this.props.selectedDataRows
+      selectedDataRowIds: this.props.selectedDataRowIds
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
-    var selectedDataRows = nextProps.selectedDataRows;
-    if($.isArray(selectedDataRows)) {
-      this.setState({selectedDataRows: selectedDataRows});
+    var selectedDataRowIds = nextProps.selectedDataRowIds;
+    if($.isArray(selectedDataRowIds)) {
+      this.setState({selectedDataRowIds: selectedDataRowIds});
     }
   },
 
@@ -3834,48 +3852,53 @@ var Table = React.createClass({displayName: "Table",
   },
 
   toggleDataRows: function(event, dataRowIds, selected) {
-    var selectedDataRows = [];
+    var selectedDataRowIds = [];
     if(selected) {
-      selectedDataRows = this.addSelectedDataRows(dataRowIds);
+      selectedDataRowIds = this.addSelectedDataRows(dataRowIds);
     } else {
-      selectedDataRows = this.removeSelectedDataRows(dataRowIds);
+      selectedDataRowIds = this.removeSelectedDataRows(dataRowIds);
     }
 
-    this.props.onSelect(event, selectedDataRows);
+    this.props.onSelect(event, selectedDataRowIds);
     if(!event.isDefaultPrevented()) {
       this.setState({
-        selectedDataRows: selectedDataRows
+        selectedDataRowIds: selectedDataRowIds
       });
     }
   },
 
   addSelectedDataRows: function(dataRowIds) {
-    var selectedDataRows = this.state.selectedDataRows.slice();
+    var selectedDataRowIds = this.state.selectedDataRowIds.slice();
     $.each(dataRowIds, function(i, dataRowId) {
-      if($.inArray(dataRowId, selectedDataRows) < 0) {
-        selectedDataRows.push(dataRowId);
+      if($.inArray(dataRowId, selectedDataRowIds) < 0) {
+        selectedDataRowIds.push(dataRowId);
       }
     });
 
-    return selectedDataRows;
+    return selectedDataRowIds;
   },
 
   removeSelectedDataRows: function(dataRowIds) {
-    return $.grep(this.state.selectedDataRows, function(dataRowId) {
+    return $.grep(this.state.selectedDataRowIds, function(dataRowId) {
       return ($.inArray(dataRowId, dataRowIds) < 0);
     }.bind(this));
   },
 
   dataRowIsSelected: function(dataRow) {
     var dataRowId = dataRow[this.props.dataRowIdField];
-    return ($.inArray(dataRowId, this.state.selectedDataRows) >= 0);
+    return ($.inArray(dataRowId, this.state.selectedDataRowIds) >= 0);
   },
 
   isAllDataRowsSelected: function() {
-    var dataRows = this.props.dataRows;
-    var selectedDataRows = this.state.selectedDataRows;
+    var dataRowIds = $.map(this.props.dataRows, function(dataRow) {
+      return dataRow[this.props.dataRowIdField];
+    }.bind(this));
 
-    return dataRows.length > 0 && (dataRows.length == selectedDataRows.length);
+    var selectedDataRowIdsInPage = $.grep(this.state.selectedDataRowIds, function(selectedDataRowId) {
+      return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
+    });
+
+    return dataRowIds.length > 0 && (dataRowIds.length == selectedDataRowIdsInPage.length);
   }
 });
 
