@@ -1,3 +1,7 @@
+table tr th, table tr td {
+  padding: 5px 2px;
+}
+
 .table-header .table-header__name.sortable {
   cursor: pointer;
 }
@@ -31,7 +35,7 @@
 .table-actions {
   display: none;
   position: absolute;
-  top: 45px;
+  top: 30px;
   left: 0;
   z-index: 1;
   padding: 0.6rem;

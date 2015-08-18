@@ -1,7 +1,8 @@
 var GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
-    actionUrls: React.PropTypes.object
+    actionUrls: React.PropTypes.object,
+    destroyConfirm: React.PropTypes.node
   },
 
   getDefaultProps: function() {
@@ -13,7 +14,8 @@ var GridActionsMixin = {
         add: ':url/new',
         edit: ':url/:id/edit',
         destroy: ':url/:id'
-      }
+      },
+      destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
 
@@ -52,9 +54,19 @@ var GridActionsMixin = {
       {
         icon: 'add',
         themeClassKey: "button.floating",
+        context: '',
         onClick: this.addAction
       }
     ]
+  },
+
+  renderCollectionActionButtons: function() {
+    var collectionActionButtons = this.getCollectionActionButtons();
+    if(!collectionActionButtons || collectionActionButtons.length === 0) {
+      return '';
+    }
+
+    return <GridActions actionButtons={collectionActionButtons} />;
   },
 
   addAction: function(event) {
@@ -68,12 +80,16 @@ var GridActionsMixin = {
   destroyAction: function(event, id) {
     var destroyUrl = this.getActionUrl('destroy', id);
 
-    $.ajax({
-      url: destroyUrl,
-      method: 'DELETE',
-      success: this.handleDestroy,
-      error: this.handleDestroyError
-    });
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: 'DELETE',
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
   },
 
   getActionUrl: function(action, id) {
@@ -91,6 +107,7 @@ var GridActionsMixin = {
   },
 
   handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
     console.log(error);
   }
 
