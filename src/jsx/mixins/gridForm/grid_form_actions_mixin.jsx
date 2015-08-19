@@ -43,8 +43,11 @@ var GridFormActionsMixin = {
     return [];
   },
 
-  editAction: function(event, id) {
-    alert('edição');
+  editAction: function(event, id, data) {
+    this.setState({
+      formAction: 'update',
+      selectedRowId: id
+    })
   },
 
   destroyAction: function(event, id) {

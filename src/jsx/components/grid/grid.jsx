@@ -16,6 +16,7 @@ var Grid = React.createClass({
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
+    selectable: React.PropTypes.bool,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func
   },
@@ -44,6 +45,7 @@ var Grid = React.createClass({
         count: 0
       },
       isLoading: false,
+      selectable: true,
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {}
     };
@@ -105,6 +107,7 @@ var Grid = React.createClass({
         sortConfigs={this.props.sortConfigs}
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
+        selectable={this.props.selectable}
         selectedDataRowIds={this.state.selectedDataRowIds}
         actionButtons={this.getMemberActionButtons()}
         onSort={this.onSort}

@@ -21,6 +21,7 @@ var GridForm = React.createClass({
     updateButton: React.PropTypes.object,
     cancelButton: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
+    selectable: React.PropTypes.bool,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
     onSuccess: React.PropTypes.func,
@@ -46,6 +47,7 @@ var GridForm = React.createClass({
         name: 'Cancelar',
         style: 'cancel'
       },
+      selectable: true,
       onSubmit: function(event, postData) {},
       onReset: function(event) {},
       onSuccess: function(data, status, xhr) { return true; },
@@ -58,6 +60,7 @@ var GridForm = React.createClass({
   getInitialState: function() {
     return {
       formAction: 'create',
+      selectedRowId: null,
       isLoading: this.props.isLoading
     };
   },
@@ -102,7 +105,7 @@ var GridForm = React.createClass({
   },
 
   getFormAction: function() {
-    return this.getActionUrl(this.state.formAction);
+    return this.getActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 
   getFormMethod: function() {
@@ -110,15 +113,25 @@ var GridForm = React.createClass({
   },
 
   getFormSubmitButton: function() {
-    return this.props.createButton;
+    if(this.state.formAction == 'create') {
+      return this.props.createButton;
+    } else if(this.state.formAction == 'update') {
+      return this.props.updateButton;
+    }
+
+    return '';
   },
 
   getFormOtherButtons: function() {
-    var cancelButtonProps = $.extend({}, this.props.cancelButton, {
-      type: "reset"
-    });
+    if(this.state.formAction == 'update') {
+      var cancelButtonProps = $.extend({}, this.props.cancelButton, {
+        type: "reset"
+      });
 
-    return [cancelButtonProps];
+      return [cancelButtonProps];
+    }
+
+    return [];
   },
 
   onSubmit: function(event, postData) {
@@ -126,12 +139,16 @@ var GridForm = React.createClass({
   },
 
   onReset: function(event) {
-    alert('hue');
+    this.setState({
+      formAction: 'create',
+      selectedRowId: null
+    });
+
     this.props.onReset(event);
   },
 
   onSuccess: function(data, status, xhr) {
-    if(this.props.onSuccess(data, status, xhr)) {
+      if(this.props.onSuccess(data, status, xhr)) {
       this.loadGridData();
       this.resetForm();
     }
