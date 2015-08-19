@@ -1,12 +1,12 @@
 var GridForm = React.createClass({
   mixins: [
     CssClassMixin,
-    RestActionsMixin
+    RestActionsMixin,
+    GridFormActionsMixin
   ],
 
   propTypes: {
     url: React.PropTypes.string,
-    actionButtons: React.PropTypes.object,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
@@ -24,9 +24,6 @@ var GridForm = React.createClass({
     return {
       form: {},
       themeClassKey: 'gridForm',
-      actionButtons: {
-        collection: []
-      },
       isLoading: false
     };
   },
@@ -64,6 +61,7 @@ var GridForm = React.createClass({
           <div className="card-content">
             <Grid
               {...this.propsWithoutCSS()}
+              actionButtons={this.getGridFormActionButtons()}
               ref="grid"
             />
           </div>
@@ -83,7 +81,6 @@ var GridForm = React.createClass({
   onSuccess: function(data) {
     this.loadGridData();
     this.resetForm();
-
   },
 
   loadGridData: function() {

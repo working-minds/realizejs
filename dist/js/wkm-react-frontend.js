@@ -719,7 +719,7 @@ var GridActionsMixin = {
         icon: 'destroy',
         onClick: this.destroyAction
       }
-    ]
+    ];
   },
 
   getCollectionActionButtons: function() {
@@ -737,7 +737,7 @@ var GridActionsMixin = {
         context: 'none',
         onClick: this.addAction
       }
-    ]
+    ];
   },
 
   renderActions: function() {
@@ -757,6 +757,113 @@ var GridActionsMixin = {
     this.setState({
       selectedDataRowIds: []
     });
+  },
+
+  addAction: function(event) {
+    window.location = this.getActionUrl('add');
+  },
+
+  editAction: function(event, id) {
+    window.location = this.getActionUrl('edit', id);
+  },
+
+  destroyAction: function(event, id) {
+    var destroyUrl = this.getActionUrl('destroy', id);
+    var destroyMethod = this.getActionMethod('destroy');
+
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: destroyMethod,
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
+  },
+
+  handleDestroy: function(data) {
+    this.loadData(data);
+  },
+
+  handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
+    console.log(error);
+  }
+};
+var GridFormActionsMixin = {
+  propTypes: {
+    actionButtons: React.PropTypes.object
+  },
+
+  getDefaultProps: function() {
+    return {
+      actionButtons: null
+    };
+  },
+
+  getGridFormActionButtons: function() {
+    var actionButtons = this.props.actionButtons;
+    if(!$.isPlainObject(actionButtons)) {
+      actionButtons = {};
+    }
+
+    if(!actionButtons.member) {
+      actionButtons.member = this.getDefaultMemberActionButtons();
+    }
+
+    if(!actionButtons.collection) {
+      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    }
+
+    return actionButtons;
+  },
+
+  getDefaultMemberActionButtons: function() {
+    return [
+      {
+        icon: 'edit',
+        onClick: this.editAction
+      },
+      {
+        icon: 'destroy',
+        onClick: this.destroyAction
+      }
+    ];
+  },
+
+  getDefaultCollectionActionButtons: function() {
+    return [];
+  },
+
+  editAction: function(event, id) {
+    alert('edição');
+  },
+
+  destroyAction: function(event, id) {
+    var destroyUrl = this.getActionUrl('destroy', id);
+    var destroyMethod = this.getActionMethod('destroy');
+
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: destroyMethod,
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
+  },
+
+  handleDestroy: function(data) {
+    this.loadGridData(data);
+  },
+
+  handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
+    console.log(error);
   }
 };
 var InputComponentMixin = {
@@ -953,30 +1060,6 @@ var RestActionsMixin = {
     };
   },
 
-  addAction: function(event) {
-    window.location = this.getActionUrl('add');
-  },
-
-  editAction: function(event, id) {
-    window.location = this.getActionUrl('edit', id);
-  },
-
-  destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
-
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
   getActionUrl: function(action, id) {
     var actionUrl = this.props.actionUrls[action];
     actionUrl = actionUrl.replace(/:url/, this.props.url);
@@ -989,15 +1072,6 @@ var RestActionsMixin = {
 
   getActionMethod: function(action) {
     return this.props.actionMethods[action];
-  },
-
-  handleDestroy: function(data) {
-    this.loadData(data);
-  },
-
-  handleDestroyError: function(xhr, status, error) {
-    this.setState({isLoading: false});
-    console.log(error);
   }
 
 };
@@ -1938,12 +2012,12 @@ var GridTable = React.createClass({displayName: "GridTable",
 var GridForm = React.createClass({displayName: "GridForm",
   mixins: [
     CssClassMixin,
-    RestActionsMixin
+    RestActionsMixin,
+    GridFormActionsMixin
   ],
 
   propTypes: {
     url: React.PropTypes.string,
-    actionButtons: React.PropTypes.object,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
@@ -1961,9 +2035,6 @@ var GridForm = React.createClass({displayName: "GridForm",
     return {
       form: {},
       themeClassKey: 'gridForm',
-      actionButtons: {
-        collection: []
-      },
       isLoading: false
     };
   },
@@ -2001,7 +2072,8 @@ var GridForm = React.createClass({displayName: "GridForm",
           React.createElement("div", {className: "card-content"}, 
             React.createElement(Grid, React.__spread({}, 
               this.propsWithoutCSS(), 
-              {ref: "grid"})
+              {actionButtons: this.getGridFormActionButtons(), 
+              ref: "grid"})
             )
           )
         )
@@ -2020,7 +2092,6 @@ var GridForm = React.createClass({displayName: "GridForm",
   onSuccess: function(data) {
     this.loadGridData();
     this.resetForm();
-
   },
 
   loadGridData: function() {
