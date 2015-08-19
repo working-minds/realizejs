@@ -43,10 +43,10 @@ var GridForm = React.createClass({
   },
 
   render: function() {
+    //TODO: adicionar os divs de card em um componente separado.
     return (
       <div className={this.className()}>
 
-        //TODO: adicionar os divs de card em um componente separado.
         <div className="card">
           <div className="card-content">
             <Form

@@ -1966,10 +1966,10 @@ var GridForm = React.createClass({displayName: "GridForm",
   },
 
   render: function() {
+    //TODO: adicionar os divs de card em um componente separado.
     return (
       React.createElement("div", {className: this.className()}, 
 
-        "//TODO: adicionar os divs de card em um componente separado.", 
         React.createElement("div", {className: "card"}, 
           React.createElement("div", {className: "card-content"}, 
             React.createElement(Form, React.__spread({
