@@ -2028,14 +2028,41 @@ var GridForm = React.createClass({displayName: "GridForm",
     countParam: React.PropTypes.string,
     actionUrls: React.PropTypes.object,
     form: React.PropTypes.object,
-    isLoading: React.PropTypes.bool
+    createButton: React.PropTypes.object,
+    updateButton: React.PropTypes.object,
+    cancelButton: React.PropTypes.object,
+    isLoading: React.PropTypes.bool,
+    onSubmit: React.PropTypes.func,
+    onReset: React.PropTypes.func,
+    onSuccess: React.PropTypes.func,
+    onError: React.PropTypes.func,
+    onLoadSuccess: React.PropTypes.func,
+    onLoadError: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       form: {},
       themeClassKey: 'gridForm',
-      isLoading: false
+      isLoading: false,
+      createButton: {
+        name: 'Adicionar',
+        icon: 'add'
+      },
+      updateButton: {
+        name: 'Atualizar',
+        icon: 'edit'
+      },
+      cancelButton: {
+        name: 'Cancelar',
+        style: 'cancel'
+      },
+      onSubmit: function(event, postData) {},
+      onReset: function(event) {},
+      onSuccess: function(data, status, xhr) { return true; },
+      onError: function(xhr, status, error) { return true; },
+      onLoadSuccess: function(data) {},
+      onLoadError: function(xhr, status, error) {}
     };
   },
 
@@ -2062,8 +2089,12 @@ var GridForm = React.createClass({displayName: "GridForm",
               this.props.form, 
               {action: this.getFormAction(), 
               method: this.getFormMethod(), 
+              submitButton: this.getFormSubmitButton(), 
+              otherButtons: this.getFormOtherButtons(), 
               onSubmit: this.onSubmit, 
+              onReset: this.onReset, 
               onSuccess: this.onSuccess, 
+              onError: this.onError, 
               ref: "form"})
             )
           )
@@ -2089,9 +2120,36 @@ var GridForm = React.createClass({displayName: "GridForm",
     return this.getActionMethod(this.state.formAction);
   },
 
-  onSuccess: function(data) {
-    this.loadGridData();
-    this.resetForm();
+  getFormSubmitButton: function() {
+    return this.props.createButton;
+  },
+
+  getFormOtherButtons: function() {
+    var cancelButtonProps = $.extend({}, this.props.cancelButton, {
+      type: "reset"
+    });
+
+    return [cancelButtonProps];
+  },
+
+  onSubmit: function(event, postData) {
+    this.props.onSubmit(event, postData);
+  },
+
+  onReset: function(event) {
+    alert('hue');
+    this.props.onReset(event);
+  },
+
+  onSuccess: function(data, status, xhr) {
+    if(this.props.onSuccess(data, status, xhr)) {
+      this.loadGridData();
+      this.resetForm();
+    }
+  },
+
+  onError: function(xhr, status, error) {
+    return this.props.onError(xhr, status, error);
   },
 
   loadGridData: function() {
