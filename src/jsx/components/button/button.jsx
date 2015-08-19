@@ -8,7 +8,8 @@ var Button = React.createClass({
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
-    isLoading: React.PropTypes.bool
+    isLoading: React.PropTypes.bool,
+    element: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -21,6 +22,7 @@ var Button = React.createClass({
       href: null,
       onClick: null,
       disableWith: 'Carregando...',
+      element: 'button'
     };
   },
 
@@ -49,10 +51,23 @@ var Button = React.createClass({
   },
 
   render: function() {
+    var content = '';
+    if(this.props.isLoading) {
+      content = this.renderLoadingIndicator();
+    } else {
+      content = this.renderContent();
+    }
+
     return (
-      <button className={this.className()} type={this.props.type} disabled={this.props.disabled} onClick={this.handleClick}>
-        {this.props.isLoading ? this.renderLoadingIndicator(): this.renderContent()}
-      </button>
+      React.createElement(this.props.element,
+        {
+          className: this.className(),
+          type: this.props.type,
+          disabled: this.props.disabled,
+          onClick: this.handleClick
+        },
+        content
+      )
     );
   },
 

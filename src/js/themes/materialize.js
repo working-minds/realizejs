@@ -26,7 +26,7 @@ WRF.themes.materialize = {
   },
 
   table: {
-    cssClass: 'striped responsive-table',
+    cssClass: 'table striped responsive-table',
 
     header: {
       cssClass: 'table-header',
@@ -164,7 +164,7 @@ WRF.themes.materialize = {
     },
 
     flat: {
-      cssClass: 'button button--flat btn-flat waves-effect waves-light'
+      cssClass: 'button button--flat btn-flat waves-effect waves-grey'
     },
 
     iconOnly: {

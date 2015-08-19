@@ -25,7 +25,6 @@ var GridActionsMixin = {
       },
       {
         icon: 'destroy',
-        style: 'danger',
         onClick: this.destroyAction
       }
     ]

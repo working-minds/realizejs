@@ -188,7 +188,7 @@ WRF.themes.materialize = {
   },
 
   table: {
-    cssClass: 'striped responsive-table',
+    cssClass: 'table striped responsive-table',
 
     header: {
       cssClass: 'table-header',
@@ -326,7 +326,7 @@ WRF.themes.materialize = {
     },
 
     flat: {
-      cssClass: 'button button--flat btn-flat waves-effect waves-light'
+      cssClass: 'button button--flat btn-flat waves-effect waves-grey'
     },
 
     iconOnly: {
@@ -717,7 +717,6 @@ var GridActionsMixin = {
       },
       {
         icon: 'destroy',
-        style: 'danger',
         onClick: this.destroyAction
       }
     ]
@@ -1012,7 +1011,8 @@ var Button = React.createClass({displayName: "Button",
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
-    isLoading: React.PropTypes.bool
+    isLoading: React.PropTypes.bool,
+    element: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -1025,6 +1025,7 @@ var Button = React.createClass({displayName: "Button",
       href: null,
       onClick: null,
       disableWith: 'Carregando...',
+      element: 'button'
     };
   },
 
@@ -1053,9 +1054,22 @@ var Button = React.createClass({displayName: "Button",
   },
 
   render: function() {
+    var content = '';
+    if(this.props.isLoading) {
+      content = this.renderLoadingIndicator();
+    } else {
+      content = this.renderContent();
+    }
+
     return (
-      React.createElement("button", {className: this.className(), type: this.props.type, disabled: this.props.disabled, onClick: this.handleClick}, 
-        this.props.isLoading ? this.renderLoadingIndicator(): this.renderContent()
+      React.createElement(this.props.element,
+        {
+          className: this.className(),
+          type: this.props.type,
+          disabled: this.props.disabled,
+          onClick: this.handleClick
+        },
+        content
       )
     );
   },
@@ -4100,7 +4114,7 @@ var Table = React.createClass({displayName: "Table",
 
     return (
       React.createElement("tr", null, 
-        React.createElement("td", {colSpan: columnsCount}, this.props.emptyMessage)
+        React.createElement("td", {colSpan: columnsCount, className: "empty-message"}, this.props.emptyMessage)
       )
     );
   },
@@ -4169,8 +4183,6 @@ var TableCell = React.createClass({displayName: "TableCell",
     name: React.PropTypes.string,
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
-    actionButtons: React.PropTypes.array,
-    firstCell: React.PropTypes.bool,
     value: React.PropTypes.func,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'datetime'])
   },
@@ -4178,7 +4190,6 @@ var TableCell = React.createClass({displayName: "TableCell",
   getDefaultProps: function() {
     return {
       format: 'text',
-      firstCell: false,
       data: {}
     };
   },
@@ -4192,8 +4203,7 @@ var TableCell = React.createClass({displayName: "TableCell",
   render: function() {
     return (
       React.createElement("td", {className: this.className()}, 
-        this.renderValue(), 
-        this.renderActionButtons()
+        this.renderValue()
       )
     );
   },
@@ -4214,14 +4224,6 @@ var TableCell = React.createClass({displayName: "TableCell",
         return this.textValue(dataValue);
       }
     }
-  },
-
-  renderActionButtons: function() {
-    if(!this.props.firstCell || !$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
-      return '';
-    }
-
-    return React.createElement(TableRowActions, React.__spread({},  this.propsWithoutCSS(), {ref: "actions"}));
   },
 
   textValue: function(value) {
@@ -4357,7 +4359,8 @@ var TableRow = React.createClass({displayName: "TableRow",
     return (
       React.createElement("tr", {className: this.className(), ref: "row"}, 
         this.renderSelectCell(), 
-        this.renderCells()
+        this.renderCells(), 
+        this.renderActionsCell()
       )
     );
   },
@@ -4381,22 +4384,26 @@ var TableRow = React.createClass({displayName: "TableRow",
   renderCells: function() {
     var columns = this.props.columns;
     var cellComponents = [];
-    var firstCell = true;
 
     $.each(columns, function(columnName, columnProps) {
       cellComponents.push(
         React.createElement(TableCell, React.__spread({},  columnProps, 
           this.propsWithoutCSS(), 
-          {firstCell: firstCell, 
-          name: columnName, 
+          {name: columnName, 
           key: columnName})
         )
       );
-
-      firstCell = false;
     }.bind(this));
 
     return cellComponents;
+  },
+
+  renderActionsCell: function() {
+    if(!$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
+      return '';
+    }
+
+    return React.createElement(TableRowActions, React.__spread({},  this.propsWithoutCSS(), {ref: "actions"}));
   },
 
   getDataRowId: function() {
@@ -4425,7 +4432,7 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
 
   render: function() {
     return (
-      React.createElement("div", React.__spread({className: this.className()},  this.props), 
+      React.createElement("td", {className: this.className()}, 
         this.renderButtons()
       )
     );
@@ -4437,7 +4444,14 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {onClick: this.handleActionClick.bind(this, actionButtonProps), key: "action_" + i})));
+      actionButtons.push(
+        React.createElement(Button, React.__spread({},  actionButtonProps, 
+          {onClick: this.handleActionClick.bind(this, actionButtonProps), 
+          themeClassKey: "button.flat", 
+          element: "a", 
+          key: "action_" + i})
+        )
+      );
     }
 
     return actionButtons;
