@@ -24,9 +24,37 @@ var InputComponentMixin = {
     };
   },
 
+  componentDidMount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.on('reset', this._handleReset);
+  },
+
+  componentWillUnmount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.off('reset', this._handleReset);
+  },
+
   componentWillReceiveProps: function(nextProps) {
+    var nextValue = nextProps.value;
+    if(nextValue !== null && nextValue !== undefined) {
+      this.setState({
+        value: nextProps.value
+      });
+    }
+  },
+
+  getInputFormNode: function() {
+    var inputRef = this.refs.input;
+    if(!!inputRef) {
+      return React.findDOMNode(inputRef).form;
+    }
+
+    return null;
+  },
+
+  _handleReset: function(event) {
     this.setState({
-      value: nextProps.value
+      value: ''
     });
   },
 

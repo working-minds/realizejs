@@ -46,16 +46,20 @@ var SelectComponentMixin = {
   },
 
   componentWillReceiveProps: function(nextProps) {
-    var nextValue = this.ensureIsArray(nextProps.value);
-    var valueChanged = (nextValue !== this.state.value);
+    var nextValue = nextProps.value;
 
-    this.setState({
-      value: nextValue
-    }, function() {
-      if(valueChanged) {
-        this.triggerDependableChanged();
-      }
-    });
+    if(nextValue !== null && nextValue !== undefined) {
+      nextValue = this.ensureIsArray(nextValue);
+      var valueChanged = (nextValue !== this.state.value);
+
+      this.setState({
+        value: nextValue
+      }, function() {
+        if(valueChanged) {
+          this.triggerDependableChanged();
+        }
+      });
+    }
   },
 
   componentDidMount: function() {
@@ -73,7 +77,7 @@ var SelectComponentMixin = {
   },
 
   ensureIsArray: function(value) {
-    if(!value) {
+    if(!value || value.length === 0) {
       value = [];
     } else if(!$.isArray(value)) {
       value = [value];

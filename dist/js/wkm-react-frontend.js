@@ -907,9 +907,37 @@ var InputComponentMixin = {
     };
   },
 
+  componentDidMount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.on('reset', this._handleReset);
+  },
+
+  componentWillUnmount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.off('reset', this._handleReset);
+  },
+
   componentWillReceiveProps: function(nextProps) {
+    var nextValue = nextProps.value;
+    if(nextValue !== null && nextValue !== undefined) {
+      this.setState({
+        value: nextProps.value
+      });
+    }
+  },
+
+  getInputFormNode: function() {
+    var inputRef = this.refs.input;
+    if(!!inputRef) {
+      return React.findDOMNode(inputRef).form;
+    }
+
+    return null;
+  },
+
+  _handleReset: function(event) {
     this.setState({
-      value: nextProps.value
+      value: ''
     });
   },
 
@@ -1015,16 +1043,20 @@ var SelectComponentMixin = {
   },
 
   componentWillReceiveProps: function(nextProps) {
-    var nextValue = this.ensureIsArray(nextProps.value);
-    var valueChanged = (nextValue !== this.state.value);
+    var nextValue = nextProps.value;
 
-    this.setState({
-      value: nextValue
-    }, function() {
-      if(valueChanged) {
-        this.triggerDependableChanged();
-      }
-    });
+    if(nextValue !== null && nextValue !== undefined) {
+      nextValue = this.ensureIsArray(nextValue);
+      var valueChanged = (nextValue !== this.state.value);
+
+      this.setState({
+        value: nextValue
+      }, function() {
+        if(valueChanged) {
+          this.triggerDependableChanged();
+        }
+      });
+    }
   },
 
   componentDidMount: function() {
@@ -1042,7 +1074,7 @@ var SelectComponentMixin = {
   },
 
   ensureIsArray: function(value) {
-    if(!value) {
+    if(!value || value.length === 0) {
       value = [];
     } else if(!$.isArray(value)) {
       value = [value];
@@ -3449,13 +3481,13 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "inputMasked", type: "text"}), 
+      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "input", type: "text"}), 
         this.props.children
       )
     );
   },
 
-  componentDidMount: function(){
+  componentDidMount: function() {
     if(this.isRegexMask())
       this.renderRegexMask();
     else{
@@ -3496,9 +3528,9 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   renderBaseMask: function(type, params){
     if(type !== undefined && type !== '')
-      $(React.findDOMNode(this.refs.inputMasked)).inputmask(type, params);
+      $(React.findDOMNode(this.refs.input)).inputmask(type, params);
     else
-      $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
+      $(React.findDOMNode(this.refs.input)).inputmask(params);
   },
 
   maskMapping: function(type) {
