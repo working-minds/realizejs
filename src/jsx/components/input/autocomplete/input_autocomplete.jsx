@@ -8,8 +8,7 @@ var InputAutocomplete = React.createClass({
   propTypes: {
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
-    searchParam: React.PropTypes.string,
-    multiple: React.PropTypes.bool
+    searchParam: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -17,8 +16,7 @@ var InputAutocomplete = React.createClass({
       maxOptions: 99,
       maxOptionsParam: 'limit',
       searchParam: 'query',
-      themeClassKey: 'input.autocomplete',
-      multiple: false
+      themeClassKey: 'input.autocomplete'
     };
   },
 

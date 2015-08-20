@@ -972,8 +972,10 @@ var SelectComponentMixin = {
     options: React.PropTypes.array,
     dependsOn: React.PropTypes.object,
     optionsUrl: React.PropTypes.string,
+    optionsParam: React.PropTypes.string,
     nameField: React.PropTypes.string,
     valueField: React.PropTypes.string,
+    multiple: React.PropTypes.bool,
     onLoad: React.PropTypes.func,
     onLoadError: React.PropTypes.func
   },
@@ -981,9 +983,11 @@ var SelectComponentMixin = {
   getDefaultProps: function() {
     return {
       dependsOn: null,
+      optionsParam: null,
       nameField: 'name',
       valueField: 'id',
       options: [],
+      multiple: false,
       onLoad: function(data) {
         return true;
       },
@@ -1071,6 +1075,10 @@ var SelectComponentMixin = {
 
   handleLoad: function(data) {
     var options = [];
+    var optionsParam = this.props.optionsParam;
+    if(!!optionsParam) {
+      data = data[optionsParam];
+    }
 
     for(var i = 0; i < data.length; i++) {
       var dataItem = data[i];
@@ -2525,8 +2533,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   propTypes: {
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
-    searchParam: React.PropTypes.string,
-    multiple: React.PropTypes.bool
+    searchParam: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -2534,8 +2541,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
       maxOptions: 99,
       maxOptionsParam: 'limit',
       searchParam: 'query',
-      themeClassKey: 'input.autocomplete',
-      multiple: false
+      themeClassKey: 'input.autocomplete'
     };
   },
 
@@ -2625,7 +2631,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   showResult: function(event) {
     if(this.state.disabled) {
       return;
-    } 
+    }
 
     $(document).on('click', this.handleDocumentClick);
     var $resultNode = $(React.findDOMNode(this.refs.result));
