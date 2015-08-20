@@ -12,7 +12,7 @@ var InputPassword = React.createClass({
 
   render: function() {
     return (
-      <input {...this.props} type="password" className={this.className()} ref="input" />
+      <input {...this.props} value={this.state.value} className={this.inputClassName()} onChange={this._handleChange} type="password" ref="input" />
     );
   }
 });

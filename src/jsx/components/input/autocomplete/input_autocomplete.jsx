@@ -24,8 +24,8 @@ var InputAutocomplete = React.createClass({
 
   getInitialState: function() {
     return {
-      selectedOptions: [],
-      active: 0
+      active: 0,
+      searchValue: ''
     };
   },
 
@@ -34,13 +34,15 @@ var InputAutocomplete = React.createClass({
   },
 
   componentDidMount: function() {
-    var valuesField = React.findDOMNode(this.refs.valuesField);
-    var $form = $(valuesField.form);
-    $form.on('reset', function(){
-      this.setState({
-        selectedOptions: []
-      });
-    }.bind(this));
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.off('reset', this.clearSelection);
   },
 
   render: function() {
@@ -49,17 +51,18 @@ var InputAutocomplete = React.createClass({
         <InputAutocompleteSelect
           {...this.propsWithoutCSS()}
           disabled={this.state.disabled}
-          selectedOptions={this.state.selectedOptions}
+          selectedOptions={this.selectedOptions()}
           onFocus={this.showResult}
         />
 
         <InputAutocompleteResult
           id={this.props.id}
-          selectedOptions={this.state.selectedOptions}
+          selectedOptions={this.selectedOptions()}
           options={this.state.options}
           active={this.state.active}
+          searchValue={this.state.searchValue}
           onKeyDown={this.handleSearchNavigation}
-          onKeyUp={this.searchOptions}
+          onChange={this.searchOptions}
           onSelect={this.handleSelect}
           onClear={this.clearSelection}
           onOptionMouseEnter={this.handleOptionMouseEnter}
@@ -70,8 +73,8 @@ var InputAutocomplete = React.createClass({
           id={this.props.id}
           name={this.props.name}
           multiple={this.props.multiple}
-          selectedOptions={this.state.selectedOptions}
-          ref="valuesField"
+          selectedOptions={this.selectedOptions()}
+          ref="select"
         />
       </div>
     );
@@ -98,13 +101,8 @@ var InputAutocomplete = React.createClass({
 
     this.state.loadParams[this.props.searchParam] = '';
     this.setState({
-      active: 0,
-      selectedOptions: $.map(this.state.selectedOptions, function(option) {
-        option.showOnTop = true;
-        return option;
-      })
+      active: 0
     });
-    this.loadOptions();
   },
 
   showResult: function(event) {
@@ -123,7 +121,8 @@ var InputAutocomplete = React.createClass({
   searchOptions: function(event) {
     var $searchInput = $(event.currentTarget);
 
-    this.state.loadParams[this.props.searchParam] = $searchInput.val();
+    this.state.searchValue = $searchInput.val();
+    this.state.loadParams[this.props.searchParam] = this.state.searchValue;
     this.loadOptions();
   },
 
@@ -171,7 +170,7 @@ var InputAutocomplete = React.createClass({
 
   clearSelection: function() {
     this.setState({
-      selectedOptions: []
+      value: []
     });
   },
 
@@ -182,58 +181,20 @@ var InputAutocomplete = React.createClass({
   },
 
   handleSelect: function(option) {
-    if(this.props.multiple) {
-      this.handleMultipleSelect(option);
+    var optionIndex = this.state.value.indexOf(option.value);
+
+    if(optionIndex < 0) {
+      if(!this.props.multiple) {
+        this.state.value = [];
+      }
+
+      this.state.value.push(option.value);
     } else {
-      this.handleSingleSelect(option);
+      this.state.value.splice(optionIndex, 1);
     }
 
+    this.forceUpdate();
     this.triggerDependableChanged();
-  },
-
-  handleMultipleSelect: function(option) {
-    var optionIndex = this.selectedOptionIndex(option);
-
-    if(optionIndex < 0) {
-      this.state.selectedOptions.push(option);
-    } else {
-      this.state.selectedOptions.splice(optionIndex, 1);
-    }
-
-    this.forceUpdate();
-  },
-
-  handleSingleSelect: function(option) {
-    var optionIndex = this.selectedOptionIndex(option);
-    var newSelectedOptions = [];
-
-    if(optionIndex < 0) {
-      newSelectedOptions.push(option);
-    }
-
-    this.state.selectedOptions = newSelectedOptions;
-    this.forceUpdate();
-  },
-
-  selectedOptionIndex: function(option) {
-    var optionValues = $.map(this.state.selectedOptions, function(option) {
-      return option.value;
-    });
-
-    return optionValues.indexOf(option.value);
-  },
-
-  triggerDependableChanged: function() {
-    var $valuesElement = $(React.findDOMNode(this.refs.valuesField));
-    var optionValues = $.map(this.state.selectedOptions, function(option) {
-      return option.value;
-    });
-
-    if(optionValues.length == 1) {
-      optionValues = optionValues[0];
-    }
-
-    $valuesElement.trigger('dependable_changed', [optionValues]);
   }
 
 });

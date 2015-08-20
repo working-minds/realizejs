@@ -318,6 +318,14 @@ WRF.themes.materialize = {
     }
   },
 
+  label: {
+    cssClass: 'label',
+
+    active: {
+      cssClass: 'active'
+    }
+  },
+
   button: {
     cssClass: 'button btn waves-effect waves-light',
 
@@ -620,6 +628,10 @@ var FormErrorHandlerMixin = {
     return React.createElement(Flash, {type: "error", message: this.flashErrorMessage(), dismissed: false});
   },
 
+  clearErrors: function() {
+    this.setState({errors: {}});
+  },
+
   handleError: function(xhr, status, error) {
     this.setState({isLoading: false});
     if(this.props.onError(xhr, status, error)) {
@@ -804,10 +816,7 @@ var GridFormActionsMixin = {
   },
 
   getGridFormActionButtons: function() {
-    var actionButtons = this.props.actionButtons;
-    if(!$.isPlainObject(actionButtons)) {
-      actionButtons = {};
-    }
+    var actionButtons = this.props.actionButtons || {};
 
     if(!actionButtons.member) {
       actionButtons.member = this.getDefaultMemberActionButtons();
@@ -840,8 +849,11 @@ var GridFormActionsMixin = {
   editAction: function(event, id, data) {
     this.setState({
       formAction: 'update',
-      selectedRowId: id
-    })
+      selectedRowId: id,
+      selectedDataRow: data
+    });
+
+    this.clearFormErrors();
   },
 
   destroyAction: function(event, id) {
@@ -873,7 +885,7 @@ var InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
     placeholder: React.PropTypes.string,
     errors: React.PropTypes.node,
@@ -882,34 +894,48 @@ var InputComponentMixin = {
 
   getDefaultProps: function() {
     return {
+      value: null,
       disabled: false,
-      onChange: function(event) {
-        return true;
-      },
+      onChange: function(event) { return true; },
       errors: []
     };
   },
 
   getInitialState: function() {
     return {
-      themeClassKey: this.setThemeClassKeyWithErrors(this.props)
+      value: this.props.value
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
     this.setState({
-      themeClassKey: this.setThemeClassKeyWithErrors(nextProps)
+      value: nextProps.value
     });
   },
 
-  setThemeClassKeyWithErrors: function(props) {
-    var themeClassKey = (props.themeClassKey || '');
-    var errors = props.errors;
+  _handleChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      var value = event.target.value;
+      this.setState({value: value});
+    }
+  },
+
+  inputClassName: function() {
+    var className = this.className();
+    var errors = this.props.errors;
+    var value = this.props.value;
+
     if(!!errors && errors.length > 0) {
-      themeClassKey += ' input.error';
+      className += ' ' + WRF.themeClass('input.error');
     }
 
-    return themeClassKey;
+    if(!!value) {
+      className += ' ' + WRF.themeClass('input.active');
+    }
+
+    return className;
   }
 };
 var MaterializeSelectMixin = {
@@ -976,9 +1002,25 @@ var SelectComponentMixin = {
   },
 
   componentWillMount: function() {
+    // SelecComponent alwalys handle value as an array.
+    this.state.value = this.ensureIsArray(this.state.value);
+
     if(!!this.props.dependsOn) {
       this.state.disabled = true;
     }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var nextValue = this.ensureIsArray(nextProps.value);
+    var valueChanged = (nextValue !== this.state.value);
+
+    this.setState({
+      value: nextValue
+    }, function() {
+      if(valueChanged) {
+        this.triggerDependableChanged();
+      }
+    });
   },
 
   componentDidMount: function() {
@@ -989,6 +1031,31 @@ var SelectComponentMixin = {
         this.loadOptions();
       }
     }
+
+    if(this.state.value.length > 0) {
+      this.triggerDependableChanged();
+    }
+  },
+
+  ensureIsArray: function(value) {
+    if(!value) {
+      value = [];
+    } else if(!$.isArray(value)) {
+      value = [value];
+    }
+    return value;
+  },
+
+  selectedOptions: function() {
+    var selectedOptions = [];
+    $.each(this.state.options, function(i, option){
+      if(this.state.value.indexOf(option.value) >= 0) {
+        selectedOptions.push(option);
+      }
+    }.bind(this));
+
+
+    return selectedOptions;
   },
 
   loadOptions: function() {
@@ -1009,7 +1076,7 @@ var SelectComponentMixin = {
       var dataItem = data[i];
       var option = {
         name: String(dataItem[this.props.nameField]),
-        value: String(dataItem[this.props.valueField])
+        value: dataItem[this.props.valueField]
       };
 
       options.push(option);
@@ -1036,9 +1103,19 @@ var SelectComponentMixin = {
       }
 
       this.state.loadParams[paramName] = dependableValue;
-      this.state.selectedOptions = [];
       this.loadOptions();
     }.bind(this));
+  },
+
+  triggerDependableChanged: function() {
+    var $valuesElement = $(React.findDOMNode(this.refs.select));
+    var optionValues = this.state.value;
+
+    if(optionValues.length == 1) {
+      optionValues = optionValues[0];
+    }
+
+    $valuesElement.trigger('dependable_changed', [optionValues]);
   },
 
   emptyAndDisable: function() {
@@ -1320,6 +1397,7 @@ var Form = React.createClass({displayName: "Form",
 
   propTypes: {
     inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
@@ -1335,6 +1413,7 @@ var Form = React.createClass({displayName: "Form",
   getDefaultProps: function() {
     return {
       inputs: {},
+      data: {},
       action: '',
       method: 'POST',
       dataType: undefined,
@@ -1359,7 +1438,7 @@ var Form = React.createClass({displayName: "Form",
   },
 
   propsToForward: function() {
-    return ['resource'];
+    return ['resource', 'data'];
   },
 
   propsToForwardMapping: function() {
@@ -1466,6 +1545,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 
   propTypes: {
     inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
@@ -1476,6 +1556,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
   getDefaultProps: function() {
     return {
       inputs: {},
+      data: {},
       errors: {},
       formStyle: 'default',
       resource: null,
@@ -1520,7 +1601,8 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 
         inputComponents.push(
           React.createElement(Input, React.__spread({},  inputProps, 
-            {errors: this.props.errors, 
+            {data: this.props.data, 
+            errors: this.props.errors, 
             resource: this.props.resource, 
             formStyle: this.props.formStyle, 
             key: "input_" + inputIndex, 
@@ -2077,6 +2159,7 @@ var GridForm = React.createClass({displayName: "GridForm",
   getInitialState: function() {
     return {
       formAction: 'create',
+      selectedDataRow: null,
       selectedRowId: null,
       isLoading: this.props.isLoading
     };
@@ -2097,6 +2180,7 @@ var GridForm = React.createClass({displayName: "GridForm",
               style: "filter"}, 
               this.props.form, 
               {action: this.getFormAction(), 
+              data: this.state.selectedDataRow, 
               method: this.getFormMethod(), 
               submitButton: this.getFormSubmitButton(), 
               otherButtons: this.getFormOtherButtons(), 
@@ -2158,9 +2242,11 @@ var GridForm = React.createClass({displayName: "GridForm",
   onReset: function(event) {
     this.setState({
       formAction: 'create',
-      selectedRowId: null
+      selectedRowId: null,
+      selectedDataRow: null
     });
 
+    this.clearFormErrors();
     this.props.onReset(event);
   },
 
@@ -2183,6 +2269,11 @@ var GridForm = React.createClass({displayName: "GridForm",
   resetForm: function() {
     var formNode = React.findDOMNode(this.refs.form);
     formNode.reset();
+  },
+
+  clearFormErrors: function() {
+    var formRef = this.refs.form;
+    formRef.clearErrors();
   }
 
 
@@ -2450,8 +2541,8 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
 
   getInitialState: function() {
     return {
-      selectedOptions: [],
-      active: 0
+      active: 0,
+      searchValue: ''
     };
   },
 
@@ -2460,13 +2551,15 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   },
 
   componentDidMount: function() {
-    var valuesField = React.findDOMNode(this.refs.valuesField);
-    var $form = $(valuesField.form);
-    $form.on('reset', function(){
-      this.setState({
-        selectedOptions: []
-      });
-    }.bind(this));
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.off('reset', this.clearSelection);
   },
 
   render: function() {
@@ -2475,17 +2568,18 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
         React.createElement(InputAutocompleteSelect, React.__spread({}, 
           this.propsWithoutCSS(), 
           {disabled: this.state.disabled, 
-          selectedOptions: this.state.selectedOptions, 
+          selectedOptions: this.selectedOptions(), 
           onFocus: this.showResult})
         ), 
 
         React.createElement(InputAutocompleteResult, {
           id: this.props.id, 
-          selectedOptions: this.state.selectedOptions, 
+          selectedOptions: this.selectedOptions(), 
           options: this.state.options, 
           active: this.state.active, 
+          searchValue: this.state.searchValue, 
           onKeyDown: this.handleSearchNavigation, 
-          onKeyUp: this.searchOptions, 
+          onChange: this.searchOptions, 
           onSelect: this.handleSelect, 
           onClear: this.clearSelection, 
           onOptionMouseEnter: this.handleOptionMouseEnter, 
@@ -2496,8 +2590,8 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
           id: this.props.id, 
           name: this.props.name, 
           multiple: this.props.multiple, 
-          selectedOptions: this.state.selectedOptions, 
-          ref: "valuesField"}
+          selectedOptions: this.selectedOptions(), 
+          ref: "select"}
         )
       )
     );
@@ -2524,19 +2618,14 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
 
     this.state.loadParams[this.props.searchParam] = '';
     this.setState({
-      active: 0,
-      selectedOptions: $.map(this.state.selectedOptions, function(option) {
-        option.showOnTop = true;
-        return option;
-      })
+      active: 0
     });
-    this.loadOptions();
   },
 
   showResult: function(event) {
     if(this.state.disabled) {
       return;
-    }
+    } 
 
     $(document).on('click', this.handleDocumentClick);
     var $resultNode = $(React.findDOMNode(this.refs.result));
@@ -2549,7 +2638,8 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   searchOptions: function(event) {
     var $searchInput = $(event.currentTarget);
 
-    this.state.loadParams[this.props.searchParam] = $searchInput.val();
+    this.state.searchValue = $searchInput.val();
+    this.state.loadParams[this.props.searchParam] = this.state.searchValue;
     this.loadOptions();
   },
 
@@ -2597,7 +2687,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
 
   clearSelection: function() {
     this.setState({
-      selectedOptions: []
+      value: []
     });
   },
 
@@ -2608,58 +2698,20 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   },
 
   handleSelect: function(option) {
-    if(this.props.multiple) {
-      this.handleMultipleSelect(option);
+    var optionIndex = this.state.value.indexOf(option.value);
+
+    if(optionIndex < 0) {
+      if(!this.props.multiple) {
+        this.state.value = [];
+      }
+
+      this.state.value.push(option.value);
     } else {
-      this.handleSingleSelect(option);
+      this.state.value.splice(optionIndex, 1);
     }
 
+    this.forceUpdate();
     this.triggerDependableChanged();
-  },
-
-  handleMultipleSelect: function(option) {
-    var optionIndex = this.selectedOptionIndex(option);
-
-    if(optionIndex < 0) {
-      this.state.selectedOptions.push(option);
-    } else {
-      this.state.selectedOptions.splice(optionIndex, 1);
-    }
-
-    this.forceUpdate();
-  },
-
-  handleSingleSelect: function(option) {
-    var optionIndex = this.selectedOptionIndex(option);
-    var newSelectedOptions = [];
-
-    if(optionIndex < 0) {
-      newSelectedOptions.push(option);
-    }
-
-    this.state.selectedOptions = newSelectedOptions;
-    this.forceUpdate();
-  },
-
-  selectedOptionIndex: function(option) {
-    var optionValues = $.map(this.state.selectedOptions, function(option) {
-      return option.value;
-    });
-
-    return optionValues.indexOf(option.value);
-  },
-
-  triggerDependableChanged: function() {
-    var $valuesElement = $(React.findDOMNode(this.refs.valuesField));
-    var optionValues = $.map(this.state.selectedOptions, function(option) {
-      return option.value;
-    });
-
-    if(optionValues.length == 1) {
-      optionValues = optionValues[0];
-    }
-
-    $valuesElement.trigger('dependable_changed', [optionValues]);
   }
 
 });
@@ -2758,7 +2810,7 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.node,
     selected: React.PropTypes.bool,
     position: React.PropTypes.number,
     isActive: React.PropTypes.bool,
@@ -2838,8 +2890,9 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
     options: React.PropTypes.array,
     selectedOptions: React.PropTypes.array,
     active: React.PropTypes.number,
+    searchValue: React.PropTypes.string,
     onKeyDown: React.PropTypes.func,
-    onKeyUp: React.PropTypes.func,
+    onChange: React.PropTypes.func,
     onSelect: React.PropTypes.func,
     onClear: React.PropTypes.func,
     onOptionMouseEnter: React.PropTypes.func
@@ -2858,7 +2911,7 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
       React.createElement("div", {className: this.className()}, 
         React.createElement("div", {className: "input-autocomplete__search"}, 
           React.createElement(Icon, {type: "search", className: "prefix"}), 
-          React.createElement(InputText, {onKeyDown: this.props.onKeyDown, onKeyUp: this.props.onKeyUp, autoComplete: "off"})
+          React.createElement(InputText, {onKeyDown: this.props.onKeyDown, value: this.props.searchValue, onChange: this.props.onChange, autoComplete: "off"})
         ), 
 
         React.createElement("a", {href: "#!", className: "input-autocomplete__clear-button", onClick: this.props.onClear}, 
@@ -3010,14 +3063,21 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
     };
   },
 
-  render: function() {
-    return (
-      React.createElement("input", React.__spread({},  this.props, {type: "checkbox", className: this.className(), onChange: this.handleChange, ref: "input"}))
-    );
+  componentDidMount: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    inputNode.indeterminate = this.props.renderAsIndeterminate;
   },
 
-  handleChange: function(event) {
-    this.props.onChange(event);
+  render: function() {
+    return (
+      React.createElement("input", React.__spread({},  this.props, 
+        {value: this.state.value, 
+        className: this.inputClassName(), 
+        onChange: this._handleChange, 
+        type: "checkbox", 
+        ref: "input"})
+      )
+    );
   }
 
 });
@@ -3103,6 +3163,7 @@ var Input = React.createClass({displayName: "Input",
     label: React.PropTypes.string,
     value: React.PropTypes.string,
     formStyle: React.PropTypes.string,
+    data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     component: React.PropTypes.string,
@@ -3114,6 +3175,7 @@ var Input = React.createClass({displayName: "Input",
       value: null,
       component: 'text',
       formStyle: 'default',
+      data: {},
       errors: {},
       resource: null,
       componentMapping: function(component) {
@@ -3189,10 +3251,11 @@ var Input = React.createClass({displayName: "Input",
 
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
-    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), {
+    var componentInputProps = React.__spread(this.propsWithoutCSS(), {
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),
+      value: this.getInputComponentValue(),
       ref: "inputComponent"
     });
 
@@ -3200,8 +3263,11 @@ var Input = React.createClass({displayName: "Input",
   },
 
   renderLabel: function() {
+    var inputValue = this.getInputComponentValue();
+    var isActive = (!!inputValue && String(inputValue).length > 0);
+
     return (
-      React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.getInputComponentId()}))
+      React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.getInputComponentId(), active: isActive}))
     );
   },
 
@@ -3225,6 +3291,15 @@ var Input = React.createClass({displayName: "Input",
     }
 
     return inputName;
+  },
+
+  getInputComponentValue: function() {
+    if(!!this.props.value) {
+      return this.props.value;
+    }
+
+    var data = this.props.data || {};
+    return data[this.props.id];
   },
 
   getInputErrors: function() {
@@ -3368,7 +3443,7 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {className: this.className(), ref: "inputMasked", type: "text"}), 
+      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "inputMasked", type: "text"}), 
         this.props.children
       )
     );
@@ -3448,7 +3523,7 @@ var InputPassword = React.createClass({displayName: "InputPassword",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {type: "password", className: this.className(), ref: "input"}))
+      React.createElement("input", React.__spread({},  this.props, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, type: "password", ref: "input"}))
     );
   }
 });
@@ -3468,7 +3543,7 @@ var InputText = React.createClass({displayName: "InputText",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {className: this.className(), ref: "input"}))
+      React.createElement("input", React.__spread({},  this.props, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "input"}))
     );
   }
 });
@@ -3488,7 +3563,12 @@ var InputTextarea = React.createClass({displayName: "InputTextarea",
 
   render: function() {
     return (
-      React.createElement("textarea", React.__spread({},  this.props, {className: this.className(), ref: "input"}))
+      React.createElement("textarea", React.__spread({},  this.props, 
+        {value: this.state.value, 
+        className: this.inputClassName(), 
+        onChange: this._handleChange, 
+        ref: "input"})
+      )
     );
   }
 });
@@ -3607,11 +3687,12 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   },
 
   handleChange: function(event) {
+    this._handleChange(event);
+
     var selectElement = React.findDOMNode(this.refs.select);
     var $selectElement = $(selectElement);
 
     $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(event);
   }
 
 });
@@ -3633,19 +3714,43 @@ var Label = React.createClass({displayName: "Label",
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.string,
+    active: React.PropTypes.bool,
     onClick: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
+      active: false,
       name: '',
-      label: ''
+      label: '',
+      themeClassKey: 'label'
     };
+  },
+
+  getInitialState: function() {
+    return {
+      themeClassKey: this.getLabelThemeClassKey(this.props)
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      themeClassKey: this.getLabelThemeClassKey(nextProps)
+    });
+  },
+
+  getLabelThemeClassKey: function(props) {
+    var themeClassKey = props.themeClassKey;
+    if(props.active) {
+      themeClassKey += ' label.active';
+    }
+
+    return themeClassKey;
   },
 
   render: function() {
     return (
-      React.createElement("label", {htmlFor: this.props.id, onClick: this.props.onClick}, 
+      React.createElement("label", {htmlFor: this.props.id, onClick: this.props.onClick, className: this.className()}, 
         (this.props.label || this.props.name)
       )
     );
@@ -4615,7 +4720,7 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
-      buttonOnClick(event, dataRowId);
+      buttonOnClick(event, dataRowId, this.props.data);
     } else if(!!buttonHref) {
       window.location = buttonHref;
     }

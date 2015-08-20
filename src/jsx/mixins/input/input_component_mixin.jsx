@@ -2,7 +2,7 @@ var InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
     placeholder: React.PropTypes.string,
     errors: React.PropTypes.node,
@@ -11,33 +11,47 @@ var InputComponentMixin = {
 
   getDefaultProps: function() {
     return {
+      value: null,
       disabled: false,
-      onChange: function(event) {
-        return true;
-      },
+      onChange: function(event) { return true; },
       errors: []
     };
   },
 
   getInitialState: function() {
     return {
-      themeClassKey: this.setThemeClassKeyWithErrors(this.props)
+      value: this.props.value
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
     this.setState({
-      themeClassKey: this.setThemeClassKeyWithErrors(nextProps)
+      value: nextProps.value
     });
   },
 
-  setThemeClassKeyWithErrors: function(props) {
-    var themeClassKey = (props.themeClassKey || '');
-    var errors = props.errors;
+  _handleChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      var value = event.target.value;
+      this.setState({value: value});
+    }
+  },
+
+  inputClassName: function() {
+    var className = this.className();
+    var errors = this.props.errors;
+    var value = this.props.value;
+
     if(!!errors && errors.length > 0) {
-      themeClassKey += ' input.error';
+      className += ' ' + WRF.themeClass('input.error');
     }
 
-    return themeClassKey;
+    if(!!value) {
+      className += ' ' + WRF.themeClass('input.active');
+    }
+
+    return className;
   }
 };

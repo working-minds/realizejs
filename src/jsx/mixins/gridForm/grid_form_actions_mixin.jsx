@@ -10,10 +10,7 @@ var GridFormActionsMixin = {
   },
 
   getGridFormActionButtons: function() {
-    var actionButtons = this.props.actionButtons;
-    if(!$.isPlainObject(actionButtons)) {
-      actionButtons = {};
-    }
+    var actionButtons = this.props.actionButtons || {};
 
     if(!actionButtons.member) {
       actionButtons.member = this.getDefaultMemberActionButtons();
@@ -46,8 +43,11 @@ var GridFormActionsMixin = {
   editAction: function(event, id, data) {
     this.setState({
       formAction: 'update',
-      selectedRowId: id
-    })
+      selectedRowId: id,
+      selectedDataRow: data
+    });
+
+    this.clearFormErrors();
   },
 
   destroyAction: function(event, id) {

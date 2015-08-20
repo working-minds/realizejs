@@ -29,6 +29,10 @@ var FormErrorHandlerMixin = {
     return <Flash type="error" message={this.flashErrorMessage()} dismissed={false} />;
   },
 
+  clearErrors: function() {
+    this.setState({errors: {}});
+  },
+
   handleError: function(xhr, status, error) {
     this.setState({isLoading: false});
     if(this.props.onError(xhr, status, error)) {

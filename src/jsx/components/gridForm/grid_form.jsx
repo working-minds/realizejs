@@ -60,6 +60,7 @@ var GridForm = React.createClass({
   getInitialState: function() {
     return {
       formAction: 'create',
+      selectedDataRow: null,
       selectedRowId: null,
       isLoading: this.props.isLoading
     };
@@ -80,6 +81,7 @@ var GridForm = React.createClass({
               style={"filter"}
               {...this.props.form}
               action={this.getFormAction()}
+              data={this.state.selectedDataRow}
               method={this.getFormMethod()}
               submitButton={this.getFormSubmitButton()}
               otherButtons={this.getFormOtherButtons()}
@@ -141,9 +143,11 @@ var GridForm = React.createClass({
   onReset: function(event) {
     this.setState({
       formAction: 'create',
-      selectedRowId: null
+      selectedRowId: null,
+      selectedDataRow: null
     });
 
+    this.clearFormErrors();
     this.props.onReset(event);
   },
 
@@ -166,6 +170,11 @@ var GridForm = React.createClass({
   resetForm: function() {
     var formNode = React.findDOMNode(this.refs.form);
     formNode.reset();
+  },
+
+  clearFormErrors: function() {
+    var formRef = this.refs.form;
+    formRef.clearErrors();
   }
 
 

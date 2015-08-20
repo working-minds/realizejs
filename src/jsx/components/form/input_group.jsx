@@ -3,6 +3,7 @@ var InputGroup = React.createClass({
 
   propTypes: {
     inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
@@ -13,6 +14,7 @@ var InputGroup = React.createClass({
   getDefaultProps: function() {
     return {
       inputs: {},
+      data: {},
       errors: {},
       formStyle: 'default',
       resource: null,
@@ -57,6 +59,7 @@ var InputGroup = React.createClass({
 
         inputComponents.push(
           <Input {...inputProps}
+            data={this.props.data}
             errors={this.props.errors}
             resource={this.props.resource}
             formStyle={this.props.formStyle}

@@ -33,9 +33,25 @@ var SelectComponentMixin = {
   },
 
   componentWillMount: function() {
+    // SelecComponent alwalys handle value as an array.
+    this.state.value = this.ensureIsArray(this.state.value);
+
     if(!!this.props.dependsOn) {
       this.state.disabled = true;
     }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var nextValue = this.ensureIsArray(nextProps.value);
+    var valueChanged = (nextValue !== this.state.value);
+
+    this.setState({
+      value: nextValue
+    }, function() {
+      if(valueChanged) {
+        this.triggerDependableChanged();
+      }
+    });
   },
 
   componentDidMount: function() {
@@ -46,6 +62,31 @@ var SelectComponentMixin = {
         this.loadOptions();
       }
     }
+
+    if(this.state.value.length > 0) {
+      this.triggerDependableChanged();
+    }
+  },
+
+  ensureIsArray: function(value) {
+    if(!value) {
+      value = [];
+    } else if(!$.isArray(value)) {
+      value = [value];
+    }
+    return value;
+  },
+
+  selectedOptions: function() {
+    var selectedOptions = [];
+    $.each(this.state.options, function(i, option){
+      if(this.state.value.indexOf(option.value) >= 0) {
+        selectedOptions.push(option);
+      }
+    }.bind(this));
+
+
+    return selectedOptions;
   },
 
   loadOptions: function() {
@@ -66,7 +107,7 @@ var SelectComponentMixin = {
       var dataItem = data[i];
       var option = {
         name: String(dataItem[this.props.nameField]),
-        value: String(dataItem[this.props.valueField])
+        value: dataItem[this.props.valueField]
       };
 
       options.push(option);
@@ -93,9 +134,19 @@ var SelectComponentMixin = {
       }
 
       this.state.loadParams[paramName] = dependableValue;
-      this.state.selectedOptions = [];
       this.loadOptions();
     }.bind(this));
+  },
+
+  triggerDependableChanged: function() {
+    var $valuesElement = $(React.findDOMNode(this.refs.select));
+    var optionValues = this.state.value;
+
+    if(optionValues.length == 1) {
+      optionValues = optionValues[0];
+    }
+
+    $valuesElement.trigger('dependable_changed', [optionValues]);
   },
 
   emptyAndDisable: function() {

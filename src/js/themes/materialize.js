@@ -156,6 +156,14 @@ WRF.themes.materialize = {
     }
   },
 
+  label: {
+    cssClass: 'label',
+
+    active: {
+      cssClass: 'active'
+    }
+  },
+
   button: {
     cssClass: 'button btn waves-effect waves-light',
 

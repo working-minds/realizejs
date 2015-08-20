@@ -5,8 +5,9 @@ var InputAutocompleteResult = React.createClass({
     options: React.PropTypes.array,
     selectedOptions: React.PropTypes.array,
     active: React.PropTypes.number,
+    searchValue: React.PropTypes.string,
     onKeyDown: React.PropTypes.func,
-    onKeyUp: React.PropTypes.func,
+    onChange: React.PropTypes.func,
     onSelect: React.PropTypes.func,
     onClear: React.PropTypes.func,
     onOptionMouseEnter: React.PropTypes.func
@@ -25,7 +26,7 @@ var InputAutocompleteResult = React.createClass({
       <div className={this.className()}>
         <div className="input-autocomplete__search">
           <Icon type="search" className="prefix" />
-          <InputText onKeyDown={this.props.onKeyDown} onKeyUp={this.props.onKeyUp} autoComplete="off" />
+          <InputText onKeyDown={this.props.onKeyDown} value={this.props.searchValue} onChange={this.props.onChange} autoComplete="off" />
         </div>
 
         <a href="#!" className="input-autocomplete__clear-button" onClick={this.props.onClear}>

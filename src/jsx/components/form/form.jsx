@@ -8,6 +8,7 @@ var Form = React.createClass({
 
   propTypes: {
     inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
@@ -23,6 +24,7 @@ var Form = React.createClass({
   getDefaultProps: function() {
     return {
       inputs: {},
+      data: {},
       action: '',
       method: 'POST',
       dataType: undefined,
@@ -47,7 +49,7 @@ var Form = React.createClass({
   },
 
   propsToForward: function() {
-    return ['resource'];
+    return ['resource', 'data'];
   },
 
   propsToForwardMapping: function() {
