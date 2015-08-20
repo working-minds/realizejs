@@ -145,7 +145,7 @@ var Table = React.createClass({
 
     return (
       <tr>
-        <td colSpan={columnsCount}>{this.props.emptyMessage}</td>
+        <td colSpan={columnsCount} className="empty-message">{this.props.emptyMessage}</td>
       </tr>
     );
   },

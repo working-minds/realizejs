@@ -6,6 +6,10 @@ WRF.themes.materialize = {
       cssClass: 'grid__actions col s12'
     },
 
+    selectionIndicator: {
+      cssClass: 'grid__selection-indicator'
+    },
+
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
@@ -22,7 +26,7 @@ WRF.themes.materialize = {
   },
 
   table: {
-    cssClass: 'striped responsive-table',
+    cssClass: 'table striped responsive-table',
 
     header: {
       cssClass: 'table-header',
@@ -77,8 +81,16 @@ WRF.themes.materialize = {
     },
 
     inputGroup: {
-      cssClass: 'form__input-group section'
+      cssClass: 'form__input-group',
+
+      section: {
+        cssClass: 'section'
+      }
     }
+  },
+
+  gridForm: {
+    cssClass: 'grid-form'
   },
 
   input: {
@@ -144,11 +156,23 @@ WRF.themes.materialize = {
     }
   },
 
+  label: {
+    cssClass: 'label',
+
+    active: {
+      cssClass: 'active'
+    }
+  },
+
   button: {
     cssClass: 'button btn waves-effect waves-light',
 
     floating: {
       cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
+    },
+
+    flat: {
+      cssClass: 'button button--flat btn-flat waves-effect waves-grey'
     },
 
     iconOnly: {

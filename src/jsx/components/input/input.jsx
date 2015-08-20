@@ -6,6 +6,7 @@ var Input = React.createClass({
     label: React.PropTypes.string,
     value: React.PropTypes.string,
     formStyle: React.PropTypes.string,
+    data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     component: React.PropTypes.string,
@@ -17,6 +18,7 @@ var Input = React.createClass({
       value: null,
       component: 'text',
       formStyle: 'default',
+      data: {},
       errors: {},
       resource: null,
       componentMapping: function(component) {
@@ -92,10 +94,11 @@ var Input = React.createClass({
 
   renderComponentInput: function() {
     var componentInputClass = this.props.componentMapping(this.props.component);
-    var componentInputProps = React.__spread({}, this.propsWithoutCSS(), {
+    var componentInputProps = React.__spread(this.propsWithoutCSS(), {
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),
+      value: this.getInputComponentValue(),
       ref: "inputComponent"
     });
 
@@ -103,8 +106,11 @@ var Input = React.createClass({
   },
 
   renderLabel: function() {
+    var inputValue = this.getInputComponentValue();
+    var isActive = (!!inputValue && String(inputValue).length > 0);
+
     return (
-      <Label {...this.propsWithoutCSS()} id={this.getInputComponentId()} />
+      <Label {...this.propsWithoutCSS()} id={this.getInputComponentId()} active={isActive} />
     );
   },
 
@@ -128,6 +134,15 @@ var Input = React.createClass({
     }
 
     return inputName;
+  },
+
+  getInputComponentValue: function() {
+    if(!!this.props.value) {
+      return this.props.value;
+    }
+
+    var data = this.props.data || {};
+    return data[this.props.id];
   },
 
   getInputErrors: function() {

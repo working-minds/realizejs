@@ -3,7 +3,7 @@ var InputAutocompleteOption = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.node,
     selected: React.PropTypes.bool,
     position: React.PropTypes.number,
     isActive: React.PropTypes.bool,

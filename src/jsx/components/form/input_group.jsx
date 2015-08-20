@@ -3,6 +3,7 @@ var InputGroup = React.createClass({
 
   propTypes: {
     inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
@@ -13,6 +14,7 @@ var InputGroup = React.createClass({
   getDefaultProps: function() {
     return {
       inputs: {},
+      data: {},
       errors: {},
       formStyle: 'default',
       resource: null,
@@ -24,7 +26,7 @@ var InputGroup = React.createClass({
   render: function() {
     return (
       <div>
-        <div className={this.className()}>
+        <div className={this.inputGroupClassName()}>
           {this.renderLabel()}
           {this.renderInputs()}
           {this.props.children}
@@ -32,6 +34,15 @@ var InputGroup = React.createClass({
         {this.renderDivider()}
       </div>
     );
+  },
+
+  inputGroupClassName: function() {
+    var className = this.className();
+    if(this.props.label !== null) {
+      className += ' ' + WRF.themeClass('form.inputGroup.section');
+    }
+
+    return className;
   },
 
   renderInputs: function() {
@@ -48,6 +59,7 @@ var InputGroup = React.createClass({
 
         inputComponents.push(
           <Input {...inputProps}
+            data={this.props.data}
             errors={this.props.errors}
             resource={this.props.resource}
             formStyle={this.props.formStyle}

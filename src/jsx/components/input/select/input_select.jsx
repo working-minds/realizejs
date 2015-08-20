@@ -49,11 +49,12 @@ var InputSelect = React.createClass({
   },
 
   handleChange: function(event) {
+    this._handleChange(event);
+
     var selectElement = React.findDOMNode(this.refs.select);
     var $selectElement = $(selectElement);
 
     $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(event);
   }
 
 });

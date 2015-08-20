@@ -1,22 +1,29 @@
 var Grid = React.createClass({
   mixins: [
     CssClassMixin,
+    RestActionsMixin,
     GridActionsMixin
   ],
+
   propTypes: {
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
-    filterForm: React.PropTypes.object,
+    filter: React.PropTypes.object,
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
-    countParam: React.PropTypes.string
+    countParam: React.PropTypes.string,
+    isLoading: React.PropTypes.bool,
+    selectable: React.PropTypes.bool,
+    onLoadSuccess: React.PropTypes.func,
+    onLoadError: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'grid',
       paginationConfigs: {
         param: 'p',
         perPage: 20,
@@ -27,21 +34,20 @@ var Grid = React.createClass({
         valueFormat: '%{field} %{direction}'
       },
       sortData: {},
-      filterForm: {
-        inputs: {
-          name: { label: 'Nome' }
-        }
-      },
+      filter: {},
       columns: {
         name: { label: 'Nome' }
       },
       dataRowsParam: 'data',
       countParam: 'count',
-      themeClassKey: 'grid',
       data: {
         dataRows: [],
         count: 0
-      }
+      },
+      isLoading: false,
+      selectable: true,
+      onLoadSuccess: function(data) {},
+      onLoadError: function(xhr, status, error) {}
     };
   },
 
@@ -53,17 +59,17 @@ var Grid = React.createClass({
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      isLoading: false
+      isLoading: this.props.isLoading
     };
   },
 
   render: function() {
     return (
       <div className={this.gridClassName()}>
-        {this.renderCollectionActionButtons()}
         {this.renderFilter()}
 
         {this.renderPagination()}
+        {this.renderActions()}
         {this.renderTable()}
         {this.renderPagination()}
       </div>
@@ -80,9 +86,13 @@ var Grid = React.createClass({
   },
 
   renderFilter: function() {
+    if($.isEmptyObject(this.props.filter)) {
+      return '';
+    }
+
     return (
       <GridFilter
-        {...this.props.filterForm}
+        {...this.props.filter}
         url={this.props.url}
         isLoading={this.state.isLoading}
         onSubmit={this.onFilterSubmit}
@@ -97,6 +107,7 @@ var Grid = React.createClass({
         sortConfigs={this.props.sortConfigs}
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
+        selectable={this.props.selectable}
         selectedDataRowIds={this.state.selectedDataRowIds}
         actionButtons={this.getMemberActionButtons()}
         onSort={this.onSort}
@@ -123,7 +134,6 @@ var Grid = React.createClass({
   },
 
   onPagination: function(page) {
-    this.setState({isLoading: true});
     this.state.page = page;
     this.loadData();
   },
@@ -131,7 +141,6 @@ var Grid = React.createClass({
   onFilterSubmit: function(event, postData) {
     event.preventDefault();
 
-    this.setState({isLoading: true});
     this.state.selectedDataRowIds = [];
     this.state.filterData = postData;
     this.state.page = 1;
@@ -139,7 +148,6 @@ var Grid = React.createClass({
   },
 
   onSort: function(sortData) {
-    this.setState({isLoading: true});
     this.state.sortData = sortData;
     this.state.page = 1;
     this.loadData();
@@ -154,6 +162,7 @@ var Grid = React.createClass({
   },
 
   loadData: function() {
+    this.setState({isLoading: true});
     var postData = this.buildPostData();
 
     $.ajax({
@@ -167,6 +176,7 @@ var Grid = React.createClass({
   },
 
   handleLoad: function(data) {
+    this.props.onLoadSuccess(data);
     this.setState({
       isLoading: false,
       dataRows: data[this.props.dataRowsParam],
@@ -175,6 +185,7 @@ var Grid = React.createClass({
   },
 
   handleLoadError: function(xhr, status, error) {
+    this.props.onLoadError(data);
     this.setState({isLoading: false});
     console.log('Grid Load error:' + error);
   },

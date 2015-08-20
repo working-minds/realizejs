@@ -18,9 +18,9 @@ var TableRowActions = React.createClass({
 
   render: function() {
     return (
-      <div className={this.className()} {...this.props}>
+      <td className={this.className()}>
         {this.renderButtons()}
-      </div>
+      </td>
     );
   },
 
@@ -30,7 +30,14 @@ var TableRowActions = React.createClass({
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(<Button {...actionButtonProps} onClick={this.handleActionClick.bind(this, actionButtonProps)} key={"action_" + i} />);
+      actionButtons.push(
+        <Button {...actionButtonProps}
+          onClick={this.handleActionClick.bind(this, actionButtonProps)}
+          themeClassKey={"button.flat"}
+          element={"a"}
+          key={"action_" + i}
+        />
+      );
     }
 
     return actionButtons;
@@ -42,7 +49,7 @@ var TableRowActions = React.createClass({
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
-      buttonOnClick(event, dataRowId);
+      buttonOnClick(event, dataRowId, this.props.data);
     } else if(!!buttonHref) {
       window.location = buttonHref;
     }

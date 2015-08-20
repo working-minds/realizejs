@@ -11,14 +11,21 @@ var InputCheckbox = React.createClass({
     };
   },
 
-  render: function() {
-    return (
-      <input {...this.props} type="checkbox" className={this.className()} onChange={this.handleChange} ref="input" />
-    );
+  componentDidMount: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    inputNode.indeterminate = this.props.renderAsIndeterminate;
   },
 
-  handleChange: function(event) {
-    this.props.onChange(event);
+  render: function() {
+    return (
+      <input {...this.props}
+        value={this.state.value}
+        className={this.inputClassName()}
+        onChange={this._handleChange}
+        type="checkbox"
+        ref="input"
+      />
+    );
   }
 
 });

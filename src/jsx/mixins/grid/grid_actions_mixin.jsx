@@ -1,26 +1,16 @@
 var GridActionsMixin = {
   propTypes: {
-    actionButtons: React.PropTypes.object,
-    actionUrls: React.PropTypes.object,
-    destroyConfirm: React.PropTypes.node
+    actionButtons: React.PropTypes.object
   },
 
   getDefaultProps: function() {
     return {
-      actionButtons: null,
-      actionUrls: {
-        index: ':url.json',
-        show: ':url/:id',
-        add: ':url/new',
-        edit: ':url/:id/edit',
-        destroy: ':url/:id'
-      },
-      destroyConfirm: 'Tem certeza que deseja remover este item?'
+      actionButtons: null
     };
   },
 
   getMemberActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
+    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.member) {
       return this.props.actionButtons.member;
     } else {
       return this.getDefaultMemberActionButtons();
@@ -35,14 +25,13 @@ var GridActionsMixin = {
       },
       {
         icon: 'destroy',
-        style: 'danger',
         onClick: this.destroyAction
       }
-    ]
+    ];
   },
 
   getCollectionActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons)) {
+    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.collection) {
       return this.props.actionButtons.collection;
     } else {
       return this.getDefaultCollectionActionButtons();
@@ -52,21 +41,30 @@ var GridActionsMixin = {
   getDefaultCollectionActionButtons: function() {
     return [
       {
-        icon: 'add',
-        themeClassKey: "button.floating",
-        context: '',
+        name: 'Novo',
+        context: 'none',
         onClick: this.addAction
       }
-    ]
+    ];
   },
 
-  renderCollectionActionButtons: function() {
+  renderActions: function() {
     var collectionActionButtons = this.getCollectionActionButtons();
-    if(!collectionActionButtons || collectionActionButtons.length === 0) {
-      return '';
-    }
 
-    return <GridActions actionButtons={collectionActionButtons} />;
+    return (
+      <GridActions
+        dataRows={this.state.dataRows}
+        selectedDataRowIds={this.state.selectedDataRowIds}
+        onRemoveSelection={this.removeSelection}
+        actionButtons={collectionActionButtons}
+      />
+    );
+  },
+
+  removeSelection: function() {
+    this.setState({
+      selectedDataRowIds: []
+    });
   },
 
   addAction: function(event) {
@@ -79,27 +77,18 @@ var GridActionsMixin = {
 
   destroyAction: function(event, id) {
     var destroyUrl = this.getActionUrl('destroy', id);
+    var destroyMethod = this.getActionMethod('destroy');
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
 
       $.ajax({
         url: destroyUrl,
-        method: 'DELETE',
+        method: destroyMethod,
         success: this.handleDestroy,
         error: this.handleDestroyError
       });
     }
-  },
-
-  getActionUrl: function(action, id) {
-    var actionUrl = this.props.actionUrls[action];
-    actionUrl = actionUrl.replace(/:url/, this.props.url);
-    if(!!id) {
-      actionUrl = actionUrl.replace(/:id/, id);
-    }
-
-    return actionUrl;
   },
 
   handleDestroy: function(data) {
@@ -110,5 +99,4 @@ var GridActionsMixin = {
     this.setState({isLoading: false});
     console.log(error);
   }
-
 };
