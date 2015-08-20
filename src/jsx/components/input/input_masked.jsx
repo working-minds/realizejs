@@ -38,7 +38,7 @@ var InputMasked = React.createClass({
 
   render: function() {
     return (
-      <input {...this.props} {...this.props.field_params} className={this.className()} ref="inputMasked" type="text" >
+      <input {...this.props} {...this.props.field_params} value={this.state.value} className={this.inputClassName()} onChange={this._handleChange} ref="inputMasked" type="text" >
         {this.props.children}
       </input>
     );

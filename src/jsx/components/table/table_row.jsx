@@ -28,6 +28,7 @@ var TableRow = React.createClass({
       <tr className={this.className()} ref="row">
         {this.renderSelectCell()}
         {this.renderCells()}
+        {this.renderActionsCell()}
       </tr>
     );
   },
@@ -51,22 +52,26 @@ var TableRow = React.createClass({
   renderCells: function() {
     var columns = this.props.columns;
     var cellComponents = [];
-    var firstCell = true;
 
     $.each(columns, function(columnName, columnProps) {
       cellComponents.push(
         <TableCell {...columnProps}
           {...this.propsWithoutCSS()}
-          firstCell={firstCell}
           name={columnName}
           key={columnName}
         />
       );
-
-      firstCell = false;
     }.bind(this));
 
     return cellComponents;
+  },
+
+  renderActionsCell: function() {
+    if(!$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
+      return '';
+    }
+
+    return <TableRowActions {...this.propsWithoutCSS()} ref="actions" />;
   },
 
   getDataRowId: function() {

@@ -15,6 +15,9 @@ button .preloader-wrapper.small {
 .button--floating.button--icon {
   padding: 0;
 }
+.grid-form .card {
+  overflow: visible;
+}
 .wkm-modal{
   background-color: white;
   display: none;
@@ -119,6 +122,12 @@ hr {
   transition: opacity .5s ease-out;
 }
 
+.grid__actions > div {
+  overflow: hidden;
+  border-bottom: 1px solid #D0D0D0;
+  min-height: 37px;
+}
+
 .grid__actions .button {
   float: right;
   margin-left: 1rem;
@@ -128,12 +137,26 @@ hr {
   margin-left: 0;
 }
 
+.grid__selection-indicator {
+  float: left;
+  padding: 5px;
+  line-height: 25px;
+  font-size: 15px;
+  color: #26A69A;
+}
+
 .grid__pagination {
   text-align: center;
 }
 
 .grid__pagination .pagination {
   display: inline-block;
+}
+
+@media only screen and (min-width : 601px) {
+  .grid__selection-indicator {
+    padding: 5px 10px;
+  }
 }
 
 .input-field {
@@ -221,8 +244,13 @@ hr {
   float: left;
   margin-left: 15px;
 }
-table tr th, table tr td {
+.table tr th, .table tr td {
   padding: 5px 2px;
+}
+
+.table .empty-message {
+  padding: 10px;
+  font-size: 15px;
 }
 
 .table-header .table-header__name.sortable {
@@ -256,24 +284,8 @@ table tr th, table tr td {
 }
 
 .table-actions {
-  display: none;
-  position: absolute;
-  top: 30px;
-  left: 0;
-  z-index: 1;
-  padding: 0.6rem;
-  background-color: white;
-  border: 1px solid #DADADA;
-  border-radius: 4px;
+  text-align: right;
   white-space: nowrap;
-}
-
-.table-actions > button, .table-actions > a {
-  margin-right: 0.75rem;
-}
-
-.table-actions > button:last-child, .table-actions > a:last-child {
-  margin-right: 0;
 }
 .tabs-container .tabs {
   margin: 15px 0;

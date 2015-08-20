@@ -1,5 +1,10 @@
-table tr th, table tr td {
+.table tr th, .table tr td {
   padding: 5px 2px;
+}
+
+.table .empty-message {
+  padding: 10px;
+  font-size: 15px;
 }
 
 .table-header .table-header__name.sortable {
@@ -33,22 +38,6 @@ table tr th, table tr td {
 }
 
 .table-actions {
-  display: none;
-  position: absolute;
-  top: 30px;
-  left: 0;
-  z-index: 1;
-  padding: 0.6rem;
-  background-color: white;
-  border: 1px solid #DADADA;
-  border-radius: 4px;
+  text-align: right;
   white-space: nowrap;
-}
-
-.table-actions > button, .table-actions > a {
-  margin-right: 0.75rem;
-}
-
-.table-actions > button:last-child, .table-actions > a:last-child {
-  margin-right: 0;
 }

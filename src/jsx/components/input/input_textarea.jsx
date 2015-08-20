@@ -13,7 +13,12 @@ var InputTextarea = React.createClass({
 
   render: function() {
     return (
-      <textarea {...this.props} className={this.className()} ref="input" />
+      <textarea {...this.props}
+        value={this.state.value}
+        className={this.inputClassName()}
+        onChange={this._handleChange}
+        ref="input"
+      />
     );
   }
 });
