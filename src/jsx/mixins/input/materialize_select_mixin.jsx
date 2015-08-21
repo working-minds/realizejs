@@ -1,6 +1,6 @@
 var MaterializeSelectMixin = {
   componentDidMount: function() {
-    this.applyMaterialize();
+    this.applyMaterialize(true);
   },
 
   componentDidUpdate: function(previousProps, previousState) {
@@ -9,11 +9,13 @@ var MaterializeSelectMixin = {
     }
   },
 
-  applyMaterialize: function() {
+  applyMaterialize: function(onMount) {
     var selectElement = React.findDOMNode(this.refs.select);
-
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
-    this.handleChangeMaterialize(selectElement);
+
+    if(!onMount) {
+      this.handleChangeMaterialize(selectElement);
+    }
   },
 
   handleChangeMaterialize: function(selectElement) {

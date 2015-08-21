@@ -44,9 +44,11 @@ var InputComponentMixin = {
   },
 
   _handleReset: function(event) {
-    this.setState({
-      value: ''
-    });
+    if(this.isMounted()) {
+      this.setState({
+        value: ''
+      });
+    }
   },
 
   _handleChange: function(event) {

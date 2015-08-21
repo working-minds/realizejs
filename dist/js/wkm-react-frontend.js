@@ -7,9 +7,9 @@ $.extend(FormSerializer.patterns, {
   key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
   named: /^[a-z0-9#_\.-]+$/i
 });
-var WRF = {};
+var Realize = {};
 
-WRF.config = {
+Realize.config = {
   theme: 'materialize',
   restUrls: {
     index: ':url.json',
@@ -32,16 +32,16 @@ WRF.config = {
   }
 };
 
-WRF.themes = {};
+Realize.themes = {};
 
-WRF.getTheme = function() {
-  var defaultTheme = WRF.themes.default;
-  var currentTheme = WRF.themes[WRF.config.theme];
+Realize.getTheme = function() {
+  var defaultTheme = Realize.themes.default;
+  var currentTheme = Realize.themes[Realize.config.theme];
 
   return $.extend({}, defaultTheme, currentTheme);
 };
 
-WRF.themeProp = function(key, theme) {
+Realize.themeProp = function(key, theme) {
   if(!key) {
     return '';
   }
@@ -64,7 +64,7 @@ WRF.themeProp = function(key, theme) {
   return prop;
 };
 
-WRF.themeClass = function(keys) {
+Realize.themeClass = function(keys) {
   var theme = this.getTheme();
   var keysArr = keys.split(' ');
   var themeClass = "";
@@ -73,13 +73,13 @@ WRF.themeClass = function(keys) {
     var key = keysArr.shift();
     var classKey = key + '.cssClass';
 
-    themeClass += WRF.themeProp(classKey, theme) + ' ';
+    themeClass += Realize.themeProp(classKey, theme) + ' ';
   }
 
   return themeClass.trim();
 };
 
-WRF.themes.default = {
+Realize.themes.default = {
   grid: {
     cssClass: 'grid',
 
@@ -160,7 +160,7 @@ WRF.themes.default = {
     }
   }
 };
-WRF.themes.materialize = {
+Realize.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
@@ -502,7 +502,7 @@ var CssClassMixin = {
     var themeClassKey = this.getThemeClassKey();
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      className += WRF.themeClass(themeClassKey);
+      className += Realize.themeClass(themeClassKey);
     }
 
     if(!!this.props.className) {
@@ -546,7 +546,7 @@ var FormContainerMixin = {
   formContainerClassName: function() {
     var className = this.className();
     if(this.inputChildrenHaveErrors()) {
-      className += ' ' + WRF.themeClass(this.props.errorThemeClassKey);
+      className += ' ' + Realize.themeClass(this.props.errorThemeClassKey);
     }
 
     return className;
@@ -850,9 +850,11 @@ var InputComponentMixin = {
   },
 
   _handleReset: function(event) {
-    this.setState({
-      value: ''
-    });
+    if(this.isMounted()) {
+      this.setState({
+        value: ''
+      });
+    }
   },
 
   _handleChange: function(event) {
@@ -867,14 +869,9 @@ var InputComponentMixin = {
   inputClassName: function() {
     var className = this.className();
     var errors = this.props.errors;
-    var value = this.props.value;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + WRF.themeClass('input.error');
-    }
-
-    if(!!value) {
-      className += ' ' + WRF.themeClass('input.active');
+      className += ' ' + Realize.themeClass('input.error');
     }
 
     return className;
@@ -882,7 +879,7 @@ var InputComponentMixin = {
 };
 var MaterializeSelectMixin = {
   componentDidMount: function() {
-    this.applyMaterialize();
+    this.applyMaterialize(true);
   },
 
   componentDidUpdate: function(previousProps, previousState) {
@@ -891,11 +888,13 @@ var MaterializeSelectMixin = {
     }
   },
 
-  applyMaterialize: function() {
+  applyMaterialize: function(onMount) {
     var selectElement = React.findDOMNode(this.refs.select);
-
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
-    this.handleChangeMaterialize(selectElement);
+
+    if(!onMount) {
+      this.handleChangeMaterialize(selectElement);
+    }
   },
 
   handleChangeMaterialize: function(selectElement) {
@@ -973,7 +972,7 @@ var SelectComponentMixin = {
   },
 
   ensureIsArray: function(value) {
-    if(!value || value.length === 0) {
+    if(value === null || value === undefined || value.length === 0) {
       value = [];
     } else if(!$.isArray(value)) {
       value = [value];
@@ -1024,35 +1023,37 @@ var SelectComponentMixin = {
     this.setState({
       options: options,
       disabled: (!!this.props.dependsOn && options.length <= 0)
-    });
+    }, this.triggerDependableChanged);
 
     this.props.onLoad(data);
   },
 
   listenToDependableChange: function() {
     var dependsOnObj = this.props.dependsOn;
-    var dependableId = dependsOnObj.dependableId;
-    var paramName = dependsOnObj.param || dependableId;
-    var dependable = document.getElementById(dependableId);
+    var $dependable = $(document.getElementById(dependsOnObj.dependableId));
 
-    $(dependable).on('dependable_changed', function(event, dependableValue) {
-      if(!dependableValue) {
-        this.emptyAndDisable();
-        return false;
-      }
+    $dependable.on('dependable_changed', this.onDependableChange);
+  },
 
-      this.state.loadParams[paramName] = dependableValue;
-      this.loadOptions();
-    }.bind(this));
+  onDependableChange: function(event, dependableValue) {
+    if(!dependableValue) {
+      this.emptyAndDisable();
+      return false;
+    }
+
+    if($.isArray(dependableValue) && dependableValue.length == 1) {
+      dependableValue = dependableValue[0];
+    }
+
+    var dependsOnObj = this.props.dependsOn;
+    var paramName = dependsOnObj.param || dependsOnObj.dependableId;
+    this.state.loadParams[paramName] = dependableValue;
+    this.loadOptions();
   },
 
   triggerDependableChanged: function() {
     var $valuesElement = $(React.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
-
-    if(optionValues.length == 1) {
-      optionValues = optionValues[0];
-    }
 
     $valuesElement.trigger('dependable_changed', [optionValues]);
   },
@@ -1073,8 +1074,8 @@ var RestActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionUrls: WRF.config.restUrls,
-      actionMethods: WRF.config.restMethods,
+      actionUrls: Realize.config.restUrls,
+      actionMethods: Realize.config.restMethods,
       destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
@@ -1401,6 +1402,7 @@ var Form = React.createClass({displayName: "Form",
   },
 
   render: function() {
+    //TODO: transformar buttonGroup em componente
     return (
       React.createElement("form", {action: this.props.action, 
         id: this.props.id, 
@@ -1413,7 +1415,7 @@ var Form = React.createClass({displayName: "Form",
         this.renderInputs(), 
         this.renderChildren(), 
 
-        React.createElement("div", {className: WRF.themeClass('form.buttonGroup')}, 
+        React.createElement("div", {className: Realize.themeClass('form.buttonGroup')}, 
           this.renderOtherButtons(), 
           React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"}))
         )
@@ -1533,7 +1535,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
   inputGroupClassName: function() {
     var className = this.className();
     if(this.props.label !== null) {
-      className += ' ' + WRF.themeClass('form.inputGroup.section');
+      className += ' ' + Realize.themeClass('form.inputGroup.section');
     }
 
     return className;
@@ -1684,10 +1686,10 @@ var Grid = React.createClass({displayName: "Grid",
     }
 
     return (
-      React.createElement(GridFilter, React.__spread({}, 
+      React.createElement(GridFilter, React.__spread({
+        action: this.props.url}, 
         this.props.filter, 
-        {url: this.props.url, 
-        isLoading: this.state.isLoading, 
+        {isLoading: this.state.isLoading, 
         onSubmit: this.onFilterSubmit})
       )
     );
@@ -1860,7 +1862,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
   mixins: [CssClassMixin],
   propTypes: {
     inputs: React.PropTypes.object,
-    url: React.PropTypes.string,
+    action: React.PropTypes.string,
     method: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     clearButton: React.PropTypes.object,
@@ -1873,7 +1875,6 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
   getDefaultProps: function() {
     return {
-      form: {},
       method: "GET",
       submitButton: {
         name: 'Filtrar',
@@ -2474,7 +2475,7 @@ var Icon = React.createClass({displayName: "Icon",
   },
 
   iconType: function() {
-    var iconType = WRF.themeProp('icon.' + this.props.type);
+    var iconType = Realize.themeProp('icon.' + this.props.type);
     if(!iconType) {
       iconType = this.props.type;
     }
@@ -3741,7 +3742,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
 var InputSelectOption = React.createClass({displayName: "InputSelectOption",
   propTypes: {
     name: React.PropTypes.string,
-    value: React.PropTypes.string
+    value: React.PropTypes.node
   },
 
   render: function() {
@@ -4583,7 +4584,7 @@ var TableHeader = React.createClass({displayName: "TableHeader",
     var className = '';
 
     if(!this.props.clearTheme) {
-      className += WRF.themeClass('table.header.label');
+      className += Realize.themeClass('table.header.label');
     }
 
     if(this.props.sortable) {
