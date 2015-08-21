@@ -21,7 +21,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'edit',
-        onClick: this.editAction
+        href: this.getActionUrl('edit')
       },
       {
         icon: 'destroy',
@@ -43,28 +43,9 @@ var GridActionsMixin = {
       {
         name: 'Novo',
         context: 'none',
-        onClick: this.addAction
+        href: this.getActionUrl('add')
       }
     ];
-  },
-
-  renderActions: function() {
-    var collectionActionButtons = this.getCollectionActionButtons();
-
-    return (
-      <GridActions
-        dataRows={this.state.dataRows}
-        selectedDataRowIds={this.state.selectedDataRowIds}
-        onRemoveSelection={this.removeSelection}
-        actionButtons={collectionActionButtons}
-      />
-    );
-  },
-
-  removeSelection: function() {
-    this.setState({
-      selectedDataRowIds: []
-    });
   },
 
   addAction: function(event) {

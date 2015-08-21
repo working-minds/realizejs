@@ -64,6 +64,7 @@ var Button = React.createClass({
           className: this.className(),
           type: this.props.type,
           disabled: this.props.disabled,
+          href: this.props.href,
           onClick: this.handleClick
         },
         content
@@ -97,7 +98,7 @@ var Button = React.createClass({
   handleClick: function(event) {
     if(!!this.props.onClick) {
       this.props.onClick(event);
-    } else if(!!this.props.href) {
+    } else if(!!this.props.href && this.props.element !== 'a') {
       window.location = this.props.href;
     }
   },

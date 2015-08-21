@@ -55,6 +55,7 @@ var Grid = React.createClass({
     return {
       dataRows: this.props.data.dataRows,
       selectedDataRowIds: [],
+      allSelected: false,
       count: this.props.data.count,
       page: 1,
       filterData: {},
@@ -85,6 +86,8 @@ var Grid = React.createClass({
     return className;
   },
 
+  /* Renderers */
+
   renderFilter: function() {
     if($.isEmptyObject(this.props.filter)) {
       return '';
@@ -109,9 +112,10 @@ var Grid = React.createClass({
         dataRows={this.state.dataRows}
         selectable={this.props.selectable}
         selectedDataRowIds={this.state.selectedDataRowIds}
+        allSelected={this.state.allSelected}
         actionButtons={this.getMemberActionButtons()}
         onSort={this.onSort}
-        onSelect={this.onSelectDataRow}
+        onSelect={this.selectDataRows}
       />
     );
   },
@@ -133,8 +137,29 @@ var Grid = React.createClass({
     );
   },
 
+  renderActions: function() {
+    return (
+      <GridActions
+        dataRows={this.state.dataRows}
+        selectedDataRowIds={this.state.selectedDataRowIds}
+        allSelected={this.state.allSelected}
+        count={this.state.count}
+        onRemoveSelection={this.removeSelection}
+        onSelectAll={this.selectAllRows}
+        actionButtons={this.getCollectionActionButtons()}
+      />
+    );
+  },
+
+  /* Event handlers */
+
   onPagination: function(page) {
     this.state.page = page;
+    if(this.state.allSelected) {
+      this.state.selectedDataRowIds = [];
+    }
+
+    this.state.allSelected = false;
     this.loadData();
   },
 
@@ -142,6 +167,7 @@ var Grid = React.createClass({
     event.preventDefault();
 
     this.state.selectedDataRowIds = [];
+    this.state.allSelected = false;
     this.state.filterData = postData;
     this.state.page = 1;
     this.loadData();
@@ -153,13 +179,7 @@ var Grid = React.createClass({
     this.loadData();
   },
 
-  onSelectDataRow: function(event, selectedDataRowIds) {
-    event.preventDefault();
-
-    this.setState({
-      selectedDataRowIds: selectedDataRowIds
-    });
-  },
+  /* Data load handler */
 
   loadData: function() {
     this.setState({isLoading: true});
@@ -214,6 +234,29 @@ var Grid = React.createClass({
     var direction = this.state.sortData.direction;
 
     return sortValueFormat.replace(/%\{field}/, field).replace(/%\{direction}/, direction);
-  }
+  },
 
+  /* Selection handlers */
+
+  selectDataRows: function(event, selectedDataRowIds) {
+    event.preventDefault();
+
+    this.setState({
+      selectedDataRowIds: selectedDataRowIds,
+      allSelected: false
+    });
+  },
+
+  removeSelection: function() {
+    this.setState({
+      selectedDataRowIds: [],
+      allSelected: false
+    });
+  },
+
+  selectAllRows: function() {
+    this.setState({
+      allSelected: true
+    });
+  }
 });
