@@ -107,7 +107,7 @@ var Input = React.createClass({
 
   renderLabel: function() {
     var inputValue = this.getInputComponentValue();
-    var isActive = (!!inputValue && String(inputValue).length > 0);
+    var isActive = (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
 
     return (
       <Label {...this.propsWithoutCSS()} id={this.getInputComponentId()} active={isActive} />
@@ -142,7 +142,12 @@ var Input = React.createClass({
     }
 
     var data = this.props.data || {};
-    return data[this.props.id];
+    var dataValue = data[this.props.id];
+    if(typeof dataValue === 'boolean') {
+      dataValue = (dataValue ? 1 : 0);
+    }
+
+    return dataValue;
   },
 
   getInputErrors: function() {

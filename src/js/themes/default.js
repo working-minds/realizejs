@@ -1,4 +1,4 @@
-WRF.themes.default = {
+Realize.themes.default = {
   grid: {
     cssClass: 'grid',
 

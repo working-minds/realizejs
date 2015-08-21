@@ -1,4 +1,4 @@
-WRF.themes.materialize = {
+Realize.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 

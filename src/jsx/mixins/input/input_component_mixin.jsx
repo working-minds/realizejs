@@ -24,10 +24,31 @@ var InputComponentMixin = {
     };
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      value: nextProps.value
-    });
+  componentDidMount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.on('reset', this._handleReset);
+  },
+
+  componentWillUnmount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.off('reset', this._handleReset);
+  },
+
+  getInputFormNode: function() {
+    var inputRef = this.refs.input;
+    if(!!inputRef) {
+      return React.findDOMNode(inputRef).form;
+    }
+
+    return null;
+  },
+
+  _handleReset: function(event) {
+    if(this.isMounted()) {
+      this.setState({
+        value: ''
+      });
+    }
   },
 
   _handleChange: function(event) {
@@ -42,14 +63,9 @@ var InputComponentMixin = {
   inputClassName: function() {
     var className = this.className();
     var errors = this.props.errors;
-    var value = this.props.value;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + WRF.themeClass('input.error');
-    }
-
-    if(!!value) {
-      className += ' ' + WRF.themeClass('input.active');
+      className += ' ' + Realize.themeClass('input.error');
     }
 
     return className;

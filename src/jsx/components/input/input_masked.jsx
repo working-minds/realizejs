@@ -38,13 +38,13 @@ var InputMasked = React.createClass({
 
   render: function() {
     return (
-      <input {...this.props} {...this.props.field_params} value={this.state.value} className={this.inputClassName()} onChange={this._handleChange} ref="inputMasked" type="text" >
+      <input {...this.props} {...this.props.field_params} value={this.state.value} className={this.inputClassName()} onChange={this._handleChange} ref="input" type="text" >
         {this.props.children}
       </input>
     );
   },
 
-  componentDidMount: function(){
+  componentDidMount: function() {
     if(this.isRegexMask())
       this.renderRegexMask();
     else{
@@ -85,9 +85,9 @@ var InputMasked = React.createClass({
 
   renderBaseMask: function(type, params){
     if(type !== undefined && type !== '')
-      $(React.findDOMNode(this.refs.inputMasked)).inputmask(type, params);
+      $(React.findDOMNode(this.refs.input)).inputmask(type, params);
     else
-      $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
+      $(React.findDOMNode(this.refs.input)).inputmask(params);
   },
 
   maskMapping: function(type) {

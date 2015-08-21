@@ -45,19 +45,6 @@ var SelectComponentMixin = {
     }
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    var nextValue = this.ensureIsArray(nextProps.value);
-    var valueChanged = (nextValue !== this.state.value);
-
-    this.setState({
-      value: nextValue
-    }, function() {
-      if(valueChanged) {
-        this.triggerDependableChanged();
-      }
-    });
-  },
-
   componentDidMount: function() {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {
@@ -73,7 +60,7 @@ var SelectComponentMixin = {
   },
 
   ensureIsArray: function(value) {
-    if(!value) {
+    if(value === null || value === undefined || value.length === 0) {
       value = [];
     } else if(!$.isArray(value)) {
       value = [value];
@@ -124,35 +111,37 @@ var SelectComponentMixin = {
     this.setState({
       options: options,
       disabled: (!!this.props.dependsOn && options.length <= 0)
-    });
+    }, this.triggerDependableChanged);
 
     this.props.onLoad(data);
   },
 
   listenToDependableChange: function() {
     var dependsOnObj = this.props.dependsOn;
-    var dependableId = dependsOnObj.dependableId;
-    var paramName = dependsOnObj.param || dependableId;
-    var dependable = document.getElementById(dependableId);
+    var $dependable = $(document.getElementById(dependsOnObj.dependableId));
 
-    $(dependable).on('dependable_changed', function(event, dependableValue) {
-      if(!dependableValue) {
-        this.emptyAndDisable();
-        return false;
-      }
+    $dependable.on('dependable_changed', this.onDependableChange);
+  },
 
-      this.state.loadParams[paramName] = dependableValue;
-      this.loadOptions();
-    }.bind(this));
+  onDependableChange: function(event, dependableValue) {
+    if(!dependableValue) {
+      this.emptyAndDisable();
+      return false;
+    }
+
+    if($.isArray(dependableValue) && dependableValue.length == 1) {
+      dependableValue = dependableValue[0];
+    }
+
+    var dependsOnObj = this.props.dependsOn;
+    var paramName = dependsOnObj.param || dependsOnObj.dependableId;
+    this.state.loadParams[paramName] = dependableValue;
+    this.loadOptions();
   },
 
   triggerDependableChanged: function() {
     var $valuesElement = $(React.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
-
-    if(optionValues.length == 1) {
-      optionValues = optionValues[0];
-    }
 
     $valuesElement.trigger('dependable_changed', [optionValues]);
   },

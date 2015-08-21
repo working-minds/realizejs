@@ -92,8 +92,8 @@ var Grid = React.createClass({
 
     return (
       <GridFilter
+        action={this.props.url}
         {...this.props.filter}
-        url={this.props.url}
         isLoading={this.state.isLoading}
         onSubmit={this.onFilterSubmit}
       />

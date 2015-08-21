@@ -16,7 +16,7 @@ var CssClassMixin = {
     var themeClassKey = this.getThemeClassKey();
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      className += WRF.themeClass(themeClassKey);
+      className += Realize.themeClass(themeClassKey);
     }
 
     if(!!this.props.className) {

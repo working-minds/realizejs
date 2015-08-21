@@ -1,5 +1,10 @@
 var InputAutocompleteSelect = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    UtilsMixin,
+    InputComponentMixin
+  ],
+
   propTypes: {
     selectedOptions: React.PropTypes.array,
     onFocus: React.PropTypes.func,
@@ -39,6 +44,7 @@ var InputAutocompleteSelect = React.createClass({
             placeholder={this.props.placeholder}
             onFocus={this.props.onFocus}
             errors={this.props.errors}
+            key={"autocomplete_select_" + this.generateUUID()}
           />
         </div>
         <Label {...this.propsWithoutCSS()} id={this.selectId()} />
@@ -53,7 +59,7 @@ var InputAutocompleteSelect = React.createClass({
   renderSelectedOptions: function() {
     var options = this.props.selectedOptions;
 
-    return $.map(options, function(option){
+    return $.map(options, function(option) {
       return option.name;
     }).join(', ');
   }

@@ -60,6 +60,7 @@ var Form = React.createClass({
   },
 
   render: function() {
+    //TODO: transformar buttonGroup em componente
     return (
       <form action={this.props.action}
         id={this.props.id}
@@ -72,7 +73,7 @@ var Form = React.createClass({
         {this.renderInputs()}
         {this.renderChildren()}
 
-        <div className={WRF.themeClass('form.buttonGroup')}>
+        <div className={Realize.themeClass('form.buttonGroup')}>
           {this.renderOtherButtons()}
           <Button {...this.submitButtonProps()} ref="submitButton" />
         </div>
