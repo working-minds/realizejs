@@ -190,6 +190,10 @@ Realize.themes.materialize = {
   table: {
     cssClass: 'table striped responsive-table',
 
+    wrapper: {
+      cssClass: 'table-wrapper'
+    },
+
     header: {
       cssClass: 'table-header',
 
@@ -725,7 +729,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'edit',
-        onClick: this.editAction
+        href: this.getActionUrl('edit')
       },
       {
         icon: 'destroy',
@@ -747,7 +751,7 @@ var GridActionsMixin = {
       {
         name: 'Novo',
         context: 'none',
-        onClick: this.addAction
+        href: this.getActionUrl('add')
       }
     ];
   },
@@ -1174,6 +1178,7 @@ var Button = React.createClass({displayName: "Button",
           className: this.className(),
           type: this.props.type,
           disabled: this.props.disabled,
+          href: this.props.href,
           onClick: this.handleClick
         },
         content
@@ -1207,7 +1212,7 @@ var Button = React.createClass({displayName: "Button",
   handleClick: function(event) {
     if(!!this.props.onClick) {
       this.props.onClick(event);
-    } else if(!!this.props.href) {
+    } else if(!!this.props.href && this.props.element !== 'a') {
       window.location = this.props.href;
     }
   },
@@ -4746,7 +4751,8 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
       var actionButtonProps = actionButtonsProps[i];
       actionButtons.push(
         React.createElement(Button, React.__spread({},  actionButtonProps, 
-          {onClick: this.handleActionClick.bind(this, actionButtonProps), 
+          {href: this.getActionButtonHref(actionButtonProps), 
+          onClick: this.handleActionButtonClick.bind(this, actionButtonProps), 
           themeClassKey: "button.flat", 
           element: "a", 
           key: "action_" + i})
@@ -4757,15 +4763,22 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
     return actionButtons;
   },
 
-  handleActionClick: function(actionButtonProps, event) {
-    var buttonOnClick = actionButtonProps.onClick;
+  getActionButtonHref: function(actionButtonProps) {
     var buttonHref = actionButtonProps.href;
+    if(!!buttonHref) {
+      var dataRowId = this.props.data[this.props.dataRowIdField];
+      buttonHref = buttonHref.replace(/:id/, dataRowId);
+    }
+
+    return buttonHref;
+  },
+
+  handleActionButtonClick: function(actionButtonProps, event) {
+    var buttonOnClick = actionButtonProps.onClick;
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
       buttonOnClick(event, dataRowId, this.props.data);
-    } else if(!!buttonHref) {
-      window.location = buttonHref;
     }
   }
 });

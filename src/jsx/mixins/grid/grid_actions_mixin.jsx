@@ -21,7 +21,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'edit',
-        onClick: this.editAction
+        href: this.getActionUrl('edit')
       },
       {
         icon: 'destroy',
@@ -43,7 +43,7 @@ var GridActionsMixin = {
       {
         name: 'Novo',
         context: 'none',
-        onClick: this.addAction
+        href: this.getActionUrl('add')
       }
     ];
   },
