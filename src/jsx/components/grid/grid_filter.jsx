@@ -2,7 +2,7 @@ var GridFilter = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     inputs: React.PropTypes.object,
-    url: React.PropTypes.string,
+    action: React.PropTypes.string,
     method: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     clearButton: React.PropTypes.object,
@@ -15,7 +15,6 @@ var GridFilter = React.createClass({
 
   getDefaultProps: function() {
     return {
-      form: {},
       method: "GET",
       submitButton: {
         name: 'Filtrar',

@@ -61,14 +61,9 @@ var InputComponentMixin = {
   inputClassName: function() {
     var className = this.className();
     var errors = this.props.errors;
-    var value = this.props.value;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + WRF.themeClass('input.error');
-    }
-
-    if(!!value) {
-      className += ' ' + WRF.themeClass('input.active');
+      className += ' ' + Realize.themeClass('input.error');
     }
 
     return className;

@@ -39,7 +39,7 @@ var InputGroup = React.createClass({
   inputGroupClassName: function() {
     var className = this.className();
     if(this.props.label !== null) {
-      className += ' ' + WRF.themeClass('form.inputGroup.section');
+      className += ' ' + Realize.themeClass('form.inputGroup.section');
     }
 
     return className;
