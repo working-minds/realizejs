@@ -1,8 +1,8 @@
 var GridForm = React.createClass({
   mixins: [
     CssClassMixin,
-    RestActionsMixin,
-    GridFormActionsMixin
+    UtilsMixin,
+    RestActionsMixin
   ],
 
   propTypes: {
@@ -16,6 +16,7 @@ var GridForm = React.createClass({
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
     actionUrls: React.PropTypes.object,
+    actionButtons: React.PropTypes.object,
     form: React.PropTypes.object,
     createButton: React.PropTypes.object,
     updateButton: React.PropTypes.object,
@@ -33,6 +34,7 @@ var GridForm = React.createClass({
   getDefaultProps: function() {
     return {
       form: {},
+      actionButtons: null,
       themeClassKey: 'gridForm',
       isLoading: false,
       createButton: {
@@ -89,6 +91,7 @@ var GridForm = React.createClass({
               onReset={this.onReset}
               onSuccess={this.onSuccess}
               onError={this.onError}
+              key={"form_" + this.generateUUID()}
               ref="form"
             />
           </div>
@@ -136,6 +139,37 @@ var GridForm = React.createClass({
     return [];
   },
 
+  getGridFormActionButtons: function() {
+    var actionButtons = this.props.actionButtons || {};
+
+    if(!actionButtons.member) {
+      actionButtons.member = this.getDefaultMemberActionButtons();
+    }
+
+    if(!actionButtons.collection) {
+      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    }
+
+    return actionButtons;
+  },
+
+  getDefaultMemberActionButtons: function() {
+    return [
+      {
+        icon: 'edit',
+        onClick: this.editAction
+      },
+      {
+        icon: 'destroy',
+        onClick: this.destroyAction
+      }
+    ];
+  },
+
+  getDefaultCollectionActionButtons: function() {
+    return [];
+  },
+
   onSubmit: function(event, postData) {
     this.props.onSubmit(event, postData);
   },
@@ -162,6 +196,41 @@ var GridForm = React.createClass({
     return this.props.onError(xhr, status, error);
   },
 
+  editAction: function(event, id, data) {
+    this.setState({
+      formAction: 'update',
+      selectedRowId: id,
+      selectedDataRow: data
+    });
+
+    this.clearFormErrors();
+  },
+
+  destroyAction: function(event, id) {
+    var destroyUrl = this.getActionUrl('destroy', id);
+    var destroyMethod = this.getActionMethod('destroy');
+
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: destroyMethod,
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
+  },
+
+  handleDestroy: function(data) {
+    this.loadGridData(data);
+  },
+
+  handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
+    console.log(error);
+  },
+
   loadGridData: function() {
     var gridRef = this.refs.grid;
     gridRef.loadData();
@@ -176,6 +245,5 @@ var GridForm = React.createClass({
     var formRef = this.refs.form;
     formRef.clearErrors();
   }
-
 
 });

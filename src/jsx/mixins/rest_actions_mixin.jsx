@@ -7,8 +7,8 @@ var RestActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionUrls: WRF.config.restUrls,
-      actionMethods: WRF.config.restMethods,
+      actionUrls: Realize.config.restUrls,
+      actionMethods: Realize.config.restMethods,
       destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },

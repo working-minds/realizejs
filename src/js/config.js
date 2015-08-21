@@ -1,6 +1,6 @@
-var WRF = {};
+var Realize = {};
 
-WRF.config = {
+Realize.config = {
   theme: 'materialize',
   restUrls: {
     index: ':url.json',

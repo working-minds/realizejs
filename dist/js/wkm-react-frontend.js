@@ -7,9 +7,9 @@ $.extend(FormSerializer.patterns, {
   key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
   named: /^[a-z0-9#_\.-]+$/i
 });
-var WRF = {};
+var Realize = {};
 
-WRF.config = {
+Realize.config = {
   theme: 'materialize',
   restUrls: {
     index: ':url.json',
@@ -32,16 +32,16 @@ WRF.config = {
   }
 };
 
-WRF.themes = {};
+Realize.themes = {};
 
-WRF.getTheme = function() {
-  var defaultTheme = WRF.themes.default;
-  var currentTheme = WRF.themes[WRF.config.theme];
+Realize.getTheme = function() {
+  var defaultTheme = Realize.themes.default;
+  var currentTheme = Realize.themes[Realize.config.theme];
 
   return $.extend({}, defaultTheme, currentTheme);
 };
 
-WRF.themeProp = function(key, theme) {
+Realize.themeProp = function(key, theme) {
   if(!key) {
     return '';
   }
@@ -64,7 +64,7 @@ WRF.themeProp = function(key, theme) {
   return prop;
 };
 
-WRF.themeClass = function(keys) {
+Realize.themeClass = function(keys) {
   var theme = this.getTheme();
   var keysArr = keys.split(' ');
   var themeClass = "";
@@ -73,13 +73,13 @@ WRF.themeClass = function(keys) {
     var key = keysArr.shift();
     var classKey = key + '.cssClass';
 
-    themeClass += WRF.themeProp(classKey, theme) + ' ';
+    themeClass += Realize.themeProp(classKey, theme) + ' ';
   }
 
   return themeClass.trim();
 };
 
-WRF.themes.default = {
+Realize.themes.default = {
   grid: {
     cssClass: 'grid',
 
@@ -160,7 +160,7 @@ WRF.themes.default = {
     }
   }
 };
-WRF.themes.materialize = {
+Realize.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
@@ -502,7 +502,7 @@ var CssClassMixin = {
     var themeClassKey = this.getThemeClassKey();
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      className += WRF.themeClass(themeClassKey);
+      className += Realize.themeClass(themeClassKey);
     }
 
     if(!!this.props.className) {
@@ -546,7 +546,7 @@ var FormContainerMixin = {
   formContainerClassName: function() {
     var className = this.className();
     if(this.inputChildrenHaveErrors()) {
-      className += ' ' + WRF.themeClass(this.props.errorThemeClassKey);
+      className += ' ' + Realize.themeClass(this.props.errorThemeClassKey);
     }
 
     return className;
@@ -804,83 +804,6 @@ var GridActionsMixin = {
     console.log(error);
   }
 };
-var GridFormActionsMixin = {
-  propTypes: {
-    actionButtons: React.PropTypes.object
-  },
-
-  getDefaultProps: function() {
-    return {
-      actionButtons: null
-    };
-  },
-
-  getGridFormActionButtons: function() {
-    var actionButtons = this.props.actionButtons || {};
-
-    if(!actionButtons.member) {
-      actionButtons.member = this.getDefaultMemberActionButtons();
-    }
-
-    if(!actionButtons.collection) {
-      actionButtons.collection = this.getDefaultCollectionActionButtons();
-    }
-
-    return actionButtons;
-  },
-
-  getDefaultMemberActionButtons: function() {
-    return [
-      {
-        icon: 'edit',
-        onClick: this.editAction
-      },
-      {
-        icon: 'destroy',
-        onClick: this.destroyAction
-      }
-    ];
-  },
-
-  getDefaultCollectionActionButtons: function() {
-    return [];
-  },
-
-  editAction: function(event, id, data) {
-    this.setState({
-      formAction: 'update',
-      selectedRowId: id,
-      selectedDataRow: data
-    });
-
-    this.clearFormErrors();
-  },
-
-  destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
-
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
-  handleDestroy: function(data) {
-    this.loadGridData(data);
-  },
-
-  handleDestroyError: function(xhr, status, error) {
-    this.setState({isLoading: false});
-    console.log(error);
-  }
-};
 var InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
@@ -907,10 +830,31 @@ var InputComponentMixin = {
     };
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      value: nextProps.value
-    });
+  componentDidMount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.on('reset', this._handleReset);
+  },
+
+  componentWillUnmount: function() {
+    var $form = $(this.getInputFormNode());
+    $form.off('reset', this._handleReset);
+  },
+
+  getInputFormNode: function() {
+    var inputRef = this.refs.input;
+    if(!!inputRef) {
+      return React.findDOMNode(inputRef).form;
+    }
+
+    return null;
+  },
+
+  _handleReset: function(event) {
+    if(this.isMounted()) {
+      this.setState({
+        value: ''
+      });
+    }
   },
 
   _handleChange: function(event) {
@@ -925,14 +869,9 @@ var InputComponentMixin = {
   inputClassName: function() {
     var className = this.className();
     var errors = this.props.errors;
-    var value = this.props.value;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + WRF.themeClass('input.error');
-    }
-
-    if(!!value) {
-      className += ' ' + WRF.themeClass('input.active');
+      className += ' ' + Realize.themeClass('input.error');
     }
 
     return className;
@@ -940,7 +879,7 @@ var InputComponentMixin = {
 };
 var MaterializeSelectMixin = {
   componentDidMount: function() {
-    this.applyMaterialize();
+    this.applyMaterialize(true);
   },
 
   componentDidUpdate: function(previousProps, previousState) {
@@ -949,22 +888,26 @@ var MaterializeSelectMixin = {
     }
   },
 
-  applyMaterialize: function() {
+  applyMaterialize: function(onMount) {
     var selectElement = React.findDOMNode(this.refs.select);
-
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
-    this.handleChangeMaterialize(selectElement);
+
+    if(!onMount) {
+      this.handleChangeMaterialize(selectElement);
+    }
   },
 
   handleChangeMaterialize: function(selectElement) {
     var $selectElement = $(selectElement);
     var fakeEvent = { currentTarget: selectElement };
+    this.props.onChange(fakeEvent);
 
     //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();
 
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(fakeEvent);
+    this.setState({
+      value: selectElement.value
+    }, this.triggerDependableChanged);
   }
 };
 var SelectComponentMixin = {
@@ -1014,19 +957,6 @@ var SelectComponentMixin = {
     }
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    var nextValue = this.ensureIsArray(nextProps.value);
-    var valueChanged = (nextValue !== this.state.value);
-
-    this.setState({
-      value: nextValue
-    }, function() {
-      if(valueChanged) {
-        this.triggerDependableChanged();
-      }
-    });
-  },
-
   componentDidMount: function() {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {
@@ -1042,7 +972,7 @@ var SelectComponentMixin = {
   },
 
   ensureIsArray: function(value) {
-    if(!value) {
+    if(value === null || value === undefined || value.length === 0) {
       value = [];
     } else if(!$.isArray(value)) {
       value = [value];
@@ -1093,35 +1023,37 @@ var SelectComponentMixin = {
     this.setState({
       options: options,
       disabled: (!!this.props.dependsOn && options.length <= 0)
-    });
+    }, this.triggerDependableChanged);
 
     this.props.onLoad(data);
   },
 
   listenToDependableChange: function() {
     var dependsOnObj = this.props.dependsOn;
-    var dependableId = dependsOnObj.dependableId;
-    var paramName = dependsOnObj.param || dependableId;
-    var dependable = document.getElementById(dependableId);
+    var $dependable = $(document.getElementById(dependsOnObj.dependableId));
 
-    $(dependable).on('dependable_changed', function(event, dependableValue) {
-      if(!dependableValue) {
-        this.emptyAndDisable();
-        return false;
-      }
+    $dependable.on('dependable_changed', this.onDependableChange);
+  },
 
-      this.state.loadParams[paramName] = dependableValue;
-      this.loadOptions();
-    }.bind(this));
+  onDependableChange: function(event, dependableValue) {
+    if(!dependableValue) {
+      this.emptyAndDisable();
+      return false;
+    }
+
+    if($.isArray(dependableValue) && dependableValue.length == 1) {
+      dependableValue = dependableValue[0];
+    }
+
+    var dependsOnObj = this.props.dependsOn;
+    var paramName = dependsOnObj.param || dependsOnObj.dependableId;
+    this.state.loadParams[paramName] = dependableValue;
+    this.loadOptions();
   },
 
   triggerDependableChanged: function() {
     var $valuesElement = $(React.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
-
-    if(optionValues.length == 1) {
-      optionValues = optionValues[0];
-    }
 
     $valuesElement.trigger('dependable_changed', [optionValues]);
   },
@@ -1142,8 +1074,8 @@ var RestActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionUrls: WRF.config.restUrls,
-      actionMethods: WRF.config.restMethods,
+      actionUrls: Realize.config.restUrls,
+      actionMethods: Realize.config.restMethods,
       destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
@@ -1162,6 +1094,19 @@ var RestActionsMixin = {
     return this.props.actionMethods[action];
   }
 
+};
+var UtilsMixin = {
+
+  // source: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
+  generateUUID: function() {
+    var d = new Date().getTime();
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (d + Math.random()*16)%16 | 0;
+      d = Math.floor(d/16);
+      return (c =='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+  }
 };
 var Button = React.createClass({displayName: "Button",
   mixins: [CssClassMixin],
@@ -1457,6 +1402,7 @@ var Form = React.createClass({displayName: "Form",
   },
 
   render: function() {
+    //TODO: transformar buttonGroup em componente
     return (
       React.createElement("form", {action: this.props.action, 
         id: this.props.id, 
@@ -1469,7 +1415,7 @@ var Form = React.createClass({displayName: "Form",
         this.renderInputs(), 
         this.renderChildren(), 
 
-        React.createElement("div", {className: WRF.themeClass('form.buttonGroup')}, 
+        React.createElement("div", {className: Realize.themeClass('form.buttonGroup')}, 
           this.renderOtherButtons(), 
           React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"}))
         )
@@ -1589,7 +1535,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
   inputGroupClassName: function() {
     var className = this.className();
     if(this.props.label !== null) {
-      className += ' ' + WRF.themeClass('form.inputGroup.section');
+      className += ' ' + Realize.themeClass('form.inputGroup.section');
     }
 
     return className;
@@ -1740,10 +1686,10 @@ var Grid = React.createClass({displayName: "Grid",
     }
 
     return (
-      React.createElement(GridFilter, React.__spread({}, 
+      React.createElement(GridFilter, React.__spread({
+        action: this.props.url}, 
         this.props.filter, 
-        {url: this.props.url, 
-        isLoading: this.state.isLoading, 
+        {isLoading: this.state.isLoading, 
         onSubmit: this.onFilterSubmit})
       )
     );
@@ -1905,7 +1851,7 @@ var GridActions = React.createClass({displayName: "GridActions",
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {themeClassKey: "button.flat", key: "action_" + i})));
+      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {element: "a", themeClassKey: "button.flat", key: "action_" + i})));
     }
 
     return actionButtons;
@@ -1916,7 +1862,7 @@ var GridFilter = React.createClass({displayName: "GridFilter",
   mixins: [CssClassMixin],
   propTypes: {
     inputs: React.PropTypes.object,
-    url: React.PropTypes.string,
+    action: React.PropTypes.string,
     method: React.PropTypes.string,
     submitButton: React.PropTypes.object,
     clearButton: React.PropTypes.object,
@@ -1929,7 +1875,6 @@ var GridFilter = React.createClass({displayName: "GridFilter",
 
   getDefaultProps: function() {
     return {
-      form: {},
       method: "GET",
       submitButton: {
         name: 'Filtrar',
@@ -2108,8 +2053,8 @@ var GridTable = React.createClass({displayName: "GridTable",
 var GridForm = React.createClass({displayName: "GridForm",
   mixins: [
     CssClassMixin,
-    RestActionsMixin,
-    GridFormActionsMixin
+    UtilsMixin,
+    RestActionsMixin
   ],
 
   propTypes: {
@@ -2123,6 +2068,7 @@ var GridForm = React.createClass({displayName: "GridForm",
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
     actionUrls: React.PropTypes.object,
+    actionButtons: React.PropTypes.object,
     form: React.PropTypes.object,
     createButton: React.PropTypes.object,
     updateButton: React.PropTypes.object,
@@ -2140,6 +2086,7 @@ var GridForm = React.createClass({displayName: "GridForm",
   getDefaultProps: function() {
     return {
       form: {},
+      actionButtons: null,
       themeClassKey: 'gridForm',
       isLoading: false,
       createButton: {
@@ -2196,6 +2143,7 @@ var GridForm = React.createClass({displayName: "GridForm",
               onReset: this.onReset, 
               onSuccess: this.onSuccess, 
               onError: this.onError, 
+              key: "form_" + this.generateUUID(), 
               ref: "form"})
             )
           )
@@ -2243,6 +2191,37 @@ var GridForm = React.createClass({displayName: "GridForm",
     return [];
   },
 
+  getGridFormActionButtons: function() {
+    var actionButtons = this.props.actionButtons || {};
+
+    if(!actionButtons.member) {
+      actionButtons.member = this.getDefaultMemberActionButtons();
+    }
+
+    if(!actionButtons.collection) {
+      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    }
+
+    return actionButtons;
+  },
+
+  getDefaultMemberActionButtons: function() {
+    return [
+      {
+        icon: 'edit',
+        onClick: this.editAction
+      },
+      {
+        icon: 'destroy',
+        onClick: this.destroyAction
+      }
+    ];
+  },
+
+  getDefaultCollectionActionButtons: function() {
+    return [];
+  },
+
   onSubmit: function(event, postData) {
     this.props.onSubmit(event, postData);
   },
@@ -2269,6 +2248,41 @@ var GridForm = React.createClass({displayName: "GridForm",
     return this.props.onError(xhr, status, error);
   },
 
+  editAction: function(event, id, data) {
+    this.setState({
+      formAction: 'update',
+      selectedRowId: id,
+      selectedDataRow: data
+    });
+
+    this.clearFormErrors();
+  },
+
+  destroyAction: function(event, id) {
+    var destroyUrl = this.getActionUrl('destroy', id);
+    var destroyMethod = this.getActionMethod('destroy');
+
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: destroyMethod,
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
+  },
+
+  handleDestroy: function(data) {
+    this.loadGridData(data);
+  },
+
+  handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
+    console.log(error);
+  },
+
   loadGridData: function() {
     var gridRef = this.refs.grid;
     gridRef.loadData();
@@ -2283,7 +2297,6 @@ var GridForm = React.createClass({displayName: "GridForm",
     var formRef = this.refs.form;
     formRef.clearErrors();
   }
-
 
 });
 
@@ -2462,7 +2475,7 @@ var Icon = React.createClass({displayName: "Icon",
   },
 
   iconType: function() {
-    var iconType = WRF.themeProp('icon.' + this.props.type);
+    var iconType = Realize.themeProp('icon.' + this.props.type);
     if(!iconType) {
       iconType = this.props.type;
     }
@@ -2940,7 +2953,12 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
 
 
 var InputAutocompleteSelect = React.createClass({displayName: "InputAutocompleteSelect",
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    UtilsMixin,
+    InputComponentMixin
+  ],
+
   propTypes: {
     selectedOptions: React.PropTypes.array,
     onFocus: React.PropTypes.func,
@@ -2979,7 +2997,8 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
             disabled: this.props.disabled, 
             placeholder: this.props.placeholder, 
             onFocus: this.props.onFocus, 
-            errors: this.props.errors}
+            errors: this.props.errors, 
+            key: "autocomplete_select_" + this.generateUUID()}
           )
         ), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.selectId()}))
@@ -2994,7 +3013,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
   renderSelectedOptions: function() {
     var options = this.props.selectedOptions;
 
-    return $.map(options, function(option){
+    return $.map(options, function(option) {
       return option.name;
     }).join(', ');
   }
@@ -3270,7 +3289,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderLabel: function() {
     var inputValue = this.getInputComponentValue();
-    var isActive = (!!inputValue && String(inputValue).length > 0);
+    var isActive = (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
 
     return (
       React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.getInputComponentId(), active: isActive}))
@@ -3305,7 +3324,12 @@ var Input = React.createClass({displayName: "Input",
     }
 
     var data = this.props.data || {};
-    return data[this.props.id];
+    var dataValue = data[this.props.id];
+    if(typeof dataValue === 'boolean') {
+      dataValue = (dataValue ? 1 : 0);
+    }
+
+    return dataValue;
   },
 
   getInputErrors: function() {
@@ -3449,13 +3473,13 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "inputMasked", type: "text"}), 
+      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "input", type: "text"}), 
         this.props.children
       )
     );
   },
 
-  componentDidMount: function(){
+  componentDidMount: function() {
     if(this.isRegexMask())
       this.renderRegexMask();
     else{
@@ -3496,9 +3520,9 @@ var InputMasked = React.createClass({displayName: "InputMasked",
 
   renderBaseMask: function(type, params){
     if(type !== undefined && type !== '')
-      $(React.findDOMNode(this.refs.inputMasked)).inputmask(type, params);
+      $(React.findDOMNode(this.refs.input)).inputmask(type, params);
     else
-      $(React.findDOMNode(this.refs.inputMasked)).inputmask(params);
+      $(React.findDOMNode(this.refs.input)).inputmask(params);
   },
 
   maskMapping: function(type) {
@@ -3666,7 +3690,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
       React.createElement("select", {
         id: this.props.id, 
         name: this.props.name, 
-        value: this.props.value, 
+        value: this.selectedValue(), 
         onChange: this.handleChange, 
         disabled: this.state.disabled, 
         className: this.className(), 
@@ -3692,13 +3716,25 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     return selectOptions;
   },
 
+  selectedValue: function() {
+    var value = this.state.value;
+    if(!this.props.multiple) {
+      value = value[0];
+    }
+
+    return value;
+  },
+
   handleChange: function(event) {
-    this._handleChange(event);
+    this.props.onChange(event);
 
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
+    if(!event.isDefaultPrevented()) {
+      var selectElement = React.findDOMNode(this.refs.select);
 
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
+      this.setState({
+        value: selectElement.value
+      }, this.triggerDependableChanged);
+    }
   }
 
 });
@@ -3706,7 +3742,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
 var InputSelectOption = React.createClass({displayName: "InputSelectOption",
   propTypes: {
     name: React.PropTypes.string,
-    value: React.PropTypes.string
+    value: React.PropTypes.node
   },
 
   render: function() {
@@ -4548,7 +4584,7 @@ var TableHeader = React.createClass({displayName: "TableHeader",
     var className = '';
 
     if(!this.props.clearTheme) {
-      className += WRF.themeClass('table.header.label');
+      className += Realize.themeClass('table.header.label');
     }
 
     if(this.props.sortable) {

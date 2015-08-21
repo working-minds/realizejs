@@ -22,7 +22,7 @@ var InputSelect = React.createClass({
       <select
         id={this.props.id}
         name={this.props.name}
-        value={this.props.value}
+        value={this.selectedValue()}
         onChange={this.handleChange}
         disabled={this.state.disabled}
         className={this.className()}
@@ -48,13 +48,25 @@ var InputSelect = React.createClass({
     return selectOptions;
   },
 
+  selectedValue: function() {
+    var value = this.state.value;
+    if(!this.props.multiple) {
+      value = value[0];
+    }
+
+    return value;
+  },
+
   handleChange: function(event) {
-    this._handleChange(event);
+    this.props.onChange(event);
 
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
+    if(!event.isDefaultPrevented()) {
+      var selectElement = React.findDOMNode(this.refs.select);
 
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
+      this.setState({
+        value: selectElement.value
+      }, this.triggerDependableChanged);
+    }
   }
 
 });

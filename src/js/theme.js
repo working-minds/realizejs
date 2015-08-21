@@ -1,13 +1,13 @@
-WRF.themes = {};
+Realize.themes = {};
 
-WRF.getTheme = function() {
-  var defaultTheme = WRF.themes.default;
-  var currentTheme = WRF.themes[WRF.config.theme];
+Realize.getTheme = function() {
+  var defaultTheme = Realize.themes.default;
+  var currentTheme = Realize.themes[Realize.config.theme];
 
   return $.extend({}, defaultTheme, currentTheme);
 };
 
-WRF.themeProp = function(key, theme) {
+Realize.themeProp = function(key, theme) {
   if(!key) {
     return '';
   }
@@ -30,7 +30,7 @@ WRF.themeProp = function(key, theme) {
   return prop;
 };
 
-WRF.themeClass = function(keys) {
+Realize.themeClass = function(keys) {
   var theme = this.getTheme();
   var keysArr = keys.split(' ');
   var themeClass = "";
@@ -39,7 +39,7 @@ WRF.themeClass = function(keys) {
     var key = keysArr.shift();
     var classKey = key + '.cssClass';
 
-    themeClass += WRF.themeProp(classKey, theme) + ' ';
+    themeClass += Realize.themeProp(classKey, theme) + ' ';
   }
 
   return themeClass.trim();

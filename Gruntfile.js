@@ -12,6 +12,7 @@ module.exports = function(grunt) {
         files: [
           'src/js/config.js',
           'src/js/serializer.js',
+          'src/js/utils.js',
           'src/js/theme.js',
           'src/js/themes/**/*.js',
           'src/jsx/**/*.jsx',

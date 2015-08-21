@@ -1,6 +1,6 @@
 var MaterializeSelectMixin = {
   componentDidMount: function() {
-    this.applyMaterialize();
+    this.applyMaterialize(true);
   },
 
   componentDidUpdate: function(previousProps, previousState) {
@@ -9,21 +9,25 @@ var MaterializeSelectMixin = {
     }
   },
 
-  applyMaterialize: function() {
+  applyMaterialize: function(onMount) {
     var selectElement = React.findDOMNode(this.refs.select);
-
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
-    this.handleChangeMaterialize(selectElement);
+
+    if(!onMount) {
+      this.handleChangeMaterialize(selectElement);
+    }
   },
 
   handleChangeMaterialize: function(selectElement) {
     var $selectElement = $(selectElement);
     var fakeEvent = { currentTarget: selectElement };
+    this.props.onChange(fakeEvent);
 
     //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();
 
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(fakeEvent);
+    this.setState({
+      value: selectElement.value
+    }, this.triggerDependableChanged);
   }
 };
