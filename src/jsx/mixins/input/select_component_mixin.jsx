@@ -45,23 +45,6 @@ var SelectComponentMixin = {
     }
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    var nextValue = nextProps.value;
-
-    if(nextValue !== null && nextValue !== undefined) {
-      nextValue = this.ensureIsArray(nextValue);
-      var valueChanged = (nextValue !== this.state.value);
-
-      this.setState({
-        value: nextValue
-      }, function() {
-        if(valueChanged) {
-          this.triggerDependableChanged();
-        }
-      });
-    }
-  },
-
   componentDidMount: function() {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {

@@ -804,83 +804,6 @@ var GridActionsMixin = {
     console.log(error);
   }
 };
-var GridFormActionsMixin = {
-  propTypes: {
-    actionButtons: React.PropTypes.object
-  },
-
-  getDefaultProps: function() {
-    return {
-      actionButtons: null
-    };
-  },
-
-  getGridFormActionButtons: function() {
-    var actionButtons = this.props.actionButtons || {};
-
-    if(!actionButtons.member) {
-      actionButtons.member = this.getDefaultMemberActionButtons();
-    }
-
-    if(!actionButtons.collection) {
-      actionButtons.collection = this.getDefaultCollectionActionButtons();
-    }
-
-    return actionButtons;
-  },
-
-  getDefaultMemberActionButtons: function() {
-    return [
-      {
-        icon: 'edit',
-        onClick: this.editAction
-      },
-      {
-        icon: 'destroy',
-        onClick: this.destroyAction
-      }
-    ];
-  },
-
-  getDefaultCollectionActionButtons: function() {
-    return [];
-  },
-
-  editAction: function(event, id, data) {
-    this.setState({
-      formAction: 'update',
-      selectedRowId: id,
-      selectedDataRow: data
-    });
-
-    this.clearFormErrors();
-  },
-
-  destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
-
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
-  handleDestroy: function(data) {
-    this.loadGridData(data);
-  },
-
-  handleDestroyError: function(xhr, status, error) {
-    this.setState({isLoading: false});
-    console.log(error);
-  }
-};
 var InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
@@ -915,15 +838,6 @@ var InputComponentMixin = {
   componentWillUnmount: function() {
     var $form = $(this.getInputFormNode());
     $form.off('reset', this._handleReset);
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var nextValue = nextProps.value;
-    if(nextValue !== null && nextValue !== undefined) {
-      this.setState({
-        value: nextProps.value
-      });
-    }
   },
 
   getInputFormNode: function() {
@@ -987,12 +901,14 @@ var MaterializeSelectMixin = {
   handleChangeMaterialize: function(selectElement) {
     var $selectElement = $(selectElement);
     var fakeEvent = { currentTarget: selectElement };
+    this.props.onChange(fakeEvent);
 
     //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();
 
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
-    this.props.onChange(fakeEvent);
+    this.setState({
+      value: selectElement.value
+    }, this.triggerDependableChanged);
   }
 };
 var SelectComponentMixin = {
@@ -1039,23 +955,6 @@ var SelectComponentMixin = {
 
     if(!!this.props.dependsOn) {
       this.state.disabled = true;
-    }
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    var nextValue = nextProps.value;
-
-    if(nextValue !== null && nextValue !== undefined) {
-      nextValue = this.ensureIsArray(nextValue);
-      var valueChanged = (nextValue !== this.state.value);
-
-      this.setState({
-        value: nextValue
-      }, function() {
-        if(valueChanged) {
-          this.triggerDependableChanged();
-        }
-      });
     }
   },
 
@@ -1194,6 +1093,19 @@ var RestActionsMixin = {
     return this.props.actionMethods[action];
   }
 
+};
+var UtilsMixin = {
+
+  // source: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
+  generateUUID: function() {
+    var d = new Date().getTime();
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (d + Math.random()*16)%16 | 0;
+      d = Math.floor(d/16);
+      return (c =='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+  }
 };
 var Button = React.createClass({displayName: "Button",
   mixins: [CssClassMixin],
@@ -1937,7 +1849,7 @@ var GridActions = React.createClass({displayName: "GridActions",
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {themeClassKey: "button.flat", key: "action_" + i})));
+      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {element: "a", themeClassKey: "button.flat", key: "action_" + i})));
     }
 
     return actionButtons;
@@ -2140,8 +2052,8 @@ var GridTable = React.createClass({displayName: "GridTable",
 var GridForm = React.createClass({displayName: "GridForm",
   mixins: [
     CssClassMixin,
-    RestActionsMixin,
-    GridFormActionsMixin
+    UtilsMixin,
+    RestActionsMixin
   ],
 
   propTypes: {
@@ -2155,6 +2067,7 @@ var GridForm = React.createClass({displayName: "GridForm",
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
     actionUrls: React.PropTypes.object,
+    actionButtons: React.PropTypes.object,
     form: React.PropTypes.object,
     createButton: React.PropTypes.object,
     updateButton: React.PropTypes.object,
@@ -2172,6 +2085,7 @@ var GridForm = React.createClass({displayName: "GridForm",
   getDefaultProps: function() {
     return {
       form: {},
+      actionButtons: null,
       themeClassKey: 'gridForm',
       isLoading: false,
       createButton: {
@@ -2228,6 +2142,7 @@ var GridForm = React.createClass({displayName: "GridForm",
               onReset: this.onReset, 
               onSuccess: this.onSuccess, 
               onError: this.onError, 
+              key: "form_" + this.generateUUID(), 
               ref: "form"})
             )
           )
@@ -2275,6 +2190,37 @@ var GridForm = React.createClass({displayName: "GridForm",
     return [];
   },
 
+  getGridFormActionButtons: function() {
+    var actionButtons = this.props.actionButtons || {};
+
+    if(!actionButtons.member) {
+      actionButtons.member = this.getDefaultMemberActionButtons();
+    }
+
+    if(!actionButtons.collection) {
+      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    }
+
+    return actionButtons;
+  },
+
+  getDefaultMemberActionButtons: function() {
+    return [
+      {
+        icon: 'edit',
+        onClick: this.editAction
+      },
+      {
+        icon: 'destroy',
+        onClick: this.destroyAction
+      }
+    ];
+  },
+
+  getDefaultCollectionActionButtons: function() {
+    return [];
+  },
+
   onSubmit: function(event, postData) {
     this.props.onSubmit(event, postData);
   },
@@ -2301,6 +2247,41 @@ var GridForm = React.createClass({displayName: "GridForm",
     return this.props.onError(xhr, status, error);
   },
 
+  editAction: function(event, id, data) {
+    this.setState({
+      formAction: 'update',
+      selectedRowId: id,
+      selectedDataRow: data
+    });
+
+    this.clearFormErrors();
+  },
+
+  destroyAction: function(event, id) {
+    var destroyUrl = this.getActionUrl('destroy', id);
+    var destroyMethod = this.getActionMethod('destroy');
+
+    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({isLoading: true});
+
+      $.ajax({
+        url: destroyUrl,
+        method: destroyMethod,
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
+  },
+
+  handleDestroy: function(data) {
+    this.loadGridData(data);
+  },
+
+  handleDestroyError: function(xhr, status, error) {
+    this.setState({isLoading: false});
+    console.log(error);
+  },
+
   loadGridData: function() {
     var gridRef = this.refs.grid;
     gridRef.loadData();
@@ -2315,7 +2296,6 @@ var GridForm = React.createClass({displayName: "GridForm",
     var formRef = this.refs.form;
     formRef.clearErrors();
   }
-
 
 });
 
@@ -2972,7 +2952,12 @@ var InputAutocompleteResult = React.createClass({displayName: "InputAutocomplete
 
 
 var InputAutocompleteSelect = React.createClass({displayName: "InputAutocompleteSelect",
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    UtilsMixin,
+    InputComponentMixin
+  ],
+
   propTypes: {
     selectedOptions: React.PropTypes.array,
     onFocus: React.PropTypes.func,
@@ -3011,7 +2996,8 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
             disabled: this.props.disabled, 
             placeholder: this.props.placeholder, 
             onFocus: this.props.onFocus, 
-            errors: this.props.errors}
+            errors: this.props.errors, 
+            key: "autocomplete_select_" + this.generateUUID()}
           )
         ), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.selectId()}))
@@ -3026,7 +3012,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
   renderSelectedOptions: function() {
     var options = this.props.selectedOptions;
 
-    return $.map(options, function(option){
+    return $.map(options, function(option) {
       return option.name;
     }).join(', ');
   }
@@ -3302,7 +3288,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderLabel: function() {
     var inputValue = this.getInputComponentValue();
-    var isActive = (!!inputValue && String(inputValue).length > 0);
+    var isActive = (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
 
     return (
       React.createElement(Label, React.__spread({},  this.propsWithoutCSS(), {id: this.getInputComponentId(), active: isActive}))
@@ -3337,7 +3323,12 @@ var Input = React.createClass({displayName: "Input",
     }
 
     var data = this.props.data || {};
-    return data[this.props.id];
+    var dataValue = data[this.props.id];
+    if(typeof dataValue === 'boolean') {
+      dataValue = (dataValue ? 1 : 0);
+    }
+
+    return dataValue;
   },
 
   getInputErrors: function() {
@@ -3698,7 +3689,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
       React.createElement("select", {
         id: this.props.id, 
         name: this.props.name, 
-        value: this.props.value, 
+        value: this.selectedValue(), 
         onChange: this.handleChange, 
         disabled: this.state.disabled, 
         className: this.className(), 
@@ -3724,13 +3715,25 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     return selectOptions;
   },
 
+  selectedValue: function() {
+    var value = this.state.value;
+    if(!this.props.multiple) {
+      value = value[0];
+    }
+
+    return value;
+  },
+
   handleChange: function(event) {
-    this._handleChange(event);
+    this.props.onChange(event);
 
-    var selectElement = React.findDOMNode(this.refs.select);
-    var $selectElement = $(selectElement);
+    if(!event.isDefaultPrevented()) {
+      var selectElement = React.findDOMNode(this.refs.select);
 
-    $selectElement.trigger('dependable_changed', [selectElement.value]);
+      this.setState({
+        value: selectElement.value
+      }, this.triggerDependableChanged);
+    }
   }
 
 });

@@ -34,15 +34,6 @@ var InputComponentMixin = {
     $form.off('reset', this._handleReset);
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    var nextValue = nextProps.value;
-    if(nextValue !== null && nextValue !== undefined) {
-      this.setState({
-        value: nextProps.value
-      });
-    }
-  },
-
   getInputFormNode: function() {
     var inputRef = this.refs.input;
     if(!!inputRef) {
