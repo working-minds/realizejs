@@ -8,6 +8,7 @@ var Table = React.createClass({
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
     selectedDataRowIds: React.PropTypes.array,
+    allSelected: React.PropTypes.bool,
     emptyMessage: React.PropTypes.string,
     actionButtons: React.PropTypes.array,
     onSort: React.PropTypes.func,
@@ -19,15 +20,16 @@ var Table = React.createClass({
       themeClassKey: 'table',
       columns: {},
       dataRowIdField: 'id',
-      selectable: true,
+      selectable: false,
       sortConfigs: {
         param: 's',
         valueFormat: '%{field} %{direction}'
       },
-      emptyMessage: 'Nenhum resultado foi encontrado.',
       sortData: {},
       dataRows: [],
       selectedDataRowIds: [],
+      allSelected: false,
+      emptyMessage: 'Nenhum resultado foi encontrado.',
       actionButtons: [],
       onSort: function(sortData) {},
       onSelect: function(event, selectedDataRowIds) {}
@@ -36,7 +38,8 @@ var Table = React.createClass({
 
   getInitialState: function() {
     return {
-      selectedDataRowIds: this.props.selectedDataRowIds
+      selectedDataRowIds: this.props.selectedDataRowIds,
+      allSelected: this.props.allSelected
     };
   },
 
@@ -167,7 +170,8 @@ var Table = React.createClass({
     this.props.onSelect(event, selectedDataRowIds);
     if(!event.isDefaultPrevented()) {
       this.setState({
-        selectedDataRowIds: selectedDataRowIds
+        selectedDataRowIds: selectedDataRowIds,
+        allSelected: false
       });
     }
   },
@@ -191,7 +195,7 @@ var Table = React.createClass({
 
   dataRowIsSelected: function(dataRow) {
     var dataRowId = dataRow[this.props.dataRowIdField];
-    return ($.inArray(dataRowId, this.state.selectedDataRowIds) >= 0);
+    return (($.inArray(dataRowId, this.state.selectedDataRowIds) >= 0) || this.props.allSelected);
   },
 
   isAllDataRowsSelected: function() {
@@ -203,6 +207,6 @@ var Table = React.createClass({
       return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
     });
 
-    return dataRowIds.length > 0 && (dataRowIds.length == selectedDataRowIdsInPage.length);
+    return ((dataRowIds.length > 0 && (dataRowIds.length == selectedDataRowIdsInPage.length)) || this.props.allSelected);
   }
 });

@@ -265,6 +265,10 @@ Realize.themes.materialize = {
 
   },
 
+  header: {
+    cssClass: 'blue-grey darken-2'
+  },
+
   icon: {
     cssClass: 'material-icons',
 

@@ -48,25 +48,6 @@ var GridActionsMixin = {
     ];
   },
 
-  renderActions: function() {
-    var collectionActionButtons = this.getCollectionActionButtons();
-
-    return (
-      <GridActions
-        dataRows={this.state.dataRows}
-        selectedDataRowIds={this.state.selectedDataRowIds}
-        onRemoveSelection={this.removeSelection}
-        actionButtons={collectionActionButtons}
-      />
-    );
-  },
-
-  removeSelection: function() {
-    this.setState({
-      selectedDataRowIds: []
-    });
-  },
-
   addAction: function(event) {
     window.location = this.getActionUrl('add');
   },

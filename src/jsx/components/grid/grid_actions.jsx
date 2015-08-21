@@ -5,15 +5,18 @@ var GridActions = React.createClass({
     dataRows: React.PropTypes.array,
     selectedDataRowIds: React.PropTypes.array,
     actionButtons: React.PropTypes.array,
+    allSelected: React.PropTypes.bool,
+    count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'grid.actions',
       actionButtons: [],
       selectedDataRowIds: [],
-      themeClassKey: 'grid.actions',
+      allSelected: false,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
