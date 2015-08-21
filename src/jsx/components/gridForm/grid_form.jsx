@@ -100,7 +100,7 @@ var GridForm = React.createClass({
           <div className="card-content">
             <Grid
               {...this.propsWithoutCSS()}
-              actionButtons={this.getGridFormActionButtons()}
+              actionButtons={this.getActionButtons()}
               ref="grid"
             />
           </div>
@@ -139,7 +139,7 @@ var GridForm = React.createClass({
     return [];
   },
 
-  getGridFormActionButtons: function() {
+  getActionButtons: function() {
     var actionButtons = this.props.actionButtons || {};
 
     if(!actionButtons.member) {
@@ -212,6 +212,7 @@ var GridForm = React.createClass({
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
+      this.resetForm();
 
       $.ajax({
         url: destroyUrl,

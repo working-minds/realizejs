@@ -27,7 +27,7 @@ var MaterializeSelectMixin = {
     $selectElement.parent().parent().find('> .caret').remove();
 
     this.setState({
-      value: selectElement.value
+      value: this.ensureIsArray(selectElement.value)
     }, this.triggerDependableChanged);
   }
 };

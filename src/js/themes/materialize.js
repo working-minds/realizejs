@@ -28,6 +28,10 @@ Realize.themes.materialize = {
   table: {
     cssClass: 'table striped responsive-table',
 
+    wrapper: {
+      cssClass: 'table-wrapper'
+    },
+
     header: {
       cssClass: 'table-header',
 
@@ -259,6 +263,10 @@ Realize.themes.materialize = {
       }
     }
 
+  },
+
+  header: {
+    cssClass: 'blue-grey darken-2'
   },
 
   icon: {

@@ -6,21 +6,27 @@ var GridSelectionIndicator = React.createClass({
     selectedDataRowIds: React.PropTypes.array,
     actionButtons: React.PropTypes.array,
     message: React.PropTypes.object,
+    removeSelectionButtonName: React.PropTypes.string,
+    selectAllButtonName: React.PropTypes.string,
+    allSelected: React.PropTypes.bool,
+    count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
-      actionButtons: [],
-      selectedDataRowIds: [],
       themeClassKey: 'grid.selectionIndicator',
+      dataRows: [],
+      selectedDataRowIds: [],
+      actionButtons: [],
       message: {
         plural: ':count itens selecionados',
         singular: '1 item selecionado'
       },
       removeSelectionButtonName: 'limpar seleção',
       selectAllButtonName: 'selecionar todos',
+      allSelected: false,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -35,7 +41,7 @@ var GridSelectionIndicator = React.createClass({
   },
 
   renderMessage: function() {
-    var count = this.props.selectedDataRowIds.length;
+    var count = this.getSelectionCount();
     if(count === 0) {
       return '';
     } else if(count === 1) {
@@ -47,7 +53,7 @@ var GridSelectionIndicator = React.createClass({
   },
 
   renderActions: function() {
-    var count = this.props.selectedDataRowIds.length;
+    var count = this.getSelectionCount();
     if(count === 0) {
       return '';
     }
@@ -73,5 +79,13 @@ var GridSelectionIndicator = React.createClass({
         {this.props.selectAllButtonName}
       </a>
     );
+  },
+
+  getSelectionCount: function() {
+    if(this.props.allSelected && !!this.props.count) {
+      return this.props.count;
+    } else {
+      return this.props.selectedDataRowIds.length;
+    }
   }
 });

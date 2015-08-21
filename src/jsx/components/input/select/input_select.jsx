@@ -64,7 +64,7 @@ var InputSelect = React.createClass({
       var selectElement = React.findDOMNode(this.refs.select);
 
       this.setState({
-        value: selectElement.value
+        value: this.ensureIsArray(selectElement.value)
       }, this.triggerDependableChanged);
     }
   }
