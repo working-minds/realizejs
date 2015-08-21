@@ -906,7 +906,7 @@ var MaterializeSelectMixin = {
     $selectElement.parent().parent().find('> .caret').remove();
 
     this.setState({
-      value: selectElement.value
+      value: this.ensureIsArray(selectElement.value)
     }, this.triggerDependableChanged);
   }
 };
@@ -2264,6 +2264,7 @@ var GridForm = React.createClass({displayName: "GridForm",
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
+      this.resetForm();
 
       $.ajax({
         url: destroyUrl,
@@ -3732,7 +3733,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
       var selectElement = React.findDOMNode(this.refs.select);
 
       this.setState({
-        value: selectElement.value
+        value: this.ensureIsArray(selectElement.value)
       }, this.triggerDependableChanged);
     }
   }

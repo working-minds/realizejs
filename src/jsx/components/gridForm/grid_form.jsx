@@ -212,6 +212,7 @@ var GridForm = React.createClass({
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
+      this.resetForm();
 
       $.ajax({
         url: destroyUrl,
