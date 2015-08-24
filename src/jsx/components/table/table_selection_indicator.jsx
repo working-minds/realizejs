@@ -1,9 +1,9 @@
-var GridSelectionIndicator = React.createClass({
+var TableSelectionIndicator = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
     dataRows: React.PropTypes.array,
-    selectedDataRowIds: React.PropTypes.array,
+    selectedRowIds: React.PropTypes.array,
     actionButtons: React.PropTypes.array,
     message: React.PropTypes.object,
     removeSelectionButtonName: React.PropTypes.string,
@@ -16,9 +16,9 @@ var GridSelectionIndicator = React.createClass({
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'grid.selectionIndicator',
+      themeClassKey: 'table.selectionIndicator',
       dataRows: [],
-      selectedDataRowIds: [],
+      selectedRowIds: [],
       actionButtons: [],
       message: {
         plural: ':count itens selecionados',
@@ -85,7 +85,7 @@ var GridSelectionIndicator = React.createClass({
     if(this.props.allSelected && !!this.props.count) {
       return this.props.count;
     } else {
-      return this.props.selectedDataRowIds.length;
+      return this.props.selectedRowIds.length;
     }
   }
 });

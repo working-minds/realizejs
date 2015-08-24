@@ -109,29 +109,6 @@ hr {
   transition: opacity .5s ease-out;
 }
 
-.grid__actions > div {
-  overflow: hidden;
-  border-bottom: 1px solid #D0D0D0;
-  min-height: 37px;
-}
-
-.grid__actions .button {
-  float: right;
-  margin-left: 1rem;
-}
-
-.grid__actions .button:last-child {
-  margin-left: 0;
-}
-
-.grid__selection-indicator {
-  float: left;
-  padding: 5px;
-  line-height: 25px;
-  font-size: 15px;
-  color: #26A69A;
-}
-
 .grid__pagination {
   text-align: center;
 }
@@ -260,6 +237,29 @@ hr {
   font-size: 15px;
 }
 
+.table__actions > div {
+  overflow: hidden;
+  border-bottom: 1px solid #D0D0D0;
+  min-height: 37px;
+}
+
+.table__actions .button {
+  float: right;
+  margin-left: 1rem;
+}
+
+.table__actions .button:last-child {
+  margin-left: 0;
+}
+
+.table__selection-indicator {
+  float: left;
+  padding: 5px;
+  line-height: 25px;
+  font-size: 15px;
+  color: #26A69A;
+}
+
 .table-header .table-header__name.sortable {
   cursor: pointer;
 }
@@ -286,11 +286,11 @@ hr {
   position: relative;
 }
 
-.table-row:hover .table-actions {
+.table-row:hover .table-row__actions {
   display: block;
 }
 
-.table-actions {
+.table-row__actions {
   text-align: right;
   white-space: nowrap;
 }

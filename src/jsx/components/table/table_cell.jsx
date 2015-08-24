@@ -6,7 +6,7 @@ var TableCell = React.createClass({
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'datetime'])
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'date', 'datetime'])
   },
 
   getDefaultProps: function() {
@@ -64,6 +64,11 @@ var TableCell = React.createClass({
 
   booleanValue: function(value) {
     return value ? "Sim" : "Não";
+  },
+
+  dateValue: function(value) {
+    value = moment(value);
+    return value.format("DD/MM/YYYY");
   },
 
   datetimeValue: function(value) {
