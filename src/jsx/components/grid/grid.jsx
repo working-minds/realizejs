@@ -15,6 +15,7 @@ var Grid = React.createClass({
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
+    selectedRowIdsParam: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
     onLoadSuccess: React.PropTypes.func,
@@ -40,6 +41,7 @@ var Grid = React.createClass({
       },
       dataRowsParam: 'data',
       countParam: 'count',
+      selectedRowIdsParam: 'rowIds',
       data: {
         dataRows: [],
         count: 0
@@ -54,7 +56,7 @@ var Grid = React.createClass({
   getInitialState: function() {
     return {
       dataRows: this.props.data.dataRows,
-      selectedDataRowIds: [],
+      selectedRowIds: [],
       allSelected: false,
       count: this.props.data.count,
       page: 1,
@@ -70,7 +72,6 @@ var Grid = React.createClass({
         {this.renderFilter()}
 
         {this.renderPagination()}
-        {this.renderActions()}
         {this.renderTable()}
         {this.renderPagination()}
       </div>
@@ -111,11 +112,16 @@ var Grid = React.createClass({
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
         selectable={this.props.selectable}
-        selectedDataRowIds={this.state.selectedDataRowIds}
+        selectedRowIds={this.state.selectedRowIds}
+        selectedRowIdsParam={this.props.selectedRowIdsParam}
         allSelected={this.state.allSelected}
-        actionButtons={this.getMemberActionButtons()}
+        allSelectedData={this.state.filterData}
+        count={this.state.count}
+        actionButtons={this.getActionButtons()}
         onSort={this.onSort}
         onSelect={this.selectDataRows}
+        onRemoveSelection={this.removeSelection}
+        onSelectAll={this.selectAllRows}
       />
     );
   },
@@ -137,26 +143,12 @@ var Grid = React.createClass({
     );
   },
 
-  renderActions: function() {
-    return (
-      <GridActions
-        dataRows={this.state.dataRows}
-        selectedDataRowIds={this.state.selectedDataRowIds}
-        allSelected={this.state.allSelected}
-        count={this.state.count}
-        onRemoveSelection={this.removeSelection}
-        onSelectAll={this.selectAllRows}
-        actionButtons={this.getCollectionActionButtons()}
-      />
-    );
-  },
-
   /* Event handlers */
 
   onPagination: function(page) {
     this.state.page = page;
     if(this.state.allSelected) {
-      this.state.selectedDataRowIds = [];
+      this.state.selectedRowIds = [];
     }
 
     this.state.allSelected = false;
@@ -166,7 +158,7 @@ var Grid = React.createClass({
   onFilterSubmit: function(event, postData) {
     event.preventDefault();
 
-    this.state.selectedDataRowIds = [];
+    this.state.selectedRowIds = [];
     this.state.allSelected = false;
     this.state.filterData = postData;
     this.state.page = 1;
@@ -238,23 +230,27 @@ var Grid = React.createClass({
 
   /* Selection handlers */
 
-  selectDataRows: function(event, selectedDataRowIds) {
+  selectDataRows: function(event, selectedRowIds) {
     event.preventDefault();
 
     this.setState({
-      selectedDataRowIds: selectedDataRowIds,
+      selectedRowIds: selectedRowIds,
       allSelected: false
     });
   },
 
-  removeSelection: function() {
+  removeSelection: function(event) {
+    event.preventDefault();
+
     this.setState({
-      selectedDataRowIds: [],
+      selectedRowIds: [],
       allSelected: false
     });
   },
 
-  selectAllRows: function() {
+  selectAllRows: function(event) {
+    event.preventDefault();
+
     this.setState({
       allSelected: true
     });

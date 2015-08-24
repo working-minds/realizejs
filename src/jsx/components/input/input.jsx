@@ -35,7 +35,7 @@ var Input = React.createClass({
           radio_group: InputRadioGroup
         }; 
 
-        return mapping[component];
+        return (mapping[component] || window[component]);
       }
     };
   },

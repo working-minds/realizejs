@@ -2,14 +2,6 @@ Realize.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
-    actions: {
-      cssClass: 'grid__actions col s12'
-    },
-
-    selectionIndicator: {
-      cssClass: 'grid__selection-indicator'
-    },
-
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
@@ -32,6 +24,14 @@ Realize.themes.materialize = {
       cssClass: 'table-wrapper'
     },
 
+    actions: {
+      cssClass: 'table__actions'
+    },
+
+    selectionIndicator: {
+      cssClass: 'table__selection-indicator'
+    },
+
     header: {
       cssClass: 'table-header',
 
@@ -48,7 +48,7 @@ Realize.themes.materialize = {
       cssClass: 'table-row',
 
       actions: {
-        cssClass: 'table-actions'
+        cssClass: 'table-row__actions'
       }
     },
 

@@ -3,16 +3,21 @@ var Table = React.createClass({
   propTypes: {
     columns: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
+    selectedRowIdsParam: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
-    selectedDataRowIds: React.PropTypes.array,
+    count: React.PropTypes.number,
+    selectedRowIds: React.PropTypes.array,
     allSelected: React.PropTypes.bool,
+    allSelectedData: React.PropTypes.object,
     emptyMessage: React.PropTypes.string,
-    actionButtons: React.PropTypes.array,
+    actionButtons: React.PropTypes.object,
     onSort: React.PropTypes.func,
-    onSelect: React.PropTypes.func
+    onSelect: React.PropTypes.func,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAll: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -20,6 +25,7 @@ var Table = React.createClass({
       themeClassKey: 'table',
       columns: {},
       dataRowIdField: 'id',
+      selectedRowIdsParam: 'rowIds',
       selectable: false,
       sortConfigs: {
         param: 's',
@@ -27,42 +33,83 @@ var Table = React.createClass({
       },
       sortData: {},
       dataRows: [],
-      selectedDataRowIds: [],
-      allSelected: false,
+      count: 0,
+      selectedRowIds: null,
+      allSelected: null,
+      allSelectedData: {},
       emptyMessage: 'Nenhum resultado foi encontrado.',
-      actionButtons: [],
+      actionButtons: {
+        member: [],
+        collection: []
+      },
       onSort: function(sortData) {},
-      onSelect: function(event, selectedDataRowIds) {}
+      onSelect: function(event, selectedRowIds) {},
+      onRemoveSelection: function(event) {},
+      onSelectAll: function(event) {}
     };
   },
 
   getInitialState: function() {
     return {
-      selectedDataRowIds: this.props.selectedDataRowIds,
+      selectedRowIds: this.props.selectedRowIds || [],
       allSelected: this.props.allSelected
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
-    var selectedDataRowIds = nextProps.selectedDataRowIds;
-    if($.isArray(selectedDataRowIds)) {
-      this.setState({selectedDataRowIds: selectedDataRowIds});
+    var selectedRowIds = nextProps.selectedRowIds;
+    var allSelected = nextProps.allSelected;
+
+    if(!!selectedRowIds && $.isArray(selectedRowIds)) {
+      this.setState({selectedRowIds: selectedRowIds});
+    }
+
+    if(allSelected !== null && allSelected !== undefined) {
+      this.setState({allSelected: allSelected});
     }
   },
 
   render: function() {
     return(
-      <table className={this.className()}>
-        <thead>
-          <tr>
-            {this.renderHeaderSelectCell()}
-            {this.renderTableHeaders()}
-          </tr>
-        </thead>
-        <tbody>
-          {(this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()}
-        </tbody>
-      </table>
+      <div className={this.wrapperClassName()}>
+        {this.renderActions()}
+        <table className={this.className()}>
+          <thead>
+            <tr>
+              {this.renderHeaderSelectCell()}
+              {this.renderTableHeaders()}
+            </tr>
+          </thead>
+          <tbody>
+            {(this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()}
+          </tbody>
+        </table>
+      </div>
+    );
+  },
+
+  wrapperClassName: function() {
+    var wrapperClassName = '';
+    if(!this.props.clearTheme) {
+      wrapperClassName = Realize.themeClass('table.wrapper');
+    }
+
+    return wrapperClassName;
+  },
+
+  renderActions: function() {
+    return (
+      <TableActions
+        dataRows={this.state.dataRows}
+        selectedRowIds={this.state.selectedRowIds}
+        selectedRowIdsParam={this.props.selectedRowIdsParam}
+        allSelected={this.state.allSelected}
+        allSelectedData={this.props.allSelectedData}
+        count={this.props.count}
+        onRemoveSelection={this.removeSelection}
+        onSelectAll={this.selectAllRows}
+        actionButtons={this.props.actionButtons.collection || []}
+      />
     );
   },
 
@@ -127,7 +174,7 @@ var Table = React.createClass({
           onSelectToggle={this.toggleDataRows}
           selected={this.dataRowIsSelected(dataRow)}
           data={dataRow}
-          actionButtons={this.props.actionButtons}
+          actionButtons={this.props.actionButtons.member || []}
           key={"table_row_" + i}
         />
       );
@@ -160,42 +207,42 @@ var Table = React.createClass({
   },
 
   toggleDataRows: function(event, dataRowIds, selected) {
-    var selectedDataRowIds = [];
+    var selectedRowIds = [];
     if(selected) {
-      selectedDataRowIds = this.addSelectedDataRows(dataRowIds);
+      selectedRowIds = this.addSelectedDataRows(dataRowIds);
     } else {
-      selectedDataRowIds = this.removeSelectedDataRows(dataRowIds);
+      selectedRowIds = this.removeSelectedDataRows(dataRowIds);
     }
 
-    this.props.onSelect(event, selectedDataRowIds);
+    this.props.onSelect(event, selectedRowIds);
     if(!event.isDefaultPrevented()) {
       this.setState({
-        selectedDataRowIds: selectedDataRowIds,
+        selectedRowIds: selectedRowIds,
         allSelected: false
       });
     }
   },
 
   addSelectedDataRows: function(dataRowIds) {
-    var selectedDataRowIds = this.state.selectedDataRowIds.slice();
+    var selectedRowIds = this.state.selectedRowIds.slice();
     $.each(dataRowIds, function(i, dataRowId) {
-      if($.inArray(dataRowId, selectedDataRowIds) < 0) {
-        selectedDataRowIds.push(dataRowId);
+      if($.inArray(dataRowId, selectedRowIds) < 0) {
+        selectedRowIds.push(dataRowId);
       }
     });
 
-    return selectedDataRowIds;
+    return selectedRowIds;
   },
 
   removeSelectedDataRows: function(dataRowIds) {
-    return $.grep(this.state.selectedDataRowIds, function(dataRowId) {
+    return $.grep(this.state.selectedRowIds, function(dataRowId) {
       return ($.inArray(dataRowId, dataRowIds) < 0);
     }.bind(this));
   },
 
   dataRowIsSelected: function(dataRow) {
     var dataRowId = dataRow[this.props.dataRowIdField];
-    return (($.inArray(dataRowId, this.state.selectedDataRowIds) >= 0) || this.props.allSelected);
+    return (($.inArray(dataRowId, this.state.selectedRowIds) >= 0) || this.props.allSelected);
   },
 
   isAllDataRowsSelected: function() {
@@ -203,10 +250,31 @@ var Table = React.createClass({
       return dataRow[this.props.dataRowIdField];
     }.bind(this));
 
-    var selectedDataRowIdsInPage = $.grep(this.state.selectedDataRowIds, function(selectedDataRowId) {
+    var selectedRowIdsInPage = $.grep(this.state.selectedRowIds, function(selectedDataRowId) {
       return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
     });
 
-    return ((dataRowIds.length > 0 && (dataRowIds.length == selectedDataRowIdsInPage.length)) || this.props.allSelected);
+    return ((dataRowIds.length > 0 && (dataRowIds.length == selectedRowIdsInPage.length)) || this.props.allSelected);
+  },
+
+  removeSelection: function(event) {
+    this.props.onRemoveSelection(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({
+        selectedRowIds: [],
+        allSelected: false
+      });
+    }
+  },
+
+  selectAllRows: function(event) {
+    this.props.onSelectAll(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({
+        allSelected: true
+      });
+    }
   }
 });

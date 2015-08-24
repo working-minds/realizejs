@@ -9,6 +9,20 @@ var GridActionsMixin = {
     };
   },
 
+  getActionButtons: function() {
+    var actionButtons = this.props.actionButtons || {};
+
+    if(!actionButtons.member) {
+      actionButtons.member = this.getDefaultMemberActionButtons();
+    }
+
+    if(!actionButtons.collection) {
+      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    }
+
+    return actionButtons;
+  },
+
   getMemberActionButtons: function() {
     if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.member) {
       return this.props.actionButtons.member;

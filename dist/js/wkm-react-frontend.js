@@ -164,14 +164,6 @@ Realize.themes.materialize = {
   grid: {
     cssClass: 'grid row',
 
-    actions: {
-      cssClass: 'grid__actions col s12'
-    },
-
-    selectionIndicator: {
-      cssClass: 'grid__selection-indicator'
-    },
-
     filter: {
       wrapper: {
         cssClass: 'grid__filter col s12'
@@ -194,6 +186,14 @@ Realize.themes.materialize = {
       cssClass: 'table-wrapper'
     },
 
+    actions: {
+      cssClass: 'table__actions'
+    },
+
+    selectionIndicator: {
+      cssClass: 'table__selection-indicator'
+    },
+
     header: {
       cssClass: 'table-header',
 
@@ -210,7 +210,7 @@ Realize.themes.materialize = {
       cssClass: 'table-row',
 
       actions: {
-        cssClass: 'table-actions'
+        cssClass: 'table-row__actions'
       }
     },
 
@@ -721,6 +721,20 @@ var GridActionsMixin = {
     };
   },
 
+  getActionButtons: function() {
+    var actionButtons = this.props.actionButtons || {};
+
+    if(!actionButtons.member) {
+      actionButtons.member = this.getDefaultMemberActionButtons();
+    }
+
+    if(!actionButtons.collection) {
+      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    }
+
+    return actionButtons;
+  },
+
   getMemberActionButtons: function() {
     if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.member) {
       return this.props.actionButtons.member;
@@ -1052,6 +1066,85 @@ var SelectComponentMixin = {
       options: [],
       disabled: true
     });
+  }
+};
+var RequestHandlerMixin = {
+  propTypes: {
+    onRequest: React.PropTypes.func,
+    onSuccess: React.PropTypes.func,
+    onError: React.PropTypes.func,
+    onComplete: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      onRequest: function(requestData, url) {},
+      onSuccess: function(responseData, status, xhr) { return true; },
+      onError: function(xhr, status, error) { return true; },
+      onComplete: function(xhr, status) { return true; }
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      isLoading: false
+    };
+  },
+
+  performRequest: function(url, requestData, method, dataType) {
+    var requestOptions = {
+      url: url,
+      data: requestData,
+      method: (method || 'GET'),
+      success: this.onSuccess,
+      error: this.onError,
+      complete: this.onComplete
+    };
+
+    if(!!dataType) {
+      requestOptions.dataType = dataType;
+    }
+
+    this.onRequest(requestData, url);
+    $.ajax(requestOptions);
+  },
+
+  onRequest: function(requestData, url) {
+    this.setState({isLoading: true});
+    this.props.onRequest(requestData, url);
+  },
+
+  onSuccess: function(responseData, status, xhr) {
+    if(this.props.onSuccess(responseData, status, xhr)) {
+      this.handleSuccess(responseData, status, xhr);
+    }
+  },
+
+  onError: function(xhr, status, error) {
+    this.props.onError(xhr, status, error);
+  },
+
+  onComplete: function(xhr, status) {
+    this.setState({isLoading: false});
+    this.props.onComplete(xhr, status);
+  },
+
+  handleSuccess: function(responseData, status, xhr) {
+    var contentType = xhr.getResponseHeader('Content-Type');
+
+    if(contentType.match(/text\/javascript/)) {
+      this.handleJsResponse(responseData);
+    } else if(contentType.match(/text\/html/)) {
+      this.handleHtmlResponse(responseData);
+    }
+  },
+
+  handleJsResponse: function(responseJs) {
+    eval(responseJs);
+  },
+
+  handleHtmlResponse: function(responseHtml) {
+
   }
 };
 var RestActionsMixin = {
@@ -1600,6 +1693,7 @@ var Grid = React.createClass({displayName: "Grid",
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
+    selectedRowIdsParam: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
     onLoadSuccess: React.PropTypes.func,
@@ -1625,6 +1719,7 @@ var Grid = React.createClass({displayName: "Grid",
       },
       dataRowsParam: 'data',
       countParam: 'count',
+      selectedRowIdsParam: 'rowIds',
       data: {
         dataRows: [],
         count: 0
@@ -1639,7 +1734,7 @@ var Grid = React.createClass({displayName: "Grid",
   getInitialState: function() {
     return {
       dataRows: this.props.data.dataRows,
-      selectedDataRowIds: [],
+      selectedRowIds: [],
       allSelected: false,
       count: this.props.data.count,
       page: 1,
@@ -1655,7 +1750,6 @@ var Grid = React.createClass({displayName: "Grid",
         this.renderFilter(), 
 
         this.renderPagination(), 
-        this.renderActions(), 
         this.renderTable(), 
         this.renderPagination()
       )
@@ -1696,11 +1790,16 @@ var Grid = React.createClass({displayName: "Grid",
         sortData: this.state.sortData, 
         dataRows: this.state.dataRows, 
         selectable: this.props.selectable, 
-        selectedDataRowIds: this.state.selectedDataRowIds, 
+        selectedRowIds: this.state.selectedRowIds, 
+        selectedRowIdsParam: this.props.selectedRowIdsParam, 
         allSelected: this.state.allSelected, 
-        actionButtons: this.getMemberActionButtons(), 
+        allSelectedData: this.state.filterData, 
+        count: this.state.count, 
+        actionButtons: this.getActionButtons(), 
         onSort: this.onSort, 
-        onSelect: this.selectDataRows}
+        onSelect: this.selectDataRows, 
+        onRemoveSelection: this.removeSelection, 
+        onSelectAll: this.selectAllRows}
       )
     );
   },
@@ -1722,26 +1821,12 @@ var Grid = React.createClass({displayName: "Grid",
     );
   },
 
-  renderActions: function() {
-    return (
-      React.createElement(GridActions, {
-        dataRows: this.state.dataRows, 
-        selectedDataRowIds: this.state.selectedDataRowIds, 
-        allSelected: this.state.allSelected, 
-        count: this.state.count, 
-        onRemoveSelection: this.removeSelection, 
-        onSelectAll: this.selectAllRows, 
-        actionButtons: this.getCollectionActionButtons()}
-      )
-    );
-  },
-
   /* Event handlers */
 
   onPagination: function(page) {
     this.state.page = page;
     if(this.state.allSelected) {
-      this.state.selectedDataRowIds = [];
+      this.state.selectedRowIds = [];
     }
 
     this.state.allSelected = false;
@@ -1751,7 +1836,7 @@ var Grid = React.createClass({displayName: "Grid",
   onFilterSubmit: function(event, postData) {
     event.preventDefault();
 
-    this.state.selectedDataRowIds = [];
+    this.state.selectedRowIds = [];
     this.state.allSelected = false;
     this.state.filterData = postData;
     this.state.page = 1;
@@ -1823,74 +1908,30 @@ var Grid = React.createClass({displayName: "Grid",
 
   /* Selection handlers */
 
-  selectDataRows: function(event, selectedDataRowIds) {
+  selectDataRows: function(event, selectedRowIds) {
     event.preventDefault();
 
     this.setState({
-      selectedDataRowIds: selectedDataRowIds,
+      selectedRowIds: selectedRowIds,
       allSelected: false
     });
   },
 
-  removeSelection: function() {
+  removeSelection: function(event) {
+    event.preventDefault();
+
     this.setState({
-      selectedDataRowIds: [],
+      selectedRowIds: [],
       allSelected: false
     });
   },
 
-  selectAllRows: function() {
+  selectAllRows: function(event) {
+    event.preventDefault();
+
     this.setState({
       allSelected: true
     });
-  }
-});
-
-var GridActions = React.createClass({displayName: "GridActions",
-  mixins: [CssClassMixin],
-
-  propTypes: {
-    dataRows: React.PropTypes.array,
-    selectedDataRowIds: React.PropTypes.array,
-    actionButtons: React.PropTypes.array,
-    allSelected: React.PropTypes.bool,
-    count: React.PropTypes.number,
-    onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'grid.actions',
-      actionButtons: [],
-      selectedDataRowIds: [],
-      allSelected: false,
-      onRemoveSelection: function(event) {},
-      onSelectAll: function(event) {}
-    };
-  },
-
-  render: function() {
-    return (
-      React.createElement("div", {className: this.className()}, 
-        React.createElement("div", null, 
-          React.createElement(GridSelectionIndicator, React.__spread({},  this.propsWithoutCSS())), 
-          this.renderButtons()
-        )
-      )
-    );
-  },
-
-  renderButtons: function() {
-    var actionButtons = [];
-    var actionButtonsProps = this.props.actionButtons;
-
-    for(var i = 0; i < actionButtonsProps.length; i++) {
-      var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(React.createElement(Button, React.__spread({},  actionButtonProps, {element: "a", themeClassKey: "button.flat", key: "action_" + i})));
-    }
-
-    return actionButtons;
   }
 });
 
@@ -1987,98 +2028,6 @@ var GridPagination = React.createClass({displayName: "GridPagination",
         )
       )
     );
-  }
-});
-
-var GridSelectionIndicator = React.createClass({displayName: "GridSelectionIndicator",
-  mixins: [CssClassMixin],
-
-  propTypes: {
-    dataRows: React.PropTypes.array,
-    selectedDataRowIds: React.PropTypes.array,
-    actionButtons: React.PropTypes.array,
-    message: React.PropTypes.object,
-    removeSelectionButtonName: React.PropTypes.string,
-    selectAllButtonName: React.PropTypes.string,
-    allSelected: React.PropTypes.bool,
-    count: React.PropTypes.number,
-    onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'grid.selectionIndicator',
-      dataRows: [],
-      selectedDataRowIds: [],
-      actionButtons: [],
-      message: {
-        plural: ':count itens selecionados',
-        singular: '1 item selecionado'
-      },
-      removeSelectionButtonName: 'limpar seleção',
-      selectAllButtonName: 'selecionar todos',
-      allSelected: false,
-      onRemoveSelection: function(event) {},
-      onSelectAll: function(event) {}
-    };
-  },
-
-  render: function() {
-    return (
-      React.createElement("div", {className: this.className()}, 
-        React.createElement("span", null, this.renderMessage()), " ", this.renderActions()
-      )
-    );
-  },
-
-  renderMessage: function() {
-    var count = this.getSelectionCount();
-    if(count === 0) {
-      return '';
-    } else if(count === 1) {
-      return this.props.message.singular;
-    } else {
-      var message = this.props.message.plural;
-      return message.replace(/:count/, count);
-    }
-  },
-
-  renderActions: function() {
-    var count = this.getSelectionCount();
-    if(count === 0) {
-      return '';
-    }
-
-    return (
-      React.createElement("span", null, 
-        "(", this.renderRemoveSelectionButton(), " | ", this.renderSelectAllButton(), ")"
-      )
-    );
-  },
-
-  renderRemoveSelectionButton: function() {
-    return (
-      React.createElement("a", {href: "#!", onClick: this.props.onRemoveSelection}, 
-        this.props.removeSelectionButtonName
-      )
-    );
-  },
-
-  renderSelectAllButton: function() {
-    return (
-      React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
-        this.props.selectAllButtonName
-      )
-    );
-  },
-
-  getSelectionCount: function() {
-    if(this.props.allSelected && !!this.props.count) {
-      return this.props.count;
-    } else {
-      return this.props.selectedDataRowIds.length;
-    }
   }
 });
 
@@ -3270,7 +3219,7 @@ var Input = React.createClass({displayName: "Input",
           radio_group: InputRadioGroup
         }; 
 
-        return mapping[component];
+        return (mapping[component] || window[component]);
       }
     };
   },
@@ -4324,16 +4273,21 @@ var Table = React.createClass({displayName: "Table",
   propTypes: {
     columns: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
+    selectedRowIdsParam: React.PropTypes.string,
     selectable: React.PropTypes.bool,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
-    selectedDataRowIds: React.PropTypes.array,
+    count: React.PropTypes.number,
+    selectedRowIds: React.PropTypes.array,
     allSelected: React.PropTypes.bool,
+    allSelectedData: React.PropTypes.object,
     emptyMessage: React.PropTypes.string,
-    actionButtons: React.PropTypes.array,
+    actionButtons: React.PropTypes.object,
     onSort: React.PropTypes.func,
-    onSelect: React.PropTypes.func
+    onSelect: React.PropTypes.func,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAll: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -4341,6 +4295,7 @@ var Table = React.createClass({displayName: "Table",
       themeClassKey: 'table',
       columns: {},
       dataRowIdField: 'id',
+      selectedRowIdsParam: 'rowIds',
       selectable: false,
       sortConfigs: {
         param: 's',
@@ -4348,41 +4303,82 @@ var Table = React.createClass({displayName: "Table",
       },
       sortData: {},
       dataRows: [],
-      selectedDataRowIds: [],
-      allSelected: false,
+      count: 0,
+      selectedRowIds: null,
+      allSelected: null,
+      allSelectedData: {},
       emptyMessage: 'Nenhum resultado foi encontrado.',
-      actionButtons: [],
+      actionButtons: {
+        member: [],
+        collection: []
+      },
       onSort: function(sortData) {},
-      onSelect: function(event, selectedDataRowIds) {}
+      onSelect: function(event, selectedRowIds) {},
+      onRemoveSelection: function(event) {},
+      onSelectAll: function(event) {}
     };
   },
 
   getInitialState: function() {
     return {
-      selectedDataRowIds: this.props.selectedDataRowIds,
+      selectedRowIds: this.props.selectedRowIds || [],
       allSelected: this.props.allSelected
     };
   },
 
   componentWillReceiveProps: function(nextProps) {
-    var selectedDataRowIds = nextProps.selectedDataRowIds;
-    if($.isArray(selectedDataRowIds)) {
-      this.setState({selectedDataRowIds: selectedDataRowIds});
+    var selectedRowIds = nextProps.selectedRowIds;
+    var allSelected = nextProps.allSelected;
+
+    if(!!selectedRowIds && $.isArray(selectedRowIds)) {
+      this.setState({selectedRowIds: selectedRowIds});
+    }
+
+    if(allSelected !== null && allSelected !== undefined) {
+      this.setState({allSelected: allSelected});
     }
   },
 
   render: function() {
     return(
-      React.createElement("table", {className: this.className()}, 
-        React.createElement("thead", null, 
-          React.createElement("tr", null, 
-            this.renderHeaderSelectCell(), 
-            this.renderTableHeaders()
+      React.createElement("div", {className: this.wrapperClassName()}, 
+        this.renderActions(), 
+        React.createElement("table", {className: this.className()}, 
+          React.createElement("thead", null, 
+            React.createElement("tr", null, 
+              this.renderHeaderSelectCell(), 
+              this.renderTableHeaders()
+            )
+          ), 
+          React.createElement("tbody", null, 
+            (this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()
           )
-        ), 
-        React.createElement("tbody", null, 
-          (this.props.dataRows.length > 0) ? this.renderTableRows() : this.renderEmptyMessage()
         )
+      )
+    );
+  },
+
+  wrapperClassName: function() {
+    var wrapperClassName = '';
+    if(!this.props.clearTheme) {
+      wrapperClassName = Realize.themeClass('table.wrapper');
+    }
+
+    return wrapperClassName;
+  },
+
+  renderActions: function() {
+    return (
+      React.createElement(TableActions, {
+        dataRows: this.state.dataRows, 
+        selectedRowIds: this.state.selectedRowIds, 
+        selectedRowIdsParam: this.props.selectedRowIdsParam, 
+        allSelected: this.state.allSelected, 
+        allSelectedData: this.props.allSelectedData, 
+        count: this.props.count, 
+        onRemoveSelection: this.removeSelection, 
+        onSelectAll: this.selectAllRows, 
+        actionButtons: this.props.actionButtons.collection || []}
       )
     );
   },
@@ -4448,7 +4444,7 @@ var Table = React.createClass({displayName: "Table",
           {onSelectToggle: this.toggleDataRows, 
           selected: this.dataRowIsSelected(dataRow), 
           data: dataRow, 
-          actionButtons: this.props.actionButtons, 
+          actionButtons: this.props.actionButtons.member || [], 
           key: "table_row_" + i})
         )
       );
@@ -4481,42 +4477,42 @@ var Table = React.createClass({displayName: "Table",
   },
 
   toggleDataRows: function(event, dataRowIds, selected) {
-    var selectedDataRowIds = [];
+    var selectedRowIds = [];
     if(selected) {
-      selectedDataRowIds = this.addSelectedDataRows(dataRowIds);
+      selectedRowIds = this.addSelectedDataRows(dataRowIds);
     } else {
-      selectedDataRowIds = this.removeSelectedDataRows(dataRowIds);
+      selectedRowIds = this.removeSelectedDataRows(dataRowIds);
     }
 
-    this.props.onSelect(event, selectedDataRowIds);
+    this.props.onSelect(event, selectedRowIds);
     if(!event.isDefaultPrevented()) {
       this.setState({
-        selectedDataRowIds: selectedDataRowIds,
+        selectedRowIds: selectedRowIds,
         allSelected: false
       });
     }
   },
 
   addSelectedDataRows: function(dataRowIds) {
-    var selectedDataRowIds = this.state.selectedDataRowIds.slice();
+    var selectedRowIds = this.state.selectedRowIds.slice();
     $.each(dataRowIds, function(i, dataRowId) {
-      if($.inArray(dataRowId, selectedDataRowIds) < 0) {
-        selectedDataRowIds.push(dataRowId);
+      if($.inArray(dataRowId, selectedRowIds) < 0) {
+        selectedRowIds.push(dataRowId);
       }
     });
 
-    return selectedDataRowIds;
+    return selectedRowIds;
   },
 
   removeSelectedDataRows: function(dataRowIds) {
-    return $.grep(this.state.selectedDataRowIds, function(dataRowId) {
+    return $.grep(this.state.selectedRowIds, function(dataRowId) {
       return ($.inArray(dataRowId, dataRowIds) < 0);
     }.bind(this));
   },
 
   dataRowIsSelected: function(dataRow) {
     var dataRowId = dataRow[this.props.dataRowIdField];
-    return (($.inArray(dataRowId, this.state.selectedDataRowIds) >= 0) || this.props.allSelected);
+    return (($.inArray(dataRowId, this.state.selectedRowIds) >= 0) || this.props.allSelected);
   },
 
   isAllDataRowsSelected: function() {
@@ -4524,11 +4520,140 @@ var Table = React.createClass({displayName: "Table",
       return dataRow[this.props.dataRowIdField];
     }.bind(this));
 
-    var selectedDataRowIdsInPage = $.grep(this.state.selectedDataRowIds, function(selectedDataRowId) {
+    var selectedRowIdsInPage = $.grep(this.state.selectedRowIds, function(selectedDataRowId) {
       return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
     });
 
-    return ((dataRowIds.length > 0 && (dataRowIds.length == selectedDataRowIdsInPage.length)) || this.props.allSelected);
+    return ((dataRowIds.length > 0 && (dataRowIds.length == selectedRowIdsInPage.length)) || this.props.allSelected);
+  },
+
+  removeSelection: function(event) {
+    this.props.onRemoveSelection(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({
+        selectedRowIds: [],
+        allSelected: false
+      });
+    }
+  },
+
+  selectAllRows: function(event) {
+    this.props.onSelectAll(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({
+        allSelected: true
+      });
+    }
+  }
+});
+
+var TableActionButton = React.createClass({displayName: "TableActionButton",
+  mixins: [CssClassMixin, RequestHandlerMixin],
+
+  propTypes: {
+    selectedRowIds: React.PropTypes.array,
+    selectedRowIdsParam: React.PropTypes.string,
+    allSelected: React.PropTypes.bool,
+    allSelectedData: React.PropTypes.object,
+    count: React.PropTypes.number,
+    actionUrl: React.PropTypes.string,
+    method: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      selectedRowIds: [],
+      allSelected: false,
+      method: 'GET'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement(Button, React.__spread({},  this.props, {onClick: this.actionButtonClick}))
+    );
+  },
+
+  actionButtonClick: function(event) {
+    var buttonOnClick = this.props.onClick;
+    var buttonAction = this.props.actionUrl;
+    var selectedData = this.getSelectedData();
+
+    if($.isFunction(buttonOnClick)) {
+      buttonOnClick(event, selectedData);
+    } else if(!!buttonAction) {
+      this.performRequest(buttonAction, selectedData, this.props.method);
+    }
+  },
+
+  getSelectedData: function() {
+    var selectedData = {};
+    if(this.props.allSelected && !!this.props.allSelectedData && !$.isEmptyObject(this.props.allSelectedData)) {
+      selectedData = this.props.allSelectedData;
+    } else {
+      selectedData[this.props.selectedRowIdsParam] = this.props.selectedRowIds;
+    }
+
+    return selectedData;
+  }
+});
+
+var TableActions = React.createClass({displayName: "TableActions",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    dataRows: React.PropTypes.array,
+    selectedRowIds: React.PropTypes.array,
+    selectedRowIdsParam: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
+    allSelected: React.PropTypes.bool,
+    count: React.PropTypes.number,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAll: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'table.actions',
+      actionButtons: [],
+      selectedRowIds: [],
+      allSelected: false,
+      onRemoveSelection: function(event) {},
+      onSelectAll: function(event) {}
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement("div", null, 
+          React.createElement(TableSelectionIndicator, React.__spread({},  this.propsWithoutCSS())), 
+          this.renderButtons()
+        )
+      )
+    );
+  },
+
+  renderButtons: function() {
+    var actionButtons = [];
+    var actionButtonsProps = this.props.actionButtons;
+
+    for(var i = 0; i < actionButtonsProps.length; i++) {
+      var actionButtonProps = actionButtonsProps[i];
+      actionButtons.push(
+        React.createElement(TableActionButton, React.__spread({}, 
+          actionButtonProps, 
+          this.propsWithoutCSS(), 
+          {element: "a", 
+          themeClassKey: "button.flat", 
+          key: "action_" + i})
+        )
+      );
+    }
+
+    return actionButtons;
   }
 });
 
@@ -4540,7 +4665,7 @@ var TableCell = React.createClass({displayName: "TableCell",
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'datetime'])
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'date', 'datetime'])
   },
 
   getDefaultProps: function() {
@@ -4598,6 +4723,11 @@ var TableCell = React.createClass({displayName: "TableCell",
 
   booleanValue: function(value) {
     return value ? "Sim" : "Não";
+  },
+
+  dateValue: function(value) {
+    value = moment(value);
+    return value.format("DD/MM/YYYY");
   },
 
   datetimeValue: function(value) {
@@ -4878,6 +5008,98 @@ var TableSelectCell = React.createClass({displayName: "TableSelectCell",
 
   handleClick: function(event) {
     event.stopPropagation();
+  }
+});
+
+var TableSelectionIndicator = React.createClass({displayName: "TableSelectionIndicator",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    dataRows: React.PropTypes.array,
+    selectedRowIds: React.PropTypes.array,
+    actionButtons: React.PropTypes.array,
+    message: React.PropTypes.object,
+    removeSelectionButtonName: React.PropTypes.string,
+    selectAllButtonName: React.PropTypes.string,
+    allSelected: React.PropTypes.bool,
+    count: React.PropTypes.number,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAll: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'table.selectionIndicator',
+      dataRows: [],
+      selectedRowIds: [],
+      actionButtons: [],
+      message: {
+        plural: ':count itens selecionados',
+        singular: '1 item selecionado'
+      },
+      removeSelectionButtonName: 'limpar seleção',
+      selectAllButtonName: 'selecionar todos',
+      allSelected: false,
+      onRemoveSelection: function(event) {},
+      onSelectAll: function(event) {}
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        React.createElement("span", null, this.renderMessage()), " ", this.renderActions()
+      )
+    );
+  },
+
+  renderMessage: function() {
+    var count = this.getSelectionCount();
+    if(count === 0) {
+      return '';
+    } else if(count === 1) {
+      return this.props.message.singular;
+    } else {
+      var message = this.props.message.plural;
+      return message.replace(/:count/, count);
+    }
+  },
+
+  renderActions: function() {
+    var count = this.getSelectionCount();
+    if(count === 0) {
+      return '';
+    }
+
+    return (
+      React.createElement("span", null, 
+        "(", this.renderRemoveSelectionButton(), " | ", this.renderSelectAllButton(), ")"
+      )
+    );
+  },
+
+  renderRemoveSelectionButton: function() {
+    return (
+      React.createElement("a", {href: "#!", onClick: this.props.onRemoveSelection}, 
+        this.props.removeSelectionButtonName
+      )
+    );
+  },
+
+  renderSelectAllButton: function() {
+    return (
+      React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
+        this.props.selectAllButtonName
+      )
+    );
+  },
+
+  getSelectionCount: function() {
+    if(this.props.allSelected && !!this.props.count) {
+      return this.props.count;
+    } else {
+      return this.props.selectedRowIds.length;
+    }
   }
 });
 
