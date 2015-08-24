@@ -17,11 +17,11 @@ var GridFilter = React.createClass({
     return {
       method: "GET",
       submitButton: {
-        name: 'Filtrar',
+        name: Realize.t('actions.filter'),
         icon: 'search'
       },
       clearButton: {
-        name: 'Limpar',
+        name: Realize.t('actions.clear'),
         type: 'reset',
         style: 'cancel'
       },

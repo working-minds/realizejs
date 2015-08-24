@@ -65,7 +65,7 @@ var InputComponentMixin = {
     var errors = this.props.errors;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + Realize.themeClass('input.error');
+      className += ' ' + Realize.themes.getCssClass('input.error');
     }
 
     return className;

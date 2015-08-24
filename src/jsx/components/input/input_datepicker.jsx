@@ -15,7 +15,7 @@ var InputDatepicker = React.createClass({
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: 'dd/mm/yyyy'
+      format: Realize.t('masks.date')
     });
 
     var picker = input.pickadate('picker');

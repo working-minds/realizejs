@@ -31,7 +31,7 @@ var Form = React.createClass({
       dataType: undefined,
       contentType: undefined,
       submitButton: {
-        name: 'Enviar',
+        name: Realize.t('actions.send'),
         icon: 'send'
       },
       otherButtons: [],
@@ -75,7 +75,7 @@ var Form = React.createClass({
         {this.renderInputs()}
         {this.renderChildren()}
 
-        <div className={Realize.themeClass('form.buttonGroup')}>
+        <div className={Realize.themes.getCssClass('form.buttonGroup')}>
           {this.renderOtherButtons()}
           <Button {...this.submitButtonProps()} ref="submitButton" />
         </div>

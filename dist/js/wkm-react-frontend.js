@@ -2,15 +2,11 @@
  * WKM Frontend v0.0.0 (http://www.wkm.com.br)
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
-$.extend(FormSerializer.patterns, {
-  validate: /^[a-z_][a-z0-9#_\.-]*(?:\[(?:\d*|[a-z0-9#_\.-]+)\])*$/i,
-  key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
-  named: /^[a-z0-9#_\.-]+$/i
-});
 var Realize = {};
 
 Realize.config = {
   theme: 'materialize',
+  language: 'en',
   restUrls: {
     index: ':url.json',
     show: ':url/:id',
@@ -32,26 +28,16 @@ Realize.config = {
   }
 };
 
-Realize.themes = {};
+$.extend(FormSerializer.patterns, {
+  validate: /^[a-z_][a-z0-9#_\.-]*(?:\[(?:\d*|[a-z0-9#_\.-]+)\])*$/i,
+  key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
+  named: /^[a-z0-9#_\.-]+$/i
+});
+Realize.utils = {};
 
-Realize.getTheme = function() {
-  var defaultTheme = Realize.themes.default;
-  var currentTheme = Realize.themes[Realize.config.theme];
-
-  return $.extend({}, defaultTheme, currentTheme);
-};
-
-Realize.themeProp = function(key, theme) {
-  if(!key) {
-    return '';
-  }
-
-  if(theme === undefined) {
-    theme = this.getTheme();
-  }
-
+Realize.utils.getProp = function(key, obj) {
   var keyArr = key.split('.');
-  var prop = theme;
+  var prop = obj;
 
   try {
     while(keyArr.length > 0) {
@@ -63,9 +49,109 @@ Realize.themeProp = function(key, theme) {
 
   return prop;
 };
+Realize.locale = {};
+Realize.locale.languages = {};
+Realize.locale.register = function(newLocaleObj, language) {
+  if(!$.isPlainObject(newLocaleObj)) {
+    throw 'Invalid Locale Object.'
+  }
 
-Realize.themeClass = function(keys) {
-  var theme = this.getTheme();
+  if(!language) {
+    throw 'Invalid Language String.';
+  }
+
+  var currentLocaleObj = Realize.locale[language] || {};
+  Realize.locale.languages[language] = $.extend({}, currentLocaleObj, newLocaleObj);
+};
+Realize.locale.translate = function(key) {
+  var currentLanguage = Realize.config.language;
+  var languageObj = Realize.locale.languages[currentLanguage];
+
+  return Realize.utils.getProp(key, languageObj);
+};
+
+Realize.t = Realize.locale.translate;
+Realize.locale.register({
+  true: 'Yes',
+  false: 'No',
+  loading: 'Loading...',
+  select: 'Select',
+  actions: {
+    send: 'Send',
+    filter: 'Filter',
+    clear: 'Clear',
+    add: 'Add',
+    update: 'Update',
+    cancel: 'Cancel'
+  },
+
+  table: {
+    emptyResult: 'No results found.'
+  },
+
+  masks: {
+    date: 'mm/dd/yyyy'
+  },
+
+  date: {
+    formats: {
+      default: 'MM/DD/YYYY HH:mm',
+      date: 'MM/DD/YYYY'
+    }
+  }
+
+
+}, 'en');
+Realize.locale.register({
+  true: 'Sim',
+  false: 'Não',
+  loading: 'Carregando...',
+  select: 'Selecione',
+  actions: {
+    send: 'Enviar',
+    filter: 'Filtrar',
+    clear: 'Limpar',
+    add: 'Adicionar',
+    update: 'Atualizar',
+    cancel: 'Cancelar'
+  },
+
+  table: {
+    emptyResult: 'Nenhum resultado foi encontrado.'
+  },
+
+  masks: {
+    date: 'dd/mm/yyyy'
+  },
+
+  date: {
+    formats: {
+      default: 'DD/MM/YYYY HH:mm',
+      date: 'DD/MM/YYYY'
+    }
+  }
+
+
+}, 'pt-BR');
+Realize.themes = {};
+
+Realize.themes.getCurrent = function() {
+  var defaultTheme = Realize.themes.default;
+  var currentTheme = Realize.themes[Realize.config.theme];
+
+  return $.extend({}, defaultTheme, currentTheme);
+};
+
+Realize.themes.getProp = function(key) {
+  if(!key) {
+    return '';
+  }
+
+  var currentTheme = this.getCurrent();
+  return Realize.utils.getProp(key, currentTheme);
+};
+
+Realize.themes.getCssClass = function(keys) {
   var keysArr = keys.split(' ');
   var themeClass = "";
 
@@ -73,7 +159,7 @@ Realize.themeClass = function(keys) {
     var key = keysArr.shift();
     var classKey = key + '.cssClass';
 
-    themeClass += Realize.themeProp(classKey, theme) + ' ';
+    themeClass += this.getProp(classKey) + ' ';
   }
 
   return themeClass.trim();
@@ -556,7 +642,11 @@ var CssClassMixin = {
     var themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
+<<<<<<< HEAD
       themedClassName += Realize.themeClass(themeClassKey);
+=======
+      className += Realize.themes.getCssClass(themeClassKey);
+>>>>>>> [WKMRF-76] In Progress
     }
 
     if(!!className) {
@@ -607,7 +697,7 @@ var FormContainerMixin = {
   formContainerClassName: function() {
     var className = this.className();
     if(this.inputChildrenHaveErrors()) {
-      className += ' ' + Realize.themeClass(this.props.errorThemeClassKey);
+      className += ' ' + Realize.themes.getCssClass(this.props.errorThemeClassKey);
     }
 
     return className;
@@ -927,7 +1017,7 @@ var InputComponentMixin = {
     var errors = this.props.errors;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + Realize.themeClass('input.error');
+      className += ' ' + Realize.themes.getCssClass('input.error');
     }
 
     return className;
@@ -1294,7 +1384,7 @@ var Button = React.createClass({displayName: "Button",
       icon: null,
       href: null,
       onClick: null,
-      disableWith: 'Carregando...',
+      disableWith: Realize.t('loading'),
       element: 'button'
     };
   },
@@ -1684,7 +1774,7 @@ var Form = React.createClass({displayName: "Form",
       dataType: undefined,
       contentType: undefined,
       submitButton: {
-        name: 'Enviar',
+        name: Realize.t('actions.send'),
         icon: 'send'
       },
       otherButtons: [],
@@ -1728,7 +1818,7 @@ var Form = React.createClass({displayName: "Form",
         this.renderInputs(), 
         this.renderChildren(), 
 
-        React.createElement("div", {className: Realize.themeClass('form.buttonGroup')}, 
+        React.createElement("div", {className: Realize.themes.getCssClass('form.buttonGroup')}, 
           this.renderOtherButtons(), 
           React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"}))
         )
@@ -1855,7 +1945,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
   inputGroupClassName: function() {
     var className = this.className();
     if(this.props.label !== null) {
-      className += ' ' + Realize.themeClass('form.inputGroup.section');
+      className += ' ' + Realize.themes.getCssClass('form.inputGroup.section');
     }
 
     return className;
@@ -2112,9 +2202,9 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   handleLoadError: function(xhr, status, error) {
-    this.props.onLoadError(data);
+    this.props.onLoadError(xhr, status, error);
     this.setState({isLoading: false});
-    console.log('Grid Load error:' + error);
+    console.log('Grid Load Error:' + error);
   },
 
   buildPostData: function() {
@@ -2191,11 +2281,11 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     return {
       method: "GET",
       submitButton: {
-        name: 'Filtrar',
+        name: Realize.t('actions.filter'),
         icon: 'search'
       },
       clearButton: {
-        name: 'Limpar',
+        name: Realize.t('actions.clear'),
         type: 'reset',
         style: 'cancel'
       },
@@ -2326,15 +2416,15 @@ var GridForm = React.createClass({displayName: "GridForm",
       themeClassKey: 'gridForm',
       isLoading: false,
       createButton: {
-        name: 'Adicionar',
+        name: Realize.t('actions.add'),
         icon: 'add'
       },
       updateButton: {
-        name: 'Atualizar',
+        name: Realize.t('actions.update'),
         icon: 'edit'
       },
       cancelButton: {
-        name: 'Cancelar',
+        name: Realize.t('actions.cancel'),
         style: 'cancel'
       },
       selectable: true,
@@ -2723,7 +2813,7 @@ var Icon = React.createClass({displayName: "Icon",
   },
 
   iconType: function() {
-    var iconType = Realize.themeProp('icon.' + this.props.type);
+    var iconType = Realize.themes.getProp('icon.' + this.props.type);
     if(!iconType) {
       iconType = this.props.type;
     }
@@ -3217,7 +3307,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
     return {
       selectedOptions: [],
       themeClassKey: 'input.autocomplete.select',
-      placeholder: "Selecione",
+      placeholder: Realize.t('select'),
       onFocus: function() {
         return true;
       },
@@ -3628,7 +3718,7 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: 'dd/mm/yyyy'
+      format: Realize.t('masks.date')
     });
 
     var picker = input.pickadate('picker');
@@ -4077,7 +4167,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     var options = this.state.options;
 
     if(this.props.includeBlank) {
-      selectOptions.push(React.createElement(InputSelectOption, {name: "Selecione", value: "", key: "empty_option"}));
+      selectOptions.push(React.createElement(InputSelectOption, {name: Realize.t('select'), value: "", key: "empty_option"}));
     }
 
     for(var i = 0; i < options.length; i++) {
@@ -4677,7 +4767,7 @@ var Table = React.createClass({displayName: "Table",
       selectedRowIds: null,
       allSelected: null,
       allSelectedData: {},
-      emptyMessage: 'Nenhum resultado foi encontrado.',
+      emptyMessage: Realize.t('table.emptyResult'),
       actionButtons: {
         member: [],
         collection: []
@@ -4731,7 +4821,7 @@ var Table = React.createClass({displayName: "Table",
   wrapperClassName: function() {
     var wrapperClassName = '';
     if(!this.props.clearTheme) {
-      wrapperClassName = Realize.themeClass('table.wrapper');
+      wrapperClassName = Realize.themes.getCssClass('table.wrapper');
     }
 
     return wrapperClassName;
@@ -5099,7 +5189,7 @@ var TableCell = React.createClass({displayName: "TableCell",
   },
 
   booleanValue: function(value) {
-    return value ? "Sim" : "Não";
+    return Realize.t(String(value));
   },
 
   dateValue: function(value) {
@@ -5148,7 +5238,7 @@ var TableHeader = React.createClass({displayName: "TableHeader",
     var className = '';
 
     if(!this.props.clearTheme) {
-      className += Realize.themeClass('table.header.label');
+      className += Realize.themes.getCssClass('table.header.label');
     }
 
     if(this.props.sortable) {

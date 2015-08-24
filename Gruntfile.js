@@ -13,8 +13,12 @@ module.exports = function(grunt) {
           'src/js/config.js',
           'src/js/serializer.js',
           'src/js/utils.js',
-          'src/js/theme.js',
-          'src/js/themes/**/*.js',
+          'src/js/locale/locale.js',
+          'src/js/locale/register.js',
+          'src/js/locale/translate.js',
+          'src/js/locale/languages/**/*.js',
+          'src/js/theme/theme.js',
+          'src/js/theme/mappings/**/*.js',
           'src/jsx/**/*.jsx',
           'src/css/**/*.css',
           'src/scss/**/*.scss'
@@ -65,10 +69,15 @@ module.exports = function(grunt) {
       },
       js: {
         src: [
-          'src/js/serializer.js',
           'src/js/config.js',
-          'src/js/theme.js',
-          'src/js/themes/**/*.js',
+          'src/js/serializer.js',
+          'src/js/utils.js',
+          'src/js/locale/locale.js',
+          'src/js/locale/register.js',
+          'src/js/locale/translate.js',
+          'src/js/locale/languages/**/*.js',
+          'src/js/theme/theme.js',
+          'src/js/theme/mappings/**/*.js',
           'tmp/js/mixins/**/*.js',
           'tmp/js/components/**/*.js'
         ],

@@ -15,7 +15,7 @@ var InputAutocompleteSelect = React.createClass({
     return {
       selectedOptions: [],
       themeClassKey: 'input.autocomplete.select',
-      placeholder: "Selecione",
+      placeholder: Realize.t('select'),
       onFocus: function() {
         return true;
       },

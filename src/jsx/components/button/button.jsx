@@ -21,7 +21,7 @@ var Button = React.createClass({
       icon: null,
       href: null,
       onClick: null,
-      disableWith: 'Carregando...',
+      disableWith: Realize.t('loading'),
       element: 'button'
     };
   },

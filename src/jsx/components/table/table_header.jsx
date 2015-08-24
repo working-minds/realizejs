@@ -33,7 +33,7 @@ var TableHeader = React.createClass({
     var className = '';
 
     if(!this.props.clearTheme) {
-      className += Realize.themeClass('table.header.label');
+      className += Realize.themes.getCssClass('table.header.label');
     }
 
     if(this.props.sortable) {

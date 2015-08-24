@@ -37,7 +37,7 @@ var Table = React.createClass({
       selectedRowIds: null,
       allSelected: null,
       allSelectedData: {},
-      emptyMessage: 'Nenhum resultado foi encontrado.',
+      emptyMessage: Realize.t('table.emptyResult'),
       actionButtons: {
         member: [],
         collection: []
@@ -91,7 +91,7 @@ var Table = React.createClass({
   wrapperClassName: function() {
     var wrapperClassName = '';
     if(!this.props.clearTheme) {
-      wrapperClassName = Realize.themeClass('table.wrapper');
+      wrapperClassName = Realize.themes.getCssClass('table.wrapper');
     }
 
     return wrapperClassName;

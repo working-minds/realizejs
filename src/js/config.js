@@ -2,6 +2,7 @@ var Realize = {};
 
 Realize.config = {
   theme: 'materialize',
+  language: 'en',
   restUrls: {
     index: ':url.json',
     show: ':url/:id',

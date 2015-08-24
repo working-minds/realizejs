@@ -23,7 +23,7 @@ var Icon = React.createClass({
   },
 
   iconType: function() {
-    var iconType = Realize.themeProp('icon.' + this.props.type);
+    var iconType = Realize.themes.getProp('icon.' + this.props.type);
     if(!iconType) {
       iconType = this.props.type;
     }

@@ -197,9 +197,9 @@ var Grid = React.createClass({
   },
 
   handleLoadError: function(xhr, status, error) {
-    this.props.onLoadError(data);
+    this.props.onLoadError(xhr, status, error);
     this.setState({isLoading: false});
-    console.log('Grid Load error:' + error);
+    console.log('Grid Load Error:' + error);
   },
 
   buildPostData: function() {
