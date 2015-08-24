@@ -6,7 +6,7 @@ var Realize = {};
 
 Realize.config = {
   theme: 'materialize',
-  language: 'en',
+  locale: 'en',
   restUrls: {
     index: ':url.json',
     show: ':url/:id',
@@ -49,29 +49,35 @@ Realize.utils.getProp = function(key, obj) {
 
   return prop;
 };
-Realize.locale = {};
-Realize.locale.languages = {};
-Realize.locale.register = function(newLocaleObj, language) {
+Realize.i18n = {};
+Realize.i18n.locales = {};
+
+Realize.i18n.registerLocale = function(newLocaleObj, locale) {
   if(!$.isPlainObject(newLocaleObj)) {
     throw 'Invalid Locale Object.'
   }
 
-  if(!language) {
-    throw 'Invalid Language String.';
+  if(!locale) {
+    throw 'Invalid Locale Name.';
   }
 
-  var currentLocaleObj = Realize.locale[language] || {};
-  Realize.locale.languages[language] = $.extend({}, currentLocaleObj, newLocaleObj);
-};
-Realize.locale.translate = function(key) {
-  var currentLanguage = Realize.config.language;
-  var languageObj = Realize.locale.languages[currentLanguage];
-
-  return Realize.utils.getProp(key, languageObj);
+  var currentLocaleObj = Realize.i18n.locales[locale] || {};
+  Realize.i18n.locales[locale] = $.extend({}, currentLocaleObj, newLocaleObj);
 };
 
-Realize.t = Realize.locale.translate;
-Realize.locale.register({
+Realize.i18n.setLocale = function(locale) {
+  Realize.config.locale = locale;
+};
+
+Realize.i18n.translate = function(key) {
+  var currentLocale = Realize.config.locale;
+  var localeObj = Realize.i18n.locales[currentLocale];
+
+  return Realize.utils.getProp(key, localeObj);
+};
+
+Realize.t = Realize.i18n.translate;
+Realize.i18n.registerLocale({
   true: 'Yes',
   false: 'No',
   loading: 'Loading...',
@@ -102,7 +108,7 @@ Realize.locale.register({
 
 
 }, 'en');
-Realize.locale.register({
+Realize.i18n.registerLocale({
   true: 'Sim',
   false: 'Não',
   loading: 'Carregando...',
@@ -130,7 +136,6 @@ Realize.locale.register({
       date: 'DD/MM/YYYY'
     }
   }
-
 
 }, 'pt-BR');
 Realize.themes = {};

@@ -1,4 +1,4 @@
-Realize.locale.register({
+Realize.i18n.registerLocale({
   true: 'Sim',
   false: 'Não',
   loading: 'Carregando...',
@@ -26,6 +26,5 @@ Realize.locale.register({
       date: 'DD/MM/YYYY'
     }
   }
-
 
 }, 'pt-BR');

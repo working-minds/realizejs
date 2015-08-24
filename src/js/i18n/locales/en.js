@@ -1,4 +1,4 @@
-Realize.locale.register({
+Realize.i18n.registerLocale({
   true: 'Yes',
   false: 'No',
   loading: 'Loading...',
