@@ -157,6 +157,23 @@ Realize.themes.materialize = {
 
     textarea: {
       cssClass: 'materialize-textarea'
+    },
+
+    file: {
+      cssClass: 'file-path',
+
+      wrapper: {
+        cssClass: 'file-field'
+      },
+
+      filePathWrapper: {
+        cssClass: 'file-path-wrapper'
+      },
+
+      button: {
+        cssClass: 'button btn'
+      }
+
     }
   },
 

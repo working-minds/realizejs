@@ -20,23 +20,7 @@ var Input = React.createClass({
       formStyle: 'default',
       data: {},
       errors: {},
-      resource: null,
-      componentMapping: function(component) {
-        var mapping = {
-          text: InputText,
-          autocomplete: InputAutocomplete,
-          checkbox: InputCheckbox,
-          datepicker: InputDatepicker,
-          hidden: InputHidden,
-          password: InputPassword,
-          select: InputSelect,
-          textarea: InputTextarea,
-          checkbox_group: InputCheckboxGroup,
-          radio_group: InputRadioGroup
-        }; 
-
-        return (mapping[component] || window[component]);
-      }
+      resource: null
     };
   },
 
@@ -88,12 +72,21 @@ var Input = React.createClass({
     );
   },
 
+  renderFileInput: function() {
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
+        {this.renderInputErrors()}
+      </div>
+    );
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
 
   renderComponentInput: function() {
-    var componentInputClass = this.props.componentMapping(this.props.component);
+    var componentInputClass = this.getInputComponentClass(this.props.component);
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
@@ -116,6 +109,24 @@ var Input = React.createClass({
 
   renderInputErrors: function() {
     return (<InputError errors={this.getInputErrors()} />);
+  },
+
+  getInputComponentClass: function(component) {
+    var mapping = {
+      text: InputText,
+      autocomplete: InputAutocomplete,
+      checkbox: InputCheckbox,
+      datepicker: InputDatepicker,
+      file: InputFile,
+      hidden: InputHidden,
+      password: InputPassword,
+      select: InputSelect,
+      textarea: InputTextarea,
+      checkbox_group: InputCheckboxGroup,
+      radio_group: InputRadioGroup
+    };
+
+    return (mapping[component] || window[component]);
   },
 
   getInputComponentId: function() {

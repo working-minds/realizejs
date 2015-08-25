@@ -18,7 +18,7 @@ var Icon = React.createClass({
 
   render: function() {
     return (
-      <i className={this.className()}>{this.iconType()}</i>
+      <i className={this.className()} {...this.propsWithoutCSS()}>{this.iconType()}</i>
     );
   },
 
