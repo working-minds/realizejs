@@ -319,6 +319,23 @@ Realize.themes.materialize = {
 
     textarea: {
       cssClass: 'materialize-textarea'
+    },
+
+    file: {
+      cssClass: 'file-path',
+
+      wrapper: {
+        cssClass: 'file-field'
+      },
+
+      filePathWrapper: {
+        cssClass: 'file-path-wrapper'
+      },
+
+      button: {
+        cssClass: 'button btn'
+      }
+
     }
   },
 
@@ -505,19 +522,25 @@ var CssClassMixin = {
     };
   },
 
-  className: function() {
-    var className = '';
-    var themeClassKey = this.getThemeClassKey();
+  themedClassName: function(themeClassKey, className) {
+    var themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      className += Realize.themeClass(themeClassKey);
+      themedClassName += Realize.themeClass(themeClassKey);
     }
 
-    if(!!this.props.className) {
-      className += ' ' + this.props.className;
+    if(!!className) {
+      themedClassName += ' ' + className;
     }
 
-    return className;
+    return themedClassName;
+  },
+
+  className: function() {
+    var themeClassKey = this.getThemeClassKey();
+    var className = this.props.className;
+
+    return this.themedClassName(themeClassKey, className);
   },
 
   getThemeClassKey: function() {
@@ -1437,6 +1460,7 @@ var Form = React.createClass({displayName: "Form",
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
+    contentType: React.PropTypes.string,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
     submitButton: React.PropTypes.object,
@@ -1453,6 +1477,7 @@ var Form = React.createClass({displayName: "Form",
       action: '',
       method: 'POST',
       dataType: undefined,
+      contentType: undefined,
       submitButton: {
         name: 'Enviar',
         icon: 'send'
@@ -1562,6 +1587,14 @@ var Form = React.createClass({displayName: "Form",
 
     if(!!this.props.dataType) {
       submitOptions.dataType = this.props.dataType;
+    }
+
+    if(!!this.props.contentType) {
+      submitOptions.contentType = this.props.contentType;
+
+      if(submitOptions.contentType == "application/json") {
+        submitOptions.data = JSON.stringify(postData);
+      }
     }
 
     $.ajax(submitOptions);
@@ -2472,7 +2505,7 @@ var Icon = React.createClass({displayName: "Icon",
 
   render: function() {
     return (
-      React.createElement("i", {className: this.className()}, this.iconType())
+      React.createElement("i", React.__spread({className: this.className()},  this.propsWithoutCSS()), this.iconType())
     );
   },
 
@@ -3204,23 +3237,7 @@ var Input = React.createClass({displayName: "Input",
       formStyle: 'default',
       data: {},
       errors: {},
-      resource: null,
-      componentMapping: function(component) {
-        var mapping = {
-          text: InputText,
-          autocomplete: InputAutocomplete,
-          checkbox: InputCheckbox,
-          datepicker: InputDatepicker,
-          hidden: InputHidden,
-          password: InputPassword,
-          select: InputSelect,
-          textarea: InputTextarea,
-          checkbox_group: InputCheckboxGroup,
-          radio_group: InputRadioGroup
-        }; 
-
-        return (mapping[component] || window[component]);
-      }
+      resource: null
     };
   },
 
@@ -3272,12 +3289,21 @@ var Input = React.createClass({displayName: "Input",
     );
   },
 
+  renderFileInput: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
 
   renderComponentInput: function() {
-    var componentInputClass = this.props.componentMapping(this.props.component);
+    var componentInputClass = this.getInputComponentClass(this.props.component);
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
@@ -3300,6 +3326,24 @@ var Input = React.createClass({displayName: "Input",
 
   renderInputErrors: function() {
     return (React.createElement(InputError, {errors: this.getInputErrors()}));
+  },
+
+  getInputComponentClass: function(component) {
+    var mapping = {
+      text: InputText,
+      autocomplete: InputAutocomplete,
+      checkbox: InputCheckbox,
+      datepicker: InputDatepicker,
+      file: InputFile,
+      hidden: InputHidden,
+      password: InputPassword,
+      select: InputSelect,
+      textarea: InputTextarea,
+      checkbox_group: InputCheckboxGroup,
+      radio_group: InputRadioGroup
+    };
+
+    return (mapping[component] || window[component]);
   },
 
   getInputComponentId: function() {
@@ -3423,6 +3467,62 @@ var InputError = React.createClass({displayName: "InputError",
     return errorMessage.replace(/[\/\s]*$/, '');
   }
 
+});
+
+var InputFile = React.createClass({displayName: "InputFile",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    buttonName: React.PropTypes.string,
+    wrapperClassName: React.PropTypes.string,
+    buttonClassName: React.PropTypes.string,
+    filePathWrapperClassName: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.file',
+      buttonName: 'Arquivo'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.wrapperClassName()}, 
+        React.createElement("div", {className: this.buttonClassName()}, 
+          React.createElement("span", null, this.props.buttonName), 
+          React.createElement("input", React.__spread({},  this.props, {value: this.state.value, onChange: this.handleChange, type: "file", ref: "input"}))
+        ), 
+        React.createElement("div", {className: this.filePathWrapperClassName()}, 
+          React.createElement("input", {className: this.inputClassName(), placeholder: this.getLabelName(), type: "text", ref: "filePath"})
+        )
+      )
+    );
+  },
+
+  handleChange: function(event) {
+    this._handleChange(event);
+
+    var fileInput = React.findDOMNode(this.refs.input);
+    var filePathInput = React.findDOMNode(this.refs.filePath);
+
+    $(filePathInput).val(fileInput.files[0].name);
+  },
+
+  wrapperClassName: function() {
+    return this.themedClassName('input.file.wrapper', this.props.wrapperClassName);
+  },
+
+  filePathWrapperClassName: function() {
+    return this.themedClassName('input.file.filePathWrapper', this.props.filePathWrapperClassName);
+  },
+
+  buttonClassName: function() {
+    return this.themedClassName('input.file.button', this.props.buttonClassName);
+  },
+
+  getLabelName: function() {
+    return (this.props.label || this.props.name);
+  }
 });
 
 var InputHidden = React.createClass({displayName: "InputHidden",
@@ -4683,10 +4783,17 @@ var TableCell = React.createClass({displayName: "TableCell",
 
   render: function() {
     return (
-      React.createElement("td", {className: this.className()}, 
+      React.createElement("td", {className: this.cellClassName()}, 
         this.renderValue()
       )
     );
+  },
+
+  cellClassName: function() {
+    var className = this.className();
+    className += ' table-cell--' + this.props.name;
+
+    return className;
   },
 
   renderValue: function() {

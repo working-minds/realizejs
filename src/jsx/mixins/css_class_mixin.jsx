@@ -11,19 +11,25 @@ var CssClassMixin = {
     };
   },
 
-  className: function() {
-    var className = '';
-    var themeClassKey = this.getThemeClassKey();
+  themedClassName: function(themeClassKey, className) {
+    var themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      className += Realize.themeClass(themeClassKey);
+      themedClassName += Realize.themeClass(themeClassKey);
     }
 
-    if(!!this.props.className) {
-      className += ' ' + this.props.className;
+    if(!!className) {
+      themedClassName += ' ' + className;
     }
 
-    return className;
+    return themedClassName;
+  },
+
+  className: function() {
+    var themeClassKey = this.getThemeClassKey();
+    var className = this.props.className;
+
+    return this.themedClassName(themeClassKey, className);
   },
 
   getThemeClassKey: function() {

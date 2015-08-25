@@ -24,10 +24,17 @@ var TableCell = React.createClass({
 
   render: function() {
     return (
-      <td className={this.className()}>
+      <td className={this.cellClassName()}>
         {this.renderValue()}
       </td>
     );
+  },
+
+  cellClassName: function() {
+    var className = this.className();
+    className += ' table-cell--' + this.props.name;
+
+    return className;
   },
 
   renderValue: function() {

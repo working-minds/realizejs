@@ -12,6 +12,7 @@ var Form = React.createClass({
     action: React.PropTypes.string,
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
+    contentType: React.PropTypes.string,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
     submitButton: React.PropTypes.object,
@@ -28,6 +29,7 @@ var Form = React.createClass({
       action: '',
       method: 'POST',
       dataType: undefined,
+      contentType: undefined,
       submitButton: {
         name: 'Enviar',
         icon: 'send'
@@ -137,6 +139,14 @@ var Form = React.createClass({
 
     if(!!this.props.dataType) {
       submitOptions.dataType = this.props.dataType;
+    }
+
+    if(!!this.props.contentType) {
+      submitOptions.contentType = this.props.contentType;
+
+      if(submitOptions.contentType == "application/json") {
+        submitOptions.data = JSON.stringify(postData);
+      }
     }
 
     $.ajax(submitOptions);
