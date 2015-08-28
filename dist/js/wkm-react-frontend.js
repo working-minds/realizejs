@@ -49,6 +49,19 @@ Realize.utils.getProp = function(key, obj) {
 
   return prop;
 };
+Realize.PropTypes = {};
+
+Realize.PropTypes.localizedString = function(props, propName, componentName) {
+  var value = props[propName];
+  if(value === null || value === undefined || (typeof value === "string" && value.length === 0)) {
+    return true;
+  }
+
+  var translatedValue = Realize.t(value);
+  if(typeof value !== "string" || typeof translatedValue !== "string" || translatedValue.length === 0) {
+    return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
+  }
+};
 Realize.i18n = {};
 Realize.i18n.locales = {};
 
@@ -69,11 +82,32 @@ Realize.i18n.setLocale = function(locale) {
   Realize.config.locale = locale;
 };
 
-Realize.i18n.translate = function(key) {
+Realize.i18n.translate = function(key, throwsException) {
+  if(throwsException === undefined) {
+    throwsException = false;
+  }
+
+  if(typeof key !== "string") {
+    if(throwsException) {
+      throw 'Key is not a string';
+    }
+
+    return '';
+  }
+
   var currentLocale = Realize.config.locale;
   var localeObj = Realize.i18n.locales[currentLocale];
 
-  return Realize.utils.getProp(key, localeObj);
+  var translatedString = Realize.utils.getProp(key, localeObj);
+  if(!translatedString) {
+    if(throwsException) {
+      throw 'Key not found in locale object';
+    }
+
+    translatedString = key;
+  }
+
+  return translatedString;
 };
 
 Realize.t = Realize.i18n.translate;
@@ -83,6 +117,7 @@ Realize.i18n.registerLocale({
   loading: 'Loading...',
   select: 'Select',
   actions: {
+    new: 'New',
     send: 'Send',
     filter: 'Filter',
     clear: 'Clear',
@@ -114,6 +149,7 @@ Realize.i18n.registerLocale({
   loading: 'Carregando...',
   select: 'Selecione',
   actions: {
+    new: 'Novo',
     send: 'Enviar',
     filter: 'Filtrar',
     clear: 'Limpar',
@@ -647,11 +683,7 @@ var CssClassMixin = {
     var themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
-<<<<<<< HEAD
-      themedClassName += Realize.themeClass(themeClassKey);
-=======
-      className += Realize.themes.getCssClass(themeClassKey);
->>>>>>> [WKMRF-76] In Progress
+      themedClassName += Realize.themes.getCssClass(themeClassKey);
     }
 
     if(!!className) {
@@ -915,7 +947,7 @@ var GridActionsMixin = {
   getDefaultCollectionActionButtons: function() {
     return [
       {
-        name: 'Novo',
+        name: 'actions.new',
         context: 'none',
         href: this.getActionUrl('add')
       }
@@ -961,7 +993,7 @@ var InputComponentMixin = {
     name: React.PropTypes.string,
     value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
-    placeholder: React.PropTypes.string,
+    placeholder: Realize.PropTypes.localizedString,
     errors: React.PropTypes.node,
     onChange: React.PropTypes.func
   },
@@ -1244,6 +1276,35 @@ var SelectComponentMixin = {
     return this.state.disabled || this.state.mustDisable;
   }
 };
+var LocalizedResourceFieldMixin = {
+  propTypes: {
+    resource: React.PropTypes.string,
+    name: React.PropTypes.string
+  },
+
+  localizeResourceField: function(name, resource) {
+    if(!name) { name = this.props.name }
+    if(!resource) { resource = this.props.resource }
+
+    if(name === undefined || resource === undefined) {
+      return '';
+    }
+
+    try {
+      var resourceKey = 'resources.' + resource + '.fields.' + name;
+      return Realize.t(resourceKey, true);
+
+    } catch(err) {
+      resourceKey = 'resources.defaults.fields.' + name;
+      try {
+        return Realize.t(resourceKey, true);
+      } catch(err) {
+        return name;
+      }
+    }
+  }
+
+};
 var RequestHandlerMixin = {
   propTypes: {
     onRequest: React.PropTypes.func,
@@ -1369,7 +1430,7 @@ var UtilsMixin = {
 var Button = React.createClass({displayName: "Button",
   mixins: [CssClassMixin],
   propTypes: {
-    name: React.PropTypes.string,
+    name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
     icon: React.PropTypes.node,
     style: React.PropTypes.oneOf(['danger', 'primary', 'warning', 'cancel']),
@@ -1377,6 +1438,7 @@ var Button = React.createClass({displayName: "Button",
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
+    disableWith: Realize.PropTypes.localizedString,
     element: React.PropTypes.string
   },
 
@@ -1389,7 +1451,7 @@ var Button = React.createClass({displayName: "Button",
       icon: null,
       href: null,
       onClick: null,
-      disableWith: Realize.t('loading'),
+      disableWith: 'loading',
       element: 'button'
     };
   },
@@ -1441,7 +1503,7 @@ var Button = React.createClass({displayName: "Button",
   },
 
   renderContent: function() {
-    return [ this.props.name, this.renderIcon() ];
+    return [ Realize.t(this.props.name), this.renderIcon() ];
   },
 
   renderIcon: function() {
@@ -1460,7 +1522,7 @@ var Button = React.createClass({displayName: "Button",
   },
 
   renderLoadingIndicator: function() {
-    return this.props.disableWith;
+    return Realize.t(this.props.disableWith);
   },
 
   handleClick: function(event) {
@@ -1779,7 +1841,7 @@ var Form = React.createClass({displayName: "Form",
       dataType: undefined,
       contentType: undefined,
       submitButton: {
-        name: Realize.t('actions.send'),
+        name: 'actions.send',
         icon: 'send'
       },
       otherButtons: [],
@@ -2017,6 +2079,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   propTypes: {
     url: React.PropTypes.string,
+    resource: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
@@ -2117,6 +2180,7 @@ var Grid = React.createClass({displayName: "Grid",
   renderTable: function() {
     return (
       React.createElement(GridTable, {
+        resource: this.props.resource, 
         columns: this.props.columns, 
         sortConfigs: this.props.sortConfigs, 
         sortData: this.state.sortData, 
@@ -2286,11 +2350,11 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     return {
       method: "GET",
       submitButton: {
-        name: Realize.t('actions.filter'),
+        name: 'actions.filter',
         icon: 'search'
       },
       clearButton: {
-        name: Realize.t('actions.clear'),
+        name: 'actions.clear',
         type: 'reset',
         style: 'cancel'
       },
@@ -2421,15 +2485,15 @@ var GridForm = React.createClass({displayName: "GridForm",
       themeClassKey: 'gridForm',
       isLoading: false,
       createButton: {
-        name: Realize.t('actions.add'),
+        name: 'actions.add',
         icon: 'add'
       },
       updateButton: {
-        name: Realize.t('actions.update'),
+        name: 'actions.update',
         icon: 'edit'
       },
       cancelButton: {
-        name: Realize.t('actions.cancel'),
+        name: 'actions.cancel',
         style: 'cancel'
       },
       selectable: true,
@@ -3304,6 +3368,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
 
   propTypes: {
     selectedOptions: React.PropTypes.array,
+    placeholder: Realize.PropTypes.localizedString,
     onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func
   },
@@ -3312,7 +3377,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
     return {
       selectedOptions: [],
       themeClassKey: 'input.autocomplete.select',
-      placeholder: Realize.t('select'),
+      placeholder: 'select',
       onFocus: function() {
         return true;
       },
@@ -3708,6 +3773,9 @@ var Input = React.createClass({displayName: "Input",
 
 var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    format: Realize.PropTypes.localizedString
+  },
 
   getDefaultProps: function() {
     return {
@@ -3723,7 +3791,7 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: Realize.t('masks.date')
+      format: 'masks.date'
     });
 
     var picker = input.pickadate('picker');
@@ -4040,7 +4108,13 @@ var InputText = React.createClass({displayName: "InputText",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "input"}))
+      React.createElement("input", React.__spread({},  this.props, 
+        {value: this.state.value, 
+        placeholder: Realize.t(this.props.placeholder), 
+        className: this.inputClassName(), 
+        onChange: this._handleChange, 
+        ref: "input"})
+      )
     );
   }
 });
@@ -4142,13 +4216,15 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   ],
 
   propTypes: {
-    includeBlank: React.PropTypes.bool
+    includeBlank: React.PropTypes.bool,
+    blankText: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      themeClassKey: 'input.select'
+      themeClassKey: 'input.select',
+      blankText: 'select'
     };
   },
 
@@ -4172,7 +4248,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     var options = this.state.options;
 
     if(this.props.includeBlank) {
-      selectOptions.push(React.createElement(InputSelectOption, {name: Realize.t('select'), value: "", key: "empty_option"}));
+      selectOptions.push(React.createElement(InputSelectOption, {name: Realize.t(this.props.blankText), value: "", key: "empty_option"}));
     }
 
     for(var i = 0; i < options.length; i++) {
@@ -4736,6 +4812,7 @@ var SideNav = React.createClass({displayName: "SideNav",
 var Table = React.createClass({displayName: "Table",
   mixins: [CssClassMixin],
   propTypes: {
+    resource: React.PropTypes.string,
     columns: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     selectedRowIdsParam: React.PropTypes.string,
@@ -4747,7 +4824,7 @@ var Table = React.createClass({displayName: "Table",
     selectedRowIds: React.PropTypes.array,
     allSelected: React.PropTypes.bool,
     allSelectedData: React.PropTypes.object,
-    emptyMessage: React.PropTypes.string,
+    emptyMessage: Realize.PropTypes.localizedString,
     actionButtons: React.PropTypes.object,
     onSort: React.PropTypes.func,
     onSelect: React.PropTypes.func,
@@ -4772,7 +4849,7 @@ var Table = React.createClass({displayName: "Table",
       selectedRowIds: null,
       allSelected: null,
       allSelectedData: {},
-      emptyMessage: Realize.t('table.emptyResult'),
+      emptyMessage: 'table.emptyResult',
       actionButtons: {
         member: [],
         collection: []
@@ -4878,6 +4955,7 @@ var Table = React.createClass({displayName: "Table",
             key: columnName, 
             sortDirection: this.sortDirectionForColumn(columnName), 
             ref: "header_" + columnName, 
+            resource: this.props.resource, 
             onSort: this.props.onSort, 
             clearTheme: this.props.clearTheme})
           )
@@ -4930,7 +5008,9 @@ var Table = React.createClass({displayName: "Table",
 
     return (
       React.createElement("tr", null, 
-        React.createElement("td", {colSpan: columnsCount, className: "empty-message"}, this.props.emptyMessage)
+        React.createElement("td", {colSpan: columnsCount, className: "empty-message"}, 
+          Realize.t(this.props.emptyMessage)
+        )
       )
     );
   },
@@ -5209,10 +5289,9 @@ var TableCell = React.createClass({displayName: "TableCell",
 });
 
 var TableHeader = React.createClass({displayName: "TableHeader",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, LocalizedResourceFieldMixin],
   propTypes: {
-    name: React.PropTypes.string,
-    label: React.PropTypes.string,
+    label: Realize.PropTypes.localizedString,
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     onSort: React.PropTypes.func
@@ -5233,10 +5312,18 @@ var TableHeader = React.createClass({displayName: "TableHeader",
     return (
       React.createElement("th", {className: this.className()}, 
         React.createElement("span", {onClick: this.sortColumn, className: this.labelClassName()}, 
-          this.props.label || this.props.name
+          this.getLabel()
         )
       )
     );
+  },
+
+  getLabel: function() {
+    if(!!this.props.label && this.props.label.length > 0) {
+      return Realize.t(this.props.label);
+    }
+
+    return this.localizeResourceField();
   },
 
   labelClassName: function() {

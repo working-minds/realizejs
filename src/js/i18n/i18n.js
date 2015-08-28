@@ -18,11 +18,32 @@ Realize.i18n.setLocale = function(locale) {
   Realize.config.locale = locale;
 };
 
-Realize.i18n.translate = function(key) {
+Realize.i18n.translate = function(key, throwsException) {
+  if(throwsException === undefined) {
+    throwsException = false;
+  }
+
+  if(typeof key !== "string") {
+    if(throwsException) {
+      throw 'Key is not a string';
+    }
+
+    return '';
+  }
+
   var currentLocale = Realize.config.locale;
   var localeObj = Realize.i18n.locales[currentLocale];
 
-  return Realize.utils.getProp(key, localeObj);
+  var translatedString = Realize.utils.getProp(key, localeObj);
+  if(!translatedString) {
+    if(throwsException) {
+      throw 'Key not found in locale object';
+    }
+
+    translatedString = key;
+  }
+
+  return translatedString;
 };
 
 Realize.t = Realize.i18n.translate;

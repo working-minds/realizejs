@@ -13,7 +13,13 @@ var InputText = React.createClass({
 
   render: function() {
     return (
-      <input {...this.props} value={this.state.value} className={this.inputClassName()} onChange={this._handleChange} ref="input" />
+      <input {...this.props}
+        value={this.state.value}
+        placeholder={Realize.t(this.props.placeholder)}
+        className={this.inputClassName()}
+        onChange={this._handleChange}
+        ref="input"
+      />
     );
   }
 });

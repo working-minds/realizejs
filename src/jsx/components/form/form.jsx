@@ -31,7 +31,7 @@ var Form = React.createClass({
       dataType: undefined,
       contentType: undefined,
       submitButton: {
-        name: Realize.t('actions.send'),
+        name: 'actions.send',
         icon: 'send'
       },
       otherButtons: [],

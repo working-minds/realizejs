@@ -55,7 +55,7 @@ var GridActionsMixin = {
   getDefaultCollectionActionButtons: function() {
     return [
       {
-        name: 'Novo',
+        name: 'actions.new',
         context: 'none',
         href: this.getActionUrl('add')
       }

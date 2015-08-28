@@ -1,7 +1,7 @@
 var Button = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
-    name: React.PropTypes.string,
+    name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
     icon: React.PropTypes.node,
     style: React.PropTypes.oneOf(['danger', 'primary', 'warning', 'cancel']),
@@ -9,6 +9,7 @@ var Button = React.createClass({
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
+    disableWith: Realize.PropTypes.localizedString,
     element: React.PropTypes.string
   },
 
@@ -21,7 +22,7 @@ var Button = React.createClass({
       icon: null,
       href: null,
       onClick: null,
-      disableWith: Realize.t('loading'),
+      disableWith: 'loading',
       element: 'button'
     };
   },
@@ -73,7 +74,7 @@ var Button = React.createClass({
   },
 
   renderContent: function() {
-    return [ this.props.name, this.renderIcon() ];
+    return [ Realize.t(this.props.name), this.renderIcon() ];
   },
 
   renderIcon: function() {
@@ -92,7 +93,7 @@ var Button = React.createClass({
   },
 
   renderLoadingIndicator: function() {
-    return this.props.disableWith;
+    return Realize.t(this.props.disableWith);
   },
 
   handleClick: function(event) {

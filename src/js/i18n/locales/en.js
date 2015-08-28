@@ -4,6 +4,7 @@ Realize.i18n.registerLocale({
   loading: 'Loading...',
   select: 'Select',
   actions: {
+    new: 'New',
     send: 'Send',
     filter: 'Filter',
     clear: 'Clear',

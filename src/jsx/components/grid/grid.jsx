@@ -7,6 +7,7 @@ var Grid = React.createClass({
 
   propTypes: {
     url: React.PropTypes.string,
+    resource: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
@@ -107,6 +108,7 @@ var Grid = React.createClass({
   renderTable: function() {
     return (
       <GridTable
+        resource={this.props.resource}
         columns={this.props.columns}
         sortConfigs={this.props.sortConfigs}
         sortData={this.state.sortData}
