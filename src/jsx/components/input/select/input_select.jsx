@@ -24,7 +24,7 @@ var InputSelect = React.createClass({
         name={this.props.name}
         value={this.selectedValue()}
         onChange={this.handleChange}
-        disabled={this.state.disabled}
+        disabled={this.isDisabled()}
         className={this.className()}
         ref="select">
         {this.renderOptions()}

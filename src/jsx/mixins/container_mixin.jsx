@@ -26,8 +26,38 @@ var ContainerMixin = {
 
     return React.Children.map(this.props.children, function(child) {
       var forwardedProps = $.extend({}, this.props.forwardedProps, props);
-      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, { forwardedProps: forwardedProps }));
+      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
     }.bind(this));
+  },
+
+  buildChildPropsToKeep: function(child) {
+
+    var defaultChildProps = {};
+    var keepProps = [];
+
+    if(!!child.type.getDefaultProps)
+      defaultChildProps = child.type.getDefaultProps();
+
+    if($.isArray(child.props['ignoreForwarded']))
+      keepProps = child.props['ignoreForwarded'];
+
+    var newProps = {};
+
+    for(var k in child.props) {
+      if( this.childPropValueIsNotDefault(child.props[k], defaultChildProps[k]) ||
+          this.shouldKeepChildPropValueAnyway(k, keepProps))
+        newProps[k] = child.props[k];
+    }
+    return newProps;
+  },
+
+  childPropValueIsNotDefault: function (propValue, defaultPropValue) {
+    return propValue !== defaultPropValue
+  },
+
+
+  shouldKeepChildPropValueAnyway: function (propName, keepList) {
+    return keepList.indexOf(propName) >= 0;
   },
 
   buildPropsToForward: function() {

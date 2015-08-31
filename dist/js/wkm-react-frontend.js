@@ -490,8 +490,38 @@ var ContainerMixin = {
 
     return React.Children.map(this.props.children, function(child) {
       var forwardedProps = $.extend({}, this.props.forwardedProps, props);
-      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, { forwardedProps: forwardedProps }));
+      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
     }.bind(this));
+  },
+
+  buildChildPropsToKeep: function(child) {
+
+    var defaultChildProps = {}
+    var keepProps = [];
+
+    if(!!child.type.getDefaultProps)
+      defaultChildProps = child.type.getDefaultProps();
+
+    if($.isArray(child.props['ignoreForwarded']))
+      keepProps = child.props['ignoreForwarded'];
+
+    var newProps = {};
+
+    for(var k in child.props) {
+      if( this.childPropValueIsNotDefault(child.props[k], defaultChildProps[k]) ||
+          this.shouldKeepChildPropValueAnyway(k, keepProps))
+        newProps[k] = child.props[k];
+    }
+    return newProps;
+  },
+
+  childPropValueIsNotDefault: function (propValue, defaultPropValue) {
+    return propValue.valueOf() !== defaultPropValue.valueOf();
+  },
+
+
+  shouldKeepChildPropValueAnyway: function (propName, keepList) {
+    return keepList.indexOf(propName) >= 0;
   },
 
   buildPropsToForward: function() {
@@ -970,6 +1000,7 @@ var SelectComponentMixin = {
     return {
       options: this.props.options,
       disabled: this.props.disabled,
+      mustDisable: false,
       loadParams: {}
     };
   },
@@ -979,7 +1010,7 @@ var SelectComponentMixin = {
     this.state.value = this.ensureIsArray(this.state.value);
 
     if(!!this.props.dependsOn) {
-      this.state.disabled = true;
+      this.state.mustDisable = true;
     }
   },
 
@@ -987,6 +1018,7 @@ var SelectComponentMixin = {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {
         this.listenToDependableChange();
+        this.loadDependentOptions();
       } else {
         this.loadOptions();
       }
@@ -994,6 +1026,12 @@ var SelectComponentMixin = {
 
     if(this.state.value.length > 0) {
       this.triggerDependableChanged();
+    }
+  },
+
+  componentWillUnmount: function() {
+    if(!!this.props.dependsOn) {
+      this.unbindDependableChangeListener();
     }
   },
 
@@ -1048,23 +1086,34 @@ var SelectComponentMixin = {
 
     this.setState({
       options: options,
-      disabled: (!!this.props.dependsOn && options.length <= 0)
+      mustDisable: (!!this.props.dependsOn && options.length <= 0)
     }, this.triggerDependableChanged);
 
     this.props.onLoad(data);
   },
 
   listenToDependableChange: function() {
-    var dependsOnObj = this.props.dependsOn;
-    var $dependable = $(document.getElementById(dependsOnObj.dependableId));
+    var dependableId = this.props.dependsOn.dependableId;
+    $('body').delegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
+  },
 
-    $dependable.on('dependable_changed', this.onDependableChange);
+  unbindDependableChangeListener: function() {
+    var dependableId = this.props.dependsOn.dependableId;
+    $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
   onDependableChange: function(event, dependableValue) {
     if(!dependableValue) {
       this.emptyAndDisable();
       return false;
+    }
+
+    this.loadDependentOptions(dependableValue);
+  },
+
+  loadDependentOptions: function(dependableValue) {
+    if(!dependableValue) {
+      dependableValue = this.getDependableNode().val();
     }
 
     if($.isArray(dependableValue) && dependableValue.length == 1) {
@@ -1077,6 +1126,11 @@ var SelectComponentMixin = {
     this.loadOptions();
   },
 
+  getDependableNode: function() {
+    var dependsOnObj = this.props.dependsOn;
+    return $(document.getElementById(dependsOnObj.dependableId));
+  },
+
   triggerDependableChanged: function() {
     var $valuesElement = $(React.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
@@ -1087,8 +1141,12 @@ var SelectComponentMixin = {
   emptyAndDisable: function() {
     this.setState({
       options: [],
-      disabled: true
+      mustDisable: true
     });
+  },
+
+  isDisabled: function () {
+    return this.state.disabled || this.state.mustDisable;
   }
 };
 var RequestHandlerMixin = {
@@ -1446,6 +1504,153 @@ var FlashDismiss = React.createClass({displayName: "FlashDismiss",
   }
 });
 
+var BulkEditForm = React.createClass({displayName: "BulkEditForm",
+  mixins: [
+    CssClassMixin,
+    UtilsMixin
+  ],
+
+  propTypes: {
+    inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
+    action: React.PropTypes.string,
+    method: React.PropTypes.string,
+    dataType: React.PropTypes.string,
+    contentType: React.PropTypes.string,
+    style: React.PropTypes.string,
+    resource: React.PropTypes.string,
+    submitButton: React.PropTypes.object,
+    otherButtons: React.PropTypes.array,
+    isLoading: React.PropTypes.bool,
+    onSubmit: React.PropTypes.func,
+    onReset: React.PropTypes.func
+  },
+
+  getDefaultProps: function () {
+    return {
+      inputs: {},
+      data: {},
+      action: '',
+      method: 'POST',
+      dataType: undefined,
+      contentType: undefined,
+      submitButton: {
+        name: 'Enviar',
+        icon: 'send'
+      },
+      otherButtons: [],
+      isLoading: false,
+      themeClassKey: 'form',
+      style: 'default',
+      resource: null,
+      onSubmit: function (event, postData) {
+      },
+      onReset: function (event) {
+      }
+    };
+  },
+
+  getInitialState: function() {
+
+    var disabled = [];
+    for(var inputId in this.props.inputs) {
+      disabled.push(inputId);
+    }
+
+    return {
+      disabled: disabled,
+      inputKeys: this.generateInputIds()
+    };
+  },
+
+  render: function() {
+
+    var formProps = $.extend({}, this.props);
+    delete formProps.inputs;
+    return (
+      React.createElement(Form, React.__spread({},  formProps), 
+        this.renderChildren()
+      ));
+  },
+
+  generateInputIds: function(){
+    var idsMap = {};
+    for(var inputId in this.props.inputs)
+      idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    return idsMap;
+  },
+
+  renderChildren: function () {
+
+    var inputsProps = this.props.inputs;
+    var inputComponents = [];
+    var inputIndex = 0;
+
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+        if(!inputProps.id) {
+          inputProps.id = inputId;
+        }
+
+        if (this.state.disabled.indexOf(inputId) === -1)
+        {
+          inputProps.disabled = false;
+        } else {
+          inputProps.disabled = true;
+        }
+
+        inputComponents.push(
+            React.createElement("div", {className: "row"}, 
+              React.createElement(InputSwitch, {id: "enable_"+inputId, 
+                           name: "enable_"+inputId, 
+                           onChange: this.handleSwitchChange, 
+                           className: "switch col s2", 
+                           offLabel: "", 
+                           onLabel: ""}
+                  ), 
+              React.createElement(Input, React.__spread({},  inputProps, 
+                  {data: this.props.data, 
+                  errors: this.props.errors, 
+                  resource: this.props.resource, 
+                  formStyle: this.props.formStyle, 
+                  className: "col s10", 
+                  key: this.state.inputKeys[inputId], 
+                  ref: "input_" + inputId})
+                  )
+            )
+        );
+        inputIndex++;
+      }
+    }
+
+    return inputComponents;
+
+  },
+
+  handleSwitchChange: function (event) {
+    var sw = event.target;
+    var inputId = sw.id.replace(/^enable_/, '');
+
+    var disabled = $.extend([], this.state.disabled);
+
+    if(!sw.checked)
+    {
+      disabled.push(inputId);
+    }
+    else
+    {
+      disabled.splice(disabled.indexOf(inputId), 1);
+    }
+
+    var inputKeys = this.state.inputKeys;
+    inputKeys[inputId] = "input_" + inputId + this.generateUUID();
+    this.setState( { disabled: disabled, inputKeys: inputKeys });
+  }
+
+
+
+});
 var Form = React.createClass({displayName: "Form",
   mixins: [
     CssClassMixin,
@@ -1629,7 +1834,6 @@ var InputGroup = React.createClass({displayName: "InputGroup",
       data: {},
       errors: {},
       formStyle: 'default',
-      resource: null,
       label: null,
       themeClassKey: 'form.inputGroup'
     };
@@ -1692,7 +1896,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
       return '';
     }
 
-    return (React.createElement("h5", {className: "col s12"}, this.props.label));
+    return (React.createElement("h5", null, this.props.label));
   },
 
   renderDivider: function() {
@@ -1702,7 +1906,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 
     //TODO: refatorar para um componente
     return (
-      React.createElement("div", {className: "col s12"}, 
+      React.createElement("div", {className: this.props.className}, 
         React.createElement("hr", null)
       )
     );
@@ -2342,6 +2546,14 @@ var Header = React.createClass({displayName: "Header",
     };
   },
 
+  componentDidMount: function(){
+    $(".button-collapse").sideNav({
+      edge: 'right',
+      closeOnClick: true
+    });
+    $('.collapsible').collapsible();
+  },
+
   render: function() {
     return (
       React.createElement("nav", {className: this.className(), role: "navigation"}, 
@@ -2458,7 +2670,8 @@ var HeaderSection = React.createClass({displayName: "HeaderSection",
   //mixins: [CssClassMixin],
 
   propTypes: {
-    align: React.PropTypes.string
+    align: React.PropTypes.string,
+    id: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -2471,7 +2684,7 @@ var HeaderSection = React.createClass({displayName: "HeaderSection",
   render: function () {
 
     return (
-      React.createElement("ul", {className: this.props.className + ' ' + this.props.align}, 
+      React.createElement("ul", {className: this.props.className + ' ' + this.props.align, id: this.props.id}, 
         this.renderChildren()
       )
     );
@@ -3660,6 +3873,48 @@ var InputPassword = React.createClass({displayName: "InputPassword",
   }
 });
 
+var InputSwitch = React.createClass({displayName: "InputSwitch",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    className: React.PropTypes.string,
+    renderAsIndeterminate: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.switch',
+      renderAsIndeterminate: false,
+      offLabel: 'Não',
+      onLabel: 'Sim',
+      className: 'switch'
+    };
+  },
+
+  componentDidMount: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    inputNode.indeterminate = this.props.renderAsIndeterminate;
+  },
+
+  render: function() {
+    return (
+        React.createElement("div", {className: this.props.className}, 
+          React.createElement("label", null, 
+            this.props.offLabel, 
+            React.createElement("input", React.__spread({},  this.props, 
+                {value: this.state.value, 
+                className: this.inputClassName(), 
+                onChange: this._handleChange, 
+                type: "checkbox", 
+                ref: "input"})
+                ), 
+            React.createElement("span", {className: "lever"}), 
+            this.props.onLabel
+          )
+        )
+    );
+  }
+});
+
 var InputText = React.createClass({displayName: "InputText",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
@@ -3794,7 +4049,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
         name: this.props.name, 
         value: this.selectedValue(), 
         onChange: this.handleChange, 
-        disabled: this.state.disabled, 
+        disabled: this.isDisabled(), 
         className: this.className(), 
         ref: "select"}, 
         this.renderOptions()

@@ -7,6 +7,14 @@ var Header = React.createClass({
     };
   },
 
+  componentDidMount: function(){
+    $(".button-collapse").sideNav({
+      edge: 'right',
+      closeOnClick: true
+    });
+    $('.collapsible').collapsible();
+  },
+
   render: function() {
     return (
       <nav className={this.className()} role="navigation">
