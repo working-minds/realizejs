@@ -1057,7 +1057,18 @@ var InputComponentMixin = {
     }
 
     return className;
+  },
+
+  getPlaceholder: function() {
+    var placeholder = Realize.t(this.props.placeholder);
+    if(typeof placeholder !== "string" || placeholder.length === 0) {
+      return null;
+    }
+
+    return placeholder;
   }
+
+
 };
 var MaterializeSelectMixin = {
   componentDidMount: function() {
@@ -4047,7 +4058,13 @@ var InputPassword = React.createClass({displayName: "InputPassword",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, type: "password", ref: "input"}))
+      React.createElement("input", React.__spread({}, 
+        this.props, 
+        {value: this.state.value, 
+        placeholder: this.getPlaceholder(), 
+        className: this.inputClassName(), 
+        onChange: this._handleChange, 
+        type: "password", ref: "input"}))
     );
   }
 });
@@ -4111,7 +4128,7 @@ var InputText = React.createClass({displayName: "InputText",
     return (
       React.createElement("input", React.__spread({},  this.props, 
         {value: this.state.value, 
-        placeholder: Realize.t(this.props.placeholder), 
+        placeholder: this.getPlaceholder(), 
         className: this.inputClassName(), 
         onChange: this._handleChange, 
         ref: "input"})
@@ -4137,6 +4154,7 @@ var InputTextarea = React.createClass({displayName: "InputTextarea",
     return (
       React.createElement("textarea", React.__spread({},  this.props, 
         {value: this.state.value, 
+        placeholder: this.getPlaceholder(), 
         className: this.inputClassName(), 
         onChange: this._handleChange, 
         ref: "input"})

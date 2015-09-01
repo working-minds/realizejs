@@ -69,5 +69,16 @@ var InputComponentMixin = {
     }
 
     return className;
+  },
+
+  getPlaceholder: function() {
+    var placeholder = Realize.t(this.props.placeholder);
+    if(typeof placeholder !== "string" || placeholder.length === 0) {
+      return null;
+    }
+
+    return placeholder;
   }
+
+
 };
