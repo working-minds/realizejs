@@ -496,7 +496,7 @@ var ContainerMixin = {
 
   buildChildPropsToKeep: function(child) {
 
-    var defaultChildProps = {}
+    var defaultChildProps = {};
     var keepProps = [];
 
     if(!!child.type.getDefaultProps)
@@ -516,7 +516,7 @@ var ContainerMixin = {
   },
 
   childPropValueIsNotDefault: function (propValue, defaultPropValue) {
-    return propValue.valueOf() !== defaultPropValue.valueOf();
+    return !_.isEqual(propValue, defaultPropValue);
   },
 
 
@@ -3332,7 +3332,14 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false
+      renderAsIndeterminate: false,
+      checked: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      checked: this.props.checked
     };
   },
 
@@ -3344,14 +3351,22 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   render: function() {
     return (
       React.createElement("input", React.__spread({},  this.props, 
-        {value: this.state.value, 
+        {checked: this.state.checked, 
         className: this.inputClassName(), 
-        onChange: this._handleChange, 
+        onChange: this.handleChange, 
         type: "checkbox", 
         ref: "input"})
       )
     );
-  }
+  },
+
+  handleChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({checked: event.target.checked});
+    }
+  },
 
 });
 

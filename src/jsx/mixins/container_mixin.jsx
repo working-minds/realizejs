@@ -52,7 +52,7 @@ var ContainerMixin = {
   },
 
   childPropValueIsNotDefault: function (propValue, defaultPropValue) {
-    return propValue !== defaultPropValue
+    return !_.isEqual(propValue, defaultPropValue);
   },
 
 

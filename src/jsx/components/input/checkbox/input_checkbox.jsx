@@ -7,7 +7,14 @@ var InputCheckbox = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false
+      renderAsIndeterminate: false,
+      checked: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      checked: this.props.checked
     };
   },
 
@@ -19,13 +26,21 @@ var InputCheckbox = React.createClass({
   render: function() {
     return (
       <input {...this.props}
-        value={this.state.value}
+        checked={this.state.checked}
         className={this.inputClassName()}
-        onChange={this._handleChange}
+        onChange={this.handleChange}
         type="checkbox"
         ref="input"
       />
     );
-  }
+  },
+
+  handleChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({checked: event.target.checked});
+    }
+  },
 
 });
