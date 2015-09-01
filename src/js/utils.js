@@ -11,6 +11,5 @@ Realize.utils.getProp = function(key, obj) {
   } catch(err) {
     return '';
   }
-
   return prop;
 };
