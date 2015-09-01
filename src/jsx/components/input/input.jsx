@@ -123,7 +123,8 @@ var Input = React.createClass({
       select: InputSelect,
       textarea: InputTextarea,
       checkbox_group: InputCheckboxGroup,
-      radio_group: InputRadioGroup
+      radio_group: InputRadioGroup,
+      masked: InputMasked
     };
 
     return (mapping[component] || window[component]);
