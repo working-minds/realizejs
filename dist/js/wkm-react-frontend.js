@@ -46,7 +46,6 @@ Realize.utils.getProp = function(key, obj) {
   } catch(err) {
     return '';
   }
-
   return prop;
 };
 Realize.PropTypes = {};
@@ -3232,7 +3231,7 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
 });
 
 var InputAutocompleteOption = React.createClass({displayName: "InputAutocompleteOption",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, UtilsMixin],
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -3280,13 +3279,13 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
   render: function() {
     return (
       React.createElement("li", {className: this.className(), onClick: this.handleSelect, onMouseEnter: this.handleMouseEnter}, 
-        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent}), 
+        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onChange: this.disableEvent, onClick: this.disableEvent, key: this.generateUUID()}), 
         React.createElement(Label, {id: this.parseOptionId(), name: this.props.name})
       )
     );
   },
 
-  handleSelect: function() {
+  handleSelect: function(event) {
     var option = {
       name: this.props.name,
       value: this.props.value,
@@ -3294,6 +3293,7 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
     };
 
     this.props.onSelect(option);
+    event.stopPropagation();
   },
 
   handleMouseEnter: function() {
@@ -3302,6 +3302,7 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
 
   disableEvent: function(event) {
     event.stopPropagation();
+    event.preventDefault();
   },
 
   parseOptionId: function() {
@@ -5524,7 +5525,7 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
 });
 
 var TableSelectCell = React.createClass({displayName: "TableSelectCell",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, UtilsMixin],
 
   propTypes: {
     rowId: React.PropTypes.string,
@@ -5550,7 +5551,7 @@ var TableSelectCell = React.createClass({displayName: "TableSelectCell",
       React.createElement(this.props.cellElement,
         { className: this.className() },
         [
-          React.createElement(InputCheckbox, {id: this.getCheckboxId(), checked: this.props.selected, key: "checkbox"}),
+          React.createElement(InputCheckbox, {id: this.getCheckboxId(), checked: this.props.selected, key: this.generateUUID()}),
           React.createElement(Label, {id: this.getCheckboxId(), key: "label", onClick: this.handleChange})
         ]
       )

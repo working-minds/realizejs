@@ -1,5 +1,5 @@
 var InputAutocompleteOption = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, UtilsMixin],
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -47,13 +47,13 @@ var InputAutocompleteOption = React.createClass({
   render: function() {
     return (
       <li className={this.className()} onClick={this.handleSelect} onMouseEnter={this.handleMouseEnter}>
-        <InputCheckbox id={this.parseOptionId()} checked={this.props.selected} onClick={this.disableEvent} />
+        <InputCheckbox id={this.parseOptionId()} checked={this.props.selected} onChange={this.disableEvent} onClick={this.disableEvent} key={this.generateUUID()} />
         <Label id={this.parseOptionId()} name={this.props.name} />
       </li>
     );
   },
 
-  handleSelect: function() {
+  handleSelect: function(event) {
     var option = {
       name: this.props.name,
       value: this.props.value,
@@ -61,6 +61,7 @@ var InputAutocompleteOption = React.createClass({
     };
 
     this.props.onSelect(option);
+    event.stopPropagation();
   },
 
   handleMouseEnter: function() {
@@ -69,6 +70,7 @@ var InputAutocompleteOption = React.createClass({
 
   disableEvent: function(event) {
     event.stopPropagation();
+    event.preventDefault();
   },
 
   parseOptionId: function() {
