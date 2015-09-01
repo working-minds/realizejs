@@ -15,6 +15,7 @@ var InputTextarea = React.createClass({
     return (
       <textarea {...this.props}
         value={this.state.value}
+        placeholder={this.getPlaceholder()}
         className={this.inputClassName()}
         onChange={this._handleChange}
         ref="input"
