@@ -4,7 +4,7 @@ var InputComponentMixin = {
     name: React.PropTypes.string,
     value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
-    placeholder: React.PropTypes.string,
+    placeholder: Realize.PropTypes.localizedString,
     errors: React.PropTypes.node,
     onChange: React.PropTypes.func
   },
@@ -65,7 +65,7 @@ var InputComponentMixin = {
     var errors = this.props.errors;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + Realize.themeClass('input.error');
+      className += ' ' + Realize.themes.getCssClass('input.error');
     }
 
     return className;

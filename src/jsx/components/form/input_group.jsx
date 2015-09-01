@@ -38,7 +38,7 @@ var InputGroup = React.createClass({
   inputGroupClassName: function() {
     var className = this.className();
     if(this.props.label !== null) {
-      className += ' ' + Realize.themeClass('form.inputGroup.section');
+      className += ' ' + Realize.themes.getCssClass('form.inputGroup.section');
     }
 
     return className;

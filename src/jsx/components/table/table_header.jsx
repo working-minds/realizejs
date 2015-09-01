@@ -1,8 +1,7 @@
 var TableHeader = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, LocalizedResourceFieldMixin],
   propTypes: {
-    name: React.PropTypes.string,
-    label: React.PropTypes.string,
+    label: Realize.PropTypes.localizedString,
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     onSort: React.PropTypes.func
@@ -23,17 +22,25 @@ var TableHeader = React.createClass({
     return (
       <th className={this.className()}>
         <span onClick={this.sortColumn} className={this.labelClassName()}>
-          {this.props.label || this.props.name}
+          {this.getLabel()}
         </span>
       </th>
     );
+  },
+
+  getLabel: function() {
+    if(!!this.props.label && this.props.label.length > 0) {
+      return Realize.t(this.props.label);
+    }
+
+    return this.localizeResourceField();
   },
 
   labelClassName: function() {
     var className = '';
 
     if(!this.props.clearTheme) {
-      className += Realize.themeClass('table.header.label');
+      className += Realize.themes.getCssClass('table.header.label');
     }
 
     if(this.props.sortable) {

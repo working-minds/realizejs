@@ -13,7 +13,7 @@ var FormContainerMixin = {
   formContainerClassName: function() {
     var className = this.className();
     if(this.inputChildrenHaveErrors()) {
-      className += ' ' + Realize.themeClass(this.props.errorThemeClassKey);
+      className += ' ' + Realize.themes.getCssClass(this.props.errorThemeClassKey);
     }
 
     return className;

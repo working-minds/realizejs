@@ -1,6 +1,7 @@
 var Table = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
+    resource: React.PropTypes.string,
     columns: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     selectedRowIdsParam: React.PropTypes.string,
@@ -12,7 +13,7 @@ var Table = React.createClass({
     selectedRowIds: React.PropTypes.array,
     allSelected: React.PropTypes.bool,
     allSelectedData: React.PropTypes.object,
-    emptyMessage: React.PropTypes.string,
+    emptyMessage: Realize.PropTypes.localizedString,
     actionButtons: React.PropTypes.object,
     onSort: React.PropTypes.func,
     onSelect: React.PropTypes.func,
@@ -37,7 +38,7 @@ var Table = React.createClass({
       selectedRowIds: null,
       allSelected: null,
       allSelectedData: {},
-      emptyMessage: 'Nenhum resultado foi encontrado.',
+      emptyMessage: 'table.emptyResult',
       actionButtons: {
         member: [],
         collection: []
@@ -91,7 +92,7 @@ var Table = React.createClass({
   wrapperClassName: function() {
     var wrapperClassName = '';
     if(!this.props.clearTheme) {
-      wrapperClassName = Realize.themeClass('table.wrapper');
+      wrapperClassName = Realize.themes.getCssClass('table.wrapper');
     }
 
     return wrapperClassName;
@@ -143,6 +144,7 @@ var Table = React.createClass({
             key={columnName}
             sortDirection={this.sortDirectionForColumn(columnName)}
             ref={"header_" + columnName}
+            resource={this.props.resource}
             onSort={this.props.onSort}
             clearTheme={this.props.clearTheme}
           />
@@ -195,7 +197,9 @@ var Table = React.createClass({
 
     return (
       <tr>
-        <td colSpan={columnsCount} className="empty-message">{this.props.emptyMessage}</td>
+        <td colSpan={columnsCount} className="empty-message">
+          {Realize.t(this.props.emptyMessage)}
+        </td>
       </tr>
     );
   },
