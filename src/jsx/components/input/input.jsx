@@ -72,6 +72,24 @@ var Input = React.createClass({
     );
   },
 
+  renderNumberInput: function(){
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
+        {this.renderInputErrors()}
+      </div>
+    );
+  },
+
+  renderSwitchInput: function(){
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
+        {this.renderInputErrors()}
+      </div>
+    );
+  },
+
   renderFileInput: function() {
     return (
       <div className={this.className()}>
@@ -126,6 +144,7 @@ var Input = React.createClass({
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
       datepicker: InputDatepicker,
+      number: InputNumber,
       file: InputFile,
       hidden: InputHidden,
       password: InputPassword,
@@ -134,7 +153,11 @@ var Input = React.createClass({
       textarea: InputTextarea,
       checkbox_group: InputCheckboxGroup,
       radio_group: InputRadioGroup,
+<<<<<<< Updated upstream
       masked: InputMasked
+=======
+      switch: InputSwitch
+>>>>>>> Stashed changes
     };
 
     return (mapping[component] || window[component]);
@@ -165,6 +188,7 @@ var Input = React.createClass({
 
     var data = this.props.data || {};
     var dataValue = data[this.props.id];
+
     if(typeof dataValue === 'boolean') {
       dataValue = (dataValue ? 1 : 0);
     }

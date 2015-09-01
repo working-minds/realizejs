@@ -792,7 +792,8 @@ var FormErrorHandlerMixin = {
   propTypes: {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,
-    onError: React.PropTypes.func
+    onError: React.PropTypes.func,
+    mapping: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -801,7 +802,8 @@ var FormErrorHandlerMixin = {
       baseErrorParam: 'base',
       onError: function(xhr, status, error) {
         return true;
-      }
+      },
+      mapping: true
     };
   },
 
@@ -833,7 +835,22 @@ var FormErrorHandlerMixin = {
   },
 
   handleValidationError: function(xhr) {
-    this.setState({errors: JSON.parse(xhr.responseText)});
+    this.setState({errors: this.getMappingErrors(xhr.responseText)});
+  },
+
+  getMappingErrors: function(error){
+    var errors = JSON.parse(error);
+    if(this.props.mapping){
+      var mappingErrors = {};
+      for(var property in errors){
+        var key = property.split('.').pop();
+        mappingErrors[key] = errors[property]
+      }
+
+      return mappingErrors;
+    } else{
+     return errors
+    }
   },
 
   flashErrorMessage: function() {
@@ -1873,6 +1890,120 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
 
 
 
+});
+var BulkInputGroup = React.createClass({displayName: "BulkInputGroup",
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
+    errors: React.PropTypes.object,
+    resource: React.PropTypes.string,
+    themeClassKey: React.PropTypes.string,
+    label: React.PropTypes.string,
+    formStyle: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      inputs: {},
+      data: {},
+      errors: {},
+      formStyle: 'default',
+      label: null,
+      themeClassKey: 'form.inputGroup'
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement("div", {className: this.inputGroupClassName()}, 
+          this.renderLabel(), 
+          this.renderInputs(), 
+          this.props.children
+        ), 
+        this.renderDivider()
+      )
+    );
+  },
+
+  inputGroupClassName: function() {
+    var className = this.className();
+    if(this.props.label !== null) {
+      className += ' ' + Realize.themeClass('form.inputGroup.section');
+    }
+
+    return className;
+  },
+
+  renderInputs: function() {
+    var inputsProps = this.props.inputs;
+    var inputComponents = [];
+    var inputIndex = 0;
+
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+        if(!inputProps.id) {
+          inputProps.id = inputId;
+        }
+
+        if (this.state.disabled.indexOf(inputId) === -1)
+        {
+          inputProps.disabled = false;
+        } else {
+          inputProps.disabled = true;
+        }
+
+        inputComponents.push(
+          React.createElement("div", {className: "row"}, 
+            React.createElement(InputSwitch, {id: "enable_"+inputId, 
+                         name: "enable_"+inputId, 
+                         onChange: this.handleSwitchChange, 
+                         className: "switch col s2", 
+                         offLabel: "", 
+                         onLabel: ""}
+              ), 
+
+            React.createElement(Input, React.__spread({},  inputProps, 
+              {data: this.props.data, 
+              errors: this.props.errors, 
+              resource: this.props.resource, 
+              formStyle: this.props.formStyle, 
+              className: "col s10", 
+              key: this.state.inputKeys[inputId], 
+              ref: "input_" + inputId})
+              )
+          )
+        );
+        inputIndex++;
+      }
+    }
+
+    return inputComponents;
+  },
+
+  renderLabel: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    return (React.createElement("h5", null, this.props.label));
+  },
+
+  renderDivider: function() {
+    if(this.props.label === null) {
+      return '';
+    }
+
+    //TODO: refatorar para um componente
+    return (
+      React.createElement("div", {className: this.props.className}, 
+        React.createElement("hr", null)
+      )
+    );
+  }
 });
 var Form = React.createClass({displayName: "Form",
   mixins: [
@@ -3734,6 +3865,24 @@ var Input = React.createClass({displayName: "Input",
     );
   },
 
+  renderNumberInput: function(){
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
+  renderSwitchInput: function(){
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
   renderFileInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
@@ -3788,6 +3937,7 @@ var Input = React.createClass({displayName: "Input",
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
       datepicker: InputDatepicker,
+      number: InputNumber,
       file: InputFile,
       hidden: InputHidden,
       password: InputPassword,
@@ -3796,7 +3946,11 @@ var Input = React.createClass({displayName: "Input",
       textarea: InputTextarea,
       checkbox_group: InputCheckboxGroup,
       radio_group: InputRadioGroup,
+<<<<<<< HEAD
       masked: InputMasked
+=======
+      switch: InputSwitch
+>>>>>>> [DINV-153] - In Progress
     };
 
     return (mapping[component] || window[component]);
@@ -3827,6 +3981,7 @@ var Input = React.createClass({displayName: "Input",
 
     var data = this.props.data || {};
     var dataValue = data[this.props.id];
+
     if(typeof dataValue === 'boolean') {
       dataValue = (dataValue ? 1 : 0);
     }
@@ -3881,7 +4036,7 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   render: function() {
     return (
       React.createElement("span", null, 
-        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, className: this.className(), ref: "input"})), 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, onChange: this._handleChange, className: this.className(), ref: "input"})), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
         React.createElement(Button, {icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
       )
@@ -4101,6 +4256,26 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params)
   }
 
+});
+var InputNumber = React.createClass({displayName: "InputNumber",
+  mixins: [CssClassMixin, InputComponentMixin],
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.number',
+      greedy: false,
+      repeat: 10
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("span", null, 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "number", plugin_params: {typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy}, className: this.className(), ref: "input"})), 
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  }
 });
 var InputPassword = React.createClass({displayName: "InputPassword",
   mixins: [CssClassMixin, InputComponentMixin],
