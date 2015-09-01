@@ -15,7 +15,7 @@ var InputText = React.createClass({
     return (
       <input {...this.props}
         value={this.state.value}
-        placeholder={Realize.t(this.props.placeholder)}
+        placeholder={this.getPlaceholder()}
         className={this.inputClassName()}
         onChange={this._handleChange}
         ref="input"
