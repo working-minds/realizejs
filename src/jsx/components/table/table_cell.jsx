@@ -70,7 +70,7 @@ var TableCell = React.createClass({
   },
 
   booleanValue: function(value) {
-    return value ? "Sim" : "Não";
+    return Realize.t(String(value));
   },
 
   dateValue: function(value) {

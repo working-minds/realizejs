@@ -2,15 +2,11 @@
  * WKM Frontend v0.0.0 (http://www.wkm.com.br)
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
-$.extend(FormSerializer.patterns, {
-  validate: /^[a-z_][a-z0-9#_\.-]*(?:\[(?:\d*|[a-z0-9#_\.-]+)\])*$/i,
-  key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
-  named: /^[a-z0-9#_\.-]+$/i
-});
 var Realize = {};
 
 Realize.config = {
   theme: 'materialize',
+  locale: 'en',
   restUrls: {
     index: ':url.json',
     show: ':url/:id',
@@ -32,26 +28,16 @@ Realize.config = {
   }
 };
 
-Realize.themes = {};
+$.extend(FormSerializer.patterns, {
+  validate: /^[a-z_][a-z0-9#_\.-]*(?:\[(?:\d*|[a-z0-9#_\.-]+)\])*$/i,
+  key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
+  named: /^[a-z0-9#_\.-]+$/i
+});
+Realize.utils = {};
 
-Realize.getTheme = function() {
-  var defaultTheme = Realize.themes.default;
-  var currentTheme = Realize.themes[Realize.config.theme];
-
-  return $.extend({}, defaultTheme, currentTheme);
-};
-
-Realize.themeProp = function(key, theme) {
-  if(!key) {
-    return '';
-  }
-
-  if(theme === undefined) {
-    theme = this.getTheme();
-  }
-
+Realize.utils.getProp = function(key, obj) {
   var keyArr = key.split('.');
-  var prop = theme;
+  var prop = obj;
 
   try {
     while(keyArr.length > 0) {
@@ -60,12 +46,152 @@ Realize.themeProp = function(key, theme) {
   } catch(err) {
     return '';
   }
-
   return prop;
 };
+Realize.PropTypes = {};
 
-Realize.themeClass = function(keys) {
-  var theme = this.getTheme();
+Realize.PropTypes.localizedString = function(props, propName, componentName) {
+  var value = props[propName];
+  if(value === null || value === undefined || (typeof value === "string" && value.length === 0)) {
+    return true;
+  }
+
+  var translatedValue = Realize.t(value);
+  if(typeof value !== "string" || typeof translatedValue !== "string" || translatedValue.length === 0) {
+    return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
+  }
+};
+Realize.i18n = {};
+Realize.i18n.locales = {};
+
+Realize.i18n.registerLocale = function(newLocaleObj, locale) {
+  if(!$.isPlainObject(newLocaleObj)) {
+    throw 'Invalid Locale Object.'
+  }
+
+  if(!locale) {
+    throw 'Invalid Locale Name.';
+  }
+
+  var currentLocaleObj = Realize.i18n.locales[locale] || {};
+  Realize.i18n.locales[locale] = $.extend({}, currentLocaleObj, newLocaleObj);
+};
+
+Realize.i18n.setLocale = function(locale) {
+  Realize.config.locale = locale;
+};
+
+Realize.i18n.translate = function(key, throwsException) {
+  if(throwsException === undefined) {
+    throwsException = false;
+  }
+
+  if(typeof key !== "string") {
+    if(throwsException) {
+      throw 'Key is not a string';
+    }
+
+    return '';
+  }
+
+  var currentLocale = Realize.config.locale;
+  var localeObj = Realize.i18n.locales[currentLocale];
+
+  var translatedString = Realize.utils.getProp(key, localeObj);
+  if(!translatedString) {
+    if(throwsException) {
+      throw 'Key not found in locale object';
+    }
+
+    translatedString = key;
+  }
+
+  return translatedString;
+};
+
+Realize.t = Realize.i18n.translate;
+Realize.i18n.registerLocale({
+  true: 'Yes',
+  false: 'No',
+  loading: 'Loading...',
+  select: 'Select',
+  actions: {
+    new: 'New',
+    send: 'Send',
+    filter: 'Filter',
+    clear: 'Clear',
+    add: 'Add',
+    update: 'Update',
+    cancel: 'Cancel'
+  },
+
+  table: {
+    emptyResult: 'No results found.'
+  },
+
+  masks: {
+    date: 'mm/dd/yyyy'
+  },
+
+  date: {
+    formats: {
+      default: 'MM/DD/YYYY HH:mm',
+      date: 'MM/DD/YYYY'
+    }
+  }
+
+
+}, 'en');
+Realize.i18n.registerLocale({
+  true: 'Sim',
+  false: 'Não',
+  loading: 'Carregando...',
+  select: 'Selecione',
+  actions: {
+    new: 'Novo',
+    send: 'Enviar',
+    filter: 'Filtrar',
+    clear: 'Limpar',
+    add: 'Adicionar',
+    update: 'Atualizar',
+    cancel: 'Cancelar'
+  },
+
+  table: {
+    emptyResult: 'Nenhum resultado foi encontrado.'
+  },
+
+  masks: {
+    date: 'dd/mm/yyyy'
+  },
+
+  date: {
+    formats: {
+      default: 'DD/MM/YYYY HH:mm',
+      date: 'DD/MM/YYYY'
+    }
+  }
+
+}, 'pt-BR');
+Realize.themes = {};
+
+Realize.themes.getCurrent = function() {
+  var defaultTheme = Realize.themes.default;
+  var currentTheme = Realize.themes[Realize.config.theme];
+
+  return $.extend({}, defaultTheme, currentTheme);
+};
+
+Realize.themes.getProp = function(key) {
+  if(!key) {
+    return '';
+  }
+
+  var currentTheme = this.getCurrent();
+  return Realize.utils.getProp(key, currentTheme);
+};
+
+Realize.themes.getCssClass = function(keys) {
   var keysArr = keys.split(' ');
   var themeClass = "";
 
@@ -73,7 +199,7 @@ Realize.themeClass = function(keys) {
     var key = keysArr.shift();
     var classKey = key + '.cssClass';
 
-    themeClass += Realize.themeProp(classKey, theme) + ' ';
+    themeClass += this.getProp(classKey) + ' ';
   }
 
   return themeClass.trim();
@@ -490,8 +616,38 @@ var ContainerMixin = {
 
     return React.Children.map(this.props.children, function(child) {
       var forwardedProps = $.extend({}, this.props.forwardedProps, props);
-      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, { forwardedProps: forwardedProps }));
+      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
     }.bind(this));
+  },
+
+  buildChildPropsToKeep: function(child) {
+
+    var defaultChildProps = {};
+    var keepProps = [];
+
+    if(!!child.type.getDefaultProps)
+      defaultChildProps = child.type.getDefaultProps();
+
+    if($.isArray(child.props['ignoreForwarded']))
+      keepProps = child.props['ignoreForwarded'];
+
+    var newProps = {};
+
+    for(var k in child.props) {
+      if( this.childPropValueIsNotDefault(child.props[k], defaultChildProps[k]) ||
+          this.shouldKeepChildPropValueAnyway(k, keepProps))
+        newProps[k] = child.props[k];
+    }
+    return newProps;
+  },
+
+  childPropValueIsNotDefault: function (propValue, defaultPropValue) {
+    return !_.isEqual(propValue, defaultPropValue);
+  },
+
+
+  shouldKeepChildPropValueAnyway: function (propName, keepList) {
+    return keepList.indexOf(propName) >= 0;
   },
 
   buildPropsToForward: function() {
@@ -526,7 +682,7 @@ var CssClassMixin = {
     var themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      themedClassName += Realize.themeClass(themeClassKey);
+      themedClassName += Realize.themes.getCssClass(themeClassKey);
     }
 
     if(!!className) {
@@ -577,7 +733,7 @@ var FormContainerMixin = {
   formContainerClassName: function() {
     var className = this.className();
     if(this.inputChildrenHaveErrors()) {
-      className += ' ' + Realize.themeClass(this.props.errorThemeClassKey);
+      className += ' ' + Realize.themes.getCssClass(this.props.errorThemeClassKey);
     }
 
     return className;
@@ -790,7 +946,7 @@ var GridActionsMixin = {
   getDefaultCollectionActionButtons: function() {
     return [
       {
-        name: 'Novo',
+        name: 'actions.new',
         context: 'none',
         href: this.getActionUrl('add')
       }
@@ -836,7 +992,7 @@ var InputComponentMixin = {
     name: React.PropTypes.string,
     value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
-    placeholder: React.PropTypes.string,
+    placeholder: Realize.PropTypes.localizedString,
     errors: React.PropTypes.node,
     onChange: React.PropTypes.func
   },
@@ -897,7 +1053,7 @@ var InputComponentMixin = {
     var errors = this.props.errors;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + Realize.themeClass('input.error');
+      className += ' ' + Realize.themes.getCssClass('input.error');
     }
 
     return className;
@@ -970,6 +1126,7 @@ var SelectComponentMixin = {
     return {
       options: this.props.options,
       disabled: this.props.disabled,
+      mustDisable: false,
       loadParams: {}
     };
   },
@@ -979,7 +1136,7 @@ var SelectComponentMixin = {
     this.state.value = this.ensureIsArray(this.state.value);
 
     if(!!this.props.dependsOn) {
-      this.state.disabled = true;
+      this.state.mustDisable = true;
     }
   },
 
@@ -987,6 +1144,7 @@ var SelectComponentMixin = {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {
         this.listenToDependableChange();
+        this.loadDependentOptions();
       } else {
         this.loadOptions();
       }
@@ -994,6 +1152,12 @@ var SelectComponentMixin = {
 
     if(this.state.value.length > 0) {
       this.triggerDependableChanged();
+    }
+  },
+
+  componentWillUnmount: function() {
+    if(!!this.props.dependsOn) {
+      this.unbindDependableChangeListener();
     }
   },
 
@@ -1048,23 +1212,34 @@ var SelectComponentMixin = {
 
     this.setState({
       options: options,
-      disabled: (!!this.props.dependsOn && options.length <= 0)
+      mustDisable: (!!this.props.dependsOn && options.length <= 0)
     }, this.triggerDependableChanged);
 
     this.props.onLoad(data);
   },
 
   listenToDependableChange: function() {
-    var dependsOnObj = this.props.dependsOn;
-    var $dependable = $(document.getElementById(dependsOnObj.dependableId));
+    var dependableId = this.props.dependsOn.dependableId;
+    $('body').delegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
+  },
 
-    $dependable.on('dependable_changed', this.onDependableChange);
+  unbindDependableChangeListener: function() {
+    var dependableId = this.props.dependsOn.dependableId;
+    $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
   onDependableChange: function(event, dependableValue) {
     if(!dependableValue) {
       this.emptyAndDisable();
       return false;
+    }
+
+    this.loadDependentOptions(dependableValue);
+  },
+
+  loadDependentOptions: function(dependableValue) {
+    if(!dependableValue) {
+      dependableValue = this.getDependableNode().val();
     }
 
     if($.isArray(dependableValue) && dependableValue.length == 1) {
@@ -1077,6 +1252,11 @@ var SelectComponentMixin = {
     this.loadOptions();
   },
 
+  getDependableNode: function() {
+    var dependsOnObj = this.props.dependsOn;
+    return $(document.getElementById(dependsOnObj.dependableId));
+  },
+
   triggerDependableChanged: function() {
     var $valuesElement = $(React.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
@@ -1087,9 +1267,42 @@ var SelectComponentMixin = {
   emptyAndDisable: function() {
     this.setState({
       options: [],
-      disabled: true
+      mustDisable: true
     });
+  },
+
+  isDisabled: function () {
+    return this.state.disabled || this.state.mustDisable;
   }
+};
+var LocalizedResourceFieldMixin = {
+  propTypes: {
+    resource: React.PropTypes.string,
+    name: React.PropTypes.string
+  },
+
+  localizeResourceField: function(name, resource) {
+    if(!name) { name = this.props.name }
+    if(!resource) { resource = this.props.resource }
+
+    if(name === undefined || resource === undefined) {
+      return '';
+    }
+
+    try {
+      var resourceKey = 'resources.' + resource + '.fields.' + name;
+      return Realize.t(resourceKey, true);
+
+    } catch(err) {
+      resourceKey = 'resources.defaults.fields.' + name;
+      try {
+        return Realize.t(resourceKey, true);
+      } catch(err) {
+        return name;
+      }
+    }
+  }
+
 };
 var RequestHandlerMixin = {
   propTypes: {
@@ -1216,7 +1429,7 @@ var UtilsMixin = {
 var Button = React.createClass({displayName: "Button",
   mixins: [CssClassMixin],
   propTypes: {
-    name: React.PropTypes.string,
+    name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
     icon: React.PropTypes.node,
     style: React.PropTypes.oneOf(['danger', 'primary', 'warning', 'cancel']),
@@ -1224,6 +1437,7 @@ var Button = React.createClass({displayName: "Button",
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
+    disableWith: Realize.PropTypes.localizedString,
     element: React.PropTypes.string
   },
 
@@ -1236,7 +1450,7 @@ var Button = React.createClass({displayName: "Button",
       icon: null,
       href: null,
       onClick: null,
-      disableWith: 'Carregando...',
+      disableWith: 'loading',
       element: 'button'
     };
   },
@@ -1288,7 +1502,7 @@ var Button = React.createClass({displayName: "Button",
   },
 
   renderContent: function() {
-    return [ this.props.name, this.renderIcon() ];
+    return [ Realize.t(this.props.name), this.renderIcon() ];
   },
 
   renderIcon: function() {
@@ -1307,7 +1521,7 @@ var Button = React.createClass({displayName: "Button",
   },
 
   renderLoadingIndicator: function() {
-    return this.props.disableWith;
+    return Realize.t(this.props.disableWith);
   },
 
   handleClick: function(event) {
@@ -1446,6 +1660,153 @@ var FlashDismiss = React.createClass({displayName: "FlashDismiss",
   }
 });
 
+var BulkEditForm = React.createClass({displayName: "BulkEditForm",
+  mixins: [
+    CssClassMixin,
+    UtilsMixin
+  ],
+
+  propTypes: {
+    inputs: React.PropTypes.object,
+    data: React.PropTypes.object,
+    action: React.PropTypes.string,
+    method: React.PropTypes.string,
+    dataType: React.PropTypes.string,
+    contentType: React.PropTypes.string,
+    style: React.PropTypes.string,
+    resource: React.PropTypes.string,
+    submitButton: React.PropTypes.object,
+    otherButtons: React.PropTypes.array,
+    isLoading: React.PropTypes.bool,
+    onSubmit: React.PropTypes.func,
+    onReset: React.PropTypes.func
+  },
+
+  getDefaultProps: function () {
+    return {
+      inputs: {},
+      data: {},
+      action: '',
+      method: 'POST',
+      dataType: undefined,
+      contentType: undefined,
+      submitButton: {
+        name: 'Enviar',
+        icon: 'send'
+      },
+      otherButtons: [],
+      isLoading: false,
+      themeClassKey: 'form',
+      style: 'default',
+      resource: null,
+      onSubmit: function (event, postData) {
+      },
+      onReset: function (event) {
+      }
+    };
+  },
+
+  getInitialState: function() {
+
+    var disabled = [];
+    for(var inputId in this.props.inputs) {
+      disabled.push(inputId);
+    }
+
+    return {
+      disabled: disabled,
+      inputKeys: this.generateInputIds()
+    };
+  },
+
+  render: function() {
+
+    var formProps = $.extend({}, this.props);
+    delete formProps.inputs;
+    return (
+      React.createElement(Form, React.__spread({},  formProps), 
+        this.renderChildren()
+      ));
+  },
+
+  generateInputIds: function(){
+    var idsMap = {};
+    for(var inputId in this.props.inputs)
+      idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    return idsMap;
+  },
+
+  renderChildren: function () {
+
+    var inputsProps = this.props.inputs;
+    var inputComponents = [];
+    var inputIndex = 0;
+
+    for(var inputId in inputsProps) {
+      if(inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+        if(!inputProps.id) {
+          inputProps.id = inputId;
+        }
+
+        if (this.state.disabled.indexOf(inputId) === -1)
+        {
+          inputProps.disabled = false;
+        } else {
+          inputProps.disabled = true;
+        }
+
+        inputComponents.push(
+            React.createElement("div", {className: "row"}, 
+              React.createElement(InputSwitch, {id: "enable_"+inputId, 
+                           name: "enable_"+inputId, 
+                           onChange: this.handleSwitchChange, 
+                           className: "switch col s2", 
+                           offLabel: "", 
+                           onLabel: ""}
+                  ), 
+              React.createElement(Input, React.__spread({},  inputProps, 
+                  {data: this.props.data, 
+                  errors: this.props.errors, 
+                  resource: this.props.resource, 
+                  formStyle: this.props.formStyle, 
+                  className: "col s10", 
+                  key: this.state.inputKeys[inputId], 
+                  ref: "input_" + inputId})
+                  )
+            )
+        );
+        inputIndex++;
+      }
+    }
+
+    return inputComponents;
+
+  },
+
+  handleSwitchChange: function (event) {
+    var sw = event.target;
+    var inputId = sw.id.replace(/^enable_/, '');
+
+    var disabled = $.extend([], this.state.disabled);
+
+    if(!sw.checked)
+    {
+      disabled.push(inputId);
+    }
+    else
+    {
+      disabled.splice(disabled.indexOf(inputId), 1);
+    }
+
+    var inputKeys = this.state.inputKeys;
+    inputKeys[inputId] = "input_" + inputId + this.generateUUID();
+    this.setState( { disabled: disabled, inputKeys: inputKeys });
+  }
+
+
+
+});
 var Form = React.createClass({displayName: "Form",
   mixins: [
     CssClassMixin,
@@ -1479,7 +1840,7 @@ var Form = React.createClass({displayName: "Form",
       dataType: undefined,
       contentType: undefined,
       submitButton: {
-        name: 'Enviar',
+        name: 'actions.send',
         icon: 'send'
       },
       otherButtons: [],
@@ -1523,7 +1884,7 @@ var Form = React.createClass({displayName: "Form",
         this.renderInputs(), 
         this.renderChildren(), 
 
-        React.createElement("div", {className: Realize.themeClass('form.buttonGroup')}, 
+        React.createElement("div", {className: Realize.themes.getCssClass('form.buttonGroup')}, 
           this.renderOtherButtons(), 
           React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"}))
         )
@@ -1629,7 +1990,6 @@ var InputGroup = React.createClass({displayName: "InputGroup",
       data: {},
       errors: {},
       formStyle: 'default',
-      resource: null,
       label: null,
       themeClassKey: 'form.inputGroup'
     };
@@ -1651,7 +2011,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
   inputGroupClassName: function() {
     var className = this.className();
     if(this.props.label !== null) {
-      className += ' ' + Realize.themeClass('form.inputGroup.section');
+      className += ' ' + Realize.themes.getCssClass('form.inputGroup.section');
     }
 
     return className;
@@ -1692,7 +2052,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
       return '';
     }
 
-    return (React.createElement("h5", {className: "col s12"}, this.props.label));
+    return (React.createElement("h5", null, this.props.label));
   },
 
   renderDivider: function() {
@@ -1702,7 +2062,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 
     //TODO: refatorar para um componente
     return (
-      React.createElement("div", {className: "col s12"}, 
+      React.createElement("div", {className: this.props.className}, 
         React.createElement("hr", null)
       )
     );
@@ -1718,6 +2078,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   propTypes: {
     url: React.PropTypes.string,
+    resource: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
@@ -1818,6 +2179,7 @@ var Grid = React.createClass({displayName: "Grid",
   renderTable: function() {
     return (
       React.createElement(GridTable, {
+        resource: this.props.resource, 
         columns: this.props.columns, 
         sortConfigs: this.props.sortConfigs, 
         sortData: this.state.sortData, 
@@ -1908,9 +2270,9 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   handleLoadError: function(xhr, status, error) {
-    this.props.onLoadError(data);
+    this.props.onLoadError(xhr, status, error);
     this.setState({isLoading: false});
-    console.log('Grid Load error:' + error);
+    console.log('Grid Load Error:' + error);
   },
 
   buildPostData: function() {
@@ -1987,11 +2349,11 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     return {
       method: "GET",
       submitButton: {
-        name: 'Filtrar',
+        name: 'actions.filter',
         icon: 'search'
       },
       clearButton: {
-        name: 'Limpar',
+        name: 'actions.clear',
         type: 'reset',
         style: 'cancel'
       },
@@ -2122,15 +2484,15 @@ var GridForm = React.createClass({displayName: "GridForm",
       themeClassKey: 'gridForm',
       isLoading: false,
       createButton: {
-        name: 'Adicionar',
+        name: 'actions.add',
         icon: 'add'
       },
       updateButton: {
-        name: 'Atualizar',
+        name: 'actions.update',
         icon: 'edit'
       },
       cancelButton: {
-        name: 'Cancelar',
+        name: 'actions.cancel',
         style: 'cancel'
       },
       selectable: true,
@@ -2342,6 +2704,14 @@ var Header = React.createClass({displayName: "Header",
     };
   },
 
+  componentDidMount: function(){
+    $(".button-collapse").sideNav({
+      edge: 'right',
+      closeOnClick: true
+    });
+    $('.collapsible').collapsible();
+  },
+
   render: function() {
     return (
       React.createElement("nav", {className: this.className(), role: "navigation"}, 
@@ -2458,7 +2828,8 @@ var HeaderSection = React.createClass({displayName: "HeaderSection",
   //mixins: [CssClassMixin],
 
   propTypes: {
-    align: React.PropTypes.string
+    align: React.PropTypes.string,
+    id: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -2471,7 +2842,7 @@ var HeaderSection = React.createClass({displayName: "HeaderSection",
   render: function () {
 
     return (
-      React.createElement("ul", {className: this.props.className + ' ' + this.props.align}, 
+      React.createElement("ul", {className: this.props.className + ' ' + this.props.align, id: this.props.id}, 
         this.renderChildren()
       )
     );
@@ -2510,7 +2881,7 @@ var Icon = React.createClass({displayName: "Icon",
   },
 
   iconType: function() {
-    var iconType = Realize.themeProp('icon.' + this.props.type);
+    var iconType = Realize.themes.getProp('icon.' + this.props.type);
     if(!iconType) {
       iconType = this.props.type;
     }
@@ -2860,7 +3231,7 @@ var InputAutocompleteList = React.createClass({displayName: "InputAutocompleteLi
 });
 
 var InputAutocompleteOption = React.createClass({displayName: "InputAutocompleteOption",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, UtilsMixin],
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -2908,13 +3279,13 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
   render: function() {
     return (
       React.createElement("li", {className: this.className(), onClick: this.handleSelect, onMouseEnter: this.handleMouseEnter}, 
-        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onClick: this.disableEvent}), 
+        React.createElement(InputCheckbox, {id: this.parseOptionId(), checked: this.props.selected, onChange: this.disableEvent, onClick: this.disableEvent, key: this.generateUUID()}), 
         React.createElement(Label, {id: this.parseOptionId(), name: this.props.name})
       )
     );
   },
 
-  handleSelect: function() {
+  handleSelect: function(event) {
     var option = {
       name: this.props.name,
       value: this.props.value,
@@ -2922,6 +3293,7 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
     };
 
     this.props.onSelect(option);
+    event.stopPropagation();
   },
 
   handleMouseEnter: function() {
@@ -2930,6 +3302,7 @@ var InputAutocompleteOption = React.createClass({displayName: "InputAutocomplete
 
   disableEvent: function(event) {
     event.stopPropagation();
+    event.preventDefault();
   },
 
   parseOptionId: function() {
@@ -2996,6 +3369,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
 
   propTypes: {
     selectedOptions: React.PropTypes.array,
+    placeholder: Realize.PropTypes.localizedString,
     onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func
   },
@@ -3004,7 +3378,7 @@ var InputAutocompleteSelect = React.createClass({displayName: "InputAutocomplete
     return {
       selectedOptions: [],
       themeClassKey: 'input.autocomplete.select',
-      placeholder: "Selecione",
+      placeholder: 'select',
       onFocus: function() {
         return true;
       },
@@ -3119,7 +3493,14 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false
+      renderAsIndeterminate: false,
+      checked: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      checked: this.props.checked
     };
   },
 
@@ -3131,14 +3512,22 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
   render: function() {
     return (
       React.createElement("input", React.__spread({},  this.props, 
-        {value: this.state.value, 
+        {checked: this.state.checked, 
         className: this.inputClassName(), 
-        onChange: this._handleChange, 
+        onChange: this.handleChange, 
         type: "checkbox", 
         ref: "input"})
       )
     );
-  }
+  },
+
+  handleChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({checked: event.target.checked});
+    }
+  },
 
 });
 
@@ -3385,6 +3774,9 @@ var Input = React.createClass({displayName: "Input",
 
 var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    format: Realize.PropTypes.localizedString
+  },
 
   getDefaultProps: function() {
     return {
@@ -3400,7 +3792,7 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: 'dd/mm/yyyy'
+      format: 'masks.date'
     });
 
     var picker = input.pickadate('picker');
@@ -3660,6 +4052,48 @@ var InputPassword = React.createClass({displayName: "InputPassword",
   }
 });
 
+var InputSwitch = React.createClass({displayName: "InputSwitch",
+  mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    className: React.PropTypes.string,
+    renderAsIndeterminate: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.switch',
+      renderAsIndeterminate: false,
+      offLabel: 'Não',
+      onLabel: 'Sim',
+      className: 'switch'
+    };
+  },
+
+  componentDidMount: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    inputNode.indeterminate = this.props.renderAsIndeterminate;
+  },
+
+  render: function() {
+    return (
+        React.createElement("div", {className: this.props.className}, 
+          React.createElement("label", null, 
+            this.props.offLabel, 
+            React.createElement("input", React.__spread({},  this.props, 
+                {value: this.state.value, 
+                className: this.inputClassName(), 
+                onChange: this._handleChange, 
+                type: "checkbox", 
+                ref: "input"})
+                ), 
+            React.createElement("span", {className: "lever"}), 
+            this.props.onLabel
+          )
+        )
+    );
+  }
+});
+
 var InputText = React.createClass({displayName: "InputText",
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
@@ -3675,7 +4109,13 @@ var InputText = React.createClass({displayName: "InputText",
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "input"}))
+      React.createElement("input", React.__spread({},  this.props, 
+        {value: this.state.value, 
+        placeholder: Realize.t(this.props.placeholder), 
+        className: this.inputClassName(), 
+        onChange: this._handleChange, 
+        ref: "input"})
+      )
     );
   }
 });
@@ -3777,13 +4217,15 @@ var InputSelect = React.createClass({displayName: "InputSelect",
   ],
 
   propTypes: {
-    includeBlank: React.PropTypes.bool
+    includeBlank: React.PropTypes.bool,
+    blankText: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      themeClassKey: 'input.select'
+      themeClassKey: 'input.select',
+      blankText: 'select'
     };
   },
 
@@ -3794,7 +4236,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
         name: this.props.name, 
         value: this.selectedValue(), 
         onChange: this.handleChange, 
-        disabled: this.state.disabled, 
+        disabled: this.isDisabled(), 
         className: this.className(), 
         ref: "select"}, 
         this.renderOptions()
@@ -3807,7 +4249,7 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     var options = this.state.options;
 
     if(this.props.includeBlank) {
-      selectOptions.push(React.createElement(InputSelectOption, {name: "Selecione", value: "", key: "empty_option"}));
+      selectOptions.push(React.createElement(InputSelectOption, {name: Realize.t(this.props.blankText), value: "", key: "empty_option"}));
     }
 
     for(var i = 0; i < options.length; i++) {
@@ -4371,6 +4813,7 @@ var SideNav = React.createClass({displayName: "SideNav",
 var Table = React.createClass({displayName: "Table",
   mixins: [CssClassMixin],
   propTypes: {
+    resource: React.PropTypes.string,
     columns: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     selectedRowIdsParam: React.PropTypes.string,
@@ -4382,7 +4825,7 @@ var Table = React.createClass({displayName: "Table",
     selectedRowIds: React.PropTypes.array,
     allSelected: React.PropTypes.bool,
     allSelectedData: React.PropTypes.object,
-    emptyMessage: React.PropTypes.string,
+    emptyMessage: Realize.PropTypes.localizedString,
     actionButtons: React.PropTypes.object,
     onSort: React.PropTypes.func,
     onSelect: React.PropTypes.func,
@@ -4407,7 +4850,7 @@ var Table = React.createClass({displayName: "Table",
       selectedRowIds: null,
       allSelected: null,
       allSelectedData: {},
-      emptyMessage: 'Nenhum resultado foi encontrado.',
+      emptyMessage: 'table.emptyResult',
       actionButtons: {
         member: [],
         collection: []
@@ -4461,7 +4904,7 @@ var Table = React.createClass({displayName: "Table",
   wrapperClassName: function() {
     var wrapperClassName = '';
     if(!this.props.clearTheme) {
-      wrapperClassName = Realize.themeClass('table.wrapper');
+      wrapperClassName = Realize.themes.getCssClass('table.wrapper');
     }
 
     return wrapperClassName;
@@ -4513,6 +4956,7 @@ var Table = React.createClass({displayName: "Table",
             key: columnName, 
             sortDirection: this.sortDirectionForColumn(columnName), 
             ref: "header_" + columnName, 
+            resource: this.props.resource, 
             onSort: this.props.onSort, 
             clearTheme: this.props.clearTheme})
           )
@@ -4565,7 +5009,9 @@ var Table = React.createClass({displayName: "Table",
 
     return (
       React.createElement("tr", null, 
-        React.createElement("td", {colSpan: columnsCount, className: "empty-message"}, this.props.emptyMessage)
+        React.createElement("td", {colSpan: columnsCount, className: "empty-message"}, 
+          Realize.t(this.props.emptyMessage)
+        )
       )
     );
   },
@@ -4829,7 +5275,7 @@ var TableCell = React.createClass({displayName: "TableCell",
   },
 
   booleanValue: function(value) {
-    return value ? "Sim" : "Não";
+    return Realize.t(String(value));
   },
 
   dateValue: function(value) {
@@ -4844,10 +5290,9 @@ var TableCell = React.createClass({displayName: "TableCell",
 });
 
 var TableHeader = React.createClass({displayName: "TableHeader",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, LocalizedResourceFieldMixin],
   propTypes: {
-    name: React.PropTypes.string,
-    label: React.PropTypes.string,
+    label: Realize.PropTypes.localizedString,
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     onSort: React.PropTypes.func
@@ -4868,17 +5313,25 @@ var TableHeader = React.createClass({displayName: "TableHeader",
     return (
       React.createElement("th", {className: this.className()}, 
         React.createElement("span", {onClick: this.sortColumn, className: this.labelClassName()}, 
-          this.props.label || this.props.name
+          this.getLabel()
         )
       )
     );
+  },
+
+  getLabel: function() {
+    if(!!this.props.label && this.props.label.length > 0) {
+      return Realize.t(this.props.label);
+    }
+
+    return this.localizeResourceField();
   },
 
   labelClassName: function() {
     var className = '';
 
     if(!this.props.clearTheme) {
-      className += Realize.themeClass('table.header.label');
+      className += Realize.themes.getCssClass('table.header.label');
     }
 
     if(this.props.sortable) {
@@ -5072,7 +5525,7 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
 });
 
 var TableSelectCell = React.createClass({displayName: "TableSelectCell",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, UtilsMixin],
 
   propTypes: {
     rowId: React.PropTypes.string,
@@ -5098,7 +5551,7 @@ var TableSelectCell = React.createClass({displayName: "TableSelectCell",
       React.createElement(this.props.cellElement,
         { className: this.className() },
         [
-          React.createElement(InputCheckbox, {id: this.getCheckboxId(), checked: this.props.selected, key: "checkbox"}),
+          React.createElement(InputCheckbox, {id: this.getCheckboxId(), checked: this.props.selected, key: this.generateUUID()}),
           React.createElement(Label, {id: this.getCheckboxId(), key: "label", onClick: this.handleChange})
         ]
       )

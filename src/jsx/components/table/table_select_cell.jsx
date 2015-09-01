@@ -1,5 +1,5 @@
 var TableSelectCell = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, UtilsMixin],
 
   propTypes: {
     rowId: React.PropTypes.string,
@@ -25,7 +25,7 @@ var TableSelectCell = React.createClass({
       React.createElement(this.props.cellElement,
         { className: this.className() },
         [
-          <InputCheckbox id={this.getCheckboxId()} checked={this.props.selected}  key="checkbox" />,
+          <InputCheckbox id={this.getCheckboxId()} checked={this.props.selected} key={this.generateUUID()} />,
           <Label id={this.getCheckboxId()} key="label" onClick={this.handleChange} />
         ]
       )

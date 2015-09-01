@@ -15,7 +15,7 @@ var CssClassMixin = {
     var themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      themedClassName += Realize.themeClass(themeClassKey);
+      themedClassName += Realize.themes.getCssClass(themeClassKey);
     }
 
     if(!!className) {

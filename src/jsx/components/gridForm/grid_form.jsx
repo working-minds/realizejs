@@ -38,15 +38,15 @@ var GridForm = React.createClass({
       themeClassKey: 'gridForm',
       isLoading: false,
       createButton: {
-        name: 'Adicionar',
+        name: 'actions.add',
         icon: 'add'
       },
       updateButton: {
-        name: 'Atualizar',
+        name: 'actions.update',
         icon: 'edit'
       },
       cancelButton: {
-        name: 'Cancelar',
+        name: 'actions.cancel',
         style: 'cancel'
       },
       selectable: true,

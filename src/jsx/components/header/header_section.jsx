@@ -2,7 +2,8 @@ var HeaderSection = React.createClass({
   //mixins: [CssClassMixin],
 
   propTypes: {
-    align: React.PropTypes.string
+    align: React.PropTypes.string,
+    id: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -15,7 +16,7 @@ var HeaderSection = React.createClass({
   render: function () {
 
     return (
-      <ul className={this.props.className + ' ' + this.props.align}>
+      <ul className={this.props.className + ' ' + this.props.align} id={this.props.id}>
         {this.renderChildren()}
       </ul>
     );

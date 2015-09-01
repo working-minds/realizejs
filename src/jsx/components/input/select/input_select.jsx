@@ -7,13 +7,15 @@ var InputSelect = React.createClass({
   ],
 
   propTypes: {
-    includeBlank: React.PropTypes.bool
+    includeBlank: React.PropTypes.bool,
+    blankText: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function() {
     return {
       includeBlank: true,
-      themeClassKey: 'input.select'
+      themeClassKey: 'input.select',
+      blankText: 'select'
     };
   },
 
@@ -24,7 +26,7 @@ var InputSelect = React.createClass({
         name={this.props.name}
         value={this.selectedValue()}
         onChange={this.handleChange}
-        disabled={this.state.disabled}
+        disabled={this.isDisabled()}
         className={this.className()}
         ref="select">
         {this.renderOptions()}
@@ -37,7 +39,7 @@ var InputSelect = React.createClass({
     var options = this.state.options;
 
     if(this.props.includeBlank) {
-      selectOptions.push(<InputSelectOption name="Selecione" value="" key="empty_option" />);
+      selectOptions.push(<InputSelectOption name={Realize.t(this.props.blankText)} value="" key="empty_option" />);
     }
 
     for(var i = 0; i < options.length; i++) {

@@ -17,7 +17,6 @@ var InputGroup = React.createClass({
       data: {},
       errors: {},
       formStyle: 'default',
-      resource: null,
       label: null,
       themeClassKey: 'form.inputGroup'
     };
@@ -39,7 +38,7 @@ var InputGroup = React.createClass({
   inputGroupClassName: function() {
     var className = this.className();
     if(this.props.label !== null) {
-      className += ' ' + Realize.themeClass('form.inputGroup.section');
+      className += ' ' + Realize.themes.getCssClass('form.inputGroup.section');
     }
 
     return className;
@@ -80,7 +79,7 @@ var InputGroup = React.createClass({
       return '';
     }
 
-    return (<h5 className="col s12">{this.props.label}</h5>);
+    return (<h5>{this.props.label}</h5>);
   },
 
   renderDivider: function() {
@@ -90,7 +89,7 @@ var InputGroup = React.createClass({
 
     //TODO: refatorar para um componente
     return (
-      <div className="col s12">
+      <div className={this.props.className}>
         <hr />
       </div>
     );

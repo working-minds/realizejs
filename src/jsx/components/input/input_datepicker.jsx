@@ -1,5 +1,8 @@
 var InputDatepicker = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
+  propTypes: {
+    format: Realize.PropTypes.localizedString
+  },
 
   getDefaultProps: function() {
     return {
@@ -15,7 +18,7 @@ var InputDatepicker = React.createClass({
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: 'dd/mm/yyyy'
+      format: 'masks.date'
     });
 
     var picker = input.pickadate('picker');

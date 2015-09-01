@@ -32,6 +32,7 @@ var SelectComponentMixin = {
     return {
       options: this.props.options,
       disabled: this.props.disabled,
+      mustDisable: false,
       loadParams: {}
     };
   },
@@ -41,7 +42,7 @@ var SelectComponentMixin = {
     this.state.value = this.ensureIsArray(this.state.value);
 
     if(!!this.props.dependsOn) {
-      this.state.disabled = true;
+      this.state.mustDisable = true;
     }
   },
 
@@ -49,6 +50,7 @@ var SelectComponentMixin = {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {
         this.listenToDependableChange();
+        this.loadDependentOptions();
       } else {
         this.loadOptions();
       }
@@ -56,6 +58,12 @@ var SelectComponentMixin = {
 
     if(this.state.value.length > 0) {
       this.triggerDependableChanged();
+    }
+  },
+
+  componentWillUnmount: function() {
+    if(!!this.props.dependsOn) {
+      this.unbindDependableChangeListener();
     }
   },
 
@@ -110,23 +118,34 @@ var SelectComponentMixin = {
 
     this.setState({
       options: options,
-      disabled: (!!this.props.dependsOn && options.length <= 0)
+      mustDisable: (!!this.props.dependsOn && options.length <= 0)
     }, this.triggerDependableChanged);
 
     this.props.onLoad(data);
   },
 
   listenToDependableChange: function() {
-    var dependsOnObj = this.props.dependsOn;
-    var $dependable = $(document.getElementById(dependsOnObj.dependableId));
+    var dependableId = this.props.dependsOn.dependableId;
+    $('body').delegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
+  },
 
-    $dependable.on('dependable_changed', this.onDependableChange);
+  unbindDependableChangeListener: function() {
+    var dependableId = this.props.dependsOn.dependableId;
+    $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
   onDependableChange: function(event, dependableValue) {
     if(!dependableValue) {
       this.emptyAndDisable();
       return false;
+    }
+
+    this.loadDependentOptions(dependableValue);
+  },
+
+  loadDependentOptions: function(dependableValue) {
+    if(!dependableValue) {
+      dependableValue = this.getDependableNode().val();
     }
 
     if($.isArray(dependableValue) && dependableValue.length == 1) {
@@ -139,6 +158,11 @@ var SelectComponentMixin = {
     this.loadOptions();
   },
 
+  getDependableNode: function() {
+    var dependsOnObj = this.props.dependsOn;
+    return $(document.getElementById(dependsOnObj.dependableId));
+  },
+
   triggerDependableChanged: function() {
     var $valuesElement = $(React.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
@@ -149,7 +173,11 @@ var SelectComponentMixin = {
   emptyAndDisable: function() {
     this.setState({
       options: [],
-      disabled: true
+      mustDisable: true
     });
+  },
+
+  isDisabled: function () {
+    return this.state.disabled || this.state.mustDisable;
   }
 };
