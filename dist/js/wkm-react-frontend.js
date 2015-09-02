@@ -3828,6 +3828,8 @@ var Input = React.createClass({displayName: "Input",
   },
 
   getInputErrors: function() {
+    if(this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
+      return this.props.errors[this.props.resource][this.props.id];
     return this.props.errors[this.props.id];
   }
 });
@@ -4089,7 +4091,7 @@ var InputMasked = React.createClass({displayName: "InputMasked",
   },
 
   isRegexMask: function(){
-    return 'regex' in this.props.plugin_params;
+    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params)
   }
 
 });

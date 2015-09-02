@@ -173,6 +173,8 @@ var Input = React.createClass({
   },
 
   getInputErrors: function() {
+    if(this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
+      return this.props.errors[this.props.resource][this.props.id];
     return this.props.errors[this.props.id];
   }
 });
