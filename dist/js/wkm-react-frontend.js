@@ -3883,15 +3883,7 @@ var Input = React.createClass({displayName: "Input",
       textarea: InputTextarea,
       checkbox_group: InputCheckboxGroup,
       radio_group: InputRadioGroup,
-<<<<<<< HEAD
-<<<<<<< HEAD
       masked: InputMasked
-=======
-      switch: InputSwitch
->>>>>>> [DINV-153] - In Progress
-=======
-      masked: InputMasked
->>>>>>> Adicionada possibilidade de passar InputGroups para o componente de bulkEditForm
     };
 
     return (mapping[component] || window[component]);
