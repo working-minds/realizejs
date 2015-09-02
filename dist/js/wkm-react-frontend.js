@@ -2153,6 +2153,7 @@ var Grid = React.createClass({displayName: "Grid",
     selectedRowIdsParam: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
+    tableClassName: React.PropTypes.string,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func
   },
@@ -2254,6 +2255,7 @@ var Grid = React.createClass({displayName: "Grid",
         allSelectedData: this.state.filterData, 
         count: this.state.count, 
         actionButtons: this.getActionButtons(), 
+        tableClassName: this.props.tableClassName, 
         onSort: this.onSort, 
         onSelect: this.selectDataRows, 
         onRemoveSelection: this.removeSelection, 
@@ -2501,7 +2503,7 @@ var GridTable = React.createClass({displayName: "GridTable",
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Table, React.__spread({},  this.propsWithoutCSS()))
+        React.createElement(Table, React.__spread({},  this.propsWithoutCSS(), {className: this.props.tableClassName}))
       )
     );
   }
@@ -4509,34 +4511,18 @@ var Modal = React.createClass({displayName: "Modal",
     };
   },
 
-  headerConfig: function () {
-    return {
-      height: this.props.headerSize + "px",
-      overflow: 'hidden'
-    };
-  },
-
-  contentConfig: function () {
-    return {
-      'overflowX': 'hidden',
-      'overflowY': 'auto'
-    };
-  },
-
-  footerConfig: function () {
-    return {
-      height: this.props.footerSize + "px",
-      overflow: 'hidden'
-    };
-  },
-
   render: function() {
-    var header = this.filterChildren('header')? this.renderHeader() : '';
-    var footer = this.filterChildren('footer')? this.renderFooter() : '';
+    var header = this.filterChildren(ModalHeader)? this.renderHeader() : '';
+    var content = this.filterChildren(ModalContent)? this.renderContent() : '';
+    var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
+
+    if(header == '' && content == '' && footer == '')
+      content = React.createElement(ModalContent, React.__spread({},  this.propTypes), this.props.children)
+
     return (
       React.createElement("div", {id: this.props.id, className: this.themeStyle(), ref: "modal"}, 
         header, 
-        this.renderContent(), 
+        content, 
         footer
       )
     );
@@ -4544,24 +4530,24 @@ var Modal = React.createClass({displayName: "Modal",
 
   renderHeader: function(){
     return (
-      React.createElement("div", {ref: "headerContainer", style: this.headerConfig()}, 
-        this.filterChildren('header')
+      React.createElement("div", {ref: "headerContainer"}, 
+        this.filterChildren(ModalHeader)
       )
     );
   },
 
   renderContent: function(){
     return (
-      React.createElement("div", {ref: "contentContainer", style: this.contentConfig()}, 
-        this.filterChildren('content')
+      React.createElement("div", {ref: "contentContainer"}, 
+        this.filterChildren(ModalContent)
       )
     );
   },
 
   renderFooter: function(){
     return (
-      React.createElement("div", {ref: "footerContainer", style: this.footerConfig()}, 
-        this.filterChildren('footer')
+      React.createElement("div", {ref: "footerContainer"}, 
+        this.filterChildren(ModalFooter)
       )
     );
   },
@@ -4595,13 +4581,42 @@ var Modal = React.createClass({displayName: "Modal",
   filterChildren : function(area) {
     var result = null;
     React.Children.map(this.props.children, function(x) {
-      if (x.props.area == area)
+      if (x.type == area)
         result =  x;
     });
     return result;
   }
 });
 
+var ModalHeader = React.createClass({displayName: "ModalHeader",
+  mixins: [CssClassMixin],
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = React.createElement("div", {className: "card-content"}, this.props.children);
+    return content;
+  }
+});
+
+var ModalContent  = React.createClass({displayName: "ModalContent",
+  mixins: [CssClassMixin],
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = React.createElement("div", {className: "card-content"}, this.props.children);
+    return content;
+  }
+});
+
+var ModalFooter = React.createClass({displayName: "ModalFooter",
+  mixins: [CssClassMixin],
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = React.createElement("div", {className: "card-content"}, this.props.children);
+    return content;
+  }
+});
 
 
 

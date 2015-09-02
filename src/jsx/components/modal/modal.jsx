@@ -18,34 +18,18 @@ var Modal = React.createClass({
     };
   },
 
-  headerConfig: function () {
-    return {
-      height: this.props.headerSize + "px",
-      overflow: 'hidden'
-    };
-  },
-
-  contentConfig: function () {
-    return {
-      'overflowX': 'hidden',
-      'overflowY': 'auto'
-    };
-  },
-
-  footerConfig: function () {
-    return {
-      height: this.props.footerSize + "px",
-      overflow: 'hidden'
-    };
-  },
-
   render: function() {
-    var header = this.filterChildren('header')? this.renderHeader() : '';
-    var footer = this.filterChildren('footer')? this.renderFooter() : '';
+    var header = this.filterChildren(ModalHeader)? this.renderHeader() : '';
+    var content = this.filterChildren(ModalContent)? this.renderContent() : '';
+    var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
+
+    if(header == '' && content == '' && footer == '')
+      content = <ModalContent {...this.propTypes}>{this.props.children}</ModalContent>
+
     return (
       <div id={this.props.id} className={this.themeStyle()} ref="modal">
         {header}
-        {this.renderContent()}
+        {content}
         {footer}
       </div>
     );
@@ -53,24 +37,24 @@ var Modal = React.createClass({
 
   renderHeader: function(){
     return (
-      <div ref="headerContainer" style={this.headerConfig()}>
-        {this.filterChildren('header')}
+      <div ref="headerContainer" >
+        {this.filterChildren(ModalHeader)}
       </div>
     );
   },
 
   renderContent: function(){
     return (
-      <div ref="contentContainer" style={this.contentConfig()}>
-        {this.filterChildren('content')}
+      <div ref="contentContainer" >
+        {this.filterChildren(ModalContent)}
       </div>
     );
   },
 
   renderFooter: function(){
     return (
-      <div ref="footerContainer" style={this.footerConfig()}>
-        {this.filterChildren('footer')}
+      <div ref="footerContainer" >
+        {this.filterChildren(ModalFooter)}
       </div>
     );
   },
@@ -104,13 +88,42 @@ var Modal = React.createClass({
   filterChildren : function(area) {
     var result = null;
     React.Children.map(this.props.children, function(x) {
-      if (x.props.area == area)
+      if (x.type == area)
         result =  x;
     });
     return result;
   }
 });
 
+var ModalHeader = React.createClass({
+  mixins: [CssClassMixin],
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = <div className="card-content">{this.props.children}</div>;
+    return content;
+  }
+});
+
+var ModalContent  = React.createClass({
+  mixins: [CssClassMixin],
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = <div className="card-content">{this.props.children}</div>;
+    return content;
+  }
+});
+
+var ModalFooter = React.createClass({
+  mixins: [CssClassMixin],
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = <div className="card-content">{this.props.children}</div>;
+    return content;
+  }
+});
 
 
 
