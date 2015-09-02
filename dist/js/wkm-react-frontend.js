@@ -5196,8 +5196,18 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
 
   render: function() {
     return (
-      React.createElement(Button, React.__spread({},  this.props, {onClick: this.actionButtonClick}))
+      React.createElement(Button, React.__spread({},  this.props, {href: this.actionButtonHref(), onClick: this.actionButtonClick}))
     );
+  },
+
+  actionButtonHref: function() {
+    var buttonHref = this.props.href;
+    if(!buttonHref) {
+      return '#!';
+    }
+
+    var selectedData = this.getSelectedData();
+    return (buttonHref + '?' + $.param(selectedData));
   },
 
   actionButtonClick: function(event) {

@@ -21,8 +21,18 @@ var TableActionButton = React.createClass({
 
   render: function() {
     return (
-      <Button {...this.props} onClick={this.actionButtonClick} />
+      <Button {...this.props} href={this.actionButtonHref()} onClick={this.actionButtonClick} />
     );
+  },
+
+  actionButtonHref: function() {
+    var buttonHref = this.props.href;
+    if(!buttonHref) {
+      return '#!';
+    }
+
+    var selectedData = this.getSelectedData();
+    return (buttonHref + '?' + $.param(selectedData));
   },
 
   actionButtonClick: function(event) {
