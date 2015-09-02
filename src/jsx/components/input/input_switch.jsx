@@ -1,41 +1,54 @@
 var InputSwitch = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    CheckboxComponentMixin
+  ],
+
   propTypes: {
-    className: React.PropTypes.string,
-    renderAsIndeterminate: React.PropTypes.bool
+    label: React.PropTypes.string,
+    offLabel: Realize.PropTypes.localizedString,
+    onLabel: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.switch',
-      renderAsIndeterminate: false,
-      offLabel: 'Não',
-      onLabel: 'Sim',
-      className: 'switch'
+      className: 'switch',
+      offLabel: 'false',
+      onLabel: 'true',
+      label: null
     };
-  },
-
-  componentDidMount: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    inputNode.indeterminate = this.props.renderAsIndeterminate;
   },
 
   render: function() {
     return (
+      <div>
         <div className={this.props.className}>
           <label>
-            {this.props.offLabel}
+            {Realize.t(this.props.offLabel)}
             <input {...this.props}
-                value={this.state.value}
-                className={this.inputClassName()}
-                onChange={this._handleChange}
-                type="checkbox"
-                ref="input"
-                />
+              checked={this.state.checked}
+              value={this.state.value}
+              className={this.inputClassName()}
+              onChange={this._handleCheckboxChange}
+              type="checkbox"
+              ref="input"
+            />
             <span className="lever"></span>
-            {this.props.onLabel}
+            {Realize.t(this.props.onLabel)}
           </label>
         </div>
+        {this.renderLabel()}
+      </div>
     );
+  },
+
+  renderLabel: function() {
+    if(!this.props.label) {
+      return null;
+    }
+
+    return <Label name={this.props.label} active={true} />;
   }
 });

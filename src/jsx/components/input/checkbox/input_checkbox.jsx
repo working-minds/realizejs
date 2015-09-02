@@ -1,26 +1,18 @@
 var InputCheckbox = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    CheckboxComponentMixin
+  ],
+
   propTypes: {
     renderAsIndeterminate: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false,
-      checked: false
+      themeClassKey: 'input.checkbox'
     };
-  },
-
-  getInitialState: function() {
-    return {
-      checked: this.props.checked
-    };
-  },
-
-  componentDidMount: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    inputNode.indeterminate = this.props.renderAsIndeterminate;
   },
 
   render: function() {
@@ -28,19 +20,11 @@ var InputCheckbox = React.createClass({
       <input {...this.props}
         checked={this.state.checked}
         className={this.inputClassName()}
-        onChange={this.handleChange}
+        onChange={this._handleCheckboxChange}
         type="checkbox"
         ref="input"
       />
     );
-  },
-
-  handleChange: function(event) {
-    this.props.onChange(event);
-
-    if(!event.isDefaultPrevented()) {
-      this.setState({checked: event.target.checked});
-    }
-  },
+  }
 
 });
