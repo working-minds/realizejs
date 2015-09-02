@@ -153,11 +153,7 @@ var Input = React.createClass({
       textarea: InputTextarea,
       checkbox_group: InputCheckboxGroup,
       radio_group: InputRadioGroup,
-<<<<<<< Updated upstream
       masked: InputMasked
-=======
-      switch: InputSwitch
->>>>>>> Stashed changes
     };
 
     return (mapping[component] || window[component]);

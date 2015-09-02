@@ -1793,8 +1793,12 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   getInitialState: function() {
 
     var disabled = [];
-    for(var inputId in this.props.inputs) {
-      disabled.push(inputId);
+
+    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+      var inputs = this.props.inputGroups[i].inputs;
+      for(var inputId in inputs) {
+        disabled.push(inputId);
+      }
     }
 
     return {
@@ -1806,7 +1810,7 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   render: function() {
 
     var formProps = $.extend({}, this.props);
-    delete formProps.inputs;
+    delete formProps.inputGroups;
     return (
       React.createElement(Form, React.__spread({},  formProps), 
         this.renderChildren()
@@ -1815,62 +1819,111 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
 
   generateInputIds: function(){
     var idsMap = {};
-    for(var inputId in this.props.inputs)
-      idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+      var inputs = this.props.inputGroups[i].inputs;
+      for(var inputId in inputs)
+        idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    }
+
     return idsMap;
   },
 
   renderChildren: function () {
 
-    var inputsProps = this.props.inputs;
     var inputComponents = [];
-    var inputIndex = 0;
 
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-        if(!inputProps.id) {
-          inputProps.id = inputId;
-        }
-
-        if (this.state.disabled.indexOf(inputId) === -1)
-        {
-          inputProps.disabled = false;
-        } else {
-          inputProps.disabled = true;
-        }
-
-        inputComponents.push(
-            React.createElement("div", {className: "row"}, 
-              React.createElement(InputSwitch, {id: "enable_"+inputId, 
-                           name: "enable_"+inputId, 
-                           onChange: this.handleSwitchChange, 
-                           className: "switch col s2", 
-                           offLabel: "", 
-                           onLabel: ""}
-                  ), 
-              React.createElement(Input, React.__spread({},  inputProps, 
-                  {data: this.props.data, 
-                  errors: this.props.errors, 
-                  resource: this.props.resource, 
-                  formStyle: this.props.formStyle, 
-                  className: "col s10", 
-                  key: this.state.inputKeys[inputId], 
-                  ref: "input_" + inputId})
-                  )
-            )
-        );
-        inputIndex++;
-      }
+    for(var i = 0; i < this.props.inputGroups.length; i++ )
+    {
+      var inputGroup = this.props.inputGroups[i];
+      this.generateInputs(inputComponents, inputGroup);
     }
 
     return inputComponents;
-
   },
 
-  handleSwitchChange: function (event) {
+
+  generateInputs: function (inputComponents, inputGroup) {
+    var inputIndex = 0;
+
+    inputComponents.push(React.createElement("h5", null, inputGroup.label));
+
+    var inputsProps = inputGroup.inputs;
+      for (var inputId in inputsProps) {
+        if (inputsProps.hasOwnProperty(inputId)) {
+          var inputProps = inputsProps[inputId];
+          if (!inputProps.id) {
+            inputProps.id = inputId;
+          }
+
+          if (this.state.disabled.indexOf(inputId) === -1) {
+            inputProps.disabled = false;
+          } else {
+            inputProps.disabled = true;
+          }
+
+          var resourceName = inputGroup.resource || this.props.resource;
+
+          switchId = "enable";
+          if (!!resourceName) {
+            switchId = switchId + "_" + resourceName
+          }
+          switchId = switchId + "_" + inputId;
+
+          switchName = "enable";
+          if (!!resourceName) {
+            switchName = switchName + "[" + resourceName + "]"
+          }
+          switchName = switchName + "[" + inputId + "]";
+
+          if (inputId == 'ids') {
+            inputComponents.push(
+              React.createElement(Input, React.__spread({},  inputProps, 
+                {disabled: false, 
+                data: this.props.data, 
+                resource: inputGroup.resource || this.props.resource, 
+                className: "col m7 s10", 
+                key: this.state.inputKeys[inputId], 
+                ref: "input_" + inputId, 
+                component: "hidden"})
+                )
+            );
+          } else {
+            inputComponents.push(
+              React.createElement("div", {className: "row"}, 
+                React.createElement(InputSwitch, {id: switchId, 
+                             name: switchName, 
+                             onChange: this.handleSwitchChange, 
+                             className: "switch col m4 s2", 
+                             offLabel: "", 
+                             onLabel: ""}
+                  ), 
+                React.createElement(Input, React.__spread({},  inputProps, 
+                  {data: this.props.data, 
+                  errors: this.props.errors, 
+                  resource: inputGroup.resource || this.props.resource, 
+                  formStyle: this.props.formStyle, 
+                  className: "col m7 s10", 
+                  key: this.state.inputKeys[inputId], 
+                  ref: "input_" + inputId})
+                  )
+              )
+            );
+            inputIndex++;
+          }
+        }
+      }
+
+    return inputComponents;
+  },
+
+
+handleSwitchChange: function (event) {
     var sw = event.target;
     var inputId = sw.id.replace(/^enable_/, '');
+
+    if (sw.name.indexOf('[') !== -1){
+      inputId = sw.name.split('[').pop().replace(']', '');
+    }
 
     var disabled = $.extend([], this.state.disabled);
 
@@ -1888,122 +1941,6 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
     this.setState( { disabled: disabled, inputKeys: inputKeys });
   }
 
-
-
-});
-var BulkInputGroup = React.createClass({displayName: "BulkInputGroup",
-  mixins: [CssClassMixin],
-
-  propTypes: {
-    inputs: React.PropTypes.object,
-    data: React.PropTypes.object,
-    errors: React.PropTypes.object,
-    resource: React.PropTypes.string,
-    themeClassKey: React.PropTypes.string,
-    label: React.PropTypes.string,
-    formStyle: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      inputs: {},
-      data: {},
-      errors: {},
-      formStyle: 'default',
-      label: null,
-      themeClassKey: 'form.inputGroup'
-    };
-  },
-
-  render: function() {
-    return (
-      React.createElement("div", null, 
-        React.createElement("div", {className: this.inputGroupClassName()}, 
-          this.renderLabel(), 
-          this.renderInputs(), 
-          this.props.children
-        ), 
-        this.renderDivider()
-      )
-    );
-  },
-
-  inputGroupClassName: function() {
-    var className = this.className();
-    if(this.props.label !== null) {
-      className += ' ' + Realize.themeClass('form.inputGroup.section');
-    }
-
-    return className;
-  },
-
-  renderInputs: function() {
-    var inputsProps = this.props.inputs;
-    var inputComponents = [];
-    var inputIndex = 0;
-
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-        if(!inputProps.id) {
-          inputProps.id = inputId;
-        }
-
-        if (this.state.disabled.indexOf(inputId) === -1)
-        {
-          inputProps.disabled = false;
-        } else {
-          inputProps.disabled = true;
-        }
-
-        inputComponents.push(
-          React.createElement("div", {className: "row"}, 
-            React.createElement(InputSwitch, {id: "enable_"+inputId, 
-                         name: "enable_"+inputId, 
-                         onChange: this.handleSwitchChange, 
-                         className: "switch col s2", 
-                         offLabel: "", 
-                         onLabel: ""}
-              ), 
-
-            React.createElement(Input, React.__spread({},  inputProps, 
-              {data: this.props.data, 
-              errors: this.props.errors, 
-              resource: this.props.resource, 
-              formStyle: this.props.formStyle, 
-              className: "col s10", 
-              key: this.state.inputKeys[inputId], 
-              ref: "input_" + inputId})
-              )
-          )
-        );
-        inputIndex++;
-      }
-    }
-
-    return inputComponents;
-  },
-
-  renderLabel: function() {
-    if(this.props.label === null) {
-      return '';
-    }
-
-    return (React.createElement("h5", null, this.props.label));
-  },
-
-  renderDivider: function() {
-    if(this.props.label === null) {
-      return '';
-    }
-
-    //TODO: refatorar para um componente
-    return (
-      React.createElement("div", {className: this.props.className}, 
-        React.createElement("hr", null)
-      )
-    );
-  }
 });
 var Form = React.createClass({displayName: "Form",
   mixins: [
@@ -3947,10 +3884,14 @@ var Input = React.createClass({displayName: "Input",
       checkbox_group: InputCheckboxGroup,
       radio_group: InputRadioGroup,
 <<<<<<< HEAD
+<<<<<<< HEAD
       masked: InputMasked
 =======
       switch: InputSwitch
 >>>>>>> [DINV-153] - In Progress
+=======
+      masked: InputMasked
+>>>>>>> Adicionada possibilidade de passar InputGroups para o componente de bulkEditForm
     };
 
     return (mapping[component] || window[component]);
@@ -4038,7 +3979,7 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
       React.createElement("span", null, 
         React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, onChange: this._handleChange, className: this.className(), ref: "input"})), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
-        React.createElement(Button, {icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
+        React.createElement(Button, {disabled: this.props.disabled, icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
       )
     );
   }

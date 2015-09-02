@@ -40,7 +40,7 @@ var InputDatepicker = React.createClass({
       <span>
         <InputMasked {...this.props} type="date" plugin_params={{typeMask: 'date', showMaskOnHover: false}} onChange={this._handleChange} className={this.className()} ref="input" />
         <Label {...this.propsWithoutCSS()} />
-        <Button icon={{type: "calendar"}} className="input-datepicker__button prefix" type="button" ref="button"/>
+        <Button disabled={this.props.disabled} icon={{type: "calendar"}} className="input-datepicker__button prefix" type="button" ref="button"/>
       </span>
     );
   }
