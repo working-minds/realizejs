@@ -8,6 +8,7 @@ var InputGroup = React.createClass({
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
     label: React.PropTypes.string,
+    separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string
   },
 
@@ -18,6 +19,7 @@ var InputGroup = React.createClass({
       errors: {},
       formStyle: 'default',
       label: null,
+      separator: false,
       themeClassKey: 'form.inputGroup'
     };
   },
@@ -83,13 +85,14 @@ var InputGroup = React.createClass({
   },
 
   renderDivider: function() {
-    if(this.props.label === null) {
+    if(!this.props.separator) {
       return '';
     }
 
     //TODO: refatorar para um componente
+    var className = Realize.themes.getCssClass('form.inputGroup.divider');
     return (
-      <div className={this.props.className}>
+      <div className={className}>
         <hr />
       </div>
     );

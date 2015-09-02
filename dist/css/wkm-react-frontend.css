@@ -90,6 +90,10 @@ button .preloader-wrapper.small {
   left: 0.75rem;
   font-size: 0.8rem;
 }
+
+.input-group__divider {
+  clear: both;
+}
 html body {
   font-size: 13px;
 }
