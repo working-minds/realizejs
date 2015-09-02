@@ -88,7 +88,11 @@ Realize.themes.materialize = {
       cssClass: 'form__input-group',
 
       section: {
-        cssClass: 'section'
+        cssClass: 'input-group__section'
+      },
+
+      divider: {
+        cssClass: 'input-group__divider'
       }
     }
   },

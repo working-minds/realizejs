@@ -26,7 +26,7 @@ var ContainerMixin = {
 
     return React.Children.map(this.props.children, function(child) {
       var forwardedProps = $.extend({}, this.props.forwardedProps, props);
-      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
+      return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
     }.bind(this));
   },
 

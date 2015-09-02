@@ -376,7 +376,11 @@ Realize.themes.materialize = {
       cssClass: 'form__input-group',
 
       section: {
-        cssClass: 'section'
+        cssClass: 'input-group__section'
+      },
+
+      divider: {
+        cssClass: 'input-group__divider'
       }
     }
   },
@@ -616,7 +620,7 @@ var ContainerMixin = {
 
     return React.Children.map(this.props.children, function(child) {
       var forwardedProps = $.extend({}, this.props.forwardedProps, props);
-      return React.addons.cloneWithProps(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
+      return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
     }.bind(this));
   },
 
@@ -984,6 +988,51 @@ var GridActionsMixin = {
   handleDestroyError: function(xhr, status, error) {
     this.setState({isLoading: false});
     console.log(error);
+  }
+};
+var CheckboxComponentMixin = {
+  propTypes: {
+    checked: React.PropTypes.bool,
+    renderAsIndeterminate: React.PropTypes.bool
+  },
+
+  getDefaultProps: function() {
+    return {
+      renderAsIndeterminate: false
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      checked: this.getInitialChecked()
+    };
+  },
+
+  componentDidMount: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    inputNode.indeterminate = this.props.renderAsIndeterminate;
+  },
+
+  getInitialChecked: function() {
+    var checked = this.props.checked;
+    var value = this.props.value;
+    if(checked !== null && this.props.checked !== undefined) {
+      return checked;
+    }
+
+    if(typeof value === "boolean" || value === 0 || value === 1) {
+      return !!value;
+    }
+
+    return false;
+  },
+
+  _handleCheckboxChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.setState({checked: event.target.checked});
+    }
   }
 };
 var InputComponentMixin = {
@@ -1992,6 +2041,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
     resource: React.PropTypes.string,
     themeClassKey: React.PropTypes.string,
     label: React.PropTypes.string,
+    separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string
   },
 
@@ -2002,6 +2052,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
       errors: {},
       formStyle: 'default',
       label: null,
+      separator: false,
       themeClassKey: 'form.inputGroup'
     };
   },
@@ -2067,13 +2118,14 @@ var InputGroup = React.createClass({displayName: "InputGroup",
   },
 
   renderDivider: function() {
-    if(this.props.label === null) {
+    if(!this.props.separator) {
       return '';
     }
 
     //TODO: refatorar para um componente
+    var className = Realize.themes.getCssClass('form.inputGroup.divider');
     return (
-      React.createElement("div", {className: this.props.className}, 
+      React.createElement("div", {className: className}, 
         React.createElement("hr", null)
       )
     );
@@ -3496,28 +3548,20 @@ var InputAutocompleteValues = React.createClass({displayName: "InputAutocomplete
 });
 
 var InputCheckbox = React.createClass({displayName: "InputCheckbox",
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    CheckboxComponentMixin
+  ],
+
   propTypes: {
     renderAsIndeterminate: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.checkbox',
-      renderAsIndeterminate: false,
-      checked: false
+      themeClassKey: 'input.checkbox'
     };
-  },
-
-  getInitialState: function() {
-    return {
-      checked: this.props.checked
-    };
-  },
-
-  componentDidMount: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    inputNode.indeterminate = this.props.renderAsIndeterminate;
   },
 
   render: function() {
@@ -3525,20 +3569,12 @@ var InputCheckbox = React.createClass({displayName: "InputCheckbox",
       React.createElement("input", React.__spread({},  this.props, 
         {checked: this.state.checked, 
         className: this.inputClassName(), 
-        onChange: this.handleChange, 
+        onChange: this._handleCheckboxChange, 
         type: "checkbox", 
         ref: "input"})
       )
     );
-  },
-
-  handleChange: function(event) {
-    this.props.onChange(event);
-
-    if(!event.isDefaultPrevented()) {
-      this.setState({checked: event.target.checked});
-    }
-  },
+  }
 
 });
 
@@ -3698,6 +3734,15 @@ var Input = React.createClass({displayName: "Input",
     );
   },
 
+  renderSwitchInput: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
@@ -3738,9 +3783,11 @@ var Input = React.createClass({displayName: "Input",
       hidden: InputHidden,
       password: InputPassword,
       select: InputSelect,
+      switch: InputSwitch,
       textarea: InputTextarea,
       checkbox_group: InputCheckboxGroup,
-      radio_group: InputRadioGroup
+      radio_group: InputRadioGroup,
+      masked: InputMasked
     };
 
     return (mapping[component] || window[component]);
@@ -4070,44 +4117,57 @@ var InputPassword = React.createClass({displayName: "InputPassword",
 });
 
 var InputSwitch = React.createClass({displayName: "InputSwitch",
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin,
+    CheckboxComponentMixin
+  ],
+
   propTypes: {
-    className: React.PropTypes.string,
-    renderAsIndeterminate: React.PropTypes.bool
+    label: React.PropTypes.string,
+    offLabel: Realize.PropTypes.localizedString,
+    onLabel: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.switch',
-      renderAsIndeterminate: false,
-      offLabel: 'Não',
-      onLabel: 'Sim',
-      className: 'switch'
+      className: 'switch',
+      offLabel: 'false',
+      onLabel: 'true',
+      label: null
     };
-  },
-
-  componentDidMount: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    inputNode.indeterminate = this.props.renderAsIndeterminate;
   },
 
   render: function() {
     return (
+      React.createElement("div", null, 
         React.createElement("div", {className: this.props.className}, 
           React.createElement("label", null, 
-            this.props.offLabel, 
+            Realize.t(this.props.offLabel), 
             React.createElement("input", React.__spread({},  this.props, 
-                {value: this.state.value, 
-                className: this.inputClassName(), 
-                onChange: this._handleChange, 
-                type: "checkbox", 
-                ref: "input"})
-                ), 
+              {checked: this.state.checked, 
+              value: this.state.value, 
+              className: this.inputClassName(), 
+              onChange: this._handleCheckboxChange, 
+              type: "checkbox", 
+              ref: "input"})
+            ), 
             React.createElement("span", {className: "lever"}), 
-            this.props.onLabel
+            Realize.t(this.props.onLabel)
           )
-        )
+        ), 
+        this.renderLabel()
+      )
     );
+  },
+
+  renderLabel: function() {
+    if(!this.props.label) {
+      return null;
+    }
+
+    return React.createElement(Label, {name: this.props.label, active: true});
   }
 });
 
@@ -5136,8 +5196,18 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
 
   render: function() {
     return (
-      React.createElement(Button, React.__spread({},  this.props, {onClick: this.actionButtonClick}))
+      React.createElement(Button, React.__spread({},  this.props, {href: this.actionButtonHref(), onClick: this.actionButtonClick}))
     );
+  },
+
+  actionButtonHref: function() {
+    var buttonHref = this.props.href;
+    if(!buttonHref) {
+      return '#!';
+    }
+
+    var selectedData = this.getSelectedData();
+    return (buttonHref + '?' + $.param(selectedData));
   },
 
   actionButtonClick: function(event) {

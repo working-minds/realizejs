@@ -81,6 +81,15 @@ var Input = React.createClass({
     );
   },
 
+  renderSwitchInput: function() {
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
+        {this.renderInputErrors()}
+      </div>
+    );
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
@@ -121,6 +130,7 @@ var Input = React.createClass({
       hidden: InputHidden,
       password: InputPassword,
       select: InputSelect,
+      switch: InputSwitch,
       textarea: InputTextarea,
       checkbox_group: InputCheckboxGroup,
       radio_group: InputRadioGroup,
