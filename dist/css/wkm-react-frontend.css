@@ -240,7 +240,9 @@ hr {
   transform: translate(-50%, -50%)!important;
   /*width: 40%;*/
 }
-
+.modal-footer{
+  overflow: hidden;
+}
 .table tr th, .table tr td {
   padding: 5px 2px;
 }

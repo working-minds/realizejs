@@ -4516,7 +4516,11 @@ var Modal = React.createClass({displayName: "Modal",
       headerSize:50,
       footerSize:50,
       marginHeaderFooter:100,
-      width: '40%'
+      width: '60%',
+      modalHeight: 0,
+      headerHeight: 0,
+      contentHeight: 0,
+      footerHeight: 0
     };
   },
 
@@ -4571,13 +4575,28 @@ var Modal = React.createClass({displayName: "Modal",
     this.resizeContent();
   },
 
-  resizeModal: function(){
+  resizeContent: function(){
     var modal = React.findDOMNode(this.refs.modal);
+    var headerContainer = React.findDOMNode(this.refs.headerContainer);
+    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    var footerContainer = React.findDOMNode(this.refs.footerContainer);
+
     $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter) );
     $(modal).css("width", this.props.width);
+
+    var maxHeightModal = $(window).height() - (this.props.marginHeaderFooter);
+    var possibleContentHeight = maxHeightModal - ($(headerContainer).height() + $(footerContainer).height());
+
+    if ($(contentContainer).height() >= possibleContentHeight){
+      $(contentContainer).css("height", $(modal).height() - ($(headerContainer).height() + $(footerContainer).height()));
+      $(contentContainer).css("overflow-y","auto");
+    }else{
+      $(contentContainer).removeAttr('style');
+    }
+
   },
 
-  resizeContent: function(){
+  resizeModal: function(){
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
     $(contentContainer).css("max-height", $(window).height() - (this.props.marginHeaderFooter) - (this.props.headerSize+ this.props.footerSize) );
   },
@@ -4599,6 +4618,11 @@ var Modal = React.createClass({displayName: "Modal",
 
 var ModalHeader = React.createClass({displayName: "ModalHeader",
   mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.header'
+    };
+  },
   render: function() {
     var content = this.props.children;
     if (this.props.clearTheme == false)
@@ -4609,6 +4633,11 @@ var ModalHeader = React.createClass({displayName: "ModalHeader",
 
 var ModalContent  = React.createClass({displayName: "ModalContent",
   mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.content'
+    };
+  },
   render: function() {
     var content = this.props.children;
     if (this.props.clearTheme == false)
@@ -4619,10 +4648,15 @@ var ModalContent  = React.createClass({displayName: "ModalContent",
 
 var ModalFooter = React.createClass({displayName: "ModalFooter",
   mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.footer'
+    };
+  },
   render: function() {
     var content = this.props.children;
     if (this.props.clearTheme == false)
-      content = React.createElement("div", {className: "card-content"}, this.props.children);
+      content = React.createElement("div", {className: "card-content modal-footer"}, this.props.children);
     return content;
   }
 });
