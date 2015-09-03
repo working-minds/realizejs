@@ -95,9 +95,14 @@ button .preloader-wrapper.small {
   font-size: 0.8rem;
 }
 
+.form__input-group {
+  clear: both;
+}
+
 .input-group__divider {
   clear: both;
 }
+
 html body {
   font-size: 13px;
 }

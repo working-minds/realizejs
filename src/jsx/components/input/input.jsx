@@ -4,7 +4,7 @@ var Input = React.createClass({
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.node,
     formStyle: React.PropTypes.string,
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
