@@ -5497,21 +5497,32 @@ var TableCell = React.createClass({displayName: "TableCell",
   },
 
   renderValue: function() {
+
     var format = this.props.format;
     var customValue = this.props.value;
     var dataValue = this.props.data[this.props.name];
 
+    var value = null;
+
     if(!!customValue) {
-      return customValue(this.props.data, this.props);
+      value = customValue(this.props.data, this.props);
     } else if(dataValue === null || dataValue === undefined) {
-      return '-';
+      value = '-';
     } else {
       try {
-        return this[format + "Value"](dataValue);
+        value = this[format + "Value"](dataValue);
       } catch(err) {
-        return this.textValue(dataValue);
+        value = this.textValue(dataValue);
       }
     }
+
+    if(!!this.props.component){
+      return React.createElement(eval(this.props.component), $.extend({}, this.props, {value: value}));
+    }
+    else {
+      return value;
+    }
+
   },
 
   textValue: function(value) {
