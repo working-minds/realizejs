@@ -2,7 +2,8 @@ var FormErrorHandlerMixin = {
   propTypes: {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,
-    onError: React.PropTypes.func
+    onError: React.PropTypes.func,
+    mapping: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -11,7 +12,8 @@ var FormErrorHandlerMixin = {
       baseErrorParam: 'base',
       onError: function(xhr, status, error) {
         return true;
-      }
+      },
+      mapping: true
     };
   },
 
@@ -43,7 +45,22 @@ var FormErrorHandlerMixin = {
   },
 
   handleValidationError: function(xhr) {
-    this.setState({errors: JSON.parse(xhr.responseText)});
+    this.setState({errors: this.getMappingErrors(xhr.responseText)});
+  },
+
+  getMappingErrors: function(error){
+    var errors = JSON.parse(error);
+    if(this.props.mapping){
+      var mappingErrors = {};
+      for(var property in errors){
+        var key = property.split('.').pop();
+        mappingErrors[key] = errors[property]
+      }
+
+      return mappingErrors;
+    } else{
+     return errors
+    }
   },
 
   flashErrorMessage: function() {

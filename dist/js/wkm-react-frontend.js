@@ -792,7 +792,8 @@ var FormErrorHandlerMixin = {
   propTypes: {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,
-    onError: React.PropTypes.func
+    onError: React.PropTypes.func,
+    mapping: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -801,7 +802,8 @@ var FormErrorHandlerMixin = {
       baseErrorParam: 'base',
       onError: function(xhr, status, error) {
         return true;
-      }
+      },
+      mapping: true
     };
   },
 
@@ -833,7 +835,22 @@ var FormErrorHandlerMixin = {
   },
 
   handleValidationError: function(xhr) {
-    this.setState({errors: JSON.parse(xhr.responseText)});
+    this.setState({errors: this.getMappingErrors(xhr.responseText)});
+  },
+
+  getMappingErrors: function(error){
+    var errors = JSON.parse(error);
+    if(this.props.mapping){
+      var mappingErrors = {};
+      for(var property in errors){
+        var key = property.split('.').pop();
+        mappingErrors[key] = errors[property]
+      }
+
+      return mappingErrors;
+    } else{
+     return errors
+    }
   },
 
   flashErrorMessage: function() {
@@ -1776,8 +1793,12 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   getInitialState: function() {
 
     var disabled = [];
-    for(var inputId in this.props.inputs) {
-      disabled.push(inputId);
+
+    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+      var inputs = this.props.inputGroups[i].inputs;
+      for(var inputId in inputs) {
+        disabled.push(inputId);
+      }
     }
 
     return {
@@ -1789,7 +1810,7 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   render: function() {
 
     var formProps = $.extend({}, this.props);
-    delete formProps.inputs;
+    delete formProps.inputGroups;
     return (
       React.createElement(Form, React.__spread({},  formProps), 
         this.renderChildren()
@@ -1798,62 +1819,111 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
 
   generateInputIds: function(){
     var idsMap = {};
-    for(var inputId in this.props.inputs)
-      idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+      var inputs = this.props.inputGroups[i].inputs;
+      for(var inputId in inputs)
+        idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    }
+
     return idsMap;
   },
 
   renderChildren: function () {
 
-    var inputsProps = this.props.inputs;
     var inputComponents = [];
-    var inputIndex = 0;
 
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-        if(!inputProps.id) {
-          inputProps.id = inputId;
-        }
-
-        if (this.state.disabled.indexOf(inputId) === -1)
-        {
-          inputProps.disabled = false;
-        } else {
-          inputProps.disabled = true;
-        }
-
-        inputComponents.push(
-            React.createElement("div", {className: "row"}, 
-              React.createElement(InputSwitch, {id: "enable_"+inputId, 
-                           name: "enable_"+inputId, 
-                           onChange: this.handleSwitchChange, 
-                           className: "switch col s2", 
-                           offLabel: "", 
-                           onLabel: ""}
-                  ), 
-              React.createElement(Input, React.__spread({},  inputProps, 
-                  {data: this.props.data, 
-                  errors: this.props.errors, 
-                  resource: this.props.resource, 
-                  formStyle: this.props.formStyle, 
-                  className: "col s10", 
-                  key: this.state.inputKeys[inputId], 
-                  ref: "input_" + inputId})
-                  )
-            )
-        );
-        inputIndex++;
-      }
+    for(var i = 0; i < this.props.inputGroups.length; i++ )
+    {
+      var inputGroup = this.props.inputGroups[i];
+      this.generateInputs(inputComponents, inputGroup);
     }
 
     return inputComponents;
-
   },
 
-  handleSwitchChange: function (event) {
+
+  generateInputs: function (inputComponents, inputGroup) {
+    var inputIndex = 0;
+
+    inputComponents.push(React.createElement("h5", null, inputGroup.label));
+
+    var inputsProps = inputGroup.inputs;
+      for (var inputId in inputsProps) {
+        if (inputsProps.hasOwnProperty(inputId)) {
+          var inputProps = inputsProps[inputId];
+          if (!inputProps.id) {
+            inputProps.id = inputId;
+          }
+
+          if (this.state.disabled.indexOf(inputId) === -1) {
+            inputProps.disabled = false;
+          } else {
+            inputProps.disabled = true;
+          }
+
+          var resourceName = inputGroup.resource || this.props.resource;
+
+          switchId = "enable";
+          if (!!resourceName) {
+            switchId = switchId + "_" + resourceName
+          }
+          switchId = switchId + "_" + inputId;
+
+          switchName = "enable";
+          if (!!resourceName) {
+            switchName = switchName + "[" + resourceName + "]"
+          }
+          switchName = switchName + "[" + inputId + "]";
+
+          if (inputId == 'ids') {
+            inputComponents.push(
+              React.createElement(Input, React.__spread({},  inputProps, 
+                {disabled: false, 
+                data: this.props.data, 
+                resource: inputGroup.resource || this.props.resource, 
+                className: "col m7 s10", 
+                key: this.state.inputKeys[inputId], 
+                ref: "input_" + inputId, 
+                component: "hidden"})
+                )
+            );
+          } else {
+            inputComponents.push(
+              React.createElement("div", {className: "row"}, 
+                React.createElement(InputSwitch, {id: switchId, 
+                             name: switchName, 
+                             onChange: this.handleSwitchChange, 
+                             className: "switch col m4 s2", 
+                             offLabel: "", 
+                             onLabel: ""}
+                  ), 
+                React.createElement(Input, React.__spread({},  inputProps, 
+                  {data: this.props.data, 
+                  errors: this.props.errors, 
+                  resource: inputGroup.resource || this.props.resource, 
+                  formStyle: this.props.formStyle, 
+                  className: "col m7 s10", 
+                  key: this.state.inputKeys[inputId], 
+                  ref: "input_" + inputId})
+                  )
+              )
+            );
+            inputIndex++;
+          }
+        }
+      }
+
+    return inputComponents;
+  },
+
+
+handleSwitchChange: function (event) {
     var sw = event.target;
     var inputId = sw.id.replace(/^enable_/, '');
+
+    if (sw.name.indexOf('[') !== -1){
+      inputId = sw.name.split('[').pop().replace(']', '');
+    }
 
     var disabled = $.extend([], this.state.disabled);
 
@@ -1870,8 +1940,6 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
     inputKeys[inputId] = "input_" + inputId + this.generateUUID();
     this.setState( { disabled: disabled, inputKeys: inputKeys });
   }
-
-
 
 });
 var Form = React.createClass({displayName: "Form",
@@ -3734,6 +3802,24 @@ var Input = React.createClass({displayName: "Input",
     );
   },
 
+  renderNumberInput: function(){
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
+  renderSwitchInput: function(){
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
   renderFileInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
@@ -3788,6 +3874,7 @@ var Input = React.createClass({displayName: "Input",
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
       datepicker: InputDatepicker,
+      number: InputNumber,
       file: InputFile,
       hidden: InputHidden,
       password: InputPassword,
@@ -3827,6 +3914,7 @@ var Input = React.createClass({displayName: "Input",
 
     var data = this.props.data || {};
     var dataValue = data[this.props.id];
+
     if(typeof dataValue === 'boolean') {
       dataValue = (dataValue ? 1 : 0);
     }
@@ -3881,9 +3969,9 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   render: function() {
     return (
       React.createElement("span", null, 
-        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, className: this.className(), ref: "input"})), 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, onChange: this._handleChange, className: this.className(), ref: "input"})), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
-        React.createElement(Button, {icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
+        React.createElement(Button, {disabled: this.props.disabled, icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
       )
     );
   }
@@ -4101,6 +4189,26 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params)
   }
 
+});
+var InputNumber = React.createClass({displayName: "InputNumber",
+  mixins: [CssClassMixin, InputComponentMixin],
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.number',
+      greedy: false,
+      repeat: 10
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("span", null, 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "number", plugin_params: {typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy}, className: this.className(), ref: "input"})), 
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  }
 });
 var InputPassword = React.createClass({displayName: "InputPassword",
   mixins: [CssClassMixin, InputComponentMixin],
