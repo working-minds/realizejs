@@ -4,7 +4,7 @@ var Input = React.createClass({
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.node,
     formStyle: React.PropTypes.string,
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
@@ -72,6 +72,24 @@ var Input = React.createClass({
     );
   },
 
+  renderNumberInput: function(){
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
+        {this.renderInputErrors()}
+      </div>
+    );
+  },
+
+  renderSwitchInput: function(){
+    return (
+      <div className={this.className()}>
+        {this.renderComponentInput()}
+        {this.renderInputErrors()}
+      </div>
+    );
+  },
+
   renderFileInput: function() {
     return (
       <div className={this.className()}>
@@ -126,6 +144,7 @@ var Input = React.createClass({
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
       datepicker: InputDatepicker,
+      number: InputNumber,
       file: InputFile,
       hidden: InputHidden,
       password: InputPassword,
@@ -165,6 +184,7 @@ var Input = React.createClass({
 
     var data = this.props.data || {};
     var dataValue = data[this.props.id];
+
     if(typeof dataValue === 'boolean') {
       dataValue = (dataValue ? 1 : 0);
     }
@@ -173,6 +193,8 @@ var Input = React.createClass({
   },
 
   getInputErrors: function() {
+    if(this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
+      return this.props.errors[this.props.resource][this.props.id];
     return this.props.errors[this.props.id];
   }
 });

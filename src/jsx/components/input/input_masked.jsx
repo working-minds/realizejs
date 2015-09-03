@@ -100,7 +100,7 @@ var InputMasked = React.createClass({
   },
 
   isRegexMask: function(){
-    return 'regex' in this.props.plugin_params;
+    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params)
   }
 
 });

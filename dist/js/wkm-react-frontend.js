@@ -792,7 +792,8 @@ var FormErrorHandlerMixin = {
   propTypes: {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,
-    onError: React.PropTypes.func
+    onError: React.PropTypes.func,
+    mapping: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -801,7 +802,8 @@ var FormErrorHandlerMixin = {
       baseErrorParam: 'base',
       onError: function(xhr, status, error) {
         return true;
-      }
+      },
+      mapping: true
     };
   },
 
@@ -833,7 +835,22 @@ var FormErrorHandlerMixin = {
   },
 
   handleValidationError: function(xhr) {
-    this.setState({errors: JSON.parse(xhr.responseText)});
+    this.setState({errors: this.getMappingErrors(xhr.responseText)});
+  },
+
+  getMappingErrors: function(error){
+    var errors = JSON.parse(error);
+    if(this.props.mapping){
+      var mappingErrors = {};
+      for(var property in errors){
+        var key = property.split('.').pop();
+        mappingErrors[key] = errors[property]
+      }
+
+      return mappingErrors;
+    } else{
+     return errors
+    }
   },
 
   flashErrorMessage: function() {
@@ -1031,7 +1048,14 @@ var CheckboxComponentMixin = {
     this.props.onChange(event);
 
     if(!event.isDefaultPrevented()) {
-      this.setState({checked: event.target.checked});
+      var newState = { checked: event.target.checked };
+      var value = this.props.value;
+
+      if(typeof value === "boolean" || value === 0 || value === 1) {
+        newState.value = event.target.checked;
+      }
+
+      this.setState(newState);
     }
   }
 };
@@ -1769,8 +1793,12 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   getInitialState: function() {
 
     var disabled = [];
-    for(var inputId in this.props.inputs) {
-      disabled.push(inputId);
+
+    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+      var inputs = this.props.inputGroups[i].inputs;
+      for(var inputId in inputs) {
+        disabled.push(inputId);
+      }
     }
 
     return {
@@ -1782,7 +1810,7 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   render: function() {
 
     var formProps = $.extend({}, this.props);
-    delete formProps.inputs;
+    delete formProps.inputGroups;
     return (
       React.createElement(Form, React.__spread({},  formProps), 
         this.renderChildren()
@@ -1791,62 +1819,111 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
 
   generateInputIds: function(){
     var idsMap = {};
-    for(var inputId in this.props.inputs)
-      idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+      var inputs = this.props.inputGroups[i].inputs;
+      for(var inputId in inputs)
+        idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    }
+
     return idsMap;
   },
 
   renderChildren: function () {
 
-    var inputsProps = this.props.inputs;
     var inputComponents = [];
-    var inputIndex = 0;
 
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-        if(!inputProps.id) {
-          inputProps.id = inputId;
-        }
-
-        if (this.state.disabled.indexOf(inputId) === -1)
-        {
-          inputProps.disabled = false;
-        } else {
-          inputProps.disabled = true;
-        }
-
-        inputComponents.push(
-            React.createElement("div", {className: "row"}, 
-              React.createElement(InputSwitch, {id: "enable_"+inputId, 
-                           name: "enable_"+inputId, 
-                           onChange: this.handleSwitchChange, 
-                           className: "switch col s2", 
-                           offLabel: "", 
-                           onLabel: ""}
-                  ), 
-              React.createElement(Input, React.__spread({},  inputProps, 
-                  {data: this.props.data, 
-                  errors: this.props.errors, 
-                  resource: this.props.resource, 
-                  formStyle: this.props.formStyle, 
-                  className: "col s10", 
-                  key: this.state.inputKeys[inputId], 
-                  ref: "input_" + inputId})
-                  )
-            )
-        );
-        inputIndex++;
-      }
+    for(var i = 0; i < this.props.inputGroups.length; i++ )
+    {
+      var inputGroup = this.props.inputGroups[i];
+      this.generateInputs(inputComponents, inputGroup);
     }
 
     return inputComponents;
-
   },
 
-  handleSwitchChange: function (event) {
+
+  generateInputs: function (inputComponents, inputGroup) {
+    var inputIndex = 0;
+
+    inputComponents.push(React.createElement("h5", null, inputGroup.label));
+
+    var inputsProps = inputGroup.inputs;
+      for (var inputId in inputsProps) {
+        if (inputsProps.hasOwnProperty(inputId)) {
+          var inputProps = inputsProps[inputId];
+          if (!inputProps.id) {
+            inputProps.id = inputId;
+          }
+
+          if (this.state.disabled.indexOf(inputId) === -1) {
+            inputProps.disabled = false;
+          } else {
+            inputProps.disabled = true;
+          }
+
+          var resourceName = inputGroup.resource || this.props.resource;
+
+          switchId = "enable";
+          if (!!resourceName) {
+            switchId = switchId + "_" + resourceName
+          }
+          switchId = switchId + "_" + inputId;
+
+          switchName = "enable";
+          if (!!resourceName) {
+            switchName = switchName + "[" + resourceName + "]"
+          }
+          switchName = switchName + "[" + inputId + "]";
+
+          if (inputId == 'ids') {
+            inputComponents.push(
+              React.createElement(Input, React.__spread({},  inputProps, 
+                {disabled: false, 
+                data: this.props.data, 
+                resource: inputGroup.resource || this.props.resource, 
+                className: "col m7 s10", 
+                key: this.state.inputKeys[inputId], 
+                ref: "input_" + inputId, 
+                component: "hidden"})
+                )
+            );
+          } else {
+            inputComponents.push(
+              React.createElement("div", {className: "row"}, 
+                React.createElement(InputSwitch, {id: switchId, 
+                             name: switchName, 
+                             onChange: this.handleSwitchChange, 
+                             className: "switch col m4 s2", 
+                             offLabel: "", 
+                             onLabel: ""}
+                  ), 
+                React.createElement(Input, React.__spread({},  inputProps, 
+                  {data: this.props.data, 
+                  errors: this.props.errors, 
+                  resource: inputGroup.resource || this.props.resource, 
+                  formStyle: this.props.formStyle, 
+                  className: "col m7 s10", 
+                  key: this.state.inputKeys[inputId], 
+                  ref: "input_" + inputId})
+                  )
+              )
+            );
+            inputIndex++;
+          }
+        }
+      }
+
+    return inputComponents;
+  },
+
+
+handleSwitchChange: function (event) {
     var sw = event.target;
     var inputId = sw.id.replace(/^enable_/, '');
+
+    if (sw.name.indexOf('[') !== -1){
+      inputId = sw.name.split('[').pop().replace(']', '');
+    }
 
     var disabled = $.extend([], this.state.disabled);
 
@@ -1863,8 +1940,6 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
     inputKeys[inputId] = "input_" + inputId + this.generateUUID();
     this.setState( { disabled: disabled, inputKeys: inputKeys });
   }
-
-
 
 });
 var Form = React.createClass({displayName: "Form",
@@ -2153,6 +2228,7 @@ var Grid = React.createClass({displayName: "Grid",
     selectedRowIdsParam: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
+    tableClassName: React.PropTypes.string,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func
   },
@@ -2254,6 +2330,7 @@ var Grid = React.createClass({displayName: "Grid",
         allSelectedData: this.state.filterData, 
         count: this.state.count, 
         actionButtons: this.getActionButtons(), 
+        tableClassName: this.props.tableClassName, 
         onSort: this.onSort, 
         onSelect: this.selectDataRows, 
         onRemoveSelection: this.removeSelection, 
@@ -2501,7 +2578,7 @@ var GridTable = React.createClass({displayName: "GridTable",
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Table, React.__spread({},  this.propsWithoutCSS()))
+        React.createElement(Table, React.__spread({},  this.propsWithoutCSS(), {className: this.props.tableClassName}))
       )
     );
   }
@@ -3657,7 +3734,7 @@ var Input = React.createClass({displayName: "Input",
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.node,
     formStyle: React.PropTypes.string,
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
@@ -3725,6 +3802,24 @@ var Input = React.createClass({displayName: "Input",
     );
   },
 
+  renderNumberInput: function(){
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
+  renderSwitchInput: function(){
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderComponentInput(), 
+        this.renderInputErrors()
+      )
+    );
+  },
+
   renderFileInput: function() {
     return (
       React.createElement("div", {className: this.className()}, 
@@ -3779,6 +3874,7 @@ var Input = React.createClass({displayName: "Input",
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
       datepicker: InputDatepicker,
+      number: InputNumber,
       file: InputFile,
       hidden: InputHidden,
       password: InputPassword,
@@ -3818,6 +3914,7 @@ var Input = React.createClass({displayName: "Input",
 
     var data = this.props.data || {};
     var dataValue = data[this.props.id];
+
     if(typeof dataValue === 'boolean') {
       dataValue = (dataValue ? 1 : 0);
     }
@@ -3826,6 +3923,8 @@ var Input = React.createClass({displayName: "Input",
   },
 
   getInputErrors: function() {
+    if(this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
+      return this.props.errors[this.props.resource][this.props.id];
     return this.props.errors[this.props.id];
   }
 });
@@ -3870,9 +3969,9 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   render: function() {
     return (
       React.createElement("span", null, 
-        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, className: this.className(), ref: "input"})), 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, onChange: this._handleChange, className: this.className(), ref: "input"})), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
-        React.createElement(Button, {icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
+        React.createElement(Button, {disabled: this.props.disabled, icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
       )
     );
   }
@@ -4087,9 +4186,29 @@ var InputMasked = React.createClass({displayName: "InputMasked",
   },
 
   isRegexMask: function(){
-    return 'regex' in this.props.plugin_params;
+    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params)
   }
 
+});
+var InputNumber = React.createClass({displayName: "InputNumber",
+  mixins: [CssClassMixin, InputComponentMixin],
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'input.number',
+      greedy: false,
+      repeat: 10
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("span", null, 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "number", plugin_params: {typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy}, className: this.className(), ref: "input"})), 
+        React.createElement(Label, React.__spread({},  this.propsWithoutCSS()))
+      )
+    );
+  }
 });
 var InputPassword = React.createClass({displayName: "InputPassword",
   mixins: [CssClassMixin, InputComponentMixin],
@@ -4505,38 +4624,26 @@ var Modal = React.createClass({displayName: "Modal",
       headerSize:50,
       footerSize:50,
       marginHeaderFooter:100,
-      width: '40%'
-    };
-  },
-
-  headerConfig: function () {
-    return {
-      height: this.props.headerSize + "px",
-      overflow: 'hidden'
-    };
-  },
-
-  contentConfig: function () {
-    return {
-      'overflowX': 'hidden',
-      'overflowY': 'auto'
-    };
-  },
-
-  footerConfig: function () {
-    return {
-      height: this.props.footerSize + "px",
-      overflow: 'hidden'
+      width: '60%',
+      modalHeight: 0,
+      headerHeight: 0,
+      contentHeight: 0,
+      footerHeight: 0
     };
   },
 
   render: function() {
-    var header = this.filterChildren('header')? this.renderHeader() : '';
-    var footer = this.filterChildren('footer')? this.renderFooter() : '';
+    var header = this.filterChildren(ModalHeader)? this.renderHeader() : '';
+    var content = this.filterChildren(ModalContent)? this.renderContent() : '';
+    var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
+
+    if(header == '' && content == '' && footer == '')
+      content = React.createElement(ModalContent, React.__spread({},  this.propTypes), this.props.children)
+
     return (
       React.createElement("div", {id: this.props.id, className: this.themeStyle(), ref: "modal"}, 
         header, 
-        this.renderContent(), 
+        content, 
         footer
       )
     );
@@ -4544,24 +4651,24 @@ var Modal = React.createClass({displayName: "Modal",
 
   renderHeader: function(){
     return (
-      React.createElement("div", {ref: "headerContainer", style: this.headerConfig()}, 
-        this.filterChildren('header')
+      React.createElement("div", {ref: "headerContainer"}, 
+        this.filterChildren(ModalHeader)
       )
     );
   },
 
   renderContent: function(){
     return (
-      React.createElement("div", {ref: "contentContainer", style: this.contentConfig()}, 
-        this.filterChildren('content')
+      React.createElement("div", {ref: "contentContainer"}, 
+        this.filterChildren(ModalContent)
       )
     );
   },
 
   renderFooter: function(){
     return (
-      React.createElement("div", {ref: "footerContainer", style: this.footerConfig()}, 
-        this.filterChildren('footer')
+      React.createElement("div", {ref: "footerContainer"}, 
+        this.filterChildren(ModalFooter)
       )
     );
   },
@@ -4576,13 +4683,28 @@ var Modal = React.createClass({displayName: "Modal",
     this.resizeContent();
   },
 
-  resizeModal: function(){
+  resizeContent: function(){
     var modal = React.findDOMNode(this.refs.modal);
+    var headerContainer = React.findDOMNode(this.refs.headerContainer);
+    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    var footerContainer = React.findDOMNode(this.refs.footerContainer);
+
     $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter) );
     $(modal).css("width", this.props.width);
+
+    var maxHeightModal = $(window).height() - (this.props.marginHeaderFooter);
+    var possibleContentHeight = maxHeightModal - ($(headerContainer).height() + $(footerContainer).height());
+
+    if ($(contentContainer).height() >= possibleContentHeight){
+      $(contentContainer).css("height", $(modal).height() - ($(headerContainer).height() + $(footerContainer).height()));
+      $(contentContainer).css("overflow-y","auto");
+    }else{
+      $(contentContainer).removeAttr('style');
+    }
+
   },
 
-  resizeContent: function(){
+  resizeModal: function(){
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
     $(contentContainer).css("max-height", $(window).height() - (this.props.marginHeaderFooter) - (this.props.headerSize+ this.props.footerSize) );
   },
@@ -4595,13 +4717,57 @@ var Modal = React.createClass({displayName: "Modal",
   filterChildren : function(area) {
     var result = null;
     React.Children.map(this.props.children, function(x) {
-      if (x.props.area == area)
+      if (x.type == area)
         result =  x;
     });
     return result;
   }
 });
 
+var ModalHeader = React.createClass({displayName: "ModalHeader",
+  mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.header'
+    };
+  },
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = React.createElement("div", {className: "card-content"}, this.props.children);
+    return content;
+  }
+});
+
+var ModalContent  = React.createClass({displayName: "ModalContent",
+  mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.content'
+    };
+  },
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = React.createElement("div", {className: "card-content"}, this.props.children);
+    return content;
+  }
+});
+
+var ModalFooter = React.createClass({displayName: "ModalFooter",
+  mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.footer'
+    };
+  },
+  render: function() {
+    var content = this.props.children;
+    if (this.props.clearTheme == false)
+      content = React.createElement("div", {className: "card-content modal-footer"}, this.props.children);
+    return content;
+  }
+});
 
 
 
@@ -5331,21 +5497,32 @@ var TableCell = React.createClass({displayName: "TableCell",
   },
 
   renderValue: function() {
+
     var format = this.props.format;
     var customValue = this.props.value;
     var dataValue = this.props.data[this.props.name];
 
+    var value = null;
+
     if(!!customValue) {
-      return customValue(this.props.data, this.props);
+      value = customValue(this.props.data, this.props);
     } else if(dataValue === null || dataValue === undefined) {
-      return '-';
+      value = '-';
     } else {
       try {
-        return this[format + "Value"](dataValue);
+        value = this[format + "Value"](dataValue);
       } catch(err) {
-        return this.textValue(dataValue);
+        value = this.textValue(dataValue);
       }
     }
+
+    if(!!this.props.component){
+      return React.createElement(eval(this.props.component), $.extend({}, this.props, {value: value}));
+    }
+    else {
+      return value;
+    }
+
   },
 
   textValue: function(value) {

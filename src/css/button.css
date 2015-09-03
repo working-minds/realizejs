@@ -8,6 +8,10 @@ button .preloader-wrapper.small {
   padding-right: 1rem;
 }
 
+.button--icon.btn-floating{
+  padding-left: 0px;
+}
+
 .button--floating.button--icon {
   padding: 0;
 }

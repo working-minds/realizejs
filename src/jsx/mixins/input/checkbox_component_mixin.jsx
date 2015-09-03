@@ -39,7 +39,14 @@ var CheckboxComponentMixin = {
     this.props.onChange(event);
 
     if(!event.isDefaultPrevented()) {
-      this.setState({checked: event.target.checked});
+      var newState = { checked: event.target.checked };
+      var value = this.props.value;
+
+      if(typeof value === "boolean" || value === 0 || value === 1) {
+        newState.value = event.target.checked;
+      }
+
+      this.setState(newState);
     }
   }
 };
