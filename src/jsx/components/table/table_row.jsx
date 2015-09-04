@@ -7,6 +7,7 @@ var TableRow = React.createClass({
     selectable: React.PropTypes.bool,
     selected: React.PropTypes.bool,
     actionButtons: React.PropTypes.array,
+    rowSelectable: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func
   },
 
@@ -19,9 +20,11 @@ var TableRow = React.createClass({
       selected: false,
       actionButtons: [],
       themeClassKey: 'table.row',
+      rowSelectable: function(dataRows){ return true },
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
+
 
   render: function() {
     return (
@@ -36,6 +39,12 @@ var TableRow = React.createClass({
   renderSelectCell: function() {
     if(!this.props.selectable) {
       return '';
+    }
+
+    var rowSelectable = this.props.rowSelectable;
+
+    if (!rowSelectable || !rowSelectable(this.props.data)){
+      return <td></td>
     }
 
     return (

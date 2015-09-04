@@ -43,23 +43,23 @@ var MenuItem = React.createClass({
     href: React.PropTypes.string,
     target: React.PropTypes.string,
     onClick: React.PropTypes.object,
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
+    method: React.PropTypes.string,
+    element: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      iconAlign: 'left'
+      iconAlign: 'left',
+      method: 'get',
+      element: 'a'
     };
   },
 
   render: function() {
-    var icon = (this.props.icon !== undefined)? <i className={'material-icons ' + (this.props.iconAlign || this.props.iconAlign)}>{this.props.icon}</i> : '';
     return (
       <li>
-        <a href={this.props.onClick? '#': this.props.href} onClick={this.props.onClick} target={this.props.target} className={this.props.className}>
-           {icon}
-           {this.props.text}
-        </a>
+        <Button {...this.props} clearTheme={true} name={this.props.text} />
       </li>
     );
   }
