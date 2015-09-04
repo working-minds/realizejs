@@ -240,6 +240,10 @@ hr {
   transform: translate(-50%, -50%)!important;
   /*width: 40%;*/
 }
+.wkm-modal .modal-header.with-title{
+  background-color: #f2f2f2;
+  padding: 5px 20px;
+}
 .modal-footer{
   overflow: hidden;
 }

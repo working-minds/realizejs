@@ -8,21 +8,34 @@ var TableActionButton = React.createClass({
     allSelectedData: React.PropTypes.object,
     count: React.PropTypes.number,
     actionUrl: React.PropTypes.string,
-    method: React.PropTypes.string
+    method: React.PropTypes.string,
+    conditionToShowActionButton: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       selectedRowIds: [],
       allSelected: false,
-      method: 'GET'
+      method: 'GET',
+      conditionParams: null,
+      conditionToShowActionButton: function(data) { return true }
     };
   },
 
   render: function() {
     return (
-      <Button {...this.props} href={this.actionButtonHref()} onClick={this.actionButtonClick} />
+      <span>
+        {this.renderButton()}
+      </span>
     );
+  },
+
+  renderButton: function(){
+    var component = [];
+    if (this.props.conditionToShowActionButton(this.props.conditionParams))
+      component.push(<Button {...this.props} href={this.actionButtonHref()} onClick={this.actionButtonClick} />);
+
+    return component;
   },
 
   actionButtonHref: function() {

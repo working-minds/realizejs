@@ -4,7 +4,10 @@ var TableRowActions = React.createClass({
   propTypes: {
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
-    actionButtons: React.PropTypes.array
+    actionButtons: React.PropTypes.array,
+    conditionParams: React.PropTypes.object,
+    component: React.PropTypes.string,
+    paramsToComponent: React.PropTypes.object
   },
 
   getDefaultProps: function() {
@@ -12,7 +15,10 @@ var TableRowActions = React.createClass({
       data: {},
       dataRowIdField: 'id',
       actionButtons: [],
-      themeClassKey: 'table.row.actions'
+      themeClassKey: 'table.row.actions',
+      conditionParams: {},
+      component: null,
+      paramsToComponent: {}
     };
   },
 
@@ -30,15 +36,23 @@ var TableRowActions = React.createClass({
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      actionButtons.push(
-        <Button {...actionButtonProps}
-          href={this.getActionButtonHref(actionButtonProps)}
-          onClick={this.handleActionButtonClick.bind(this, actionButtonProps)}
-          themeClassKey={"button.flat"}
-          element={"a"}
-          key={"action_" + i}
-        />
-      );
+      var conditionToShowFunction = actionButtonProps.conditionToShowActionButton;
+
+      if(!conditionToShowFunction || actionButtonProps.conditionToShowActionButton(actionButtonProps.conditionParams)) {
+        if(!!actionButtonProps.component){
+          return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
+        }else {
+          actionButtons.push(
+            <Button {...actionButtonProps}
+              href={this.getActionButtonHref(actionButtonProps)}
+              onClick={this.handleActionButtonClick.bind(this, actionButtonProps)}
+              themeClassKey={"button.flat"}
+              element={"a"}
+              key={"action_" + i}
+              />
+          );
+        }
+      }
     }
 
     return actionButtons;

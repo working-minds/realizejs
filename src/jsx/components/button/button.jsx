@@ -10,7 +10,9 @@ var Button = React.createClass({
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
-    element: React.PropTypes.string
+    element: React.PropTypes.string,
+    target: React.PropTypes.string,
+    method: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -23,7 +25,8 @@ var Button = React.createClass({
       href: null,
       onClick: null,
       disableWith: 'loading',
-      element: 'button'
+      element: 'button',
+      method: null
     };
   },
 
@@ -66,11 +69,21 @@ var Button = React.createClass({
           type: this.props.type,
           disabled: this.props.disabled,
           href: this.props.href,
-          onClick: this.handleClick
+          onClick: this.handleClick,
+          'data-method': this.getMethod()
         },
         content
       )
     );
+  },
+
+
+  getMethod: function(){
+    if(!!this.props.method){
+      return this.props.method
+    }
+
+    return null
   },
 
   renderContent: function() {

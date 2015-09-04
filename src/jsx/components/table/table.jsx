@@ -18,7 +18,8 @@ var Table = React.createClass({
     onSort: React.PropTypes.func,
     onSelect: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
+    onSelectAll: React.PropTypes.func,
+    rowSelectable: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -46,7 +47,8 @@ var Table = React.createClass({
       onSort: function(sortData) {},
       onSelect: function(event, selectedRowIds) {},
       onRemoveSelection: function(event) {},
-      onSelectAll: function(event) {}
+      onSelectAll: function(event) {},
+      rowSelectable: function(data) {}
     };
   },
 
@@ -178,6 +180,7 @@ var Table = React.createClass({
           data={dataRow}
           actionButtons={this.props.actionButtons.member || []}
           key={"table_row_" + i}
+          rowSelectable={this.props.rowSelectable}
         />
       );
     }

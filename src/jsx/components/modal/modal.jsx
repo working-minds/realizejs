@@ -114,50 +114,10 @@ var Modal = React.createClass({
   }
 });
 
-var ModalHeader = React.createClass({
-  mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.header'
-    };
-  },
-  render: function() {
-    var content = this.props.children;
-    if (this.props.clearTheme == false)
-      content = <div className="card-content">{this.props.children}</div>;
-    return content;
-  }
-});
 
-var ModalContent  = React.createClass({
-  mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.content'
-    };
-  },
-  render: function() {
-    var content = this.props.children;
-    if (this.props.clearTheme == false)
-      content = <div className="card-content">{this.props.children}</div>;
-    return content;
-  }
-});
 
-var ModalFooter = React.createClass({
-  mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.footer'
-    };
-  },
-  render: function() {
-    var content = this.props.children;
-    if (this.props.clearTheme == false)
-      content = <div className="card-content modal-footer">{this.props.children}</div>;
-    return content;
-  }
-});
+
+
 
 
 
