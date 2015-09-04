@@ -578,6 +578,20 @@ Realize.themes.materialize = {
     cssClass: 'blue-grey darken-2'
   },
 
+  modal: {
+    header: {
+      cssClass: 'card-content modal-header',
+      withTitle: 'with-title'
+    },
+    content:{
+      cssClass: 'card-content modal-content'
+    },
+    footer:{
+      cssClass: 'card-content modal-footer'
+    }
+  },
+
+
   icon: {
     cssClass: 'material-icons',
 
@@ -4724,50 +4738,10 @@ var Modal = React.createClass({displayName: "Modal",
   }
 });
 
-var ModalHeader = React.createClass({displayName: "ModalHeader",
-  mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.header'
-    };
-  },
-  render: function() {
-    var content = this.props.children;
-    if (this.props.clearTheme == false)
-      content = React.createElement("div", {className: "card-content"}, this.props.children);
-    return content;
-  }
-});
 
-var ModalContent  = React.createClass({displayName: "ModalContent",
-  mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.content'
-    };
-  },
-  render: function() {
-    var content = this.props.children;
-    if (this.props.clearTheme == false)
-      content = React.createElement("div", {className: "card-content"}, this.props.children);
-    return content;
-  }
-});
 
-var ModalFooter = React.createClass({displayName: "ModalFooter",
-  mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.footer'
-    };
-  },
-  render: function() {
-    var content = this.props.children;
-    if (this.props.clearTheme == false)
-      content = React.createElement("div", {className: "card-content modal-footer"}, this.props.children);
-    return content;
-  }
-});
+
+
 
 
 
@@ -4827,6 +4801,59 @@ var ModalButton = React.createClass({displayName: "ModalButton",
 
 });
 
+var ModalContent  = React.createClass({displayName: "ModalContent",
+  mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.content'
+    };
+  },
+  render: function() {
+    return React.createElement("div", {className: this.getClassName()}, this.props.children);
+  },
+
+  getClassName: function() {
+    return Realize.themes.getCssClass(this.props.themeClassKey);
+  }
+
+});
+
+var ModalFooter = React.createClass({displayName: "ModalFooter",
+  mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.footer'
+    };
+  },
+  render: function() {
+    return React.createElement("div", {className: this.getClassName()}, this.props.children);
+  },
+
+  getClassName: function() {
+    return Realize.themes.getCssClass(this.props.themeClassKey);
+  }
+});
+var ModalHeader = React.createClass({displayName: "ModalHeader",
+  mixins: [CssClassMixin],
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.header',
+      withTitle: false
+    };
+  },
+
+  render: function() {
+    return React.createElement("div", {className: this.getClassName()}, this.props.children);
+  },
+
+  getClassName: function() {
+    var className = Realize.themes.getCssClass(this.props.themeClassKey);
+    if(this.props.clearTheme == false && this.props.withTitle) {
+      className += ' '+ Realize.themes.getProp('modal.header.withTitle')
+    }
+    return className;
+  }
+});
 var Pagination = React.createClass({displayName: "Pagination",
   mixins: [CssClassMixin],
   propTypes: {

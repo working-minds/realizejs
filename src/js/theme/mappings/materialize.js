@@ -290,6 +290,20 @@ Realize.themes.materialize = {
     cssClass: 'blue-grey darken-2'
   },
 
+  modal: {
+    header: {
+      cssClass: 'card-content modal-header',
+      withTitle: 'with-title'
+    },
+    content:{
+      cssClass: 'card-content modal-content'
+    },
+    footer:{
+      cssClass: 'card-content modal-footer'
+    }
+  },
+
+
   icon: {
     cssClass: 'material-icons',
 
