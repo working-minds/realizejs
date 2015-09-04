@@ -4835,6 +4835,11 @@ var ModalFooter = React.createClass({displayName: "ModalFooter",
 });
 var ModalHeader = React.createClass({displayName: "ModalHeader",
   mixins: [CssClassMixin],
+
+  propTypes: {
+    withTitle: React.PropTypes.bool
+  },
+
   getDefaultProps: function() {
     return {
       themeClassKey: 'modal.header',

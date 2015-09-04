@@ -1,5 +1,10 @@
 var ModalHeader = React.createClass({
   mixins: [CssClassMixin],
+
+  propTypes: {
+    withTitle: React.PropTypes.bool
+  },
+
   getDefaultProps: function() {
     return {
       themeClassKey: 'modal.header',
