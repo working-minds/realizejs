@@ -5510,7 +5510,7 @@ var TableCell = React.createClass({displayName: "TableCell",
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'date', 'datetime'])
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime'])
   },
 
   getDefaultProps: function() {
@@ -5580,6 +5580,15 @@ var TableCell = React.createClass({displayName: "TableCell",
     return numeral(value).format('0,0.[000]');
   },
 
+  percentageValue: function(value) {
+    value = parseFloat(value);
+    if(value > 1.0 || value < -1.0) {
+      value = value / 100.0;
+    }
+
+    return numeral(value).format('0.0%');
+  },
+
   currencyValue: function(value) {
     value = parseFloat(value);
     return numeral(value).format('$ 0,0.00');
@@ -5604,7 +5613,7 @@ var TableHeader = React.createClass({displayName: "TableHeader",
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
   propTypes: {
     label: Realize.PropTypes.localizedString,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'date', 'datetime']),
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     onSort: React.PropTypes.func

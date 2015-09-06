@@ -6,7 +6,7 @@ var TableCell = React.createClass({
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'date', 'datetime'])
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime'])
   },
 
   getDefaultProps: function() {
@@ -74,6 +74,15 @@ var TableCell = React.createClass({
   numberValue: function(value) {
     value = parseFloat(value);
     return numeral(value).format('0,0.[000]');
+  },
+
+  percentageValue: function(value) {
+    value = parseFloat(value);
+    if(value > 1.0 || value < -1.0) {
+      value = value / 100.0;
+    }
+
+    return numeral(value).format('0.0%');
   },
 
   currencyValue: function(value) {

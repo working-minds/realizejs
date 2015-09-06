@@ -2,7 +2,7 @@ var TableHeader = React.createClass({
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
   propTypes: {
     label: Realize.PropTypes.localizedString,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'date', 'datetime']),
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     onSort: React.PropTypes.func

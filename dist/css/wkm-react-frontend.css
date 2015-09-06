@@ -297,11 +297,12 @@ hr {
   content: ' \25BE';
 }
 
-.table-cell--currency, .table-cell--number, .table-cell--datetime {
+.table-cell--currency, .table-cell--number, .table-cell--datetime, .table-cell--percentage {
   white-space: nowrap;
 }
 
-.table-cell--number, .table-header--number, .table-cell--currency, .table-header--currency {
+.table-cell--number, .table-header--number, .table-cell--currency, .table-header--currency,
+.table-cell--percentage, .table-header--percentage {
   text-align: right;
 }
 
