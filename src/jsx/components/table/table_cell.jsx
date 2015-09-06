@@ -11,14 +11,9 @@ var TableCell = React.createClass({
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'table.cell',
       format: 'text',
       data: {}
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      themeClassKey: 'table.cell table.cell.' + this.props.format
     };
   },
 
@@ -32,7 +27,13 @@ var TableCell = React.createClass({
 
   cellClassName: function() {
     var className = this.className();
-    className += ' table-cell--' + this.props.name;
+    if(!!this.props.format) {
+      className += ' table-cell--' + this.props.format;
+    }
+
+    if(!!this.props.name) {
+      className += ' table-cell--' + this.props.name;
+    }
 
     return className;
   },

@@ -279,6 +279,12 @@ hr {
   color: #26A69A;
 }
 
+.table-select {
+  position: relative;
+  top: 4px;
+  left: 0.5rem;
+}
+
 .table-header .table-header__name.sortable {
   cursor: pointer;
 }
@@ -295,10 +301,8 @@ hr {
   white-space: nowrap;
 }
 
-.table-select {
-  position: relative;
-  top: 4px;
-  left: 0.5rem;
+.table-cell--number, .table-header--number, .table-cell--currency, .table-header--currency {
+  text-align: right;
 }
 
 .table-cell {

@@ -50,16 +50,17 @@ var FormErrorHandlerMixin = {
 
   getMappingErrors: function(error){
     var errors = JSON.parse(error);
-    if(this.props.mapping){
+    if(this.props.mapping) {
       var mappingErrors = {};
+
       for(var property in errors){
         var key = property.split('.').pop();
         mappingErrors[key] = errors[property]
       }
 
       return mappingErrors;
-    } else{
-     return errors
+    } else {
+     return errors;
     }
   },
 

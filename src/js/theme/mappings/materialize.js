@@ -53,27 +53,7 @@ Realize.themes.materialize = {
     },
 
     cell: {
-      cssClass: 'table-cell',
-
-      text: {
-        cssClass: 'table-cell--text'
-      },
-
-      currency: {
-        cssClass: 'table-cell--currency'
-      },
-
-      number: {
-        cssClass: 'table-cell--number'
-      },
-
-      boolean: {
-        cssClass: 'table-cell--boolean'
-      },
-
-      datetime: {
-        cssClass: 'table-cell--datetime'
-      }
+      cssClass: 'table-cell'
     }
   },
 

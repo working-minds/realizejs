@@ -341,27 +341,7 @@ Realize.themes.materialize = {
     },
 
     cell: {
-      cssClass: 'table-cell',
-
-      text: {
-        cssClass: 'table-cell--text'
-      },
-
-      currency: {
-        cssClass: 'table-cell--currency'
-      },
-
-      number: {
-        cssClass: 'table-cell--number'
-      },
-
-      boolean: {
-        cssClass: 'table-cell--boolean'
-      },
-
-      datetime: {
-        cssClass: 'table-cell--datetime'
-      }
+      cssClass: 'table-cell'
     }
   },
 
@@ -854,16 +834,17 @@ var FormErrorHandlerMixin = {
 
   getMappingErrors: function(error){
     var errors = JSON.parse(error);
-    if(this.props.mapping){
+    if(this.props.mapping) {
       var mappingErrors = {};
+
       for(var property in errors){
         var key = property.split('.').pop();
         mappingErrors[key] = errors[property]
       }
 
       return mappingErrors;
-    } else{
-     return errors
+    } else {
+     return errors;
     }
   },
 
@@ -5534,14 +5515,9 @@ var TableCell = React.createClass({displayName: "TableCell",
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'table.cell',
       format: 'text',
       data: {}
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      themeClassKey: 'table.cell table.cell.' + this.props.format
     };
   },
 
@@ -5555,7 +5531,13 @@ var TableCell = React.createClass({displayName: "TableCell",
 
   cellClassName: function() {
     var className = this.className();
-    className += ' table-cell--' + this.props.name;
+    if(!!this.props.format) {
+      className += ' table-cell--' + this.props.format;
+    }
+
+    if(!!this.props.name) {
+      className += ' table-cell--' + this.props.name;
+    }
 
     return className;
   },
@@ -5622,6 +5604,7 @@ var TableHeader = React.createClass({displayName: "TableHeader",
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
   propTypes: {
     label: Realize.PropTypes.localizedString,
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'boolean', 'date', 'datetime']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     onSort: React.PropTypes.func
@@ -5640,12 +5623,21 @@ var TableHeader = React.createClass({displayName: "TableHeader",
 
   render: function() {
     return (
-      React.createElement("th", {className: this.className()}, 
+      React.createElement("th", {className: this.headerClassName()}, 
         React.createElement("span", {onClick: this.sortColumn, className: this.labelClassName()}, 
           this.getLabel()
         )
       )
     );
+  },
+
+  headerClassName: function() {
+    var className = this.className();
+    if(!!this.props.format) {
+      className += ' table-header--' + this.props.format;
+    }
+
+    return className;
   },
 
   getLabel: function() {
