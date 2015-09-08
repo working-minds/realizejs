@@ -2239,7 +2239,7 @@ var Grid = React.createClass({displayName: "Grid",
     tableClassName: React.PropTypes.string,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
-    rowSelectable: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -2270,7 +2270,7 @@ var Grid = React.createClass({displayName: "Grid",
       selectable: true,
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
-      rowSelectable: function(data) {}
+      rowSelectableFilter: null
     };
   },
 
@@ -2345,7 +2345,7 @@ var Grid = React.createClass({displayName: "Grid",
         onSelect: this.selectDataRows, 
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
-        rowSelectable: this.props.rowSelectable}
+        rowSelectableFilter: this.props.rowSelectableFilter}
       )
     );
   },
@@ -3960,13 +3960,13 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: 'masks.date'
+      format: Realize.t('masks.date')
     });
 
     var picker = input.pickadate('picker');
+    picker.on('close', this.props.onChange);
 
     // TODO: should close on date click - materialize currently broke it
-
     $(buttonNode).on('click', function(e) {
       if (picker.get('open')) {
         picker.close();
@@ -3980,7 +3980,7 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   render: function() {
     return (
       React.createElement("span", null, 
-        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, onChange: this._handleChange, className: this.className(), ref: "input"})), 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", className: this.className(), onChange: this._handleChange, plugin_params: {typeMask: 'date', showMaskOnHover: false}, ref: "input"})), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
         React.createElement(Button, {disabled: this.props.disabled, icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
       )
@@ -4102,7 +4102,10 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     mask: React.PropTypes.string,
     typeMask: React.PropTypes.string,
     predefinedMasks: React.PropTypes.object,
-    regex: React.PropTypes.string
+    regex: React.PropTypes.string,
+    onComplete: React.PropTypes.func,
+    onIncomplete: React.PropTypes.func,
+    onCleared: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -4129,13 +4132,16 @@ var InputMasked = React.createClass({displayName: "InputMasked",
           numericInput: true,
           rightAlign: true
         }
-      }
+      },
+      onComplete: function() {},
+      onIncomplete: function() {},
+      onCleared: function() {}
     };
   },
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "input", type: "text"}), 
+      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onKeyUp: this.props.onChange, ref: "input", type: "text"}), 
         this.props.children
       )
     );
@@ -4152,13 +4158,13 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     }
   },
 
-  renderRegexMask: function(){
+  renderRegexMask: function() {
     var params = {};
     params.regex = this.props.plugin_params.regex;
-    this.renderBaseMask('Regex',params);
+    this.renderBaseMask('Regex', params);
   },
 
-  renderCustomMask: function(){
+  renderCustomMask: function() {
     var typeMask = this.props.plugin_params.typeMask;
     delete this.props.plugin_params.placeholder;
     delete this.props.plugin_params.typeMask;
@@ -4169,7 +4175,7 @@ var InputMasked = React.createClass({displayName: "InputMasked",
       this.renderBaseMask('', this.props.plugin_params);
   },
 
-  renderPredefinedMask: function(){
+  renderPredefinedMask: function() {
     var params = this.maskMapping(this.props.plugin_params.mask);
     var typeMask = this.props.plugin_params.typeMask;
     delete this.props.plugin_params.mask;
@@ -4180,11 +4186,11 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     this.renderBaseMask(typeMask, params);
   },
 
-  renderBaseMask: function(type, params){
+  renderBaseMask: function(type, params) {
     if(type !== undefined && type !== '')
-      $(React.findDOMNode(this.refs.input)).inputmask(type, params);
+      $(React.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));
     else
-      $(React.findDOMNode(this.refs.input)).inputmask(params);
+      $(React.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
   },
 
   maskMapping: function(type) {
@@ -4192,12 +4198,23 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     return typesMask[type] === undefined ? type : typesMask[type];
   },
 
-  isAPredefinedMask: function(){
+  isAPredefinedMask: function() {
     return this.props.plugin_params.mask in this.props.predefinedMasks;
   },
 
-  isRegexMask: function(){
-    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params)
+  isRegexMask: function() {
+    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params);
+  },
+
+  paramsWithEvents: function(params) {
+    if(!params) {
+      params = {};
+    }
+
+    params.oncomplete = this.props.onComplete;
+    params.onincomplete = this.props.onIncomplete;
+    params.oncleared = this.props.onCleared;
+    return params;
   }
 
 });
@@ -5104,7 +5121,7 @@ var Table = React.createClass({displayName: "Table",
     onSelect: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectable: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5133,7 +5150,7 @@ var Table = React.createClass({displayName: "Table",
       onSelect: function(event, selectedRowIds) {},
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {},
-      rowSelectable: function(data) {}
+      rowSelectableFilter: null
     };
   },
 
@@ -5196,7 +5213,8 @@ var Table = React.createClass({displayName: "Table",
         count: this.props.count, 
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
-        actionButtons: this.props.actionButtons.collection || []}
+        actionButtons: this.props.actionButtons.collection || [], 
+        rowSelectableFilter: this.props.rowSelectableFilter}
       )
     );
   },
@@ -5265,7 +5283,7 @@ var Table = React.createClass({displayName: "Table",
           data: dataRow, 
           actionButtons: this.props.actionButtons.member || [], 
           key: "table_row_" + i, 
-          rowSelectable: this.props.rowSelectable})
+          rowSelectableFilter: this.props.rowSelectableFilter})
         )
       );
     }
@@ -5293,7 +5311,12 @@ var Table = React.createClass({displayName: "Table",
   },
 
   getDataRowIds: function() {
-    return $.map(this.props.dataRows, function(dataRow) {
+    var rowSelectableFilter = this.props.rowSelectableFilter;
+    var selectableDataRows = $.grep(this.props.dataRows, function(dataRow) {
+      return !rowSelectableFilter || !!rowSelectableFilter(dataRow);
+    });
+
+    return $.map(selectableDataRows, function(dataRow) {
       return dataRow[this.props.dataRowIdField];
     }.bind(this));
   },
@@ -5338,10 +5361,7 @@ var Table = React.createClass({displayName: "Table",
   },
 
   isAllDataRowsSelected: function() {
-    var dataRowIds = $.map(this.props.dataRows, function(dataRow) {
-      return dataRow[this.props.dataRowIdField];
-    }.bind(this));
-
+    var dataRowIds = this.getDataRowIds();
     var selectedRowIdsInPage = $.grep(this.state.selectedRowIds, function(selectedDataRowId) {
       return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
     });
@@ -5456,7 +5476,8 @@ var TableActions = React.createClass({displayName: "TableActions",
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
+    onSelectAll: React.PropTypes.func,
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5465,6 +5486,7 @@ var TableActions = React.createClass({displayName: "TableActions",
       actionButtons: [],
       selectedRowIds: [],
       allSelected: false,
+      rowSelectableFilter: null,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -5611,6 +5633,7 @@ var TableCell = React.createClass({displayName: "TableCell",
 
 var TableHeader = React.createClass({displayName: "TableHeader",
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
+
   propTypes: {
     label: Realize.PropTypes.localizedString,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
@@ -5715,7 +5738,7 @@ var TableRow = React.createClass({displayName: "TableRow",
     selectable: React.PropTypes.bool,
     selected: React.PropTypes.bool,
     actionButtons: React.PropTypes.array,
-    rowSelectable: React.PropTypes.func,
+    rowSelectableFilter: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func
   },
 
@@ -5728,7 +5751,7 @@ var TableRow = React.createClass({displayName: "TableRow",
       selected: false,
       actionButtons: [],
       themeClassKey: 'table.row',
-      rowSelectable: function(dataRows){ return true },
+      rowSelectableFilter: null,
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
@@ -5749,10 +5772,9 @@ var TableRow = React.createClass({displayName: "TableRow",
       return '';
     }
 
-    var rowSelectable = this.props.rowSelectable;
-
-    if (!rowSelectable || !rowSelectable(this.props.data)){
-      return React.createElement("td", null)
+    var rowSelectableFilter = this.props.rowSelectableFilter;
+    if(typeof rowSelectableFilter === "function" && !rowSelectableFilter(this.props.data)) {
+      return React.createElement("td", null);
     }
 
     return (
@@ -5937,7 +5959,8 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
+    onSelectAll: React.PropTypes.func,
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5953,6 +5976,7 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
       removeSelectionButtonName: 'limpar seleção',
       selectAllButtonName: 'selecionar todos',
       allSelected: false,
+      rowSelectableFilter: null,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -5986,7 +6010,8 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
 
     return (
       React.createElement("span", null, 
-        "(", this.renderRemoveSelectionButton(), " | ", this.renderSelectAllButton(), ")"
+        "(", this.renderRemoveSelectionButton(), 
+        this.renderSelectAllButton(), ")"
       )
     );
   },
@@ -6000,9 +6025,16 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
   },
 
   renderSelectAllButton: function() {
+    if(typeof this.props.rowSelectableFilter === "function") {
+      return '';
+    }
+
     return (
-      React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
-        this.props.selectAllButtonName
+      React.createElement("span", null, 
+        " | ", 
+        React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
+          this.props.selectAllButtonName
+        )
       )
     );
   },

@@ -1,5 +1,6 @@
 var TableHeader = React.createClass({
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
+
   propTypes: {
     label: Realize.PropTypes.localizedString,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),

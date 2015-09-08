@@ -19,7 +19,7 @@ var Table = React.createClass({
     onSelect: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectable: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -48,7 +48,7 @@ var Table = React.createClass({
       onSelect: function(event, selectedRowIds) {},
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {},
-      rowSelectable: function(data) {}
+      rowSelectableFilter: null
     };
   },
 
@@ -112,6 +112,7 @@ var Table = React.createClass({
         onRemoveSelection={this.removeSelection}
         onSelectAll={this.selectAllRows}
         actionButtons={this.props.actionButtons.collection || []}
+        rowSelectableFilter={this.props.rowSelectableFilter}
       />
     );
   },
@@ -180,7 +181,7 @@ var Table = React.createClass({
           data={dataRow}
           actionButtons={this.props.actionButtons.member || []}
           key={"table_row_" + i}
-          rowSelectable={this.props.rowSelectable}
+          rowSelectableFilter={this.props.rowSelectableFilter}
         />
       );
     }
@@ -208,7 +209,12 @@ var Table = React.createClass({
   },
 
   getDataRowIds: function() {
-    return $.map(this.props.dataRows, function(dataRow) {
+    var rowSelectableFilter = this.props.rowSelectableFilter;
+    var selectableDataRows = $.grep(this.props.dataRows, function(dataRow) {
+      return !rowSelectableFilter || !!rowSelectableFilter(dataRow);
+    });
+
+    return $.map(selectableDataRows, function(dataRow) {
       return dataRow[this.props.dataRowIdField];
     }.bind(this));
   },
@@ -253,10 +259,7 @@ var Table = React.createClass({
   },
 
   isAllDataRowsSelected: function() {
-    var dataRowIds = $.map(this.props.dataRows, function(dataRow) {
-      return dataRow[this.props.dataRowIdField];
-    }.bind(this));
-
+    var dataRowIds = this.getDataRowIds();
     var selectedRowIdsInPage = $.grep(this.state.selectedRowIds, function(selectedDataRowId) {
       return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
     });
