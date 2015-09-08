@@ -9,7 +9,8 @@ var TableActions = React.createClass({
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
+    onSelectAll: React.PropTypes.func,
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -18,6 +19,7 @@ var TableActions = React.createClass({
       actionButtons: [],
       selectedRowIds: [],
       allSelected: false,
+      rowSelectableFilter: null,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };

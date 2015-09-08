@@ -2239,7 +2239,7 @@ var Grid = React.createClass({displayName: "Grid",
     tableClassName: React.PropTypes.string,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
-    rowSelectable: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -2270,7 +2270,7 @@ var Grid = React.createClass({displayName: "Grid",
       selectable: true,
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
-      rowSelectable: function(data) {}
+      rowSelectableFilter: null
     };
   },
 
@@ -2345,7 +2345,7 @@ var Grid = React.createClass({displayName: "Grid",
         onSelect: this.selectDataRows, 
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
-        rowSelectable: this.props.rowSelectable}
+        rowSelectableFilter: this.props.rowSelectableFilter}
       )
     );
   },
@@ -5121,7 +5121,7 @@ var Table = React.createClass({displayName: "Table",
     onSelect: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectable: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5150,7 +5150,7 @@ var Table = React.createClass({displayName: "Table",
       onSelect: function(event, selectedRowIds) {},
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {},
-      rowSelectable: function(data) {}
+      rowSelectableFilter: null
     };
   },
 
@@ -5213,7 +5213,8 @@ var Table = React.createClass({displayName: "Table",
         count: this.props.count, 
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
-        actionButtons: this.props.actionButtons.collection || []}
+        actionButtons: this.props.actionButtons.collection || [], 
+        rowSelectableFilter: this.props.rowSelectableFilter}
       )
     );
   },
@@ -5282,7 +5283,7 @@ var Table = React.createClass({displayName: "Table",
           data: dataRow, 
           actionButtons: this.props.actionButtons.member || [], 
           key: "table_row_" + i, 
-          rowSelectable: this.props.rowSelectable})
+          rowSelectableFilter: this.props.rowSelectableFilter})
         )
       );
     }
@@ -5310,7 +5311,12 @@ var Table = React.createClass({displayName: "Table",
   },
 
   getDataRowIds: function() {
-    return $.map(this.props.dataRows, function(dataRow) {
+    var rowSelectableFilter = this.props.rowSelectableFilter;
+    var selectableDataRows = $.grep(this.props.dataRows, function(dataRow) {
+      return !rowSelectableFilter || !!rowSelectableFilter(dataRow);
+    });
+
+    return $.map(selectableDataRows, function(dataRow) {
       return dataRow[this.props.dataRowIdField];
     }.bind(this));
   },
@@ -5355,10 +5361,7 @@ var Table = React.createClass({displayName: "Table",
   },
 
   isAllDataRowsSelected: function() {
-    var dataRowIds = $.map(this.props.dataRows, function(dataRow) {
-      return dataRow[this.props.dataRowIdField];
-    }.bind(this));
-
+    var dataRowIds = this.getDataRowIds();
     var selectedRowIdsInPage = $.grep(this.state.selectedRowIds, function(selectedDataRowId) {
       return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
     });
@@ -5473,7 +5476,8 @@ var TableActions = React.createClass({displayName: "TableActions",
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
+    onSelectAll: React.PropTypes.func,
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5482,6 +5486,7 @@ var TableActions = React.createClass({displayName: "TableActions",
       actionButtons: [],
       selectedRowIds: [],
       allSelected: false,
+      rowSelectableFilter: null,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -5628,6 +5633,7 @@ var TableCell = React.createClass({displayName: "TableCell",
 
 var TableHeader = React.createClass({displayName: "TableHeader",
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
+
   propTypes: {
     label: Realize.PropTypes.localizedString,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
@@ -5732,7 +5738,7 @@ var TableRow = React.createClass({displayName: "TableRow",
     selectable: React.PropTypes.bool,
     selected: React.PropTypes.bool,
     actionButtons: React.PropTypes.array,
-    rowSelectable: React.PropTypes.func,
+    rowSelectableFilter: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func
   },
 
@@ -5745,7 +5751,7 @@ var TableRow = React.createClass({displayName: "TableRow",
       selected: false,
       actionButtons: [],
       themeClassKey: 'table.row',
-      rowSelectable: function(dataRows){ return true },
+      rowSelectableFilter: null,
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
@@ -5766,10 +5772,9 @@ var TableRow = React.createClass({displayName: "TableRow",
       return '';
     }
 
-    var rowSelectable = this.props.rowSelectable;
-
-    if (!rowSelectable || !rowSelectable(this.props.data)){
-      return React.createElement("td", null)
+    var rowSelectableFilter = this.props.rowSelectableFilter;
+    if(typeof rowSelectableFilter === "function" && !rowSelectableFilter(this.props.data)) {
+      return React.createElement("td", null);
     }
 
     return (
@@ -5954,7 +5959,8 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func
+    onSelectAll: React.PropTypes.func,
+    rowSelectableFilter: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5970,6 +5976,7 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
       removeSelectionButtonName: 'limpar seleção',
       selectAllButtonName: 'selecionar todos',
       allSelected: false,
+      rowSelectableFilter: null,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -6003,7 +6010,8 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
 
     return (
       React.createElement("span", null, 
-        "(", this.renderRemoveSelectionButton(), " | ", this.renderSelectAllButton(), ")"
+        "(", this.renderRemoveSelectionButton(), 
+        this.renderSelectAllButton(), ")"
       )
     );
   },
@@ -6017,9 +6025,16 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
   },
 
   renderSelectAllButton: function() {
+    if(typeof this.props.rowSelectableFilter === "function") {
+      return '';
+    }
+
     return (
-      React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
-        this.props.selectAllButtonName
+      React.createElement("span", null, 
+        " | ", 
+        React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
+          this.props.selectAllButtonName
+        )
       )
     );
   },
