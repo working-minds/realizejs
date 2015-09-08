@@ -18,13 +18,13 @@ var InputDatepicker = React.createClass({
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: 'masks.date'
+      format: Realize.t('masks.date')
     });
 
     var picker = input.pickadate('picker');
+    picker.on('close', this.props.onChange);
 
     // TODO: should close on date click - materialize currently broke it
-
     $(buttonNode).on('click', function(e) {
       if (picker.get('open')) {
         picker.close();
@@ -38,7 +38,7 @@ var InputDatepicker = React.createClass({
   render: function() {
     return (
       <span>
-        <InputMasked {...this.props} type="date" plugin_params={{typeMask: 'date', showMaskOnHover: false}} onChange={this._handleChange} className={this.className()} ref="input" />
+        <InputMasked {...this.props} type="date" className={this.className()} onChange={this._handleChange} plugin_params={{typeMask: 'date', showMaskOnHover: false}} ref="input" />
         <Label {...this.propsWithoutCSS()} />
         <Button disabled={this.props.disabled} icon={{type: "calendar"}} className="input-datepicker__button prefix" type="button" ref="button"/>
       </span>

@@ -3960,13 +3960,13 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
       editable: true,
       selectMonths: true,
       selectYears: true ,
-      format: 'masks.date'
+      format: Realize.t('masks.date')
     });
 
     var picker = input.pickadate('picker');
+    picker.on('close', this.props.onChange);
 
     // TODO: should close on date click - materialize currently broke it
-
     $(buttonNode).on('click', function(e) {
       if (picker.get('open')) {
         picker.close();
@@ -3980,7 +3980,7 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   render: function() {
     return (
       React.createElement("span", null, 
-        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", plugin_params: {typeMask: 'date', showMaskOnHover: false}, onChange: this._handleChange, className: this.className(), ref: "input"})), 
+        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", className: this.className(), onChange: this._handleChange, plugin_params: {typeMask: 'date', showMaskOnHover: false}, ref: "input"})), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
         React.createElement(Button, {disabled: this.props.disabled, icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
       )
@@ -4102,7 +4102,10 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     mask: React.PropTypes.string,
     typeMask: React.PropTypes.string,
     predefinedMasks: React.PropTypes.object,
-    regex: React.PropTypes.string
+    regex: React.PropTypes.string,
+    onComplete: React.PropTypes.func,
+    onIncomplete: React.PropTypes.func,
+    onCleared: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -4129,13 +4132,16 @@ var InputMasked = React.createClass({displayName: "InputMasked",
           numericInput: true,
           rightAlign: true
         }
-      }
+      },
+      onComplete: function() {},
+      onIncomplete: function() {},
+      onCleared: function() {}
     };
   },
 
   render: function() {
     return (
-      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onChange: this._handleChange, ref: "input", type: "text"}), 
+      React.createElement("input", React.__spread({},  this.props,  this.props.field_params, {value: this.state.value, className: this.inputClassName(), onKeyUp: this.props.onChange, ref: "input", type: "text"}), 
         this.props.children
       )
     );
@@ -4152,13 +4158,13 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     }
   },
 
-  renderRegexMask: function(){
+  renderRegexMask: function() {
     var params = {};
     params.regex = this.props.plugin_params.regex;
-    this.renderBaseMask('Regex',params);
+    this.renderBaseMask('Regex', params);
   },
 
-  renderCustomMask: function(){
+  renderCustomMask: function() {
     var typeMask = this.props.plugin_params.typeMask;
     delete this.props.plugin_params.placeholder;
     delete this.props.plugin_params.typeMask;
@@ -4169,7 +4175,7 @@ var InputMasked = React.createClass({displayName: "InputMasked",
       this.renderBaseMask('', this.props.plugin_params);
   },
 
-  renderPredefinedMask: function(){
+  renderPredefinedMask: function() {
     var params = this.maskMapping(this.props.plugin_params.mask);
     var typeMask = this.props.plugin_params.typeMask;
     delete this.props.plugin_params.mask;
@@ -4180,11 +4186,11 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     this.renderBaseMask(typeMask, params);
   },
 
-  renderBaseMask: function(type, params){
+  renderBaseMask: function(type, params) {
     if(type !== undefined && type !== '')
-      $(React.findDOMNode(this.refs.input)).inputmask(type, params);
+      $(React.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));
     else
-      $(React.findDOMNode(this.refs.input)).inputmask(params);
+      $(React.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
   },
 
   maskMapping: function(type) {
@@ -4192,12 +4198,23 @@ var InputMasked = React.createClass({displayName: "InputMasked",
     return typesMask[type] === undefined ? type : typesMask[type];
   },
 
-  isAPredefinedMask: function(){
+  isAPredefinedMask: function() {
     return this.props.plugin_params.mask in this.props.predefinedMasks;
   },
 
-  isRegexMask: function(){
-    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params)
+  isRegexMask: function() {
+    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params);
+  },
+
+  paramsWithEvents: function(params) {
+    if(!params) {
+      params = {};
+    }
+
+    params.oncomplete = this.props.onComplete;
+    params.onincomplete = this.props.onIncomplete;
+    params.oncleared = this.props.onCleared;
+    return params;
   }
 
 });
