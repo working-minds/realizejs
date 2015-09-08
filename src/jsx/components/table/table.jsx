@@ -72,12 +72,20 @@ var Table = React.createClass({
     }
   },
 
+  componentDidMount: function () {
+    if(!!this.props.customTableHeader)
+    {
+      var $thead = $(React.findDOMNode(this.refs.thead));
+      $thead.prepend(this.props.customTableHeader)
+    }
+  },
+
   render: function() {
     return(
       <div className={this.wrapperClassName()}>
         {this.renderActions()}
         <table className={this.className()}>
-          <thead>
+          <thead ref="thead">
             <tr>
               {this.renderHeaderSelectCell()}
               {this.renderTableHeaders()}
@@ -89,6 +97,10 @@ var Table = React.createClass({
         </table>
       </div>
     );
+  },
+
+  renderCustomTableHeader : function () {
+
   },
 
   wrapperClassName: function() {
@@ -150,7 +162,7 @@ var Table = React.createClass({
             resource={this.props.resource}
             onSort={this.props.onSort}
             clearTheme={this.props.clearTheme}
-          />
+            />
         );
       }
     }

@@ -22,7 +22,8 @@ var Grid = React.createClass({
     tableClassName: React.PropTypes.string,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    customTableHeader: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -53,7 +54,8 @@ var Grid = React.createClass({
       selectable: true,
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
-      rowSelectableFilter: null
+      rowSelectableFilter: null,
+      customTableHeader: null
     };
   },
 
@@ -129,6 +131,7 @@ var Grid = React.createClass({
         onRemoveSelection={this.removeSelection}
         onSelectAll={this.selectAllRows}
         rowSelectableFilter={this.props.rowSelectableFilter}
+        customTableHeader={this.props.customTableHeader}
       />
     );
   },

@@ -31,6 +31,7 @@ var SelectComponentMixin = {
   getInitialState: function() {
     return {
       options: this.props.options,
+      optionsCache: this.props.options,
       disabled: this.props.disabled,
       mustDisable: false,
       loadParams: {}
@@ -78,7 +79,7 @@ var SelectComponentMixin = {
 
   selectedOptions: function() {
     var selectedOptions = [];
-    $.each(this.state.options, function(i, option){
+    $.each(this.state.optionsCache, function(i, option) {
       if(this.state.value.indexOf(option.value) >= 0) {
         selectedOptions.push(option);
       }
@@ -118,10 +119,27 @@ var SelectComponentMixin = {
 
     this.setState({
       options: options,
+      optionsCache: this.cacheOptions(options),
       mustDisable: (!!this.props.dependsOn && options.length <= 0)
     }, this.triggerDependableChanged);
 
     this.props.onLoad(data);
+  },
+
+  cacheOptions: function(options) {
+    var optionsCache = options.slice(0);
+    var optionValuesCache = $.map(optionsCache, function(option) {
+      return option.value;
+    });
+
+    $.each(this.state.optionsCache, function(i, option) {
+      var optionValue = option.value;
+      if(optionValuesCache.indexOf(optionValue) < 0) {
+        optionsCache.push(option);
+      }
+    });
+
+    return optionsCache;
   },
 
   listenToDependableChange: function() {
