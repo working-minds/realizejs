@@ -2239,7 +2239,8 @@ var Grid = React.createClass({displayName: "Grid",
     tableClassName: React.PropTypes.string,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    customTableHeader: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -2270,7 +2271,8 @@ var Grid = React.createClass({displayName: "Grid",
       selectable: true,
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
-      rowSelectableFilter: null
+      rowSelectableFilter: null,
+      customTableHeader: null
     };
   },
 
@@ -2345,7 +2347,8 @@ var Grid = React.createClass({displayName: "Grid",
         onSelect: this.selectDataRows, 
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
-        rowSelectableFilter: this.props.rowSelectableFilter}
+        rowSelectableFilter: this.props.rowSelectableFilter, 
+        customTableHeader: this.props.customTableHeader}
       )
     );
   },
@@ -5174,12 +5177,20 @@ var Table = React.createClass({displayName: "Table",
     }
   },
 
+  componentDidMount: function () {
+    if(!!this.props.customTableHeader)
+    {
+      var $thead = $(React.findDOMNode(this.refs.thead));
+      $thead.prepend(this.props.customTableHeader)
+    }
+  },
+
   render: function() {
     return(
       React.createElement("div", {className: this.wrapperClassName()}, 
         this.renderActions(), 
         React.createElement("table", {className: this.className()}, 
-          React.createElement("thead", null, 
+          React.createElement("thead", {ref: "thead"}, 
             React.createElement("tr", null, 
               this.renderHeaderSelectCell(), 
               this.renderTableHeaders()
@@ -5191,6 +5202,10 @@ var Table = React.createClass({displayName: "Table",
         )
       )
     );
+  },
+
+  renderCustomTableHeader : function () {
+
   },
 
   wrapperClassName: function() {
@@ -5252,7 +5267,7 @@ var Table = React.createClass({displayName: "Table",
             resource: this.props.resource, 
             onSort: this.props.onSort, 
             clearTheme: this.props.clearTheme})
-          )
+            )
         );
       }
     }
