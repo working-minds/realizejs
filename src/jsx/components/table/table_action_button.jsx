@@ -9,6 +9,8 @@ var TableActionButton = React.createClass({
     count: React.PropTypes.number,
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    selectionContext: React.PropTypes.string,
     conditionToShowActionButton: React.PropTypes.func
   },
 
@@ -18,6 +20,8 @@ var TableActionButton = React.createClass({
       allSelected: false,
       method: 'GET',
       conditionParams: null,
+      disabled: false,
+      selectionContext: 'none',
       conditionToShowActionButton: function(data) { return true }
     };
   },
@@ -33,9 +37,20 @@ var TableActionButton = React.createClass({
   renderButton: function(){
     var component = [];
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      component.push(<Button {...this.props} href={this.actionButtonHref()} onClick={this.actionButtonClick} />);
+      component.push(<Button {...this.props} disabled={this.isDisabled()} href={this.actionButtonHref()} onClick={this.actionButtonClick} />);
 
     return component;
+  },
+
+  isDisabled: function(){
+    selectionContext = this.props.selectionContext;
+    if (selectionContext == 'none'){
+      return false;
+    } else if (selectionContext === 'atLeastOne'){
+      return (this.props.selectedRowIds.length == 0) ;
+    }
+
+    return false;
   },
 
   actionButtonHref: function() {
