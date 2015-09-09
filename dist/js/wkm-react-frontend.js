@@ -1590,10 +1590,10 @@ var Button = React.createClass({displayName: "Button",
     return (
       React.createElement(this.props.element,
         {
-          className: this.className(),
+          className: this.getClassName(),
           type: this.props.type,
           disabled: this.props.disabled,
-          href: this.props.href,
+          href: this.getCorrectHref(),
           onClick: this.handleClick,
           'data-method': this.getMethod()
         },
@@ -1602,6 +1602,19 @@ var Button = React.createClass({displayName: "Button",
     );
   },
 
+  getClassName: function(){
+    var className = this.className();
+    if (this.props.disabled && this.props.element === 'a')
+      className = 'button btn-flat disable-action-button';
+
+    return className;
+  },
+
+  getCorrectHref: function(){
+    if (this.props.disabled && this.props.element === 'a')
+      return 'javascript:void(0)';
+    return this.props.href;
+  },
 
   getMethod: function(){
     if(!!this.props.method){
@@ -5435,6 +5448,8 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     count: React.PropTypes.number,
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    selectionContext: React.PropTypes.string,
     conditionToShowActionButton: React.PropTypes.func
   },
 
@@ -5444,6 +5459,8 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
       allSelected: false,
       method: 'GET',
       conditionParams: null,
+      disabled: false,
+      selectionContext: 'none',
       conditionToShowActionButton: function(data) { return true }
     };
   },
@@ -5459,9 +5476,20 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
   renderButton: function(){
     var component = [];
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      component.push(React.createElement(Button, React.__spread({},  this.props, {href: this.actionButtonHref(), onClick: this.actionButtonClick})));
+      component.push(React.createElement(Button, React.__spread({},  this.props, {disabled: this.isDisabled(), href: this.actionButtonHref(), onClick: this.actionButtonClick})));
 
     return component;
+  },
+
+  isDisabled: function(){
+    selectionContext = this.props.selectionContext;
+    if (selectionContext == 'none'){
+      return false;
+    } else if (selectionContext === 'atLeastOne'){
+      return (this.props.selectedRowIds.length == 0) ;
+    }
+
+    return false;
   },
 
   actionButtonHref: function() {

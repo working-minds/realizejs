@@ -65,10 +65,10 @@ var Button = React.createClass({
     return (
       React.createElement(this.props.element,
         {
-          className: this.className(),
+          className: this.getClassName(),
           type: this.props.type,
           disabled: this.props.disabled,
-          href: this.props.href,
+          href: this.getCorrectHref(),
           onClick: this.handleClick,
           'data-method': this.getMethod()
         },
@@ -77,6 +77,19 @@ var Button = React.createClass({
     );
   },
 
+  getClassName: function(){
+    var className = this.className();
+    if (this.props.disabled && this.props.element === 'a')
+      className = 'button btn-flat disable-action-button';
+
+    return className;
+  },
+
+  getCorrectHref: function(){
+    if (this.props.disabled && this.props.element === 'a')
+      return 'javascript:void(0)';
+    return this.props.href;
+  },
 
   getMethod: function(){
     if(!!this.props.method){
