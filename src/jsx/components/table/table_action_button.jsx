@@ -37,17 +37,17 @@ var TableActionButton = React.createClass({
   renderButton: function(){
     var component = [];
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      component.push(<Button {...this.props} disabled={this.isDisabled()} href={this.actionButtonHref()} onClick={this.actionButtonClick} />);
+      component.push(<Button {...this.props} disabled={this.isDisabled()} href={this.actionButtonHref()} onClick={this.actionButtonClick} key={this.props.name} />);
 
     return component;
   },
 
-  isDisabled: function(){
-    selectionContext = this.props.selectionContext;
-    if (selectionContext == 'none'){
+  isDisabled: function() {
+    var selectionContext = this.props.selectionContext;
+    if (selectionContext === 'none') {
       return false;
-    } else if (selectionContext === 'atLeastOne'){
-      return (this.props.selectedRowIds.length == 0) ;
+    } else if (selectionContext === 'atLeastOne') {
+      return (this.props.selectedRowIds.length === 0) ;
     }
 
     return false;

@@ -48,7 +48,7 @@ var InputAutocomplete = React.createClass({
       <div className={this.className()} ref="container">
         <InputAutocompleteSelect
           {...this.propsWithoutCSS()}
-          disabled={this.state.disabled}
+          disabled={this.isDisabled()}
           selectedOptions={this.selectedOptions()}
           onFocus={this.showResult}
         />

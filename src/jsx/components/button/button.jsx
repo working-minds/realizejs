@@ -10,7 +10,7 @@ var Button = React.createClass({
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
-    element: React.PropTypes.string,
+    element: React.PropTypes.oneOf(['button', 'a']),
     target: React.PropTypes.string,
     method: React.PropTypes.string
   },

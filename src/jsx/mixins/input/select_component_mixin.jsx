@@ -153,17 +153,17 @@ var SelectComponentMixin = {
   },
 
   onDependableChange: function(event, dependableValue) {
-    if(!dependableValue) {
-      this.emptyAndDisable();
-      return false;
-    }
-
     this.loadDependentOptions(dependableValue);
   },
 
   loadDependentOptions: function(dependableValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
+    }
+
+    if(!dependableValue || dependableValue.length === 0) {
+      this.emptyAndDisable();
+      return false;
     }
 
     if($.isArray(dependableValue) && dependableValue.length == 1) {

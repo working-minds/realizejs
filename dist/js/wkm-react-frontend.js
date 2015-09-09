@@ -1326,17 +1326,17 @@ var SelectComponentMixin = {
   },
 
   onDependableChange: function(event, dependableValue) {
-    if(!dependableValue) {
-      this.emptyAndDisable();
-      return false;
-    }
-
     this.loadDependentOptions(dependableValue);
   },
 
   loadDependentOptions: function(dependableValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
+    }
+
+    if(!dependableValue || dependableValue.length === 0) {
+      this.emptyAndDisable();
+      return false;
     }
 
     if($.isArray(dependableValue) && dependableValue.length == 1) {
@@ -1535,7 +1535,7 @@ var Button = React.createClass({displayName: "Button",
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
-    element: React.PropTypes.string,
+    element: React.PropTypes.oneOf(['button', 'a']),
     target: React.PropTypes.string,
     method: React.PropTypes.string
   },
@@ -3177,7 +3177,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
       React.createElement("div", {className: this.className(), ref: "container"}, 
         React.createElement(InputAutocompleteSelect, React.__spread({}, 
           this.propsWithoutCSS(), 
-          {disabled: this.state.disabled, 
+          {disabled: this.isDisabled(), 
           selectedOptions: this.selectedOptions(), 
           onFocus: this.showResult})
         ), 
@@ -5476,17 +5476,17 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
   renderButton: function(){
     var component = [];
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      component.push(React.createElement(Button, React.__spread({},  this.props, {disabled: this.isDisabled(), href: this.actionButtonHref(), onClick: this.actionButtonClick})));
+      component.push(React.createElement(Button, React.__spread({},  this.props, {disabled: this.isDisabled(), href: this.actionButtonHref(), onClick: this.actionButtonClick, key: this.props.name})));
 
     return component;
   },
 
-  isDisabled: function(){
-    selectionContext = this.props.selectionContext;
-    if (selectionContext == 'none'){
+  isDisabled: function() {
+    var selectionContext = this.props.selectionContext;
+    if (selectionContext === 'none') {
       return false;
-    } else if (selectionContext === 'atLeastOne'){
-      return (this.props.selectedRowIds.length == 0) ;
+    } else if (selectionContext === 'atLeastOne') {
+      return (this.props.selectedRowIds.length === 0) ;
     }
 
     return false;
