@@ -72,6 +72,7 @@ var Form = React.createClass({
         ref="form">
 
         {this.renderFlashErrors()}
+        {this.renderFlashSuccess()}
         {this.renderInputs()}
         {this.renderChildren()}
 
@@ -118,7 +119,7 @@ var Form = React.createClass({
     this.props.onSubmit(event, postData);
 
     if(!event.isDefaultPrevented()) {
-      this.setState({isLoading: true, errors: {}});
+      this.setState({isLoading: true, errors: {}, showSuccessFlash: false});
       this.submit(postData);
     }
   },

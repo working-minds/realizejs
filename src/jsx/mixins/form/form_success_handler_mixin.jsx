@@ -1,23 +1,37 @@
 var FormSuccessHandlerMixin = {
   propTypes: {
-    onSuccess: React.PropTypes.func
+    onSuccess: React.PropTypes.func,
+    successMessage: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      onSuccess: function(data, status, xhr) {
-        return true;
-      }
+      onSuccess: function(data, status, xhr) { return true; },
+      successMessage: ''
     };
   },
 
   getInitialState: function() {
     return {
+      showSuccessFlash: false
     };
   },
 
+  renderFlashSuccess: function() {
+    if(!this.state.showSuccessFlash) {
+      return '';
+    }
+
+    return <Flash type="success" message={this.props.successMessage} dismissed={false} />;
+  },
+
   handleSuccess: function(data, status, xhr) {
-    this.setState({isLoading: false, errors: {}});
+    var showSuccessFlash = (!!this.props.successMessage && this.props.successMessage.length > 0);
+    this.setState({
+      isLoading: false,
+      errors: {},
+      showSuccessFlash: showSuccessFlash
+    });
 
     if(this.props.onSuccess(data, status, xhr)) {
       if(xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
