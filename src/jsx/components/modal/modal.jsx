@@ -11,9 +11,9 @@ var Modal = React.createClass({
 
   getDefaultProps: function() {
     return {
-      headerSize:50,
-      footerSize:50,
-      marginHeaderFooter:100,
+      headerSize: 50,
+      footerSize: 50,
+      marginHeaderFooter: 100,
       width: '60%',
       modalHeight: 0,
       headerHeight: 0,
@@ -110,6 +110,7 @@ var Modal = React.createClass({
       if (x.type == area)
         result =  x;
     });
+
     return result;
   }
 });
