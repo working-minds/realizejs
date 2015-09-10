@@ -4839,7 +4839,7 @@ var Modal = React.createClass({displayName: "Modal",
     var availableHeight = ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
     var contentHeight = 0;
     $(contentContainer).find("> *").each(function(i, content) {
-      contentHeight += $(content).height();
+      contentHeight += $(content).outerHeight();
     });
 
     return Math.min(availableHeight, contentHeight);
