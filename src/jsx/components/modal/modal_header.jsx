@@ -8,7 +8,7 @@ var ModalHeader = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'modal.header',
-      withTitle: false
+      withTitle: true
     };
   },
 
@@ -18,9 +18,10 @@ var ModalHeader = React.createClass({
 
   getClassName: function() {
     var className = Realize.themes.getCssClass(this.props.themeClassKey);
-    if(this.props.clearTheme == false && this.props.withTitle) {
+    if(!this.props.clearTheme && this.props.withTitle) {
       className += ' '+ Realize.themes.getProp('modal.header.withTitle')
     }
+
     return className;
   }
 });

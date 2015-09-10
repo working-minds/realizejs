@@ -559,13 +559,17 @@ Realize.themes.materialize = {
   },
 
   modal: {
+    cssClass: 'card realize-modal',
+
     header: {
       cssClass: 'card-content modal-header',
       withTitle: 'with-title'
     },
+
     content:{
       cssClass: 'card-content modal-content'
     },
+
     footer:{
       cssClass: 'card-content modal-footer'
     }
@@ -1417,7 +1421,6 @@ var LocalizedResourceFieldMixin = {
 };
 var ModalRendererMixin = {
   propTypes: {
-    modalId: React.PropTypes.string,
     modalContainerId: React.PropTypes.string
   },
 
@@ -1429,7 +1432,6 @@ var ModalRendererMixin = {
 
   renderModalHtml: function(modalHtml) {
     var modalContainerId = this.props.modalContainerId;
-    var modalId = this.props.modalId;
 
     var $modalContainer = $("#" + modalContainerId);
     if($modalContainer.length === 0) {
@@ -1438,7 +1440,6 @@ var ModalRendererMixin = {
     }
 
     $modalContainer.html(modalHtml);
-    $('#' + modalId).openModal();
   }
 };
 var RequestHandlerMixin = {
@@ -2499,12 +2500,13 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   handleLoad: function(data) {
-    this.props.onLoadSuccess(data);
     this.setState({
       isLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
-    });
+    }, function() {
+      this.props.onLoadSuccess(data);
+    }.bind(this));
   },
 
   handleLoadError: function(xhr, status, error) {
@@ -4728,14 +4730,20 @@ var Modal = React.createClass({displayName: "Modal",
 
   propTypes: {
     id: React.PropTypes.string,
-    headerSize:React.PropTypes.number,
-    footerSize:React.PropTypes.number,
+    opened: React.PropTypes.bool,
+    headerSize: React.PropTypes.number,
+    footerSize: React.PropTypes.number,
     marginHeaderFooter:React.PropTypes.number,
-    width: React.PropTypes.string
+    width: React.PropTypes.string,
+    modalHeight: React.PropTypes.number,
+    headerHeight: React.PropTypes.number,
+    contentHeight: React.PropTypes.number,
+    footerHeight: React.PropTypes.number
   },
 
   getDefaultProps: function() {
     return {
+      opened: false,
       headerSize: 50,
       footerSize: 50,
       marginHeaderFooter: 100,
@@ -4743,8 +4751,26 @@ var Modal = React.createClass({displayName: "Modal",
       modalHeight: 0,
       headerHeight: 0,
       contentHeight: 0,
-      footerHeight: 0
+      footerHeight: 0,
+      themeClassKey: 'modal'
     };
+  },
+
+  componentDidMount: function() {
+    this.resizeContent();
+    $(window).on('resize', this.resizeContent);
+
+    if(!!this.props.opened) {
+      this.openModal();
+    }
+  },
+
+  componentDidUnmount: function() {
+    $(window).off('resize', this.resizeContent);
+  },
+
+  componentDidUpdate: function() {
+    this.resizeContent();
   },
 
   render: function() {
@@ -4753,10 +4779,10 @@ var Modal = React.createClass({displayName: "Modal",
     var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
 
     if(header == '' && content == '' && footer == '')
-      content = React.createElement(ModalContent, React.__spread({},  this.propTypes), this.props.children)
+      content = React.createElement(ModalContent, React.__spread({},  this.propTypes), this.props.children);
 
     return (
-      React.createElement("div", {id: this.props.id, className: this.themeStyle(), ref: "modal"}, 
+      React.createElement("div", {id: this.props.id, className: this.className(), ref: "modal"}, 
         header, 
         content, 
         footer
@@ -4764,69 +4790,59 @@ var Modal = React.createClass({displayName: "Modal",
     );
   },
 
-  renderHeader: function(){
+  renderHeader: function() {
     return (
-      React.createElement("div", {ref: "headerContainer"}, 
+      React.createElement("div", {ref: "headerContainer", className: "modal-header-container"}, 
         this.filterChildren(ModalHeader)
       )
     );
   },
 
-  renderContent: function(){
+  renderContent: function() {
     return (
-      React.createElement("div", {ref: "contentContainer"}, 
+      React.createElement("div", {ref: "contentContainer", className: "modal-content-container"}, 
         this.filterChildren(ModalContent)
       )
     );
   },
 
-  renderFooter: function(){
+  renderFooter: function() {
     return (
-      React.createElement("div", {ref: "footerContainer"}, 
+      React.createElement("div", {ref: "footerContainer", className: "modal-footer-container"}, 
         this.filterChildren(ModalFooter)
       )
     );
   },
 
-  componentDidMount: function(){
-    this.resizeAll();
-    $(window).bind('resize',this.resizeAll);
+  openModal: function() {
+    var $modal = $(React.findDOMNode(this.refs.modal));
+
+    $modal.openModal({
+      ready: this.resizeContent
+    });
   },
 
-  resizeAll: function(){
-    this.resizeModal();
-    this.resizeContent();
-  },
-
-  resizeContent: function(){
+  resizeContent: function() {
     var modal = React.findDOMNode(this.refs.modal);
-    var headerContainer = React.findDOMNode(this.refs.headerContainer);
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
+
+    $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter));
+    $(modal).css("width", this.props.width);
+    $(contentContainer).css("height", this.getContentHeight());
+  },
+
+  getContentHeight: function() {
+    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    var headerContainer = React.findDOMNode(this.refs.headerContainer);
     var footerContainer = React.findDOMNode(this.refs.footerContainer);
 
-    $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter) );
-    $(modal).css("width", this.props.width);
+    var availableHeight = ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
+    var contentHeight = 0;
+    $(contentContainer).find("> *").each(function(i, content) {
+      contentHeight += $(content).height();
+    });
 
-    var maxHeightModal = $(window).height() - (this.props.marginHeaderFooter);
-    var possibleContentHeight = maxHeightModal - ($(headerContainer).height() + $(footerContainer).height());
-
-    if ($(contentContainer).height() >= possibleContentHeight){
-      $(contentContainer).css("height", $(modal).height() - ($(headerContainer).height() + $(footerContainer).height()));
-      $(contentContainer).css("overflow-y","auto");
-    }else{
-      $(contentContainer).removeAttr('style');
-    }
-
-  },
-
-  resizeModal: function(){
-    var contentContainer = React.findDOMNode(this.refs.contentContainer);
-    $(contentContainer).css("max-height", $(window).height() - (this.props.marginHeaderFooter) - (this.props.headerSize+ this.props.footerSize) );
-  },
-
-  themeStyle: function(){
-    var className = 'card wkm-modal '+this.props.className;
-    return className;
+    return Math.min(availableHeight, contentHeight);
   },
 
   filterChildren : function(area) {
@@ -4838,6 +4854,7 @@ var Modal = React.createClass({displayName: "Modal",
 
     return result;
   }
+
 });
 
 
@@ -4945,7 +4962,7 @@ var ModalHeader = React.createClass({displayName: "ModalHeader",
   getDefaultProps: function() {
     return {
       themeClassKey: 'modal.header',
-      withTitle: false
+      withTitle: true
     };
   },
 
@@ -4955,9 +4972,10 @@ var ModalHeader = React.createClass({displayName: "ModalHeader",
 
   getClassName: function() {
     var className = Realize.themes.getCssClass(this.props.themeClassKey);
-    if(this.props.clearTheme == false && this.props.withTitle) {
+    if(!this.props.clearTheme && this.props.withTitle) {
       className += ' '+ Realize.themes.getProp('modal.header.withTitle')
     }
+
     return className;
   }
 });

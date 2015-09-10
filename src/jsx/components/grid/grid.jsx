@@ -198,12 +198,13 @@ var Grid = React.createClass({
   },
 
   handleLoad: function(data) {
-    this.props.onLoadSuccess(data);
     this.setState({
       isLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
-    });
+    }, function() {
+      this.props.onLoadSuccess(data);
+    }.bind(this));
   },
 
   handleLoadError: function(xhr, status, error) {

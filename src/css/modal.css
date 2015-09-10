@@ -1,19 +1,27 @@
-.wkm-modal{
+.realize-modal {
   background-color: white;
   display: none;
-  /*max-height: calc(100% - 100px)!important;*/
   position: fixed;
-  top: 50%!important;
+  top: 50% !important;
   left: 50%;
   right: auto;
   bottom: auto;
-  transform: translate(-50%, -50%)!important;
-  /*width: 40%;*/
+  transform: translate(-50%, -50%) !important;
 }
-.wkm-modal .modal-header.with-title{
+
+.realize-modal .modal-header.with-title {
   background-color: #f2f2f2;
   padding: 5px 20px;
 }
-.modal-footer{
+
+.realize-modal .modal-footer {
   overflow: hidden;
+}
+
+.realize-modal .modal-content-container {
+  overflow-y: auto;
+
+  transition: height .5s ease;
+  -webkit-transition: height .5s ease;
+  -moz-transition: height .5s ease;
 }
