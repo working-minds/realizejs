@@ -1429,37 +1429,49 @@ var RequestHandlerMixin = {
       url: url,
       data: requestData,
       method: (method || 'GET'),
-      success: this.onSuccess,
-      error: this.onError,
-      complete: this.onComplete
+      success: this.successCallback,
+      error: this.errorCallback,
+      complete: this.completeCallback
     };
 
     if(!!dataType) {
       requestOptions.dataType = dataType;
     }
 
-    this.onRequest(requestData, url);
+    this.requestCallback(requestData, url);
     $.ajax(requestOptions);
   },
 
-  onRequest: function(requestData, url) {
+  requestCallback: function(requestData, url) {
     this.setState({isLoading: true});
-    this.props.onRequest(requestData, url);
+    this.executeCallback('onRequest', requestData, url);
   },
 
-  onSuccess: function(responseData, status, xhr) {
-    if(this.props.onSuccess(responseData, status, xhr)) {
+  successCallback: function(responseData, status, xhr) {
+    if(this.executeCallback('onSuccess', responseData, status, xhr)) {
       this.handleSuccess(responseData, status, xhr);
     }
   },
 
-  onError: function(xhr, status, error) {
-    this.props.onError(xhr, status, error);
+  errorCallback: function(xhr, status, error) {
+    this.executeCallback('onError', xhr, status, error);
   },
 
-  onComplete: function(xhr, status) {
+  completeCallback: function(xhr, status) {
     this.setState({isLoading: false});
-    this.props.onComplete(xhr, status);
+    this.executeCallback('onComplete', xhr, status);
+  },
+
+  executeCallback: function(callbackFunction) {
+    var callbackArguments = Array.prototype.slice.call(arguments, 1);
+    var componentFunction = this[callbackFunction];
+    var propFunction = this.props[callbackFunction];
+
+    if(typeof componentFunction === "function") {
+      componentFunction(callbackArguments);
+    } else {
+      propFunction(callbackArguments);
+    }
   },
 
   handleSuccess: function(responseData, status, xhr) {
