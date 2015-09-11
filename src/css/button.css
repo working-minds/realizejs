@@ -9,9 +9,21 @@ button .preloader-wrapper.small {
 }
 
 .button--icon.btn-floating{
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .button--floating.button--icon {
   padding: 0;
+}
+
+.button-group .button {
+  margin-left: 1rem;
+}
+
+.button-group .button:first-child {
+  margin-left: 0;
+}
+
+.realize-modal .modal-footer .button-group {
+  float: right;
 }

@@ -462,6 +462,10 @@ Realize.themes.materialize = {
   button: {
     cssClass: 'button btn waves-effect waves-light',
 
+    group: {
+      cssClass: 'button-group'
+    },
+
     floating: {
       cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
     },
@@ -565,15 +569,20 @@ Realize.themes.materialize = {
 
     header: {
       cssClass: 'card-content modal-header',
-      withTitle: 'with-title'
+      withTitle: {
+        cssClass: 'with-title'
+      }
     },
 
-    content:{
+    content: {
       cssClass: 'card-content modal-content'
     },
 
-    footer:{
-      cssClass: 'card-content modal-footer'
+    footer: {
+      cssClass: 'card-content modal-footer',
+      withSeparator: {
+        cssClass: 'with-separator'
+      }
     }
   },
 
@@ -1612,6 +1621,7 @@ var Button = React.createClass({displayName: "Button",
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
+    confirmsWith: Realize.PropTypes.localizedString,
     element: React.PropTypes.oneOf(['button', 'a']),
     target: React.PropTypes.string,
     method: React.PropTypes.string
@@ -1627,6 +1637,7 @@ var Button = React.createClass({displayName: "Button",
       href: null,
       onClick: null,
       disableWith: 'loading',
+      confirmsWith: null,
       element: 'button',
       method: null
     };
@@ -1670,9 +1681,10 @@ var Button = React.createClass({displayName: "Button",
           className: this.getClassName(),
           type: this.props.type,
           disabled: this.props.disabled,
-          href: this.getCorrectHref(),
+          href: this.getHref(),
           onClick: this.handleClick,
-          'data-method': this.getMethod()
+          'data-method': this.getMethod(),
+          'data-confirm': this.getConfirmsWith()
         },
         content
       )
@@ -1687,7 +1699,7 @@ var Button = React.createClass({displayName: "Button",
     return className;
   },
 
-  getCorrectHref: function(){
+  getHref: function(){
     if (this.props.disabled && this.props.element === 'a')
       return 'javascript:void(0)';
     return this.props.href;
@@ -1695,7 +1707,15 @@ var Button = React.createClass({displayName: "Button",
 
   getMethod: function(){
     if(!!this.props.method){
-      return this.props.method
+      return this.props.method;
+    }
+
+    return null
+  },
+
+  getConfirmsWith: function(){
+    if(!!this.props.confirmsWith){
+      return Realize.t(this.props.confirmsWith);
     }
 
     return null
@@ -1740,6 +1760,42 @@ var Button = React.createClass({displayName: "Button",
     }
   }
   
+});
+
+var ButtonGroup = React.createClass({displayName: "ButtonGroup",
+  mixins: [CssClassMixin],
+  propTypes: {
+    buttons: React.PropTypes.array
+  },
+
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'button.group',
+      buttons: []
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: this.className()}, 
+        this.renderButtons()
+      )
+    );
+  },
+
+  renderButtons: function() {
+    var buttonsProps = this.props.buttons;
+    var buttons = [];
+
+    for(var i = 0; i < buttonsProps.length; i++) {
+      var buttonProps = buttonsProps[i];
+
+      buttons.push(React.createElement(Button, React.__spread({},  buttonProps, {key: "button_" + i})));
+    }
+
+    return buttons;
+  }
+
 });
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -2009,7 +2065,7 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
                 React.createElement(InputSwitch, {id: switchId, 
                              name: switchName, 
                              onChange: this.handleSwitchChange, 
-                             className: "switch col m4 s2", 
+                             className: "switch col l3 m3 s2", 
                              offLabel: "", 
                              onLabel: ""}
                   ), 
@@ -2018,7 +2074,8 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
                   errors: this.props.errors, 
                   resource: inputGroup.resource || this.props.resource, 
                   formStyle: this.props.formStyle, 
-                  className: "col m7 s10", 
+                  className: "input-field col offset-s1 l8 m8 s8", 
+                  clearTheme: true, 
                   key: this.state.inputKeys[inputId], 
                   ref: "input_" + inputId})
                   )
@@ -2122,7 +2179,6 @@ var Form = React.createClass({displayName: "Form",
   },
 
   render: function() {
-    //TODO: transformar buttonGroup em componente
     return (
       React.createElement("form", {action: this.props.action, 
         id: this.props.id, 
@@ -4980,17 +5036,31 @@ var ModalContent  = React.createClass({displayName: "ModalContent",
 
 var ModalFooter = React.createClass({displayName: "ModalFooter",
   mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.footer'
-    };
-  },
-  render: function() {
-    return React.createElement("div", {className: this.getClassName()}, this.props.children);
+
+  propTypes: {
+    separatorThemeClassKey: React.PropTypes.string,
+    withSeparator: React.PropTypes.bool
   },
 
-  getClassName: function() {
-    return Realize.themes.getCssClass(this.props.themeClassKey);
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.footer',
+      separatorThemeClassKey: 'modal.footer.withSeparator',
+      withSeparator: true
+    };
+  },
+
+  render: function() {
+    return React.createElement("div", {className: this.footerClassName()}, this.props.children);
+  },
+
+  footerClassName: function() {
+    var className = this.className();
+    if(this.props.withSeparator) {
+      className += " " + Realize.themes.getCssClass(this.props.separatorThemeClassKey);
+    }
+
+    return className;
   }
 });
 var ModalHeader = React.createClass({displayName: "ModalHeader",
@@ -5014,7 +5084,7 @@ var ModalHeader = React.createClass({displayName: "ModalHeader",
   getClassName: function() {
     var className = Realize.themes.getCssClass(this.props.themeClassKey);
     if(!this.props.clearTheme && this.props.withTitle) {
-      className += ' '+ Realize.themes.getProp('modal.header.withTitle')
+      className += ' '+ Realize.themes.getCssClass('modal.header.withTitle');
     }
 
     return className;
