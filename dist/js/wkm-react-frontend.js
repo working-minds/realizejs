@@ -126,7 +126,15 @@ Realize.i18n.registerLocale({
   },
 
   table: {
-    emptyResult: 'No results found.'
+    emptyResult: 'No results found.',
+    selection: {
+      clear: 'clear selection',
+      selectAll: 'select all :count items',
+      select: {
+        singular: '1 item selected',
+        plural: ':count items selected'
+      }
+    }
   },
 
   masks: {
@@ -158,7 +166,15 @@ Realize.i18n.registerLocale({
   },
 
   table: {
-    emptyResult: 'Nenhum resultado foi encontrado.'
+    emptyResult: 'Nenhum resultado foi encontrado.',
+    selection: {
+      clear: 'limpar seleção',
+      selectAll: 'selecionar todos os :count itens',
+      select: {
+        singular: '1 item selecionado',
+        plural: ':count itens selecionados'
+      }
+    }
   },
 
   masks: {
@@ -4964,7 +4980,7 @@ var Modal = React.createClass({displayName: "Modal",
 
 
 var ModalButton = React.createClass({displayName: "ModalButton",
-  //mixins: [CssClassMixin],
+  mixins: [CssClassMixin],
 
   propTypes: {
     top:React.PropTypes.number,
@@ -4994,11 +5010,22 @@ var ModalButton = React.createClass({displayName: "ModalButton",
 
   render: function() {
     return (
-        React.createElement("button", {"data-target": this.props.modal_id, className: this.props.className, ref: "modalButton"}, this.props.text)
+        React.createElement(Button, React.__spread({},  this.props, {"data-target": this.props.modal_id, className: this.getClassName(), ref: "modalButton"}), this.props.text)
     );
   },
 
+  getClassName: function(){
+    var className = this.className();
+    if (this.props.disabled && this.props.element === 'a')
+      className = 'button btn-flat disable-action-button';
+
+    return className;
+  },
+
+
   componentDidMount: function(){
+    $(React.findDOMNode(this.refs.modalButton)).attr('data-target',this.props.modal_id);
+
     $(React.findDOMNode(this.refs.modalButton)).click(function(e){
       e.stopPropagation();
       e.preventDefault();
@@ -6198,8 +6225,8 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
     selectedRowIds: React.PropTypes.array,
     actionButtons: React.PropTypes.array,
     message: React.PropTypes.object,
-    removeSelectionButtonName: React.PropTypes.string,
-    selectAllButtonName: React.PropTypes.string,
+    removeSelectionButtonName: Realize.PropTypes.localizedString,
+    selectAllButtonName: Realize.PropTypes.localizedString,
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
@@ -6214,11 +6241,11 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
       selectedRowIds: [],
       actionButtons: [],
       message: {
-        plural: ':count itens selecionados',
-        singular: '1 item selecionado'
+        plural: 'table.selection.select.plural',
+        singular: 'table.selection.select.singular'
       },
-      removeSelectionButtonName: 'limpar seleção',
-      selectAllButtonName: 'selecionar todos',
+      removeSelectionButtonName: 'table.selection.clear',
+      selectAllButtonName: 'table.selection.selectAll',
       allSelected: false,
       rowSelectableFilter: null,
       onRemoveSelection: function(event) {},
@@ -6239,9 +6266,9 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
     if(count === 0) {
       return '';
     } else if(count === 1) {
-      return this.props.message.singular;
+      return Realize.t(this.props.message.singular);
     } else {
-      var message = this.props.message.plural;
+      var message = Realize.t(this.props.message.plural);
       return message.replace(/:count/, count);
     }
   },
@@ -6263,13 +6290,13 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
   renderRemoveSelectionButton: function() {
     return (
       React.createElement("a", {href: "#!", onClick: this.props.onRemoveSelection}, 
-        this.props.removeSelectionButtonName
+        Realize.t(this.props.removeSelectionButtonName)
       )
     );
   },
 
   renderSelectAllButton: function() {
-    if(typeof this.props.rowSelectableFilter === "function") {
+    if(typeof this.props.rowSelectableFilter === "function" || this.props.allSelected) {
       return '';
     }
 
@@ -6277,7 +6304,7 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
       React.createElement("span", null, 
         " | ", 
         React.createElement("a", {href: "#!", onClick: this.props.onSelectAll}, 
-          this.props.selectAllButtonName
+          this.getSelectAllButtonName()
         )
       )
     );
@@ -6289,6 +6316,13 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
     } else {
       return this.props.selectedRowIds.length;
     }
+  },
+
+  getSelectAllButtonName: function() {
+    var buttonName = Realize.t(this.props.selectAllButtonName);
+    var count = this.props.count || this.props.dataRows.length;
+
+    return buttonName.replace(/:count/, count);
   }
 });
 
