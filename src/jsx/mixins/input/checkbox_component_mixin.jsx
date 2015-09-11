@@ -19,6 +19,15 @@ var CheckboxComponentMixin = {
   componentDidMount: function() {
     var inputNode = React.findDOMNode(this.refs.input);
     inputNode.indeterminate = this.props.renderAsIndeterminate;
+
+    var $form = $(inputNode.form);
+    $form.on('reset', this._handleCheckboxReset);
+  },
+
+  componentWillUnmount: function() {
+    var inputNode = React.findDOMNode(this.refs.input);
+    var $form = $(inputNode.form);
+    $form.off('reset', this._handleCheckboxReset);
   },
 
   getInitialChecked: function() {
@@ -33,6 +42,14 @@ var CheckboxComponentMixin = {
     }
 
     return false;
+  },
+
+  _handleCheckboxReset: function(event) {
+    if(this.isMounted()) {
+      this.setState({
+        checked: this.getInitialChecked()
+      });
+    }
   },
 
   _handleCheckboxChange: function(event) {
