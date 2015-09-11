@@ -14,7 +14,15 @@ Realize.i18n.registerLocale({
   },
 
   table: {
-    emptyResult: 'No results found.'
+    emptyResult: 'No results found.',
+    selection: {
+      clear: 'clear selection',
+      selectAll: 'select all :count items',
+      select: {
+        singular: '1 item selected',
+        plural: ':count items selected'
+      }
+    }
   },
 
   masks: {

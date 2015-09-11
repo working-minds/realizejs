@@ -336,10 +336,6 @@ hr {
   position: relative;
 }
 
-.table-row:hover .table-row__actions {
-  display: block;
-}
-
 .table-row__actions {
   text-align: right;
   white-space: nowrap;

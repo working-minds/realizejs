@@ -6,8 +6,8 @@ var TableSelectionIndicator = React.createClass({
     selectedRowIds: React.PropTypes.array,
     actionButtons: React.PropTypes.array,
     message: React.PropTypes.object,
-    removeSelectionButtonName: React.PropTypes.string,
-    selectAllButtonName: React.PropTypes.string,
+    removeSelectionButtonName: Realize.PropTypes.localizedString,
+    selectAllButtonName: Realize.PropTypes.localizedString,
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
@@ -22,11 +22,11 @@ var TableSelectionIndicator = React.createClass({
       selectedRowIds: [],
       actionButtons: [],
       message: {
-        plural: ':count itens selecionados',
-        singular: '1 item selecionado'
+        plural: 'table.selection.select.plural',
+        singular: 'table.selection.select.singular'
       },
-      removeSelectionButtonName: 'limpar seleção',
-      selectAllButtonName: 'selecionar todos',
+      removeSelectionButtonName: 'table.selection.clear',
+      selectAllButtonName: 'table.selection.selectAll',
       allSelected: false,
       rowSelectableFilter: null,
       onRemoveSelection: function(event) {},
@@ -47,9 +47,9 @@ var TableSelectionIndicator = React.createClass({
     if(count === 0) {
       return '';
     } else if(count === 1) {
-      return this.props.message.singular;
+      return Realize.t(this.props.message.singular);
     } else {
-      var message = this.props.message.plural;
+      var message = Realize.t(this.props.message.plural);
       return message.replace(/:count/, count);
     }
   },
@@ -71,13 +71,13 @@ var TableSelectionIndicator = React.createClass({
   renderRemoveSelectionButton: function() {
     return (
       <a href="#!" onClick={this.props.onRemoveSelection}>
-        {this.props.removeSelectionButtonName}
+        {Realize.t(this.props.removeSelectionButtonName)}
       </a>
     );
   },
 
   renderSelectAllButton: function() {
-    if(typeof this.props.rowSelectableFilter === "function") {
+    if(typeof this.props.rowSelectableFilter === "function" || this.props.allSelected) {
       return '';
     }
 
@@ -85,7 +85,7 @@ var TableSelectionIndicator = React.createClass({
       <span>
         &nbsp;|&nbsp;
         <a href="#!" onClick={this.props.onSelectAll}>
-          {this.props.selectAllButtonName}
+          {this.getSelectAllButtonName()}
         </a>
       </span>
     );
@@ -97,5 +97,12 @@ var TableSelectionIndicator = React.createClass({
     } else {
       return this.props.selectedRowIds.length;
     }
+  },
+
+  getSelectAllButtonName: function() {
+    var buttonName = Realize.t(this.props.selectAllButtonName);
+    var count = this.props.count || this.props.dataRows.length;
+
+    return buttonName.replace(/:count/, count);
   }
 });
