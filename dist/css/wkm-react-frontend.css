@@ -138,6 +138,7 @@ hr {
 
 .input-field {
   position: relative;
+  height: 4rem;
 }
 
 .input-autocomplete {
