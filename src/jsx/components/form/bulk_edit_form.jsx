@@ -147,7 +147,7 @@ var BulkEditForm = React.createClass({
                 <InputSwitch id={switchId}
                              name={switchName}
                              onChange={this.handleSwitchChange}
-                             className="switch col m4 s2"
+                             className="switch col l3 m3 s2"
                              offLabel=''
                              onLabel=''
                   />
@@ -156,7 +156,8 @@ var BulkEditForm = React.createClass({
                   errors={this.props.errors}
                   resource={inputGroup.resource || this.props.resource}
                   formStyle={this.props.formStyle}
-                  className="col m7 s10"
+                  className="input-field col offset-s1 l8 m8 s8"
+                  clearTheme={true}
                   key={this.state.inputKeys[inputId]}
                   ref={"input_" + inputId}
                   />

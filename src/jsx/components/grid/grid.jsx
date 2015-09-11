@@ -72,9 +72,15 @@ var Grid = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    this.setState({
+      filterData: this.getInitialFilterData()
+    });
+  },
+
   render: function() {
     return (
-      <div className={this.gridClassName()}>
+      <div className={this.gridClassName()} ref="grid">
         {this.renderFilter()}
 
         {this.renderPagination()}
@@ -93,6 +99,15 @@ var Grid = React.createClass({
     return className;
   },
 
+  /* Initializers */
+
+  getInitialFilterData: function() {
+    var gridFilterNode = React.findDOMNode(this.refs.filter);
+    var filterForm = $(gridFilterNode).find('form');
+
+    return filterForm.serializeObject();
+  },
+
   /* Renderers */
 
   renderFilter: function() {
@@ -106,6 +121,7 @@ var Grid = React.createClass({
         {...this.props.filter}
         isLoading={this.state.isLoading}
         onSubmit={this.onFilterSubmit}
+        ref="filter"
       />
     );
   },
