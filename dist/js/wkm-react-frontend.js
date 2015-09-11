@@ -370,13 +370,15 @@ Realize.themes.materialize = {
   },
 
   input: {
-    wrapper: {
+    cssClass: 'form__input input-field',
+
+    grid: {
       default: {
-        cssClass: 'form__input input-field col l6 m6 s12'
+        cssClass: 'col l6 m6 s12'
       },
 
       filter: {
-        cssClass: 'form__input input-field col l3 m4 s12'
+        cssClass: 'col l3 m4 s12'
       }
     },
 
@@ -3857,34 +3859,44 @@ var Input = React.createClass({displayName: "Input",
     name: React.PropTypes.string,
     label: React.PropTypes.string,
     value: React.PropTypes.node,
-    formStyle: React.PropTypes.string,
+    component: React.PropTypes.string,
+    formStyle: React.PropTypes.oneOf(['default', 'filter']),
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
-    component: React.PropTypes.string,
-    componentMapping: React.PropTypes.func
+    scope: React.PropTypes.oneOf(['resource', 'global'])
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'input',
       value: null,
       component: 'text',
       formStyle: 'default',
       data: {},
       errors: {},
-      resource: null
+      resource: null,
+      scope: 'resource'
     };
   },
 
   getInitialState: function() {
     return {
-      value: this.props.value,
-      themeClassKey: this.themeClassKeyByStyle()
+      value: this.props.value
     };
   },
 
   themeClassKeyByStyle: function() {
     return 'input.wrapper.' + this.props.formStyle;
+  },
+
+  inputClassName: function() {
+    var className = this.className();
+    if(!this.props.className) {
+      className += ' ' + Realize.themes.getCssClass('input.grid.' + this.props.formStyle);
+    }
+
+    return className;
   },
 
   render: function() {
@@ -3898,7 +3910,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderInput: function() {
     return (
-      React.createElement("div", {className: this.className()}, 
+      React.createElement("div", {className: this.inputClassName()}, 
         this.renderComponentInput(), 
         this.renderLabel(), 
         this.renderInputErrors()
@@ -3908,7 +3920,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderAutocompleteInput: function() {
     return (
-      React.createElement("div", {className: this.className()}, 
+      React.createElement("div", {className: this.inputClassName()}, 
         this.renderComponentInput(), 
         this.renderInputErrors()
       )
@@ -3917,7 +3929,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderDatepickerInput: function() {
     return (
-      React.createElement("div", {className: this.className()}, 
+      React.createElement("div", {className: this.inputClassName()}, 
         this.renderComponentInput(), 
         this.renderInputErrors()
       )
@@ -3926,7 +3938,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderNumberInput: function(){
     return (
-      React.createElement("div", {className: this.className()}, 
+      React.createElement("div", {className: this.inputClassName()}, 
         this.renderComponentInput(), 
         this.renderInputErrors()
       )
@@ -3935,7 +3947,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderSwitchInput: function(){
     return (
-      React.createElement("div", {className: this.className()}, 
+      React.createElement("div", {className: this.inputClassName()}, 
         this.renderComponentInput(), 
         this.renderInputErrors()
       )
@@ -3944,16 +3956,7 @@ var Input = React.createClass({displayName: "Input",
 
   renderFileInput: function() {
     return (
-      React.createElement("div", {className: this.className()}, 
-        this.renderComponentInput(), 
-        this.renderInputErrors()
-      )
-    );
-  },
-
-  renderSwitchInput: function() {
-    return (
-      React.createElement("div", {className: this.className()}, 
+      React.createElement("div", {className: this.inputClassName()}, 
         this.renderComponentInput(), 
         this.renderInputErrors()
       )
@@ -4013,7 +4016,7 @@ var Input = React.createClass({displayName: "Input",
 
   getInputComponentId: function() {
     var inputId = this.props.id;
-    if(this.props.resource !== null) {
+    if(this.props.resource !== null && this.props.scope === "resource") {
       inputId = this.props.resource + '_' + inputId;
     }
 
@@ -4022,7 +4025,7 @@ var Input = React.createClass({displayName: "Input",
 
   getInputComponentName: function() {
     var inputName = (this.props.name || this.props.id);
-    if(this.props.resource !== null) {
+    if(this.props.resource !== null && this.props.scope === "resource") {
       inputName = this.props.resource + '[' + inputName + ']';
     }
 

@@ -5,34 +5,44 @@ var Input = React.createClass({
     name: React.PropTypes.string,
     label: React.PropTypes.string,
     value: React.PropTypes.node,
-    formStyle: React.PropTypes.string,
+    component: React.PropTypes.string,
+    formStyle: React.PropTypes.oneOf(['default', 'filter']),
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
-    component: React.PropTypes.string,
-    componentMapping: React.PropTypes.func
+    scope: React.PropTypes.oneOf(['resource', 'global'])
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'input',
       value: null,
       component: 'text',
       formStyle: 'default',
       data: {},
       errors: {},
-      resource: null
+      resource: null,
+      scope: 'resource'
     };
   },
 
   getInitialState: function() {
     return {
-      value: this.props.value,
-      themeClassKey: this.themeClassKeyByStyle()
+      value: this.props.value
     };
   },
 
   themeClassKeyByStyle: function() {
     return 'input.wrapper.' + this.props.formStyle;
+  },
+
+  inputClassName: function() {
+    var className = this.className();
+    if(!this.props.className) {
+      className += ' ' + Realize.themes.getCssClass('input.grid.' + this.props.formStyle);
+    }
+
+    return className;
   },
 
   render: function() {
@@ -46,7 +56,7 @@ var Input = React.createClass({
 
   renderInput: function() {
     return (
-      <div className={this.className()}>
+      <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderLabel()}
         {this.renderInputErrors()}
@@ -56,7 +66,7 @@ var Input = React.createClass({
 
   renderAutocompleteInput: function() {
     return (
-      <div className={this.className()}>
+      <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
@@ -65,7 +75,7 @@ var Input = React.createClass({
 
   renderDatepickerInput: function() {
     return (
-      <div className={this.className()}>
+      <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
@@ -74,7 +84,7 @@ var Input = React.createClass({
 
   renderNumberInput: function(){
     return (
-      <div className={this.className()}>
+      <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
@@ -83,7 +93,7 @@ var Input = React.createClass({
 
   renderSwitchInput: function(){
     return (
-      <div className={this.className()}>
+      <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
@@ -92,16 +102,7 @@ var Input = React.createClass({
 
   renderFileInput: function() {
     return (
-      <div className={this.className()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
-  },
-
-  renderSwitchInput: function() {
-    return (
-      <div className={this.className()}>
+      <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
@@ -161,7 +162,7 @@ var Input = React.createClass({
 
   getInputComponentId: function() {
     var inputId = this.props.id;
-    if(this.props.resource !== null) {
+    if(this.props.resource !== null && this.props.scope === "resource") {
       inputId = this.props.resource + '_' + inputId;
     }
 
@@ -170,7 +171,7 @@ var Input = React.createClass({
 
   getInputComponentName: function() {
     var inputName = (this.props.name || this.props.id);
-    if(this.props.resource !== null) {
+    if(this.props.resource !== null && this.props.scope === "resource") {
       inputName = this.props.resource + '[' + inputName + ']';
     }
 

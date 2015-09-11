@@ -82,13 +82,15 @@ Realize.themes.materialize = {
   },
 
   input: {
-    wrapper: {
+    cssClass: 'form__input input-field',
+
+    grid: {
       default: {
-        cssClass: 'form__input input-field col l6 m6 s12'
+        cssClass: 'col l6 m6 s12'
       },
 
       filter: {
-        cssClass: 'form__input input-field col l3 m4 s12'
+        cssClass: 'col l3 m4 s12'
       }
     },
 
