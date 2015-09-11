@@ -2,10 +2,6 @@
   margin-left: 1.5em;
 }
 
-.form__input {
-  margin-bottom: 10px;
-}
-
 .form__input-error {
   color: #F44336;
   position: absolute;

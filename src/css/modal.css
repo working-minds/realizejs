@@ -19,14 +19,18 @@
   padding: 5px 20px;
 }
 
-.realize-modal .modal-footer {
-  overflow: hidden;
-}
-
 .realize-modal .modal-content-container {
   overflow-y: auto;
 
   transition: height .5s ease;
   -webkit-transition: height .5s ease;
   -moz-transition: height .5s ease;
+}
+
+.realize-modal .modal-footer {
+  overflow: hidden;
+}
+
+.realize-modal .modal-footer.with-separator {
+  border-top: 1px solid #e2e2e2;
 }

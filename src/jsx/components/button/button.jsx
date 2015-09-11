@@ -10,6 +10,7 @@ var Button = React.createClass({
     onClick: React.PropTypes.func,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
+    confirmsWith: Realize.PropTypes.localizedString,
     element: React.PropTypes.oneOf(['button', 'a']),
     target: React.PropTypes.string,
     method: React.PropTypes.string
@@ -25,6 +26,7 @@ var Button = React.createClass({
       href: null,
       onClick: null,
       disableWith: 'loading',
+      confirmsWith: null,
       element: 'button',
       method: null
     };
@@ -68,9 +70,10 @@ var Button = React.createClass({
           className: this.getClassName(),
           type: this.props.type,
           disabled: this.props.disabled,
-          href: this.getCorrectHref(),
+          href: this.getHref(),
           onClick: this.handleClick,
-          'data-method': this.getMethod()
+          'data-method': this.getMethod(),
+          'data-confirm': this.getConfirmsWith()
         },
         content
       )
@@ -85,7 +88,7 @@ var Button = React.createClass({
     return className;
   },
 
-  getCorrectHref: function(){
+  getHref: function(){
     if (this.props.disabled && this.props.element === 'a')
       return 'javascript:void(0)';
     return this.props.href;
@@ -93,7 +96,15 @@ var Button = React.createClass({
 
   getMethod: function(){
     if(!!this.props.method){
-      return this.props.method
+      return this.props.method;
+    }
+
+    return null
+  },
+
+  getConfirmsWith: function(){
+    if(!!this.props.confirmsWith){
+      return Realize.t(this.props.confirmsWith);
     }
 
     return null

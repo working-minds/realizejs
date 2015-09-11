@@ -174,6 +174,10 @@ Realize.themes.materialize = {
   button: {
     cssClass: 'button btn waves-effect waves-light',
 
+    group: {
+      cssClass: 'button-group'
+    },
+
     floating: {
       cssClass: 'button button--floating btn-floating btn-large waves-effect waves-light'
     },
@@ -277,15 +281,20 @@ Realize.themes.materialize = {
 
     header: {
       cssClass: 'card-content modal-header',
-      withTitle: 'with-title'
+      withTitle: {
+        cssClass: 'with-title'
+      }
     },
 
-    content:{
+    content: {
       cssClass: 'card-content modal-content'
     },
 
-    footer:{
-      cssClass: 'card-content modal-footer'
+    footer: {
+      cssClass: 'card-content modal-footer',
+      withSeparator: {
+        cssClass: 'with-separator'
+      }
     }
   },
 

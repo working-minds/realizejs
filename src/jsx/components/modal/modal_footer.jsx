@@ -1,15 +1,29 @@
 var ModalFooter = React.createClass({
   mixins: [CssClassMixin],
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.footer'
-    };
-  },
-  render: function() {
-    return <div className={this.getClassName()}>{this.props.children}</div>;
+
+  propTypes: {
+    separatorThemeClassKey: React.PropTypes.string,
+    withSeparator: React.PropTypes.bool
   },
 
-  getClassName: function() {
-    return Realize.themes.getCssClass(this.props.themeClassKey);
+  getDefaultProps: function() {
+    return {
+      themeClassKey: 'modal.footer',
+      separatorThemeClassKey: 'modal.footer.withSeparator',
+      withSeparator: true
+    };
+  },
+
+  render: function() {
+    return <div className={this.footerClassName()}>{this.props.children}</div>;
+  },
+
+  footerClassName: function() {
+    var className = this.className();
+    if(this.props.withSeparator) {
+      className += " " + Realize.themes.getCssClass(this.props.separatorThemeClassKey);
+    }
+
+    return className;
   }
 });

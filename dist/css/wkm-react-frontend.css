@@ -13,11 +13,23 @@ button .preloader-wrapper.small {
 }
 
 .button--icon.btn-floating{
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .button--floating.button--icon {
   padding: 0;
+}
+
+.button-group .button {
+  margin-left: 1rem;
+}
+
+.button-group .button:first-child {
+  margin-left: 0;
+}
+
+.realize-modal .modal-footer .button-group {
+  float: right;
 }
 .grid-form .card {
   overflow: visible;
@@ -83,10 +95,6 @@ button .preloader-wrapper.small {
   margin-left: 1.5em;
 }
 
-.form__input {
-  margin-bottom: 10px;
-}
-
 .form__input-error {
   color: #F44336;
   position: absolute;
@@ -138,7 +146,7 @@ hr {
 
 .input-field {
   position: relative;
-  height: 4rem;
+  min-height: 4rem;
 }
 
 .input-autocomplete {
@@ -250,16 +258,20 @@ hr {
   padding: 5px 20px;
 }
 
-.realize-modal .modal-footer {
-  overflow: hidden;
-}
-
 .realize-modal .modal-content-container {
   overflow-y: auto;
 
   transition: height .5s ease;
   -webkit-transition: height .5s ease;
   -moz-transition: height .5s ease;
+}
+
+.realize-modal .modal-footer {
+  overflow: hidden;
+}
+
+.realize-modal .modal-footer.with-separator {
+  border-top: 1px solid #e2e2e2;
 }
 .table tr th, .table tr td {
   padding: 5px 2px;

@@ -62,7 +62,6 @@ var Form = React.createClass({
   },
 
   render: function() {
-    //TODO: transformar buttonGroup em componente
     return (
       <form action={this.props.action}
         id={this.props.id}
