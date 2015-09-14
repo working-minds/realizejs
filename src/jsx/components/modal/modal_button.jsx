@@ -2,7 +2,7 @@ var ModalButton = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    top:React.PropTypes.number,
+    top: React.PropTypes.number,
     text: React.PropTypes.string,
     modal_id: React.PropTypes.string,
     dismissible: React.PropTypes.bool,
