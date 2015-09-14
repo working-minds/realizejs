@@ -110,7 +110,10 @@ var GridForm = React.createClass({
   },
 
   getFormAction: function() {
-    return this.getActionUrl(this.state.formAction, this.state.selectedRowId);
+    if(this.props.form && this.props.form.action != '')
+      return this.props.form.action
+    else
+      return this.getActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 
   getFormMethod: function() {
