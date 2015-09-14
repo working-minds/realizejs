@@ -11,7 +11,8 @@ var TableActionButton = React.createClass({
     method: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     selectionContext: React.PropTypes.string,
-    conditionToShowActionButton: React.PropTypes.func
+    conditionToShowActionButton: React.PropTypes.func,
+    component: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -22,6 +23,7 @@ var TableActionButton = React.createClass({
       conditionParams: null,
       disabled: false,
       selectionContext: 'none',
+      component: null,
       conditionToShowActionButton: function(data) { return true }
     };
   },
@@ -37,7 +39,12 @@ var TableActionButton = React.createClass({
   renderButton: function(){
     var component = [];
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      component.push(<Button {...this.props} disabled={this.isDisabled()} href={this.actionButtonHref()} onClick={this.actionButtonClick} key={this.props.name} />);
+      if(!!this.props.component){
+        return React.createElement(eval(this.props.component), this.props)
+      }else {
+        component.push(<Button {...this.props} disabled={this.isDisabled()} href={this.actionButtonHref()}
+                                               onClick={this.actionButtonClick} key={this.props.name}/>);
+      }
 
     return component;
   },
