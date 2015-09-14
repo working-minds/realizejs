@@ -4983,7 +4983,7 @@ var ModalButton = React.createClass({displayName: "ModalButton",
   mixins: [CssClassMixin],
 
   propTypes: {
-    top:React.PropTypes.number,
+    top: React.PropTypes.number,
     text: React.PropTypes.string,
     modal_id: React.PropTypes.string,
     dismissible: React.PropTypes.bool,
@@ -5660,7 +5660,8 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     method: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     selectionContext: React.PropTypes.string,
-    conditionToShowActionButton: React.PropTypes.func
+    conditionToShowActionButton: React.PropTypes.func,
+    component: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -5671,6 +5672,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
       conditionParams: null,
       disabled: false,
       selectionContext: 'none',
+      component: null,
       conditionToShowActionButton: function(data) { return true }
     };
   },
@@ -5686,7 +5688,12 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
   renderButton: function(){
     var component = [];
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      component.push(React.createElement(Button, React.__spread({},  this.props, {disabled: this.isDisabled(), href: this.actionButtonHref(), onClick: this.actionButtonClick, key: this.props.name})));
+      if(!!this.props.component){
+        return React.createElement(eval(this.props.component), this.props)
+      }else {
+        component.push(React.createElement(Button, React.__spread({},  this.props, {disabled: this.isDisabled(), href: this.actionButtonHref(), 
+                                               onClick: this.actionButtonClick, key: this.props.name})));
+      }
 
     return component;
   },
