@@ -1431,6 +1431,7 @@ var SelectComponentMixin = {
   emptyAndDisable: function() {
     this.setState({
       options: [],
+      optionsCache: [],
       mustDisable: true
     });
   },
@@ -3465,7 +3466,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   clearSelection: function() {
     this.setState({
       value: []
-    });
+    }, this.triggerDependableChanged);
   },
 
   handleOptionMouseEnter: function(position) {
