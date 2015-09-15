@@ -19,7 +19,7 @@ var TableActionButton = React.createClass({
     return {
       selectedRowIds: [],
       allSelected: false,
-      method: 'GET',
+      method: null,
       conditionParams: null,
       disabled: false,
       selectionContext: 'none',
