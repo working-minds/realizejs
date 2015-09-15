@@ -3,7 +3,8 @@ var Header = React.createClass({
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'header'
+      themeClassKey: 'header',
+      wrapperClassName: 'nav-wrapper container'
     };
   },
 
@@ -18,7 +19,7 @@ var Header = React.createClass({
   render: function() {
     return (
       <nav className={this.className()} role="navigation">
-        <div className="nav-wrapper">
+        <div className={this.props.wrapperClassName}>
           {this.props.children}
         </div>
       </nav>
