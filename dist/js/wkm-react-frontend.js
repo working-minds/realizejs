@@ -3053,7 +3053,8 @@ var Header = React.createClass({displayName: "Header",
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'header'
+      themeClassKey: 'header',
+      wrapperClassName: 'nav-wrapper container'
     };
   },
 
@@ -3068,7 +3069,7 @@ var Header = React.createClass({displayName: "Header",
   render: function() {
     return (
       React.createElement("nav", {className: this.className(), role: "navigation"}, 
-        React.createElement("div", {className: "nav-wrapper"}, 
+        React.createElement("div", {className: this.props.wrapperClassName}, 
           this.props.children
         )
       )
