@@ -1431,6 +1431,7 @@ var SelectComponentMixin = {
   emptyAndDisable: function() {
     this.setState({
       options: [],
+      optionsCache: [],
       mustDisable: true
     });
   },
@@ -1715,22 +1716,22 @@ var Button = React.createClass({displayName: "Button",
     return className;
   },
 
-  getHref: function(){
+  getHref: function() {
     if (this.props.disabled && this.props.element === 'a')
       return 'javascript:void(0)';
     return this.props.href;
   },
 
-  getMethod: function(){
-    if(!!this.props.method){
+  getMethod: function() {
+    if(!!this.props.method) {
       return this.props.method;
     }
 
     return null
   },
 
-  getConfirmsWith: function(){
-    if(!!this.props.confirmsWith){
+  getConfirmsWith: function() {
+    if(!!this.props.confirmsWith) {
       return Realize.t(this.props.confirmsWith);
     }
 
@@ -2405,6 +2406,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   propTypes: {
     url: React.PropTypes.string,
+    eagerLoad: React.PropTypes.bool,
     resource: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
@@ -2427,6 +2429,7 @@ var Grid = React.createClass({displayName: "Grid",
   getDefaultProps: function() {
     return {
       themeClassKey: 'grid',
+      eagerLoad: false,
       paginationConfigs: {
         param: 'p',
         perPage: 20,
@@ -2473,7 +2476,11 @@ var Grid = React.createClass({displayName: "Grid",
   componentDidMount: function() {
     this.setState({
       filterData: this.getInitialFilterData()
-    });
+    }, function() {
+      if(!!this.props.eagerLoad) {
+        this.loadData();
+      }
+    }.bind(this));
   },
 
   render: function() {
@@ -3052,7 +3059,8 @@ var Header = React.createClass({displayName: "Header",
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'header'
+      themeClassKey: 'header',
+      wrapperClassName: 'nav-wrapper container'
     };
   },
 
@@ -3067,7 +3075,7 @@ var Header = React.createClass({displayName: "Header",
   render: function() {
     return (
       React.createElement("nav", {className: this.className(), role: "navigation"}, 
-        React.createElement("div", {className: "nav-wrapper"}, 
+        React.createElement("div", {className: this.props.wrapperClassName}, 
           this.props.children
         )
       )
@@ -3465,7 +3473,7 @@ var InputAutocomplete = React.createClass({displayName: "InputAutocomplete",
   clearSelection: function() {
     this.setState({
       value: []
-    });
+    }, this.triggerDependableChanged);
   },
 
   handleOptionMouseEnter: function(position) {
@@ -4941,22 +4949,34 @@ var Modal = React.createClass({displayName: "Modal",
 
     $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter));
     $(modal).css("width", this.props.width);
-    $(contentContainer).css("height", this.getContentHeight());
+
+    var availableHeight = this.getAvailableHeight();
+    var contentHeight = this.getContentHeight();
+
+    $(contentContainer).css("height", Math.min(availableHeight, contentHeight));
+    if(contentHeight > availableHeight) {
+      $(contentContainer).css("overflow-y", "auto");
+    }
+  },
+
+  getAvailableHeight: function() {
+    var headerContainer = React.findDOMNode(this.refs.headerContainer);
+    var footerContainer = React.findDOMNode(this.refs.footerContainer);
+
+    return ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
   },
 
   getContentHeight: function() {
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
-    var headerContainer = React.findDOMNode(this.refs.headerContainer);
-    var footerContainer = React.findDOMNode(this.refs.footerContainer);
-
-    var availableHeight = ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
     var contentHeight = 0;
     $(contentContainer).find("> *").each(function(i, content) {
       contentHeight += $(content).outerHeight();
     });
 
-    return Math.min(availableHeight, contentHeight);
+    return contentHeight;
   },
+
+
 
   filterChildren : function(area) {
     var result = null;
@@ -4984,37 +5004,36 @@ var ModalButton = React.createClass({displayName: "ModalButton",
 
   propTypes: {
     top: React.PropTypes.number,
-    text: React.PropTypes.string,
-    modal_id: React.PropTypes.string,
+    modalId: React.PropTypes.string,
     dismissible: React.PropTypes.bool,
     opacity: React.PropTypes.number,
-    in_duration: React.PropTypes.number,
-    out_duration: React.PropTypes.number,
+    inDuration: React.PropTypes.number,
+    outDuration: React.PropTypes.number,
     ready: React.PropTypes.func,
     complete: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
-      top:0,
+      top: 0,
+      modalId: '',
       dismissible: true,
-      text:'Modal',
       className: 'btn',
-      opacity: 0,
-      in_duration: 300,
-      out_duration: 200,
-      ready: function(){return true;},
-      complete: function(){return true;}
+      opacity: 0.4,
+      inDuration: 300,
+      outDuration: 200,
+      ready: function() { return true; },
+      complete: function() { return true; }
     };
   },
 
   render: function() {
     return (
-        React.createElement(Button, React.__spread({},  this.props, {"data-target": this.props.modal_id, className: this.getClassName(), ref: "modalButton"}), this.props.text)
+      React.createElement(Button, React.__spread({},  this.props, {className: this.getClassName(), href: "#!", onClick: this.openModal, ref: "modalButton"}))
     );
   },
 
-  getClassName: function(){
+  getClassName: function() {
     var className = this.className();
     if (this.props.disabled && this.props.element === 'a')
       className = 'button btn-flat disable-action-button';
@@ -5022,24 +5041,40 @@ var ModalButton = React.createClass({displayName: "ModalButton",
     return className;
   },
 
+  getModalToOpen: function() {
+    return $("#" + this.props.modalId);
+  },
 
-  componentDidMount: function(){
-    $(React.findDOMNode(this.refs.modalButton)).attr('data-target',this.props.modal_id);
+  openModal: function(event) {
+    event.nativeEvent.preventDefault();
+    event.stopPropagation();
+    event.preventDefault();
 
-    $(React.findDOMNode(this.refs.modalButton)).click(function(e){
-      e.stopPropagation();
-      e.preventDefault();
+    $modalToOpen = this.getModalToOpen();
+    $modalToOpen.openModal({
+      top:this.props.top,
+      dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
+      opacity: this.props.opacity, // Opacity of modal background
+      inDuration: this.props.inDuration, // Transition in duration
+      outDuration: this.props.outDuration, // Transition out duration
+      ready: this.handleReady, // Callback for Modal open
+      complete: this.handleComplete // Callback for Modal close,
     });
-    $(React.findDOMNode(this.refs.modalButton)).leanModal({
-        top:this.props.top,
-        dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
-        opacity: this.props.opacity, // Opacity of modal background
-        in_duration: this.props.in_duration, // Transition in duration
-        out_duration: this.props.out_duration, // Transition out duration
-        ready: this.props.ready, // Callback for Modal open
-        complete: this.props.complete // Callback for Modal close,
-      }
-    );
+  },
+
+  handleReady: function() {
+    $modalToOpen = this.getModalToOpen();
+    $modalToOpen.trigger('resize');
+
+    if(typeof this.props.ready === "function") {
+      this.props.ready();
+    }
+  },
+
+  handleComplete: function() {
+    if(typeof this.props.complete === "function") {
+      this.props.complete();
+    }
   }
 
 });
@@ -5659,7 +5694,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
     disabled: React.PropTypes.bool,
-    selectionContext: React.PropTypes.string,
+    selectionContext: React.PropTypes.oneOf(['none', 'atLeastOne']),
     conditionToShowActionButton: React.PropTypes.func,
     component: React.PropTypes.string
   },
@@ -5668,7 +5703,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     return {
       selectedRowIds: [],
       allSelected: false,
-      method: 'GET',
+      method: null,
       conditionParams: null,
       disabled: false,
       selectionContext: 'none',
@@ -5690,15 +5725,26 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
       if(!!this.props.component){
         return React.createElement(eval(this.props.component), this.props)
-      }else {
-        component.push(React.createElement(Button, React.__spread({},  this.props, {disabled: this.isDisabled(), href: this.actionButtonHref(), 
-                                               onClick: this.actionButtonClick, key: this.props.name})));
+      } else {
+        component.push(
+          React.createElement(Button, React.__spread({},  this.props, 
+            {disabled: this.isDisabled(), 
+            method: this.actionButtonMethod(), 
+            href: this.actionButtonHref(), 
+            onClick: this.actionButtonClick, 
+            key: this.props.name})
+          )
+        );
       }
 
     return component;
   },
 
   isDisabled: function() {
+    if(!!this.props.disabled) {
+      return true;
+    }
+
     var selectionContext = this.props.selectionContext;
     if (selectionContext === 'none') {
       return false;
@@ -5707,6 +5753,15 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     }
 
     return false;
+  },
+
+  actionButtonMethod: function() {
+    var buttonHref = this.props.href;
+    if(!buttonHref) {
+      return null;
+    }
+
+    return this.props.method;
   },
 
   actionButtonHref: function() {
@@ -5720,6 +5775,10 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
   },
 
   actionButtonClick: function(event) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     var buttonOnClick = this.props.onClick;
     var buttonAction = this.props.actionUrl;
     var selectedData = this.getSelectedData();
@@ -6098,7 +6157,7 @@ var TableRow = React.createClass({displayName: "TableRow",
 });
 
 var TableRowActions = React.createClass({displayName: "TableRowActions",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, RequestHandlerMixin],
 
   propTypes: {
     data: React.PropTypes.object,
@@ -6138,13 +6197,14 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
       var conditionToShowFunction = actionButtonProps.conditionToShowActionButton;
 
       if(!conditionToShowFunction || actionButtonProps.conditionToShowActionButton(actionButtonProps.conditionParams)) {
-        if(!!actionButtonProps.component){
+        if(!!actionButtonProps.component) {
           return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
-        }else {
+        } else {
           actionButtons.push(
             React.createElement(Button, React.__spread({},  actionButtonProps, 
-              {href: this.getActionButtonHref(actionButtonProps), 
-              onClick: this.handleActionButtonClick.bind(this, actionButtonProps), 
+              {method: this.actionButtonMethod(actionButtonProps), 
+              href: this.actionButtonHref(actionButtonProps), 
+              onClick: this.actionButtonClick.bind(this, actionButtonProps), 
               themeClassKey: "button.flat", 
               element: "a", 
               key: "action_" + i})
@@ -6157,7 +6217,17 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
     return actionButtons;
   },
 
-  getActionButtonHref: function(actionButtonProps) {
+  //TODO: Criar um componente para TableRowActionButton
+  actionButtonMethod: function(actionButtonProps) {
+    var buttonHref = actionButtonProps.href;
+    if(!buttonHref) {
+      return null;
+    }
+
+    return actionButtonProps.method;
+  },
+
+  actionButtonHref: function(actionButtonProps) {
     var buttonHref = actionButtonProps.href;
     if(!!buttonHref) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
@@ -6167,13 +6237,26 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
     return buttonHref;
   },
 
-  handleActionButtonClick: function(actionButtonProps, event) {
+  actionButtonClick: function(actionButtonProps, event) {
     var buttonOnClick = actionButtonProps.onClick;
+    var buttonAction = actionButtonProps.actionUrl;
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
       buttonOnClick(event, dataRowId, this.props.data);
+    } else if(!!buttonAction) {
+      var actionData = this.getActionData(actionButtonProps);
+      this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
     }
+  },
+
+  getActionData: function(actionButtonProps) {
+    var dataIdParam = actionButtonProps.dataIdParam || 'id';
+    var dataRowId = this.props.data[this.props.dataRowIdField];
+    var actionData = {};
+
+    actionData[dataIdParam] = dataRowId;
+    return actionData;
   }
 });
 

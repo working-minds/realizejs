@@ -191,6 +191,7 @@ var SelectComponentMixin = {
   emptyAndDisable: function() {
     this.setState({
       options: [],
+      optionsCache: [],
       mustDisable: true
     });
   },

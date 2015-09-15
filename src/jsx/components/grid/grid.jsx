@@ -7,6 +7,7 @@ var Grid = React.createClass({
 
   propTypes: {
     url: React.PropTypes.string,
+    eagerLoad: React.PropTypes.bool,
     resource: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
@@ -29,6 +30,7 @@ var Grid = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'grid',
+      eagerLoad: false,
       paginationConfigs: {
         param: 'p',
         perPage: 20,
@@ -75,7 +77,11 @@ var Grid = React.createClass({
   componentDidMount: function() {
     this.setState({
       filterData: this.getInitialFilterData()
-    });
+    }, function() {
+      if(!!this.props.eagerLoad) {
+        this.loadData();
+      }
+    }.bind(this));
   },
 
   render: function() {

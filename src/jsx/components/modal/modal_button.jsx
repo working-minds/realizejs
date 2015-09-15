@@ -3,37 +3,36 @@ var ModalButton = React.createClass({
 
   propTypes: {
     top: React.PropTypes.number,
-    text: React.PropTypes.string,
-    modal_id: React.PropTypes.string,
+    modalId: React.PropTypes.string,
     dismissible: React.PropTypes.bool,
     opacity: React.PropTypes.number,
-    in_duration: React.PropTypes.number,
-    out_duration: React.PropTypes.number,
+    inDuration: React.PropTypes.number,
+    outDuration: React.PropTypes.number,
     ready: React.PropTypes.func,
     complete: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
-      top:0,
+      top: 0,
+      modalId: '',
       dismissible: true,
-      text:'Modal',
       className: 'btn',
-      opacity: 0,
-      in_duration: 300,
-      out_duration: 200,
-      ready: function(){return true;},
-      complete: function(){return true;}
+      opacity: 0.4,
+      inDuration: 300,
+      outDuration: 200,
+      ready: function() { return true; },
+      complete: function() { return true; }
     };
   },
 
   render: function() {
     return (
-        <Button {...this.props} data-target={this.props.modal_id} className={this.getClassName()} ref="modalButton">{this.props.text}</Button>
+      <Button {...this.props} className={this.getClassName()} href="#!" onClick={this.openModal} ref="modalButton" />
     );
   },
 
-  getClassName: function(){
+  getClassName: function() {
     var className = this.className();
     if (this.props.disabled && this.props.element === 'a')
       className = 'button btn-flat disable-action-button';
@@ -41,24 +40,40 @@ var ModalButton = React.createClass({
     return className;
   },
 
+  getModalToOpen: function() {
+    return $("#" + this.props.modalId);
+  },
 
-  componentDidMount: function(){
-    $(React.findDOMNode(this.refs.modalButton)).attr('data-target',this.props.modal_id);
+  openModal: function(event) {
+    event.nativeEvent.preventDefault();
+    event.stopPropagation();
+    event.preventDefault();
 
-    $(React.findDOMNode(this.refs.modalButton)).click(function(e){
-      e.stopPropagation();
-      e.preventDefault();
+    $modalToOpen = this.getModalToOpen();
+    $modalToOpen.openModal({
+      top:this.props.top,
+      dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
+      opacity: this.props.opacity, // Opacity of modal background
+      inDuration: this.props.inDuration, // Transition in duration
+      outDuration: this.props.outDuration, // Transition out duration
+      ready: this.handleReady, // Callback for Modal open
+      complete: this.handleComplete // Callback for Modal close,
     });
-    $(React.findDOMNode(this.refs.modalButton)).leanModal({
-        top:this.props.top,
-        dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
-        opacity: this.props.opacity, // Opacity of modal background
-        in_duration: this.props.in_duration, // Transition in duration
-        out_duration: this.props.out_duration, // Transition out duration
-        ready: this.props.ready, // Callback for Modal open
-        complete: this.props.complete // Callback for Modal close,
-      }
-    );
+  },
+
+  handleReady: function() {
+    $modalToOpen = this.getModalToOpen();
+    $modalToOpen.trigger('resize');
+
+    if(typeof this.props.ready === "function") {
+      this.props.ready();
+    }
+  },
+
+  handleComplete: function() {
+    if(typeof this.props.complete === "function") {
+      this.props.complete();
+    }
   }
 
 });

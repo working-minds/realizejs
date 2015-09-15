@@ -169,7 +169,7 @@ var InputAutocomplete = React.createClass({
   clearSelection: function() {
     this.setState({
       value: []
-    });
+    }, this.triggerDependableChanged);
   },
 
   handleOptionMouseEnter: function(position) {

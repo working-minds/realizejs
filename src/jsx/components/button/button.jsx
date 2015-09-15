@@ -88,22 +88,22 @@ var Button = React.createClass({
     return className;
   },
 
-  getHref: function(){
+  getHref: function() {
     if (this.props.disabled && this.props.element === 'a')
       return 'javascript:void(0)';
     return this.props.href;
   },
 
-  getMethod: function(){
-    if(!!this.props.method){
+  getMethod: function() {
+    if(!!this.props.method) {
       return this.props.method;
     }
 
     return null
   },
 
-  getConfirmsWith: function(){
-    if(!!this.props.confirmsWith){
+  getConfirmsWith: function() {
+    if(!!this.props.confirmsWith) {
       return Realize.t(this.props.confirmsWith);
     }
 
