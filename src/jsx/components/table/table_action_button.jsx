@@ -57,6 +57,10 @@ var TableActionButton = React.createClass({
   },
 
   isDisabled: function() {
+    if(!!this.props.disabled) {
+      return true;
+    }
+
     var selectionContext = this.props.selectionContext;
     if (selectionContext === 'none') {
       return false;
@@ -87,6 +91,10 @@ var TableActionButton = React.createClass({
   },
 
   actionButtonClick: function(event) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     var buttonOnClick = this.props.onClick;
     var buttonAction = this.props.actionUrl;
     var selectedData = this.getSelectedData();
