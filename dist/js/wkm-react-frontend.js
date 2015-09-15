@@ -5729,6 +5729,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
         component.push(
           React.createElement(Button, React.__spread({},  this.props, 
             {disabled: this.isDisabled(), 
+            method: this.actionButtonMethod(), 
             href: this.actionButtonHref(), 
             onClick: this.actionButtonClick, 
             key: this.props.name})
@@ -5748,6 +5749,15 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     }
 
     return false;
+  },
+
+  actionButtonMethod: function() {
+    var buttonHref = this.props.href;
+    if(!buttonHref) {
+      return null;
+    }
+
+    return this.props.method;
   },
 
   actionButtonHref: function() {
@@ -6139,7 +6149,7 @@ var TableRow = React.createClass({displayName: "TableRow",
 });
 
 var TableRowActions = React.createClass({displayName: "TableRowActions",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, RequestHandlerMixin],
 
   propTypes: {
     data: React.PropTypes.object,
@@ -6184,7 +6194,8 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
         } else {
           actionButtons.push(
             React.createElement(Button, React.__spread({},  actionButtonProps, 
-              {href: this.actionButtonHref(actionButtonProps), 
+              {method: this.actionButtonMethod(actionButtonProps), 
+              href: this.actionButtonHref(actionButtonProps), 
               onClick: this.actionButtonClick.bind(this, actionButtonProps), 
               themeClassKey: "button.flat", 
               element: "a", 
@@ -6199,6 +6210,15 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
   },
 
   //TODO: Criar um componente para TableRowActionButton
+  actionButtonMethod: function(actionButtonProps) {
+    var buttonHref = actionButtonProps.href;
+    if(!buttonHref) {
+      return null;
+    }
+
+    return actionButtonProps.method;
+  },
+
   actionButtonHref: function(actionButtonProps) {
     var buttonHref = actionButtonProps.href;
     if(!!buttonHref) {

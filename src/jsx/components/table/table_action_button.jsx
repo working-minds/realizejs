@@ -45,6 +45,7 @@ var TableActionButton = React.createClass({
         component.push(
           <Button {...this.props}
             disabled={this.isDisabled()}
+            method={this.actionButtonMethod()}
             href={this.actionButtonHref()}
             onClick={this.actionButtonClick}
             key={this.props.name}
@@ -64,6 +65,15 @@ var TableActionButton = React.createClass({
     }
 
     return false;
+  },
+
+  actionButtonMethod: function() {
+    var buttonHref = this.props.href;
+    if(!buttonHref) {
+      return null;
+    }
+
+    return this.props.method;
   },
 
   actionButtonHref: function() {

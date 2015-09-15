@@ -1,5 +1,5 @@
 var TableRowActions = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, RequestHandlerMixin],
 
   propTypes: {
     data: React.PropTypes.object,
@@ -44,6 +44,7 @@ var TableRowActions = React.createClass({
         } else {
           actionButtons.push(
             <Button {...actionButtonProps}
+              method={this.actionButtonMethod(actionButtonProps)}
               href={this.actionButtonHref(actionButtonProps)}
               onClick={this.actionButtonClick.bind(this, actionButtonProps)}
               themeClassKey={"button.flat"}
@@ -59,6 +60,15 @@ var TableRowActions = React.createClass({
   },
 
   //TODO: Criar um componente para TableRowActionButton
+  actionButtonMethod: function(actionButtonProps) {
+    var buttonHref = actionButtonProps.href;
+    if(!buttonHref) {
+      return null;
+    }
+
+    return actionButtonProps.method;
+  },
+
   actionButtonHref: function(actionButtonProps) {
     var buttonHref = actionButtonProps.href;
     if(!!buttonHref) {
