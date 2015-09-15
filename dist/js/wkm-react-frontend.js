@@ -2481,7 +2481,7 @@ var Grid = React.createClass({displayName: "Grid",
         this.loadData();
       }
     }.bind(this));
-  }, 
+  },
 
   render: function() {
     return (
@@ -4949,22 +4949,34 @@ var Modal = React.createClass({displayName: "Modal",
 
     $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter));
     $(modal).css("width", this.props.width);
-    $(contentContainer).css("height", this.getContentHeight());
+
+    var availableHeight = this.getAvailableHeight();
+    var contentHeight = this.getContentHeight();
+
+    $(contentContainer).css("height", Math.min(availableHeight, contentHeight));
+    if(contentHeight > availableHeight) {
+      $(contentContainer).css("overflow-y", "auto");
+    }
+  },
+
+  getAvailableHeight: function() {
+    var headerContainer = React.findDOMNode(this.refs.headerContainer);
+    var footerContainer = React.findDOMNode(this.refs.footerContainer);
+
+    return ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
   },
 
   getContentHeight: function() {
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
-    var headerContainer = React.findDOMNode(this.refs.headerContainer);
-    var footerContainer = React.findDOMNode(this.refs.footerContainer);
-
-    var availableHeight = ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
     var contentHeight = 0;
     $(contentContainer).find("> *").each(function(i, content) {
       contentHeight += $(content).outerHeight();
     });
 
-    return Math.min(availableHeight, contentHeight);
+    return contentHeight;
   },
+
+
 
   filterChildren : function(area) {
     var result = null;
@@ -5682,7 +5694,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
     disabled: React.PropTypes.bool,
-    selectionContext: React.PropTypes.string,
+    selectionContext: React.PropTypes.oneOf(['none', 'atLeastOne']),
     conditionToShowActionButton: React.PropTypes.func,
     component: React.PropTypes.string
   },
@@ -5713,9 +5725,15 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
       if(!!this.props.component){
         return React.createElement(eval(this.props.component), this.props)
-      }else {
-        component.push(React.createElement(Button, React.__spread({},  this.props, {disabled: this.isDisabled(), href: this.actionButtonHref(), 
-                                               onClick: this.actionButtonClick, key: this.props.name})));
+      } else {
+        component.push(
+          React.createElement(Button, React.__spread({},  this.props, 
+            {disabled: this.isDisabled(), 
+            href: this.actionButtonHref(), 
+            onClick: this.actionButtonClick, 
+            key: this.props.name})
+          )
+        );
       }
 
     return component;
@@ -6161,13 +6179,13 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
       var conditionToShowFunction = actionButtonProps.conditionToShowActionButton;
 
       if(!conditionToShowFunction || actionButtonProps.conditionToShowActionButton(actionButtonProps.conditionParams)) {
-        if(!!actionButtonProps.component){
+        if(!!actionButtonProps.component) {
           return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
-        }else {
+        } else {
           actionButtons.push(
             React.createElement(Button, React.__spread({},  actionButtonProps, 
-              {href: this.getActionButtonHref(actionButtonProps), 
-              onClick: this.handleActionButtonClick.bind(this, actionButtonProps), 
+              {href: this.actionButtonHref(actionButtonProps), 
+              onClick: this.actionButtonClick.bind(this, actionButtonProps), 
               themeClassKey: "button.flat", 
               element: "a", 
               key: "action_" + i})
@@ -6180,7 +6198,8 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
     return actionButtons;
   },
 
-  getActionButtonHref: function(actionButtonProps) {
+  //TODO: Criar um componente para TableRowActionButton
+  actionButtonHref: function(actionButtonProps) {
     var buttonHref = actionButtonProps.href;
     if(!!buttonHref) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
@@ -6190,13 +6209,26 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
     return buttonHref;
   },
 
-  handleActionButtonClick: function(actionButtonProps, event) {
+  actionButtonClick: function(actionButtonProps, event) {
     var buttonOnClick = actionButtonProps.onClick;
+    var buttonAction = actionButtonProps.actionUrl;
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
       buttonOnClick(event, dataRowId, this.props.data);
+    } else if(!!buttonAction) {
+      var actionData = this.getActionData(actionButtonProps);
+      this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
     }
+  },
+
+  getActionData: function(actionButtonProps) {
+    var dataIdParam = actionButtonProps.dataIdParam || 'id';
+    var dataRowId = this.props.data[this.props.dataRowIdField];
+    var actionData = {};
+
+    actionData[dataIdParam] = dataRowId;
+    return actionData;
   }
 });
 

@@ -101,22 +101,34 @@ var Modal = React.createClass({
 
     $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter));
     $(modal).css("width", this.props.width);
-    $(contentContainer).css("height", this.getContentHeight());
+
+    var availableHeight = this.getAvailableHeight();
+    var contentHeight = this.getContentHeight();
+
+    $(contentContainer).css("height", Math.min(availableHeight, contentHeight));
+    if(contentHeight > availableHeight) {
+      $(contentContainer).css("overflow-y", "auto");
+    }
+  },
+
+  getAvailableHeight: function() {
+    var headerContainer = React.findDOMNode(this.refs.headerContainer);
+    var footerContainer = React.findDOMNode(this.refs.footerContainer);
+
+    return ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
   },
 
   getContentHeight: function() {
     var contentContainer = React.findDOMNode(this.refs.contentContainer);
-    var headerContainer = React.findDOMNode(this.refs.headerContainer);
-    var footerContainer = React.findDOMNode(this.refs.footerContainer);
-
-    var availableHeight = ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
     var contentHeight = 0;
     $(contentContainer).find("> *").each(function(i, content) {
       contentHeight += $(content).outerHeight();
     });
 
-    return Math.min(availableHeight, contentHeight);
+    return contentHeight;
   },
+
+
 
   filterChildren : function(area) {
     var result = null;

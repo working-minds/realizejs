@@ -39,13 +39,13 @@ var TableRowActions = React.createClass({
       var conditionToShowFunction = actionButtonProps.conditionToShowActionButton;
 
       if(!conditionToShowFunction || actionButtonProps.conditionToShowActionButton(actionButtonProps.conditionParams)) {
-        if(!!actionButtonProps.component){
+        if(!!actionButtonProps.component) {
           return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
-        }else {
+        } else {
           actionButtons.push(
             <Button {...actionButtonProps}
-              href={this.getActionButtonHref(actionButtonProps)}
-              onClick={this.handleActionButtonClick.bind(this, actionButtonProps)}
+              href={this.actionButtonHref(actionButtonProps)}
+              onClick={this.actionButtonClick.bind(this, actionButtonProps)}
               themeClassKey={"button.flat"}
               element={"a"}
               key={"action_" + i}
@@ -58,7 +58,8 @@ var TableRowActions = React.createClass({
     return actionButtons;
   },
 
-  getActionButtonHref: function(actionButtonProps) {
+  //TODO: Criar um componente para TableRowActionButton
+  actionButtonHref: function(actionButtonProps) {
     var buttonHref = actionButtonProps.href;
     if(!!buttonHref) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
@@ -68,12 +69,25 @@ var TableRowActions = React.createClass({
     return buttonHref;
   },
 
-  handleActionButtonClick: function(actionButtonProps, event) {
+  actionButtonClick: function(actionButtonProps, event) {
     var buttonOnClick = actionButtonProps.onClick;
+    var buttonAction = actionButtonProps.actionUrl;
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
       buttonOnClick(event, dataRowId, this.props.data);
+    } else if(!!buttonAction) {
+      var actionData = this.getActionData(actionButtonProps);
+      this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
     }
+  },
+
+  getActionData: function(actionButtonProps) {
+    var dataIdParam = actionButtonProps.dataIdParam || 'id';
+    var dataRowId = this.props.data[this.props.dataRowIdField];
+    var actionData = {};
+
+    actionData[dataIdParam] = dataRowId;
+    return actionData;
   }
 });
