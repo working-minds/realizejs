@@ -9,7 +9,8 @@ var TableRow = React.createClass({
     actionButtons: React.PropTypes.array,
     rowSelectableFilter: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -23,6 +24,7 @@ var TableRow = React.createClass({
       themeClassKey: 'table.row',
       rowSelectableFilter: null,
       onClickRow: null,
+      tableRowCssClass: null,
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
@@ -43,11 +45,18 @@ var TableRow = React.createClass({
     );
   },
 
-  getClassName: function(){
+  getClassName: function() {
     var className = this.className();
 
-    if(!!this.props.onClickRow){
+    if(!!this.props.onClickRow) {
       className = className + ' clickable-row'
+    }
+
+    if(!!this.props.tableRowCssClass) {
+      var cssClass = this.props.tableRowCssClass(this.props.data);
+      if (!!cssClass) {
+        className = className + ' ' + cssClass
+      }
     }
 
     return className;

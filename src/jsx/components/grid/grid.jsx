@@ -26,7 +26,8 @@ var Grid = React.createClass({
     rowSelectableFilter: React.PropTypes.func,
     customTableHeader: React.PropTypes.string,
     forceShowSelectAllButton: React.PropTypes.bool,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -61,7 +62,8 @@ var Grid = React.createClass({
       rowSelectableFilter: null,
       customTableHeader: null,
       forceShowSelectAllButton: false,
-      onClickRow: null
+      onClickRow: null,
+      tableRowCssClass: null
     };
   },
 
@@ -160,6 +162,7 @@ var Grid = React.createClass({
         customTableHeader={this.props.customTableHeader}
         forceShowSelectAllButton={this.props.forceShowSelectAllButton}
         onClickRow={this.props.onClickRow}
+        tableRowCssClass={this.props.tableRowCssClass}
       />
     );
   },

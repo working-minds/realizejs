@@ -2428,7 +2428,8 @@ var Grid = React.createClass({displayName: "Grid",
     rowSelectableFilter: React.PropTypes.func,
     customTableHeader: React.PropTypes.string,
     forceShowSelectAllButton: React.PropTypes.bool,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -2463,7 +2464,8 @@ var Grid = React.createClass({displayName: "Grid",
       rowSelectableFilter: null,
       customTableHeader: null,
       forceShowSelectAllButton: false,
-      onClickRow: null
+      onClickRow: null,
+      tableRowCssClass: null
     };
   },
 
@@ -2561,7 +2563,8 @@ var Grid = React.createClass({displayName: "Grid",
         rowSelectableFilter: this.props.rowSelectableFilter, 
         customTableHeader: this.props.customTableHeader, 
         forceShowSelectAllButton: this.props.forceShowSelectAllButton, 
-        onClickRow: this.props.onClickRow}
+        onClickRow: this.props.onClickRow, 
+        tableRowCssClass: this.props.tableRowCssClass}
       )
     );
   },
@@ -5416,7 +5419,8 @@ var Table = React.createClass({displayName: "Table",
     onSelectAll: React.PropTypes.func,
     rowSelectableFilter: React.PropTypes.func,
     forceShowSelectAllButton: React.PropTypes.bool,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5447,7 +5451,8 @@ var Table = React.createClass({displayName: "Table",
       onSelectAll: function(event) {},
       rowSelectableFilter: null,
       forceShowSelectAllButton: false,
-      onClickRow: null
+      onClickRow: null,
+      tableRowCssClass: null
     };
   },
 
@@ -5590,7 +5595,8 @@ var Table = React.createClass({displayName: "Table",
           actionButtons: this.props.actionButtons.member || [], 
           key: "table_row_" + i, 
           rowSelectableFilter: this.props.rowSelectableFilter, 
-          onClickRow: this.props.onClickRow})
+          onClickRow: this.props.onClickRow, 
+          tableRowCssClass: this.props.tableRowCssClass})
         )
       );
     }
@@ -6096,7 +6102,8 @@ var TableRow = React.createClass({displayName: "TableRow",
     actionButtons: React.PropTypes.array,
     rowSelectableFilter: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -6110,6 +6117,7 @@ var TableRow = React.createClass({displayName: "TableRow",
       themeClassKey: 'table.row',
       rowSelectableFilter: null,
       onClickRow: null,
+      tableRowCssClass: null,
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
@@ -6130,11 +6138,18 @@ var TableRow = React.createClass({displayName: "TableRow",
     );
   },
 
-  getClassName: function(){
+  getClassName: function() {
     var className = this.className();
 
-    if(!!this.props.onClickRow){
+    if(!!this.props.onClickRow) {
       className = className + ' clickable-row'
+    }
+
+    if(!!this.props.tableRowCssClass) {
+      var cssClass = this.props.tableRowCssClass(this.props.data);
+      if (!!cssClass) {
+        className = className + ' ' + cssClass
+      }
     }
 
     return className;
