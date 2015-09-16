@@ -25,11 +25,8 @@ var Grid = React.createClass({
     onLoadError: React.PropTypes.func,
     rowSelectableFilter: React.PropTypes.func,
     customTableHeader: React.PropTypes.string,
-<<<<<<< Updated upstream
-    forceShowSelectAllButton: React.PropTypes.bool
-=======
+    forceShowSelectAllButton: React.PropTypes.bool,
     onClickRow: React.PropTypes.func
->>>>>>> Stashed changes
   },
 
   getDefaultProps: function() {
@@ -63,11 +60,8 @@ var Grid = React.createClass({
       onLoadError: function(xhr, status, error) {},
       rowSelectableFilter: null,
       customTableHeader: null,
-<<<<<<< Updated upstream
-      forceShowSelectAllButton: false
-=======
+      forceShowSelectAllButton: false,
       onClickRow: null
->>>>>>> Stashed changes
     };
   },
 
@@ -164,11 +158,8 @@ var Grid = React.createClass({
         onSelectAll={this.selectAllRows}
         rowSelectableFilter={this.props.rowSelectableFilter}
         customTableHeader={this.props.customTableHeader}
-<<<<<<< Updated upstream
         forceShowSelectAllButton={this.props.forceShowSelectAllButton}
-=======
         onClickRow={this.props.onClickRow}
->>>>>>> Stashed changes
       />
     );
   },

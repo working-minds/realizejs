@@ -20,11 +20,8 @@ var Table = React.createClass({
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
     rowSelectableFilter: React.PropTypes.func,
-<<<<<<< Updated upstream
-    forceShowSelectAllButton: React.PropTypes.bool
-=======
+    forceShowSelectAllButton: React.PropTypes.bool,
     onClickRow: React.PropTypes.func
->>>>>>> Stashed changes
   },
 
   getDefaultProps: function() {
@@ -54,11 +51,8 @@ var Table = React.createClass({
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {},
       rowSelectableFilter: null,
-<<<<<<< Updated upstream
-      forceShowSelectAllButton: false
-=======
+      forceShowSelectAllButton: false,
       onClickRow: null
->>>>>>> Stashed changes
     };
   },
 
@@ -107,10 +101,6 @@ var Table = React.createClass({
         </table>
       </div>
     );
-  },
-
-  renderCustomTableHeader : function () {
-
   },
 
   wrapperClassName: function() {
