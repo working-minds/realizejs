@@ -340,6 +340,10 @@ hr {
   text-align: right;
   white-space: nowrap;
 }
+
+.clickable-row{
+  cursor: pointer;
+}
 .tabs-container .tabs {
   margin: 15px 0;
 }
