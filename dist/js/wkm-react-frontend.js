@@ -6201,7 +6201,8 @@ var TableRowActionButton = React.createClass({displayName: "TableRowActionButton
           React.createElement(Button, React.__spread({},  this.props, 
             {method: this.actionButtonMethod(), 
             href: this.actionButtonHref(), 
-            onClick: this.actionButtonClick})
+            onClick: this.actionButtonClick, 
+            key: "button"})
           )
         );
       }
