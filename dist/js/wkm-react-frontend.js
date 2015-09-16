@@ -1500,6 +1500,8 @@ var RequestHandlerMixin = {
     onComplete: React.PropTypes.func
   },
 
+  current_xhr: null,
+
   getDefaultProps: function() {
     return {
       onRequest: function(requestData, url) {},
@@ -1518,7 +1520,7 @@ var RequestHandlerMixin = {
   performRequest: function(url, requestData, method, dataType) {
     var requestOptions = {
       url: url,
-      data: requestData,
+      data: (requestData || {}),
       method: (method || 'GET'),
       success: this.successCallback,
       error: this.errorCallback,
@@ -1529,8 +1531,15 @@ var RequestHandlerMixin = {
       requestOptions.dataType = dataType;
     }
 
+    this.cancelPendingRequest();
     this.requestCallback(requestData, url);
-    $.ajax(requestOptions);
+    this.current_xhr = $.ajax(requestOptions);
+  },
+
+  cancelPendingRequest: function() {
+    if(this.current_xhr !== null && this.current_xhr.readyState < 4) {
+      this.current_xhr.abort();
+    }
   },
 
   requestCallback: function(requestData, url) {
@@ -1545,7 +1554,9 @@ var RequestHandlerMixin = {
   },
 
   errorCallback: function(xhr, status, error) {
-    this.executeCallback('onError', xhr, status, error);
+    if(error !== "abort") {
+      this.executeCallback('onError', xhr, status, error);
+    }
   },
 
   completeCallback: function(xhr, status) {
@@ -1559,9 +1570,9 @@ var RequestHandlerMixin = {
     var propFunction = this.props[callbackFunction];
 
     if(typeof componentFunction === "function") {
-      componentFunction(callbackArguments);
+      componentFunction.apply(this, callbackArguments);
     } else {
-      propFunction(callbackArguments);
+      propFunction.apply(this, callbackArguments);
     }
   },
 
@@ -2415,7 +2426,9 @@ var Grid = React.createClass({displayName: "Grid",
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
     rowSelectableFilter: React.PropTypes.func,
-    customTableHeader: React.PropTypes.string
+    customTableHeader: React.PropTypes.string,
+    forceShowSelectAllButton: React.PropTypes.bool,
+    onClickRow: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -2448,7 +2461,9 @@ var Grid = React.createClass({displayName: "Grid",
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
       rowSelectableFilter: null,
-      customTableHeader: null
+      customTableHeader: null,
+      forceShowSelectAllButton: false,
+      onClickRow: null
     };
   },
 
@@ -2544,7 +2559,9 @@ var Grid = React.createClass({displayName: "Grid",
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
         rowSelectableFilter: this.props.rowSelectableFilter, 
-        customTableHeader: this.props.customTableHeader}
+        customTableHeader: this.props.customTableHeader, 
+        forceShowSelectAllButton: this.props.forceShowSelectAllButton, 
+        onClickRow: this.props.onClickRow}
       )
     );
   },
@@ -5397,7 +5414,9 @@ var Table = React.createClass({displayName: "Table",
     onSelect: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    forceShowSelectAllButton: React.PropTypes.bool,
+    onClickRow: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5426,7 +5445,9 @@ var Table = React.createClass({displayName: "Table",
       onSelect: function(event, selectedRowIds) {},
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {},
-      rowSelectableFilter: null
+      rowSelectableFilter: null,
+      forceShowSelectAllButton: false,
+      onClickRow: null
     };
   },
 
@@ -5477,10 +5498,6 @@ var Table = React.createClass({displayName: "Table",
     );
   },
 
-  renderCustomTableHeader : function () {
-
-  },
-
   wrapperClassName: function() {
     var wrapperClassName = '';
     if(!this.props.clearTheme) {
@@ -5502,7 +5519,8 @@ var Table = React.createClass({displayName: "Table",
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
         actionButtons: this.props.actionButtons.collection || [], 
-        rowSelectableFilter: this.props.rowSelectableFilter}
+        rowSelectableFilter: this.props.rowSelectableFilter, 
+        forceShowSelectAllButton: this.props.forceShowSelectAllButton}
       )
     );
   },
@@ -5571,7 +5589,8 @@ var Table = React.createClass({displayName: "Table",
           data: dataRow, 
           actionButtons: this.props.actionButtons.member || [], 
           key: "table_row_" + i, 
-          rowSelectableFilter: this.props.rowSelectableFilter})
+          rowSelectableFilter: this.props.rowSelectableFilter, 
+          onClickRow: this.props.onClickRow})
         )
       );
     }
@@ -5812,7 +5831,8 @@ var TableActions = React.createClass({displayName: "TableActions",
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    forceShowSelectAllButton: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -5822,6 +5842,7 @@ var TableActions = React.createClass({displayName: "TableActions",
       selectedRowIds: [],
       allSelected: false,
       rowSelectableFilter: null,
+      forceShowSelectAllButton: false,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -6074,7 +6095,8 @@ var TableRow = React.createClass({displayName: "TableRow",
     selected: React.PropTypes.bool,
     actionButtons: React.PropTypes.array,
     rowSelectableFilter: React.PropTypes.func,
-    onSelectToggle: React.PropTypes.func
+    onSelectToggle: React.PropTypes.func,
+    onClickRow: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -6087,19 +6109,35 @@ var TableRow = React.createClass({displayName: "TableRow",
       actionButtons: [],
       themeClassKey: 'table.row',
       rowSelectableFilter: null,
+      onClickRow: null,
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
 
+  rowClick: function(event) {
+    if(!!this.props.onClickRow && typeof this.props.onClickRow === "function") {
+      this.props.onClickRow(event, this.props.data);
+    }
+  },
 
   render: function() {
     return (
-      React.createElement("tr", {className: this.className(), ref: "row"}, 
+      React.createElement("tr", {className: this.getClassName(), ref: "row", onClick: this.rowClick}, 
         this.renderSelectCell(), 
         this.renderCells(), 
         this.renderActionsCell()
       )
     );
+  },
+
+  getClassName: function(){
+    var className = this.className();
+
+    if(!!this.props.onClickRow){
+      className = className + ' clickable-row'
+    }
+
+    return className;
   },
 
   renderSelectCell: function() {
@@ -6369,7 +6407,8 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    forceShowSelectAllButton: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -6386,6 +6425,7 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
       selectAllButtonName: 'table.selection.selectAll',
       allSelected: false,
       rowSelectableFilter: null,
+      forceShowSelectAllButton: false,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -6435,7 +6475,9 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
 
   renderSelectAllButton: function() {
     if(typeof this.props.rowSelectableFilter === "function" || this.props.allSelected) {
-      return '';
+      if(!this.props.forceShowSelectAllButton){
+        return '';
+      }
     }
 
     return (

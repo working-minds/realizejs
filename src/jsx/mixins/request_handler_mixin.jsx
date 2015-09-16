@@ -6,6 +6,8 @@ var RequestHandlerMixin = {
     onComplete: React.PropTypes.func
   },
 
+  current_xhr: null,
+
   getDefaultProps: function() {
     return {
       onRequest: function(requestData, url) {},
@@ -24,7 +26,7 @@ var RequestHandlerMixin = {
   performRequest: function(url, requestData, method, dataType) {
     var requestOptions = {
       url: url,
-      data: requestData,
+      data: (requestData || {}),
       method: (method || 'GET'),
       success: this.successCallback,
       error: this.errorCallback,
@@ -35,8 +37,15 @@ var RequestHandlerMixin = {
       requestOptions.dataType = dataType;
     }
 
+    this.cancelPendingRequest();
     this.requestCallback(requestData, url);
-    $.ajax(requestOptions);
+    this.current_xhr = $.ajax(requestOptions);
+  },
+
+  cancelPendingRequest: function() {
+    if(this.current_xhr !== null && this.current_xhr.readyState < 4) {
+      this.current_xhr.abort();
+    }
   },
 
   requestCallback: function(requestData, url) {
@@ -51,7 +60,9 @@ var RequestHandlerMixin = {
   },
 
   errorCallback: function(xhr, status, error) {
-    this.executeCallback('onError', xhr, status, error);
+    if(error !== "abort") {
+      this.executeCallback('onError', xhr, status, error);
+    }
   },
 
   completeCallback: function(xhr, status) {
@@ -65,9 +76,9 @@ var RequestHandlerMixin = {
     var propFunction = this.props[callbackFunction];
 
     if(typeof componentFunction === "function") {
-      componentFunction(callbackArguments);
+      componentFunction.apply(this, callbackArguments);
     } else {
-      propFunction(callbackArguments);
+      propFunction.apply(this, callbackArguments);
     }
   },
 

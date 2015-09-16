@@ -12,7 +12,8 @@ var TableSelectionIndicator = React.createClass({
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    forceShowSelectAllButton: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -29,6 +30,7 @@ var TableSelectionIndicator = React.createClass({
       selectAllButtonName: 'table.selection.selectAll',
       allSelected: false,
       rowSelectableFilter: null,
+      forceShowSelectAllButton: false,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -78,7 +80,9 @@ var TableSelectionIndicator = React.createClass({
 
   renderSelectAllButton: function() {
     if(typeof this.props.rowSelectableFilter === "function" || this.props.allSelected) {
-      return '';
+      if(!this.props.forceShowSelectAllButton){
+        return '';
+      }
     }
 
     return (
