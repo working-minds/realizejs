@@ -4859,11 +4859,13 @@ var Modal = React.createClass({displayName: "Modal",
     modalHeight: React.PropTypes.number,
     headerHeight: React.PropTypes.number,
     contentHeight: React.PropTypes.number,
-    footerHeight: React.PropTypes.number
+    footerHeight: React.PropTypes.number,
+    useAvailableHeight: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'modal',
       opened: false,
       headerSize: 50,
       footerSize: 50,
@@ -4873,7 +4875,7 @@ var Modal = React.createClass({displayName: "Modal",
       headerHeight: 0,
       contentHeight: 0,
       footerHeight: 0,
-      themeClassKey: 'modal'
+      useAvailableHeight: false
     };
   },
 
@@ -4952,11 +4954,14 @@ var Modal = React.createClass({displayName: "Modal",
 
     var availableHeight = this.getAvailableHeight();
     var contentHeight = this.getContentHeight();
-
-    $(contentContainer).css("height", Math.min(availableHeight, contentHeight));
-    if(contentHeight > availableHeight) {
-      $(contentContainer).css("overflow-y", "auto");
+    var containerHeight = 0;
+    if(!!this.props.useAvailableHeight) {
+      containerHeight = availableHeight;
+    } else {
+      containerHeight = Math.min(availableHeight, contentHeight);
     }
+
+    $(contentContainer).css("height", containerHeight);
   },
 
   getAvailableHeight: function() {
@@ -5728,7 +5733,8 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
       } else {
         component.push(
           React.createElement(Button, React.__spread({},  this.props, 
-            {disabled: this.isDisabled(), 
+            {isLoading: this.state.isLoading, 
+            disabled: this.isDisabled(), 
             method: this.actionButtonMethod(), 
             href: this.actionButtonHref(), 
             onClick: this.actionButtonClick, 
@@ -6203,7 +6209,8 @@ var TableRowActionButton = React.createClass({displayName: "TableRowActionButton
           React.createElement(Button, React.__spread({},  this.props, 
             {method: this.actionButtonMethod(this.props), 
             href: this.actionButtonHref(this.props), 
-            onClick: this.actionButtonClick.bind(this, this.props)})
+            onClick: this.actionButtonClick.bind(this, this.props), 
+            isLoading: this.state.isLoading})
           )
         );
       }

@@ -259,7 +259,7 @@ hr {
 }
 
 .realize-modal .modal-content-container {
-  overflow-y: visible;
+  overflow-y: auto;
 
   transition: height .5s ease;
   -webkit-transition: height .5s ease;

@@ -44,6 +44,7 @@ var TableActionButton = React.createClass({
       } else {
         component.push(
           <Button {...this.props}
+            isLoading={this.state.isLoading}
             disabled={this.isDisabled()}
             method={this.actionButtonMethod()}
             href={this.actionButtonHref()}

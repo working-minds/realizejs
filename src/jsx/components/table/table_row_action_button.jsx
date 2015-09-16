@@ -46,6 +46,7 @@ var TableRowActionButton = React.createClass({
             method={this.actionButtonMethod(this.props)}
             href={this.actionButtonHref(this.props)}
             onClick={this.actionButtonClick.bind(this, this.props)}
+            isLoading={this.state.isLoading}
           />
         );
       }

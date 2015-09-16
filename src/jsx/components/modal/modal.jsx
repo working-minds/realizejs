@@ -11,11 +11,13 @@ var Modal = React.createClass({
     modalHeight: React.PropTypes.number,
     headerHeight: React.PropTypes.number,
     contentHeight: React.PropTypes.number,
-    footerHeight: React.PropTypes.number
+    footerHeight: React.PropTypes.number,
+    useAvailableHeight: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'modal',
       opened: false,
       headerSize: 50,
       footerSize: 50,
@@ -25,7 +27,7 @@ var Modal = React.createClass({
       headerHeight: 0,
       contentHeight: 0,
       footerHeight: 0,
-      themeClassKey: 'modal'
+      useAvailableHeight: false
     };
   },
 
@@ -104,11 +106,14 @@ var Modal = React.createClass({
 
     var availableHeight = this.getAvailableHeight();
     var contentHeight = this.getContentHeight();
-
-    $(contentContainer).css("height", Math.min(availableHeight, contentHeight));
-    if(contentHeight > availableHeight) {
-      $(contentContainer).css("overflow-y", "auto");
+    var containerHeight = 0;
+    if(!!this.props.useAvailableHeight) {
+      containerHeight = availableHeight;
+    } else {
+      containerHeight = Math.min(availableHeight, contentHeight);
     }
+
+    $(contentContainer).css("height", containerHeight);
   },
 
   getAvailableHeight: function() {
