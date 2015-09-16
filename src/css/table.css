@@ -65,3 +65,7 @@
   text-align: right;
   white-space: nowrap;
 }
+
+.clickable-row{
+  cursor: pointer;
+}
