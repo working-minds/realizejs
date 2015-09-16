@@ -2415,7 +2415,8 @@ var Grid = React.createClass({displayName: "Grid",
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
     rowSelectableFilter: React.PropTypes.func,
-    customTableHeader: React.PropTypes.string
+    customTableHeader: React.PropTypes.string,
+    forceShowSelectAllButton: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -2448,7 +2449,8 @@ var Grid = React.createClass({displayName: "Grid",
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
       rowSelectableFilter: null,
-      customTableHeader: null
+      customTableHeader: null,
+      forceShowSelectAllButton: false
     };
   },
 
@@ -2544,7 +2546,8 @@ var Grid = React.createClass({displayName: "Grid",
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
         rowSelectableFilter: this.props.rowSelectableFilter, 
-        customTableHeader: this.props.customTableHeader}
+        customTableHeader: this.props.customTableHeader, 
+        forceShowSelectAllButton: this.props.forceShowSelectAllButton}
       )
     );
   },
@@ -5397,7 +5400,8 @@ var Table = React.createClass({displayName: "Table",
     onSelect: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    forceShowSelectAllButton: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -5426,7 +5430,8 @@ var Table = React.createClass({displayName: "Table",
       onSelect: function(event, selectedRowIds) {},
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {},
-      rowSelectableFilter: null
+      rowSelectableFilter: null,
+      forceShowSelectAllButton: false
     };
   },
 
@@ -5502,7 +5507,8 @@ var Table = React.createClass({displayName: "Table",
         onRemoveSelection: this.removeSelection, 
         onSelectAll: this.selectAllRows, 
         actionButtons: this.props.actionButtons.collection || [], 
-        rowSelectableFilter: this.props.rowSelectableFilter}
+        rowSelectableFilter: this.props.rowSelectableFilter, 
+        forceShowSelectAllButton: this.props.forceShowSelectAllButton}
       )
     );
   },
@@ -5812,7 +5818,8 @@ var TableActions = React.createClass({displayName: "TableActions",
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    forceShowSelectAllButton: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -5822,6 +5829,7 @@ var TableActions = React.createClass({displayName: "TableActions",
       selectedRowIds: [],
       allSelected: false,
       rowSelectableFilter: null,
+      forceShowSelectAllButton: false,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -6369,7 +6377,8 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
     count: React.PropTypes.number,
     onRemoveSelection: React.PropTypes.func,
     onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func
+    rowSelectableFilter: React.PropTypes.func,
+    forceShowSelectAllButton: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -6386,6 +6395,7 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
       selectAllButtonName: 'table.selection.selectAll',
       allSelected: false,
       rowSelectableFilter: null,
+      forceShowSelectAllButton: false,
       onRemoveSelection: function(event) {},
       onSelectAll: function(event) {}
     };
@@ -6435,7 +6445,9 @@ var TableSelectionIndicator = React.createClass({displayName: "TableSelectionInd
 
   renderSelectAllButton: function() {
     if(typeof this.props.rowSelectableFilter === "function" || this.props.allSelected) {
-      return '';
+      if(!this.props.forceShowSelectAllButton){
+        return '';
+      }
     }
 
     return (
