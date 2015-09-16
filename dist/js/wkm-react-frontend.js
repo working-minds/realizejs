@@ -6161,10 +6161,7 @@ var TableRowActionButton = React.createClass({displayName: "TableRowActionButton
 
   propTypes: {
     data: React.PropTypes.object,
-    selectedRowIds: React.PropTypes.array,
-    selectedRowIdsParam: React.PropTypes.string,
-    allSelected: React.PropTypes.bool,
-    allSelectedData: React.PropTypes.object,
+    dataRowFieldId: React.PropTypes.string,
     count: React.PropTypes.number,
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
@@ -6176,8 +6173,8 @@ var TableRowActionButton = React.createClass({displayName: "TableRowActionButton
 
   getDefaultProps: function() {
     return {
-      selectedRowIds: [],
-      allSelected: false,
+      data: {},
+      dataRowFieldId: 'id',
       method: null,
       conditionParams: null,
       disabled: false,
@@ -6190,9 +6187,9 @@ var TableRowActionButton = React.createClass({displayName: "TableRowActionButton
 
   render: function() {
     return (
-        React.createElement("span", null, 
+      React.createElement("span", null, 
         this.renderButton()
-        )
+      )
     );
   },
 

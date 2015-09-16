@@ -3,10 +3,7 @@ var TableRowActionButton = React.createClass({
 
   propTypes: {
     data: React.PropTypes.object,
-    selectedRowIds: React.PropTypes.array,
-    selectedRowIdsParam: React.PropTypes.string,
-    allSelected: React.PropTypes.bool,
-    allSelectedData: React.PropTypes.object,
+    dataRowFieldId: React.PropTypes.string,
     count: React.PropTypes.number,
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
@@ -18,8 +15,8 @@ var TableRowActionButton = React.createClass({
 
   getDefaultProps: function() {
     return {
-      selectedRowIds: [],
-      allSelected: false,
+      data: {},
+      dataRowFieldId: 'id',
       method: null,
       conditionParams: null,
       disabled: false,
@@ -32,9 +29,9 @@ var TableRowActionButton = React.createClass({
 
   render: function() {
     return (
-        <span>
+      <span>
         {this.renderButton()}
-        </span>
+      </span>
     );
   },
 
