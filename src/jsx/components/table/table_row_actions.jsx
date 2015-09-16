@@ -43,7 +43,7 @@ var TableRowActions = React.createClass({
           return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
         } else {
           actionButtons.push(
-              <TableRowActionButton key={"action_" + i} {...actionButtonProps} dataRowIdField={this.props.data[this.props.dataRowIdField]}/>
+            <TableRowActionButton key={"action_" + i} {...actionButtonProps} dataRowIdField={this.props.dataRowIdField} data={this.props.data} />
           );
         }
       }
