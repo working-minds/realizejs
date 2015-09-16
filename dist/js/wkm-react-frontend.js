@@ -818,7 +818,7 @@ var FormErrorHandlerMixin = {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,
     onError: React.PropTypes.func,
-    mapping: React.PropTypes.string
+    mapping: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -1972,18 +1972,15 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
       themeClassKey: 'form',
       style: 'default',
       resource: null,
-      onSubmit: function (event, postData) {
-      },
-      onReset: function (event) {
-      }
+      onSubmit: function (event, postData) {},
+      onReset: function (event) {}
     };
   },
 
   getInitialState: function() {
-
     var disabled = [];
 
-    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+    for(var i = 0; i < this.props.inputGroups.length; i++ ) {
       var inputs = this.props.inputGroups[i].inputs;
       for(var inputId in inputs) {
         disabled.push(inputId);
@@ -1997,13 +1994,14 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   },
 
   render: function() {
-
     var formProps = $.extend({}, this.props);
     delete formProps.inputGroups;
+
     return (
       React.createElement(Form, React.__spread({},  formProps), 
         this.renderChildren()
-      ));
+      )
+    );
   },
 
   generateInputIds: function(){
@@ -2018,96 +2016,90 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
   },
 
   renderChildren: function () {
-
     var inputComponents = [];
 
-    for(var i = 0; i < this.props.inputGroups.length; i++ )
-    {
+    for(var i = 0; i < this.props.inputGroups.length; i++ ) {
       var inputGroup = this.props.inputGroups[i];
-      this.generateInputs(inputComponents, inputGroup);
+      this.generateInputs(inputComponents, inputGroup, i);
     }
 
     return inputComponents;
   },
 
 
-  generateInputs: function (inputComponents, inputGroup) {
+  generateInputs: function (inputComponents, inputGroup, i) {
     var inputIndex = 0;
 
-    inputComponents.push(React.createElement("h5", null, inputGroup.label));
-
+    inputComponents.push(React.createElement("h5", {key: "header_" + i}, inputGroup.label));
     var inputsProps = inputGroup.inputs;
-      for (var inputId in inputsProps) {
-        if (inputsProps.hasOwnProperty(inputId)) {
-          var inputProps = inputsProps[inputId];
-          if (!inputProps.id) {
-            inputProps.id = inputId;
-          }
+    for (var inputId in inputsProps) {
+      if (inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+        if (!inputProps.id) {
+          inputProps.id = inputId;
+        }
 
-          if (this.state.disabled.indexOf(inputId) === -1) {
-            inputProps.disabled = false;
-          } else {
-            inputProps.disabled = true;
-          }
+        inputProps.disabled = (this.state.disabled.indexOf(inputId) !== -1);
+        var resourceName = inputGroup.resource || this.props.resource;
 
-          var resourceName = inputGroup.resource || this.props.resource;
+        var switchId = "enable";
+        if (!!resourceName) {
+          switchId = switchId + "_" + resourceName
+        }
+        switchId = switchId + "_" + inputId;
 
-          switchId = "enable";
-          if (!!resourceName) {
-            switchId = switchId + "_" + resourceName
-          }
-          switchId = switchId + "_" + inputId;
+        var switchName = "enable";
+        if (!!resourceName) {
+          switchName = switchName + "[" + resourceName + "]"
+        }
+        switchName = switchName + "[" + inputId + "]";
 
-          switchName = "enable";
-          if (!!resourceName) {
-            switchName = switchName + "[" + resourceName + "]"
-          }
-          switchName = switchName + "[" + inputId + "]";
-
-          if (inputId == 'ids') {
-            inputComponents.push(
+        if (inputId == 'ids') {
+          inputComponents.push(
+            React.createElement(Input, React.__spread({},  inputProps, 
+              {disabled: false, 
+              data: this.props.data, 
+              resource: inputGroup.resource || this.props.resource, 
+              className: "col m7 s10", 
+              key: "value_" + inputId, 
+              ref: "input_" + inputId, 
+              component: "hidden"})
+            )
+          );
+        } else {
+          inputComponents.push(
+            React.createElement("div", {className: "row", key: "wrapper_" + inputId}, 
+              React.createElement(InputSwitch, {
+                id: switchId, 
+                name: switchName, 
+                onChange: this.handleSwitchChange, 
+                className: "switch col l3 m3 s2", 
+                offLabel: "", 
+                onLabel: "", 
+                key: "switch_" + inputId}
+              ), 
               React.createElement(Input, React.__spread({},  inputProps, 
-                {disabled: false, 
-                data: this.props.data, 
+                {data: this.props.data, 
+                errors: this.props.errors, 
                 resource: inputGroup.resource || this.props.resource, 
-                className: "col m7 s10", 
+                formStyle: this.props.formStyle, 
+                className: "input-field col offset-s1 l8 m8 s8", 
+                clearTheme: true, 
                 key: this.state.inputKeys[inputId], 
-                ref: "input_" + inputId, 
-                component: "hidden"})
-                )
-            );
-          } else {
-            inputComponents.push(
-              React.createElement("div", {className: "row"}, 
-                React.createElement(InputSwitch, {id: switchId, 
-                             name: switchName, 
-                             onChange: this.handleSwitchChange, 
-                             className: "switch col l3 m3 s2", 
-                             offLabel: "", 
-                             onLabel: ""}
-                  ), 
-                React.createElement(Input, React.__spread({},  inputProps, 
-                  {data: this.props.data, 
-                  errors: this.props.errors, 
-                  resource: inputGroup.resource || this.props.resource, 
-                  formStyle: this.props.formStyle, 
-                  className: "input-field col offset-s1 l8 m8 s8", 
-                  clearTheme: true, 
-                  key: this.state.inputKeys[inputId], 
-                  ref: "input_" + inputId})
-                  )
+                ref: "input_" + inputId})
               )
-            );
-            inputIndex++;
-          }
+            )
+          );
+          inputIndex++;
         }
       }
+    }
 
     return inputComponents;
   },
 
 
-handleSwitchChange: function (event) {
+  handleSwitchChange: function (event) {
     var sw = event.target;
     var inputId = sw.id.replace(/^enable_/, '');
 
@@ -4859,11 +4851,13 @@ var Modal = React.createClass({displayName: "Modal",
     modalHeight: React.PropTypes.number,
     headerHeight: React.PropTypes.number,
     contentHeight: React.PropTypes.number,
-    footerHeight: React.PropTypes.number
+    footerHeight: React.PropTypes.number,
+    useAvailableHeight: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'modal',
       opened: false,
       headerSize: 50,
       footerSize: 50,
@@ -4873,7 +4867,7 @@ var Modal = React.createClass({displayName: "Modal",
       headerHeight: 0,
       contentHeight: 0,
       footerHeight: 0,
-      themeClassKey: 'modal'
+      useAvailableHeight: false
     };
   },
 
@@ -4952,11 +4946,14 @@ var Modal = React.createClass({displayName: "Modal",
 
     var availableHeight = this.getAvailableHeight();
     var contentHeight = this.getContentHeight();
-
-    $(contentContainer).css("height", Math.min(availableHeight, contentHeight));
-    if(contentHeight > availableHeight) {
-      $(contentContainer).css("overflow-y", "auto");
+    var containerHeight = 0;
+    if(!!this.props.useAvailableHeight) {
+      containerHeight = availableHeight;
+    } else {
+      containerHeight = Math.min(availableHeight, contentHeight);
     }
+
+    $(contentContainer).css("height", containerHeight);
   },
 
   getAvailableHeight: function() {
@@ -5728,7 +5725,8 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
       } else {
         component.push(
           React.createElement(Button, React.__spread({},  this.props, 
-            {disabled: this.isDisabled(), 
+            {isLoading: this.state.isLoading, 
+            disabled: this.isDisabled(), 
             method: this.actionButtonMethod(), 
             href: this.actionButtonHref(), 
             onClick: this.actionButtonClick, 
@@ -5741,7 +5739,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
   },
 
   isDisabled: function() {
-    if(!!this.props.disabled) {
+    if(!!this.props.disabled || !!this.state.isLoading) {
       return true;
     }
 
@@ -6156,6 +6154,105 @@ var TableRow = React.createClass({displayName: "TableRow",
 
 });
 
+var TableRowActionButton = React.createClass({displayName: "TableRowActionButton",
+  mixins: [CssClassMixin, RequestHandlerMixin],
+
+  propTypes: {
+    data: React.PropTypes.object,
+    dataRowFieldId: React.PropTypes.string,
+    count: React.PropTypes.number,
+    actionUrl: React.PropTypes.string,
+    method: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    conditionToShowActionButton: React.PropTypes.func,
+    component: React.PropTypes.string,
+    element: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      data: {},
+      dataRowFieldId: 'id',
+      method: null,
+      conditionParams: null,
+      disabled: false,
+      component: null,
+      element: 'a',
+      themeClassKey: 'button.flat',
+      conditionToShowActionButton: function(data) { return true }
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement("span", null, 
+        this.renderButton()
+      )
+    );
+  },
+
+  renderButton: function(){
+    var component = [];
+    if (this.props.conditionToShowActionButton(this.props.conditionParams))
+      if(!!this.props.component){
+        return React.createElement(eval(this.props.component), this.props)
+      } else {
+        component.push(
+          React.createElement(Button, React.__spread({},  this.props, 
+            {method: this.actionButtonMethod(), 
+            href: this.actionButtonHref(), 
+            onClick: this.actionButtonClick, 
+            key: "button"})
+          )
+        );
+      }
+
+    return component;
+  },
+
+  actionButtonMethod: function() {
+    var buttonHref = this.props.href;
+    if(!buttonHref) {
+      return null;
+    }
+
+    return this.props.method;
+  },
+
+  actionButtonHref: function() {
+    var buttonHref = this.props.href;
+    if(!!buttonHref) {
+      var dataRowId = this.props.data[this.props.dataRowIdField];
+      buttonHref = buttonHref.replace(/:id/, dataRowId);
+    }
+
+    return buttonHref;
+  },
+
+  actionButtonClick: function(event) {
+    var buttonOnClick = this.props.onClick;
+    var buttonAction = this.props.actionUrl;
+
+    if($.isFunction(buttonOnClick)) {
+      var dataRowId = this.props.data[this.props.dataRowIdField];
+      buttonOnClick(event, dataRowId, this.props.data);
+    } else if(!!buttonAction) {
+      var actionData = this.getActionData(this.props);
+      this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
+    }
+  },
+
+  getActionData: function() {
+    var dataIdParam = this.props.dataIdParam || 'id';
+    var dataRowId = this.props.data[this.props.dataRowIdField];
+    var actionData = {};
+
+    actionData[dataIdParam] = dataRowId;
+    return actionData;
+  }
+
+});
+
 var TableRowActions = React.createClass({displayName: "TableRowActions",
   mixins: [CssClassMixin, RequestHandlerMixin],
 
@@ -6201,62 +6298,13 @@ var TableRowActions = React.createClass({displayName: "TableRowActions",
           return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
         } else {
           actionButtons.push(
-            React.createElement(Button, React.__spread({},  actionButtonProps, 
-              {method: this.actionButtonMethod(actionButtonProps), 
-              href: this.actionButtonHref(actionButtonProps), 
-              onClick: this.actionButtonClick.bind(this, actionButtonProps), 
-              themeClassKey: "button.flat", 
-              element: "a", 
-              key: "action_" + i})
-              )
+            React.createElement(TableRowActionButton, React.__spread({key: "action_" + i},  actionButtonProps, {dataRowIdField: this.props.dataRowIdField, data: this.props.data}))
           );
         }
       }
     }
 
     return actionButtons;
-  },
-
-  //TODO: Criar um componente para TableRowActionButton
-  actionButtonMethod: function(actionButtonProps) {
-    var buttonHref = actionButtonProps.href;
-    if(!buttonHref) {
-      return null;
-    }
-
-    return actionButtonProps.method;
-  },
-
-  actionButtonHref: function(actionButtonProps) {
-    var buttonHref = actionButtonProps.href;
-    if(!!buttonHref) {
-      var dataRowId = this.props.data[this.props.dataRowIdField];
-      buttonHref = buttonHref.replace(/:id/, dataRowId);
-    }
-
-    return buttonHref;
-  },
-
-  actionButtonClick: function(actionButtonProps, event) {
-    var buttonOnClick = actionButtonProps.onClick;
-    var buttonAction = actionButtonProps.actionUrl;
-
-    if($.isFunction(buttonOnClick)) {
-      var dataRowId = this.props.data[this.props.dataRowIdField];
-      buttonOnClick(event, dataRowId, this.props.data);
-    } else if(!!buttonAction) {
-      var actionData = this.getActionData(actionButtonProps);
-      this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
-    }
-  },
-
-  getActionData: function(actionButtonProps) {
-    var dataIdParam = actionButtonProps.dataIdParam || 'id';
-    var dataRowId = this.props.data[this.props.dataRowIdField];
-    var actionData = {};
-
-    actionData[dataIdParam] = dataRowId;
-    return actionData;
   }
 });
 

@@ -43,61 +43,12 @@ var TableRowActions = React.createClass({
           return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
         } else {
           actionButtons.push(
-            <Button {...actionButtonProps}
-              method={this.actionButtonMethod(actionButtonProps)}
-              href={this.actionButtonHref(actionButtonProps)}
-              onClick={this.actionButtonClick.bind(this, actionButtonProps)}
-              themeClassKey={"button.flat"}
-              element={"a"}
-              key={"action_" + i}
-              />
+            <TableRowActionButton key={"action_" + i} {...actionButtonProps} dataRowIdField={this.props.dataRowIdField} data={this.props.data} />
           );
         }
       }
     }
 
     return actionButtons;
-  },
-
-  //TODO: Criar um componente para TableRowActionButton
-  actionButtonMethod: function(actionButtonProps) {
-    var buttonHref = actionButtonProps.href;
-    if(!buttonHref) {
-      return null;
-    }
-
-    return actionButtonProps.method;
-  },
-
-  actionButtonHref: function(actionButtonProps) {
-    var buttonHref = actionButtonProps.href;
-    if(!!buttonHref) {
-      var dataRowId = this.props.data[this.props.dataRowIdField];
-      buttonHref = buttonHref.replace(/:id/, dataRowId);
-    }
-
-    return buttonHref;
-  },
-
-  actionButtonClick: function(actionButtonProps, event) {
-    var buttonOnClick = actionButtonProps.onClick;
-    var buttonAction = actionButtonProps.actionUrl;
-
-    if($.isFunction(buttonOnClick)) {
-      var dataRowId = this.props.data[this.props.dataRowIdField];
-      buttonOnClick(event, dataRowId, this.props.data);
-    } else if(!!buttonAction) {
-      var actionData = this.getActionData(actionButtonProps);
-      this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
-    }
-  },
-
-  getActionData: function(actionButtonProps) {
-    var dataIdParam = actionButtonProps.dataIdParam || 'id';
-    var dataRowId = this.props.data[this.props.dataRowIdField];
-    var actionData = {};
-
-    actionData[dataIdParam] = dataRowId;
-    return actionData;
   }
 });

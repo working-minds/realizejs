@@ -3,7 +3,7 @@ var FormErrorHandlerMixin = {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,
     onError: React.PropTypes.func,
-    mapping: React.PropTypes.string
+    mapping: React.PropTypes.bool
   },
 
   getDefaultProps: function() {

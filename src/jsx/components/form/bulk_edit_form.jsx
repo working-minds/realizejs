@@ -37,18 +37,15 @@ var BulkEditForm = React.createClass({
       themeClassKey: 'form',
       style: 'default',
       resource: null,
-      onSubmit: function (event, postData) {
-      },
-      onReset: function (event) {
-      }
+      onSubmit: function (event, postData) {},
+      onReset: function (event) {}
     };
   },
 
   getInitialState: function() {
-
     var disabled = [];
 
-    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+    for(var i = 0; i < this.props.inputGroups.length; i++ ) {
       var inputs = this.props.inputGroups[i].inputs;
       for(var inputId in inputs) {
         disabled.push(inputId);
@@ -62,13 +59,14 @@ var BulkEditForm = React.createClass({
   },
 
   render: function() {
-
     var formProps = $.extend({}, this.props);
     delete formProps.inputGroups;
+
     return (
       <Form {...formProps}>
         {this.renderChildren()}
-      </Form>);
+      </Form>
+    );
   },
 
   generateInputIds: function(){
@@ -83,96 +81,90 @@ var BulkEditForm = React.createClass({
   },
 
   renderChildren: function () {
-
     var inputComponents = [];
 
-    for(var i = 0; i < this.props.inputGroups.length; i++ )
-    {
+    for(var i = 0; i < this.props.inputGroups.length; i++ ) {
       var inputGroup = this.props.inputGroups[i];
-      this.generateInputs(inputComponents, inputGroup);
+      this.generateInputs(inputComponents, inputGroup, i);
     }
 
     return inputComponents;
   },
 
 
-  generateInputs: function (inputComponents, inputGroup) {
+  generateInputs: function (inputComponents, inputGroup, i) {
     var inputIndex = 0;
 
-    inputComponents.push(<h5>{inputGroup.label}</h5>);
-
+    inputComponents.push(<h5 key={"header_" + i}>{inputGroup.label}</h5>);
     var inputsProps = inputGroup.inputs;
-      for (var inputId in inputsProps) {
-        if (inputsProps.hasOwnProperty(inputId)) {
-          var inputProps = inputsProps[inputId];
-          if (!inputProps.id) {
-            inputProps.id = inputId;
-          }
+    for (var inputId in inputsProps) {
+      if (inputsProps.hasOwnProperty(inputId)) {
+        var inputProps = inputsProps[inputId];
+        if (!inputProps.id) {
+          inputProps.id = inputId;
+        }
 
-          if (this.state.disabled.indexOf(inputId) === -1) {
-            inputProps.disabled = false;
-          } else {
-            inputProps.disabled = true;
-          }
+        inputProps.disabled = (this.state.disabled.indexOf(inputId) !== -1);
+        var resourceName = inputGroup.resource || this.props.resource;
 
-          var resourceName = inputGroup.resource || this.props.resource;
+        var switchId = "enable";
+        if (!!resourceName) {
+          switchId = switchId + "_" + resourceName
+        }
+        switchId = switchId + "_" + inputId;
 
-          switchId = "enable";
-          if (!!resourceName) {
-            switchId = switchId + "_" + resourceName
-          }
-          switchId = switchId + "_" + inputId;
+        var switchName = "enable";
+        if (!!resourceName) {
+          switchName = switchName + "[" + resourceName + "]"
+        }
+        switchName = switchName + "[" + inputId + "]";
 
-          switchName = "enable";
-          if (!!resourceName) {
-            switchName = switchName + "[" + resourceName + "]"
-          }
-          switchName = switchName + "[" + inputId + "]";
-
-          if (inputId == 'ids') {
-            inputComponents.push(
+        if (inputId == 'ids') {
+          inputComponents.push(
+            <Input {...inputProps}
+              disabled={false}
+              data={this.props.data}
+              resource={inputGroup.resource || this.props.resource}
+              className="col m7 s10"
+              key={"value_" + inputId}
+              ref={"input_" + inputId}
+              component='hidden'
+            />
+          );
+        } else {
+          inputComponents.push(
+            <div className="row" key={"wrapper_" + inputId}>
+              <InputSwitch
+                id={switchId}
+                name={switchName}
+                onChange={this.handleSwitchChange}
+                className="switch col l3 m3 s2"
+                offLabel=''
+                onLabel=''
+                key={"switch_" + inputId}
+              />
               <Input {...inputProps}
-                disabled={false}
                 data={this.props.data}
+                errors={this.props.errors}
                 resource={inputGroup.resource || this.props.resource}
-                className="col m7 s10"
+                formStyle={this.props.formStyle}
+                className="input-field col offset-s1 l8 m8 s8"
+                clearTheme={true}
                 key={this.state.inputKeys[inputId]}
                 ref={"input_" + inputId}
-                component='hidden'
-                />
-            );
-          } else {
-            inputComponents.push(
-              <div className="row">
-                <InputSwitch id={switchId}
-                             name={switchName}
-                             onChange={this.handleSwitchChange}
-                             className="switch col l3 m3 s2"
-                             offLabel=''
-                             onLabel=''
-                  />
-                <Input {...inputProps}
-                  data={this.props.data}
-                  errors={this.props.errors}
-                  resource={inputGroup.resource || this.props.resource}
-                  formStyle={this.props.formStyle}
-                  className="input-field col offset-s1 l8 m8 s8"
-                  clearTheme={true}
-                  key={this.state.inputKeys[inputId]}
-                  ref={"input_" + inputId}
-                  />
-              </div>
-            );
-            inputIndex++;
-          }
+              />
+            </div>
+          );
+          inputIndex++;
         }
       }
+    }
 
     return inputComponents;
   },
 
 
-handleSwitchChange: function (event) {
+  handleSwitchChange: function (event) {
     var sw = event.target;
     var inputId = sw.id.replace(/^enable_/, '');
 
