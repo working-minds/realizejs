@@ -5747,7 +5747,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
   },
 
   isDisabled: function() {
-    if(!!this.props.disabled) {
+    if(!!this.props.disabled || !!this.state.isLoading) {
       return true;
     }
 
@@ -6209,8 +6209,7 @@ var TableRowActionButton = React.createClass({displayName: "TableRowActionButton
           React.createElement(Button, React.__spread({},  this.props, 
             {method: this.actionButtonMethod(this.props), 
             href: this.actionButtonHref(this.props), 
-            onClick: this.actionButtonClick.bind(this, this.props), 
-            isLoading: this.state.isLoading})
+            onClick: this.actionButtonClick.bind(this, this.props)})
           )
         );
       }

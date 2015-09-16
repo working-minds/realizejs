@@ -58,7 +58,7 @@ var TableActionButton = React.createClass({
   },
 
   isDisabled: function() {
-    if(!!this.props.disabled) {
+    if(!!this.props.disabled || !!this.state.isLoading) {
       return true;
     }
 
