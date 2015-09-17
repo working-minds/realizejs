@@ -2429,7 +2429,8 @@ var Grid = React.createClass({displayName: "Grid",
     customTableHeader: React.PropTypes.string,
     forceShowSelectAllButton: React.PropTypes.bool,
     onClickRow: React.PropTypes.func,
-    tableRowCssClass: React.PropTypes.func
+    tableRowCssClass: React.PropTypes.func,
+    paginationOnTop: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -2465,7 +2466,8 @@ var Grid = React.createClass({displayName: "Grid",
       customTableHeader: null,
       forceShowSelectAllButton: false,
       onClickRow: null,
-      tableRowCssClass: null
+      tableRowCssClass: null,
+      paginationOnTop: true
     };
   },
 
@@ -2497,11 +2499,16 @@ var Grid = React.createClass({displayName: "Grid",
       React.createElement("div", {className: this.gridClassName(), ref: "grid"}, 
         this.renderFilter(), 
 
-        this.renderPagination(), 
+        this.renderPaginationOnTop(), 
         this.renderTable(), 
         this.renderPagination()
       )
     );
+  },
+
+  renderPaginationOnTop: function() {
+    if(!!this.props.paginationOnTop)
+      return this.renderPagination()
   },
 
   gridClassName: function() {
