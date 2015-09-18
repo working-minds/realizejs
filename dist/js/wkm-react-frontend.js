@@ -1297,6 +1297,7 @@ var SelectComponentMixin = {
       }
     }
 
+
     if(this.state.value.length > 0) {
       this.triggerDependableChanged();
     }
@@ -4720,6 +4721,24 @@ var InputSelect = React.createClass({displayName: "InputSelect",
       themeClassKey: 'input.select',
       blankText: 'select'
     };
+  },
+
+  componentDidMount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.off('reset', this.clearSelection);
+  },
+
+  clearSelection: function() {
+    this.setState({
+      value: []
+    }, this.triggerDependableChanged);
   },
 
   render: function() {
