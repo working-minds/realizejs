@@ -2430,7 +2430,8 @@ var Grid = React.createClass({displayName: "Grid",
     forceShowSelectAllButton: React.PropTypes.bool,
     onClickRow: React.PropTypes.func,
     tableRowCssClass: React.PropTypes.func,
-    paginationOnTop: React.PropTypes.bool
+    paginationOnTop: React.PropTypes.bool,
+    clearThemeTable: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -2467,7 +2468,8 @@ var Grid = React.createClass({displayName: "Grid",
       forceShowSelectAllButton: false,
       onClickRow: null,
       tableRowCssClass: null,
-      paginationOnTop: true
+      paginationOnTop: true,
+      clearThemeTable: false
     };
   },
 
@@ -2571,7 +2573,8 @@ var Grid = React.createClass({displayName: "Grid",
         customTableHeader: this.props.customTableHeader, 
         forceShowSelectAllButton: this.props.forceShowSelectAllButton, 
         onClickRow: this.props.onClickRow, 
-        tableRowCssClass: this.props.tableRowCssClass}
+        tableRowCssClass: this.props.tableRowCssClass, 
+        clearThemeTable: this.props.clearThemeTable}
       )
     );
   },
@@ -2852,7 +2855,7 @@ var GridTable = React.createClass({displayName: "GridTable",
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Table, React.__spread({},  this.propsWithoutCSS(), {className: this.props.tableClassName}))
+        React.createElement(Table, React.__spread({},  this.propsWithoutCSS(), {className: this.props.tableClassName, clearTheme: this.props.clearThemeTable}))
       )
     );
   }

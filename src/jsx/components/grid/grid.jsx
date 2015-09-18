@@ -28,7 +28,8 @@ var Grid = React.createClass({
     forceShowSelectAllButton: React.PropTypes.bool,
     onClickRow: React.PropTypes.func,
     tableRowCssClass: React.PropTypes.func,
-    paginationOnTop: React.PropTypes.bool
+    paginationOnTop: React.PropTypes.bool,
+    clearThemeTable: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -65,7 +66,8 @@ var Grid = React.createClass({
       forceShowSelectAllButton: false,
       onClickRow: null,
       tableRowCssClass: null,
-      paginationOnTop: true
+      paginationOnTop: true,
+      clearThemeTable: false
     };
   },
 
@@ -170,6 +172,7 @@ var Grid = React.createClass({
         forceShowSelectAllButton={this.props.forceShowSelectAllButton}
         onClickRow={this.props.onClickRow}
         tableRowCssClass={this.props.tableRowCssClass}
+        clearThemeTable={this.props.clearThemeTable}
       />
     );
   },
