@@ -1827,6 +1827,26 @@ var ButtonGroup = React.createClass({displayName: "ButtonGroup",
 
 });
 
+var Container = React.createClass({displayName: "Container",
+  mixins: [ ContainerMixin ],
+
+  propTypes: {
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function(){
+    className: 'row'
+  },
+
+  render: function(){
+    return (
+      React.createElement("div", {className: this.props.className}, 
+        this.renderChildren()
+      )
+    )
+  }
+
+});
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var Flash = React.createClass({displayName: "Flash",
   mixins: [CssClassMixin],
@@ -2080,7 +2100,7 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
           );
         } else {
           inputComponents.push(
-            React.createElement("div", {className: "row", key: "wrapper_" + inputId}, 
+            React.createElement(Container, {className: "row"}, 
               React.createElement(InputSwitch, {
                 id: switchId, 
                 name: switchName, 

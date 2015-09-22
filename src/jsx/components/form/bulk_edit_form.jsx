@@ -133,7 +133,7 @@ var BulkEditForm = React.createClass({
           );
         } else {
           inputComponents.push(
-            <div className="row" key={"wrapper_" + inputId}>
+            <Container className="row">
               <InputSwitch
                 id={switchId}
                 name={switchName}
@@ -153,7 +153,7 @@ var BulkEditForm = React.createClass({
                 key={this.state.inputKeys[inputId]}
                 ref={"input_" + inputId}
               />
-            </div>
+            </Container>
           );
           inputIndex++;
         }
