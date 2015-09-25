@@ -2235,10 +2235,20 @@ var Form = React.createClass({displayName: "Form",
 
         React.createElement("div", {className: Realize.themes.getCssClass('form.buttonGroup')}, 
           this.renderOtherButtons(), 
-          React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"}))
+          this.renderSubmitButton()
         )
       )
     );
+  },
+
+  renderSubmitButton: function(){
+    if (this.isAllInputsFilterHidden()){
+      return '';
+    }
+
+    var submitButton = [];
+    submitButton.push(React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"})));
+    return submitButton;
   },
 
   renderInputs: function() {
@@ -2250,6 +2260,10 @@ var Form = React.createClass({displayName: "Form",
   },
 
   renderOtherButtons: function() {
+    if (this.isAllInputsFilterHidden()){
+      return '';
+    }
+
     var otherButtonsProps = this.props.otherButtons;
     var otherButtons = [];
 
@@ -2259,6 +2273,17 @@ var Form = React.createClass({displayName: "Form",
     }
 
     return otherButtons;
+  },
+
+  isAllInputsFilterHidden: function(){
+    allIsHidden = true;
+    var inputs = this.props.inputs;
+    for( var property in inputs ){
+      if (inputs[property].component !== 'hidden')
+        allIsHidden = false;
+    }
+
+    return allIsHidden;
   },
 
   submitButtonProps: function() {
