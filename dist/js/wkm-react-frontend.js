@@ -322,7 +322,7 @@ Realize.themes.materialize = {
   },
 
   table: {
-    cssClass: 'table striped responsive-table',
+    cssClass: 'table striped',
 
     wrapper: {
       cssClass: 'table-wrapper'
