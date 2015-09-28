@@ -10,12 +10,14 @@ var GridFilter = React.createClass({
     onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
-    isLoading: React.PropTypes.bool
+    isLoading: React.PropTypes.bool,
+    collapsible: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       method: "GET",
+      collapsible: false,
       submitButton: {
         name: 'actions.filter',
         icon: 'search'
@@ -46,9 +48,43 @@ var GridFilter = React.createClass({
   render: function() {
     return(
       <div className={this.className()}>
-        <Form {...this.props} otherButtons={[this.props.clearButton]} style="filter" ref="form" />
+        {this.renderFilters()}
       </div>
     );
+  },
+
+  renderFilters: function() {
+    if(this.props.collapsible)  {
+      return this.renderCollapsibleFilter();
+    } else {
+     return this.renderFormFilters();
+    }
+  },
+
+  renderCollapsibleFilter: function() {
+    var component = [];
+
+    component.push(
+        <ul className='collapsible' data-collapsible='accordion'>
+          <li>
+            <div className='collapsible-header'>
+              <span>Filtrar</span>
+              <i className='material-icons'>filter_list</i>
+            </div>
+            <div className='collapsible-body'>
+              {this.renderFormFilters()}
+            </div>
+          </li>
+        </ul>
+      );
+
+    return component;
+  },
+
+  renderFormFilters: function(){
+    return (
+      <Form {...this.props} otherButtons={[this.props.clearButton]} style="filter" ref="form" />
+    )
   },
 
   serialize: function() {

@@ -10,7 +10,7 @@ var GridTable = React.createClass({
   render: function() {
     return(
       <div className={this.className()}>
-        <Table {...this.propsWithoutCSS()} className={this.props.tableClassName} />
+        <Table {...this.propsWithoutCSS()} className={this.props.tableClassName} clearTheme={this.props.clearThemeTable} />
       </div>
     );
   }

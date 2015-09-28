@@ -1297,6 +1297,7 @@ var SelectComponentMixin = {
       }
     }
 
+
     if(this.state.value.length > 0) {
       this.triggerDependableChanged();
     }
@@ -1826,6 +1827,26 @@ var ButtonGroup = React.createClass({displayName: "ButtonGroup",
 
 });
 
+var Container = React.createClass({displayName: "Container",
+  mixins: [ ContainerMixin ],
+
+  propTypes: {
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function(){
+    className: 'row'
+  },
+
+  render: function(){
+    return (
+      React.createElement("div", {className: this.props.className}, 
+        this.renderChildren()
+      )
+    )
+  }
+
+});
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var Flash = React.createClass({displayName: "Flash",
   mixins: [CssClassMixin],
@@ -2079,7 +2100,7 @@ var BulkEditForm = React.createClass({displayName: "BulkEditForm",
           );
         } else {
           inputComponents.push(
-            React.createElement("div", {className: "row", key: "wrapper_" + inputId}, 
+            React.createElement(Container, {className: "row"}, 
               React.createElement(InputSwitch, {
                 id: switchId, 
                 name: switchName, 
@@ -2214,10 +2235,20 @@ var Form = React.createClass({displayName: "Form",
 
         React.createElement("div", {className: Realize.themes.getCssClass('form.buttonGroup')}, 
           this.renderOtherButtons(), 
-          React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"}))
+          this.renderSubmitButton()
         )
       )
     );
+  },
+
+  renderSubmitButton: function(){
+    if (this.isAllInputsFilterHidden()){
+      return '';
+    }
+
+    var submitButton = [];
+    submitButton.push(React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"})));
+    return submitButton;
   },
 
   renderInputs: function() {
@@ -2229,6 +2260,10 @@ var Form = React.createClass({displayName: "Form",
   },
 
   renderOtherButtons: function() {
+    if (this.isAllInputsFilterHidden()){
+      return '';
+    }
+
     var otherButtonsProps = this.props.otherButtons;
     var otherButtons = [];
 
@@ -2238,6 +2273,17 @@ var Form = React.createClass({displayName: "Form",
     }
 
     return otherButtons;
+  },
+
+  isAllInputsFilterHidden: function(){
+    allIsHidden = true;
+    var inputs = this.props.inputs;
+    for( var property in inputs ){
+      if (inputs[property].component !== 'hidden')
+        allIsHidden = false;
+    }
+
+    return allIsHidden;
   },
 
   submitButtonProps: function() {
@@ -2428,7 +2474,10 @@ var Grid = React.createClass({displayName: "Grid",
     rowSelectableFilter: React.PropTypes.func,
     customTableHeader: React.PropTypes.string,
     forceShowSelectAllButton: React.PropTypes.bool,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func,
+    paginationOnTop: React.PropTypes.bool,
+    clearThemeTable: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -2463,7 +2512,10 @@ var Grid = React.createClass({displayName: "Grid",
       rowSelectableFilter: null,
       customTableHeader: null,
       forceShowSelectAllButton: false,
-      onClickRow: null
+      onClickRow: null,
+      tableRowCssClass: null,
+      paginationOnTop: true,
+      clearThemeTable: false
     };
   },
 
@@ -2495,11 +2547,16 @@ var Grid = React.createClass({displayName: "Grid",
       React.createElement("div", {className: this.gridClassName(), ref: "grid"}, 
         this.renderFilter(), 
 
-        this.renderPagination(), 
+        this.renderPaginationOnTop(), 
         this.renderTable(), 
         this.renderPagination()
       )
     );
+  },
+
+  renderPaginationOnTop: function() {
+    if(!!this.props.paginationOnTop)
+      return this.renderPagination()
   },
 
   gridClassName: function() {
@@ -2561,7 +2618,9 @@ var Grid = React.createClass({displayName: "Grid",
         rowSelectableFilter: this.props.rowSelectableFilter, 
         customTableHeader: this.props.customTableHeader, 
         forceShowSelectAllButton: this.props.forceShowSelectAllButton, 
-        onClickRow: this.props.onClickRow}
+        onClickRow: this.props.onClickRow, 
+        tableRowCssClass: this.props.tableRowCssClass, 
+        clearThemeTable: this.props.clearThemeTable}
       )
     );
   },
@@ -2710,12 +2769,14 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     onError: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
-    isLoading: React.PropTypes.bool
+    isLoading: React.PropTypes.bool,
+    collapsible: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       method: "GET",
+      collapsible: false,
       submitButton: {
         name: 'actions.filter',
         icon: 'search'
@@ -2746,9 +2807,43 @@ var GridFilter = React.createClass({displayName: "GridFilter",
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Form, React.__spread({},  this.props, {otherButtons: [this.props.clearButton], style: "filter", ref: "form"}))
+        this.renderFilters()
       )
     );
+  },
+
+  renderFilters: function() {
+    if(this.props.collapsible)  {
+      return this.renderCollapsibleFilter();
+    } else {
+     return this.renderFormFilters();
+    }
+  },
+
+  renderCollapsibleFilter: function() {
+    var component = [];
+
+    component.push(
+        React.createElement("ul", {className: "collapsible", "data-collapsible": "accordion"}, 
+          React.createElement("li", null, 
+            React.createElement("div", {className: "collapsible-header"}, 
+              React.createElement("span", null, "Filtrar"), 
+              React.createElement("i", {className: "material-icons"}, "filter_list")
+            ), 
+            React.createElement("div", {className: "collapsible-body"}, 
+              this.renderFormFilters()
+            )
+          )
+        )
+      );
+
+    return component;
+  },
+
+  renderFormFilters: function(){
+    return (
+      React.createElement(Form, React.__spread({},  this.props, {otherButtons: [this.props.clearButton], style: "filter", ref: "form"}))
+    )
   },
 
   serialize: function() {
@@ -2806,7 +2901,7 @@ var GridTable = React.createClass({displayName: "GridTable",
   render: function() {
     return(
       React.createElement("div", {className: this.className()}, 
-        React.createElement(Table, React.__spread({},  this.propsWithoutCSS(), {className: this.props.tableClassName}))
+        React.createElement(Table, React.__spread({},  this.propsWithoutCSS(), {className: this.props.tableClassName, clearTheme: this.props.clearThemeTable}))
       )
     );
   }
@@ -4673,6 +4768,24 @@ var InputSelect = React.createClass({displayName: "InputSelect",
     };
   },
 
+  componentDidMount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.off('reset', this.clearSelection);
+  },
+
+  clearSelection: function() {
+    this.setState({
+      value: []
+    }, this.triggerDependableChanged);
+  },
+
   render: function() {
     return (
       React.createElement("select", {
@@ -5416,7 +5529,8 @@ var Table = React.createClass({displayName: "Table",
     onSelectAll: React.PropTypes.func,
     rowSelectableFilter: React.PropTypes.func,
     forceShowSelectAllButton: React.PropTypes.bool,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5447,7 +5561,8 @@ var Table = React.createClass({displayName: "Table",
       onSelectAll: function(event) {},
       rowSelectableFilter: null,
       forceShowSelectAllButton: false,
-      onClickRow: null
+      onClickRow: null,
+      tableRowCssClass: null
     };
   },
 
@@ -5590,7 +5705,8 @@ var Table = React.createClass({displayName: "Table",
           actionButtons: this.props.actionButtons.member || [], 
           key: "table_row_" + i, 
           rowSelectableFilter: this.props.rowSelectableFilter, 
-          onClickRow: this.props.onClickRow})
+          onClickRow: this.props.onClickRow, 
+          tableRowCssClass: this.props.tableRowCssClass})
         )
       );
     }
@@ -6096,7 +6212,8 @@ var TableRow = React.createClass({displayName: "TableRow",
     actionButtons: React.PropTypes.array,
     rowSelectableFilter: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -6110,6 +6227,7 @@ var TableRow = React.createClass({displayName: "TableRow",
       themeClassKey: 'table.row',
       rowSelectableFilter: null,
       onClickRow: null,
+      tableRowCssClass: null,
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
@@ -6130,11 +6248,18 @@ var TableRow = React.createClass({displayName: "TableRow",
     );
   },
 
-  getClassName: function(){
+  getClassName: function() {
     var className = this.className();
 
-    if(!!this.props.onClickRow){
+    if(!!this.props.onClickRow) {
       className = className + ' clickable-row'
+    }
+
+    if(!!this.props.tableRowCssClass) {
+      var cssClass = this.props.tableRowCssClass(this.props.data);
+      if (!!cssClass) {
+        className = className + ' ' + cssClass
+      }
     }
 
     return className;

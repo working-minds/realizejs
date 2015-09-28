@@ -19,6 +19,24 @@ var InputSelect = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function() {
+    var valuesSelect = React.findDOMNode(this.refs.select);
+    var $form = $(valuesSelect.form);
+    $form.off('reset', this.clearSelection);
+  },
+
+  clearSelection: function() {
+    this.setState({
+      value: []
+    }, this.triggerDependableChanged);
+  },
+
   render: function() {
     return (
       <select

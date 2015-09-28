@@ -77,10 +77,20 @@ var Form = React.createClass({
 
         <div className={Realize.themes.getCssClass('form.buttonGroup')}>
           {this.renderOtherButtons()}
-          <Button {...this.submitButtonProps()} ref="submitButton" />
+          {this.renderSubmitButton()}
         </div>
       </form>
     );
+  },
+
+  renderSubmitButton: function(){
+    if (this.isAllInputsFilterHidden()){
+      return '';
+    }
+
+    var submitButton = [];
+    submitButton.push(<Button {...this.submitButtonProps()} ref="submitButton" />);
+    return submitButton;
   },
 
   renderInputs: function() {
@@ -92,6 +102,10 @@ var Form = React.createClass({
   },
 
   renderOtherButtons: function() {
+    if (this.isAllInputsFilterHidden()){
+      return '';
+    }
+
     var otherButtonsProps = this.props.otherButtons;
     var otherButtons = [];
 
@@ -101,6 +115,17 @@ var Form = React.createClass({
     }
 
     return otherButtons;
+  },
+
+  isAllInputsFilterHidden: function(){
+    allIsHidden = true;
+    var inputs = this.props.inputs;
+    for( var property in inputs ){
+      if (inputs[property].component !== 'hidden')
+        allIsHidden = false;
+    }
+
+    return allIsHidden;
   },
 
   submitButtonProps: function() {

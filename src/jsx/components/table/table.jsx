@@ -21,7 +21,8 @@ var Table = React.createClass({
     onSelectAll: React.PropTypes.func,
     rowSelectableFilter: React.PropTypes.func,
     forceShowSelectAllButton: React.PropTypes.bool,
-    onClickRow: React.PropTypes.func
+    onClickRow: React.PropTypes.func,
+    tableRowCssClass: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -52,7 +53,8 @@ var Table = React.createClass({
       onSelectAll: function(event) {},
       rowSelectableFilter: null,
       forceShowSelectAllButton: false,
-      onClickRow: null
+      onClickRow: null,
+      tableRowCssClass: null
     };
   },
 
@@ -196,6 +198,7 @@ var Table = React.createClass({
           key={"table_row_" + i}
           rowSelectableFilter={this.props.rowSelectableFilter}
           onClickRow={this.props.onClickRow}
+          tableRowCssClass={this.props.tableRowCssClass}
         />
       );
     }
