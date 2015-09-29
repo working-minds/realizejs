@@ -2242,7 +2242,7 @@ var Form = React.createClass({displayName: "Form",
   },
 
   renderSubmitButton: function(){
-    if (this.isAllInputsFilterHidden()){
+    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()){
       return '';
     }
 
@@ -2260,7 +2260,7 @@ var Form = React.createClass({displayName: "Form",
   },
 
   renderOtherButtons: function() {
-    if (this.isAllInputsFilterHidden()){
+    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()){
       return '';
     }
 
@@ -2280,7 +2280,7 @@ var Form = React.createClass({displayName: "Form",
     var inputs = this.props.inputs;
     for( var property in inputs ){
       if (inputs[property].component !== 'hidden')
-        allIsHidden = false;
+        return allIsHidden = false;
     }
 
     return allIsHidden;
