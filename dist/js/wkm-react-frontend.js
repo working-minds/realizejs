@@ -5828,7 +5828,8 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     disabled: React.PropTypes.bool,
     selectionContext: React.PropTypes.oneOf(['none', 'atLeastOne']),
     conditionToShowActionButton: React.PropTypes.func,
-    component: React.PropTypes.string
+    component: React.PropTypes.string,
+    params: React.PropTypes.object
   },
 
   getDefaultProps: function() {
@@ -5840,6 +5841,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
       disabled: false,
       selectionContext: 'none',
       component: null,
+      params: null,
       conditionToShowActionButton: function(data) { return true }
     };
   },
@@ -5904,7 +5906,15 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     }
 
     var selectedData = this.getSelectedData();
-    return (buttonHref + '?' + $.param(selectedData));
+    buttonHref = (buttonHref + '?' + $.param(selectedData));
+
+    if (!!this.props.params) {
+      for(var property in this.props.params) {
+        buttonHref = buttonHref + '&' + property + '=' + this.props.params[property]
+      }
+    }
+
+    return buttonHref;
   },
 
   actionButtonClick: function(event) {
