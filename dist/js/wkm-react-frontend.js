@@ -2820,11 +2820,18 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     }
   },
 
+  componentDidUpdate: function(){
+    var collapsible = React.findDOMNode(this.refs.collapsible);
+    if (!!collapsible) {
+      $(collapsible).collapsible();
+    }
+  },
+
   renderCollapsibleFilter: function() {
     var component = [];
 
     component.push(
-        React.createElement("ul", {className: "collapsible", "data-collapsible": "accordion"}, 
+        React.createElement("ul", {className: "collapsible", "data-collapsible": "accordion", ref: "collapsible"}, 
           React.createElement("li", null, 
             React.createElement("div", {className: "collapsible-header"}, 
               React.createElement("span", null, "Filtrar"), 
