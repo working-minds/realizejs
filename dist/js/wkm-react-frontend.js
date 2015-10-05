@@ -5630,6 +5630,11 @@ var Table = React.createClass({displayName: "Table",
   },
 
   renderActions: function() {
+    var collectionButtons = this.props.actionButtons.collection || [];
+    if (!this.props.selectable && collectionButtons.length == 0) {
+      return '';
+    }
+
     return (
       React.createElement(TableActions, {
         dataRows: this.state.dataRows, 
