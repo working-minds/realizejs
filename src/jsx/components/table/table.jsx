@@ -115,6 +115,11 @@ var Table = React.createClass({
   },
 
   renderActions: function() {
+    var collectionButtons = this.props.actionButtons.collection || [];
+    if (!this.props.selectable && collectionButtons.length == 0) {
+      return '';
+    }
+
     return (
       <TableActions
         dataRows={this.state.dataRows}

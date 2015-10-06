@@ -61,11 +61,18 @@ var GridFilter = React.createClass({
     }
   },
 
+  componentDidUpdate: function(){
+    var collapsible = React.findDOMNode(this.refs.collapsible);
+    if (!!collapsible) {
+      $(collapsible).collapsible();
+    }
+  },
+
   renderCollapsibleFilter: function() {
     var component = [];
 
     component.push(
-        <ul className='collapsible' data-collapsible='accordion'>
+        <ul className='collapsible' data-collapsible='accordion' ref='collapsible'>
           <li>
             <div className='collapsible-header'>
               <span>Filtrar</span>

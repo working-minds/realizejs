@@ -1639,7 +1639,7 @@ var UtilsMixin = {
   }
 };
 var Button = React.createClass({displayName: "Button",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, RequestHandlerMixin],
   propTypes: {
     name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
@@ -1648,6 +1648,8 @@ var Button = React.createClass({displayName: "Button",
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
+    actionUrl: React.PropTypes.string,
+    actionData: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
     confirmsWith: Realize.PropTypes.localizedString,
@@ -1665,6 +1667,8 @@ var Button = React.createClass({displayName: "Button",
       icon: null,
       href: null,
       onClick: null,
+      actionUrl: null,
+      actionData: {},
       disableWith: 'loading',
       confirmsWith: null,
       element: 'button',
@@ -1774,10 +1778,14 @@ var Button = React.createClass({displayName: "Button",
   },
 
   handleClick: function(event) {
-    if(!!this.props.onClick) {
+    var buttonOnClick = this.props.onClick;
+    var buttonAction = this.props.actionUrl;
+
+    if($.isFunction(buttonOnClick)) {
       this.props.onClick(event);
-    } else if(!!this.props.href && this.props.element !== 'a') {
-      window.location = this.props.href;
+    } else if(!!buttonAction) {
+      var actionData = this.props.actionData;
+      this.performRequest(buttonAction, actionData, (this.getMethod() || 'POST'));
     }
   },
 
@@ -2820,11 +2828,18 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     }
   },
 
+  componentDidUpdate: function(){
+    var collapsible = React.findDOMNode(this.refs.collapsible);
+    if (!!collapsible) {
+      $(collapsible).collapsible();
+    }
+  },
+
   renderCollapsibleFilter: function() {
     var component = [];
 
     component.push(
-        React.createElement("ul", {className: "collapsible", "data-collapsible": "accordion"}, 
+        React.createElement("ul", {className: "collapsible", "data-collapsible": "accordion", ref: "collapsible"}, 
           React.createElement("li", null, 
             React.createElement("div", {className: "collapsible-header"}, 
               React.createElement("span", null, "Filtrar"), 
@@ -5623,6 +5638,11 @@ var Table = React.createClass({displayName: "Table",
   },
 
   renderActions: function() {
+    var collectionButtons = this.props.actionButtons.collection || [];
+    if (!this.props.selectable && collectionButtons.length == 0) {
+      return '';
+    }
+
     return (
       React.createElement(TableActions, {
         dataRows: this.state.dataRows, 
@@ -5828,7 +5848,8 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     disabled: React.PropTypes.bool,
     selectionContext: React.PropTypes.oneOf(['none', 'atLeastOne']),
     conditionToShowActionButton: React.PropTypes.func,
-    component: React.PropTypes.string
+    component: React.PropTypes.string,
+    params: React.PropTypes.object
   },
 
   getDefaultProps: function() {
@@ -5840,6 +5861,7 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
       disabled: false,
       selectionContext: 'none',
       component: null,
+      params: null,
       conditionToShowActionButton: function(data) { return true }
     };
   },
@@ -5904,7 +5926,15 @@ var TableActionButton = React.createClass({displayName: "TableActionButton",
     }
 
     var selectedData = this.getSelectedData();
-    return (buttonHref + '?' + $.param(selectedData));
+    buttonHref = (buttonHref + '?' + $.param(selectedData));
+
+    if (!!this.props.params) {
+      for(var property in this.props.params) {
+        buttonHref = buttonHref + '&' + property + '=' + this.props.params[property]
+      }
+    }
+
+    return buttonHref;
   },
 
   actionButtonClick: function(event) {
