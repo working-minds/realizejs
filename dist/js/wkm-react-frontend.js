@@ -1639,7 +1639,7 @@ var UtilsMixin = {
   }
 };
 var Button = React.createClass({displayName: "Button",
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, RequestHandlerMixin],
   propTypes: {
     name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
@@ -1648,6 +1648,8 @@ var Button = React.createClass({displayName: "Button",
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
+    actionUrl: React.PropTypes.string,
+    actionData: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
     confirmsWith: Realize.PropTypes.localizedString,
@@ -1665,6 +1667,8 @@ var Button = React.createClass({displayName: "Button",
       icon: null,
       href: null,
       onClick: null,
+      actionUrl: null,
+      actionData: {},
       disableWith: 'loading',
       confirmsWith: null,
       element: 'button',
@@ -1774,10 +1778,14 @@ var Button = React.createClass({displayName: "Button",
   },
 
   handleClick: function(event) {
-    if(!!this.props.onClick) {
+    var buttonOnClick = this.props.onClick;
+    var buttonAction = this.props.actionUrl;
+
+    if($.isFunction(buttonOnClick)) {
       this.props.onClick(event);
-    } else if(!!this.props.href && this.props.element !== 'a') {
-      window.location = this.props.href;
+    } else if(!!buttonAction) {
+      var actionData = this.props.actionData;
+      this.performRequest(buttonAction, actionData, (this.getMethod() || 'POST'));
     }
   },
 
