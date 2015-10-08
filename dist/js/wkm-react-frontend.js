@@ -6718,10 +6718,17 @@ var Tabs = React.createClass({displayName: "Tabs",
     ContainerMixin
   ],
 
+  propTypes: {
+    themeClassKey: React.PropTypes.string,
+    className: React.PropTypes.string,
+    activeTab: React.PropTypes.integer
+  },
+
   getDefaultProps: function() {
     return {
       themeClassKey: 'tabs',
-      className: 's12'
+      className: 's12',
+      activeTab: 1
     };
   },
 
@@ -6747,7 +6754,7 @@ var Tabs = React.createClass({displayName: "Tabs",
     var children = this.getChildren();
 
     React.Children.forEach(children, function(child, i) {
-      var isActive = (i === 0);
+      var isActive = (i === (this.props.activeTab - 1));
       tabs.push(React.createElement(TabButton, React.__spread({},  child.props, {active: isActive, key: "tab_" + i})));
     }.bind(this));
 
