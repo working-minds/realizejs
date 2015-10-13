@@ -2485,7 +2485,8 @@ var Grid = React.createClass({displayName: "Grid",
     onClickRow: React.PropTypes.func,
     tableRowCssClass: React.PropTypes.func,
     paginationOnTop: React.PropTypes.bool,
-    clearThemeTable: React.PropTypes.bool
+    clearThemeTable: React.PropTypes.bool,
+    pagination: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -2523,7 +2524,8 @@ var Grid = React.createClass({displayName: "Grid",
       onClickRow: null,
       tableRowCssClass: null,
       paginationOnTop: true,
-      clearThemeTable: false
+      clearThemeTable: false,
+      pagination: true
     };
   },
 
@@ -2634,21 +2636,23 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   renderPagination: function() {
-    var totalRowsCount = this.state.count;
-    var pageRowsCount = this.state.dataRows.length;
-    if(totalRowsCount <= pageRowsCount) {
-      return null;
-    }
+    if (this.props.pagination) {
+      var totalRowsCount = this.state.count;
+      var pageRowsCount = this.state.dataRows.length;
+      if (totalRowsCount <= pageRowsCount) {
+        return null;
+      }
 
-    return (
-      React.createElement(GridPagination, React.__spread({}, 
-        this.props.paginationConfigs, 
-        {page: this.state.page, 
-        count: this.state.count, 
-        onPagination: this.onPagination})
-      )
-    );
-  },
+      return (
+        React.createElement(GridPagination, React.__spread({}, 
+          this.props.paginationConfigs, 
+          {page: this.state.page, 
+          count: this.state.count, 
+          onPagination: this.onPagination})
+          )
+      );
+    }
+  } ,
 
   /* Event handlers */
 
