@@ -86,8 +86,9 @@ var GridActionsMixin = {
     }
   },
 
-  handleDestroy: function(data) {
+  handleDestroy: function(data, status, xhr) {
     this.loadData(data);
+    this.handleSuccess(data, status, xhr);
   },
 
   handleDestroyError: function(xhr, status, error) {
