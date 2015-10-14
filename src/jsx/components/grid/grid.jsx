@@ -29,7 +29,8 @@ var Grid = React.createClass({
     onClickRow: React.PropTypes.func,
     tableRowCssClass: React.PropTypes.func,
     paginationOnTop: React.PropTypes.bool,
-    clearThemeTable: React.PropTypes.bool
+    clearThemeTable: React.PropTypes.bool,
+    pagination: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -67,7 +68,8 @@ var Grid = React.createClass({
       onClickRow: null,
       tableRowCssClass: null,
       paginationOnTop: true,
-      clearThemeTable: false
+      clearThemeTable: false,
+      pagination: true
     };
   },
 
@@ -178,21 +180,23 @@ var Grid = React.createClass({
   },
 
   renderPagination: function() {
-    var totalRowsCount = this.state.count;
-    var pageRowsCount = this.state.dataRows.length;
-    if(totalRowsCount <= pageRowsCount) {
-      return null;
-    }
+    if (this.props.pagination) {
+      var totalRowsCount = this.state.count;
+      var pageRowsCount = this.state.dataRows.length;
+      if (totalRowsCount <= pageRowsCount) {
+        return null;
+      }
 
-    return (
-      <GridPagination
-        {...this.props.paginationConfigs}
-        page={this.state.page}
-        count={this.state.count}
-        onPagination={this.onPagination}
-      />
-    );
-  },
+      return (
+        <GridPagination
+          {...this.props.paginationConfigs}
+          page={this.state.page}
+          count={this.state.count}
+          onPagination={this.onPagination}
+          />
+      );
+    }
+  } ,
 
   /* Event handlers */
 

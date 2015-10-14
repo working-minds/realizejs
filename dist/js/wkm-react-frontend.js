@@ -2485,7 +2485,8 @@ var Grid = React.createClass({displayName: "Grid",
     onClickRow: React.PropTypes.func,
     tableRowCssClass: React.PropTypes.func,
     paginationOnTop: React.PropTypes.bool,
-    clearThemeTable: React.PropTypes.bool
+    clearThemeTable: React.PropTypes.bool,
+    pagination: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -2523,7 +2524,8 @@ var Grid = React.createClass({displayName: "Grid",
       onClickRow: null,
       tableRowCssClass: null,
       paginationOnTop: true,
-      clearThemeTable: false
+      clearThemeTable: false,
+      pagination: true
     };
   },
 
@@ -2634,21 +2636,23 @@ var Grid = React.createClass({displayName: "Grid",
   },
 
   renderPagination: function() {
-    var totalRowsCount = this.state.count;
-    var pageRowsCount = this.state.dataRows.length;
-    if(totalRowsCount <= pageRowsCount) {
-      return null;
-    }
+    if (this.props.pagination) {
+      var totalRowsCount = this.state.count;
+      var pageRowsCount = this.state.dataRows.length;
+      if (totalRowsCount <= pageRowsCount) {
+        return null;
+      }
 
-    return (
-      React.createElement(GridPagination, React.__spread({}, 
-        this.props.paginationConfigs, 
-        {page: this.state.page, 
-        count: this.state.count, 
-        onPagination: this.onPagination})
-      )
-    );
-  },
+      return (
+        React.createElement(GridPagination, React.__spread({}, 
+          this.props.paginationConfigs, 
+          {page: this.state.page, 
+          count: this.state.count, 
+          onPagination: this.onPagination})
+          )
+      );
+    }
+  } ,
 
   /* Event handlers */
 
@@ -6718,10 +6722,17 @@ var Tabs = React.createClass({displayName: "Tabs",
     ContainerMixin
   ],
 
+  propTypes: {
+    themeClassKey: React.PropTypes.string,
+    className: React.PropTypes.string,
+    activeTab: React.PropTypes.integer
+  },
+
   getDefaultProps: function() {
     return {
       themeClassKey: 'tabs',
-      className: 's12'
+      className: 's12',
+      activeTab: 1
     };
   },
 
@@ -6747,7 +6758,7 @@ var Tabs = React.createClass({displayName: "Tabs",
     var children = this.getChildren();
 
     React.Children.forEach(children, function(child, i) {
-      var isActive = (i === 0);
+      var isActive = (i === (this.props.activeTab - 1));
       tabs.push(React.createElement(TabButton, React.__spread({},  child.props, {active: isActive, key: "tab_" + i})));
     }.bind(this));
 
