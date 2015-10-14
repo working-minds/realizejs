@@ -1,6 +1,7 @@
 var Grid = React.createClass({
   mixins: [
     CssClassMixin,
+    RequestHandlerMixin,
     RestActionsMixin,
     GridActionsMixin
   ],
@@ -82,7 +83,7 @@ var Grid = React.createClass({
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      isLoading: this.props.isLoading
+      gridIsLoading: this.props.isLoading
     };
   },
 
@@ -115,7 +116,7 @@ var Grid = React.createClass({
 
   gridClassName: function() {
     var className = this.className();
-    if(this.state.isLoading) {
+    if(this.state.gridIsLoading) {
       className += ' loading';
     }
 
@@ -142,7 +143,7 @@ var Grid = React.createClass({
       <GridFilter
         action={this.props.url}
         {...this.props.filter}
-        isLoading={this.state.isLoading}
+        isLoading={this.state.gridIsLoading}
         onSubmit={this.onFilterSubmit}
         ref="filter"
       />
@@ -229,7 +230,7 @@ var Grid = React.createClass({
   /* Data load handler */
 
   loadData: function() {
-    this.setState({isLoading: true});
+    this.setState({gridIsLoading: true});
     var postData = this.buildPostData();
 
     $.ajax({
@@ -244,7 +245,7 @@ var Grid = React.createClass({
 
   handleLoad: function(data) {
     this.setState({
-      isLoading: false,
+      gridIsLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
     }, function() {
@@ -254,7 +255,7 @@ var Grid = React.createClass({
 
   handleLoadError: function(xhr, status, error) {
     this.props.onLoadError(xhr, status, error);
-    this.setState({isLoading: false});
+    this.setState({gridIsLoading: false});
     console.log('Grid Load Error:' + error);
   },
 

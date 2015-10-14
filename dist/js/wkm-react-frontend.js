@@ -1038,8 +1038,9 @@ var GridActionsMixin = {
     }
   },
 
-  handleDestroy: function(data) {
+  handleDestroy: function(data, status, xhr) {
     this.loadData(data);
+    this.handleSuccess(data, status, xhr);
   },
 
   handleDestroyError: function(xhr, status, error) {
@@ -2457,6 +2458,7 @@ var InputGroup = React.createClass({displayName: "InputGroup",
 var Grid = React.createClass({displayName: "Grid",
   mixins: [
     CssClassMixin,
+    RequestHandlerMixin,
     RestActionsMixin,
     GridActionsMixin
   ],
@@ -2538,7 +2540,7 @@ var Grid = React.createClass({displayName: "Grid",
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      isLoading: this.props.isLoading
+      gridIsLoading: this.props.isLoading
     };
   },
 
@@ -2571,7 +2573,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   gridClassName: function() {
     var className = this.className();
-    if(this.state.isLoading) {
+    if(this.state.gridIsLoading) {
       className += ' loading';
     }
 
@@ -2598,7 +2600,7 @@ var Grid = React.createClass({displayName: "Grid",
       React.createElement(GridFilter, React.__spread({
         action: this.props.url}, 
         this.props.filter, 
-        {isLoading: this.state.isLoading, 
+        {isLoading: this.state.gridIsLoading, 
         onSubmit: this.onFilterSubmit, 
         ref: "filter"})
       )
@@ -2685,7 +2687,7 @@ var Grid = React.createClass({displayName: "Grid",
   /* Data load handler */
 
   loadData: function() {
-    this.setState({isLoading: true});
+    this.setState({gridIsLoading: true});
     var postData = this.buildPostData();
 
     $.ajax({
@@ -2700,7 +2702,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   handleLoad: function(data) {
     this.setState({
-      isLoading: false,
+      gridIsLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
     }, function() {
@@ -2710,7 +2712,7 @@ var Grid = React.createClass({displayName: "Grid",
 
   handleLoadError: function(xhr, status, error) {
     this.props.onLoadError(xhr, status, error);
-    this.setState({isLoading: false});
+    this.setState({gridIsLoading: false});
     console.log('Grid Load Error:' + error);
   },
 
