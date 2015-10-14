@@ -35,7 +35,7 @@ var TableRowActionButton = React.createClass({
     );
   },
 
-  renderButton: function(){
+  renderButton: function() {
     var component = [];
     if (this.props.conditionToShowActionButton(this.props.conditionParams))
       if(!!this.props.component){
@@ -73,9 +73,19 @@ var TableRowActionButton = React.createClass({
     return buttonHref;
   },
 
+  actionButtonUrl: function() {
+    var buttonActionUrl = this.props.actionUrl;
+    if(!!buttonActionUrl) {
+      var dataRowId = this.props.data[this.props.dataRowIdField];
+      buttonActionUrl = buttonActionUrl.replace(/:id/, dataRowId);
+    }
+
+    return buttonActionUrl;
+  },
+
   actionButtonClick: function(event) {
     var buttonOnClick = this.props.onClick;
-    var buttonAction = this.props.actionUrl;
+    var buttonAction = this.actionButtonUrl();
 
     if($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
