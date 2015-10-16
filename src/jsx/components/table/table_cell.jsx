@@ -82,7 +82,7 @@ var TableCell = React.createClass({
       value = value / 100.0;
     }
 
-    return numeral(value).format('0.0%');
+    return numeral(value).format('0.00%');
   },
 
   currencyValue: function(value) {
