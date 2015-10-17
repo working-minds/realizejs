@@ -6737,7 +6737,7 @@ var Tabs = React.createClass({displayName: "Tabs",
   propTypes: {
     themeClassKey: React.PropTypes.string,
     className: React.PropTypes.string,
-    activeTab: React.PropTypes.integer
+    activeTab: React.PropTypes.number
   },
 
   getDefaultProps: function() {
