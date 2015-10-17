@@ -73,7 +73,7 @@ var Button = React.createClass({
         {
           className: this.getClassName(),
           type: this.props.type,
-          disabled: this.props.disabled,
+          disabled: this.props.disabled || this.props.isLoading,
           href: this.getHref(),
           onClick: this.handleClick,
           'data-method': this.getMethod(),
@@ -134,7 +134,7 @@ var Button = React.createClass({
   },
 
   renderLoadingIndicator: function() {
-    return Realize.t(this.props.disableWith);
+      return Realize.t(this.props.disableWith);
   },
 
   handleClick: function(event) {
