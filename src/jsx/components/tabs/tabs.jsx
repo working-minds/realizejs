@@ -7,7 +7,7 @@ var Tabs = React.createClass({
   propTypes: {
     themeClassKey: React.PropTypes.string,
     className: React.PropTypes.string,
-    activeTab: React.PropTypes.integer
+    activeTab: React.PropTypes.number
   },
 
   getDefaultProps: function() {
