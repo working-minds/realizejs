@@ -72,18 +72,18 @@ var GridFilter = React.createClass({
     var component = [];
 
     component.push(
-        <ul className='collapsible' data-collapsible='accordion' ref='collapsible'>
-          <li>
-            <div className='collapsible-header'>
-              <span>Filtrar</span>
-              <i className='material-icons'>filter_list</i>
-            </div>
-            <div className='collapsible-body'>
-              {this.renderFormFilters()}
-            </div>
-          </li>
-        </ul>
-      );
+      <ul className='collapsible' data-collapsible='accordion' ref='collapsible' key='collapsible_form'>
+        <li>
+          <div className='collapsible-header'>
+            <span>Filtrar</span>
+            <i className='material-icons'>filter_list</i>
+          </div>
+          <div className='collapsible-body'>
+            {this.renderFormFilters()}
+          </div>
+        </li>
+      </ul>
+    );
 
     return component;
   },

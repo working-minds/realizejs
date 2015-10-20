@@ -2256,7 +2256,7 @@ var Form = React.createClass({displayName: "Form",
     }
 
     var submitButton = [];
-    submitButton.push(React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton"})));
+    submitButton.push(React.createElement(Button, React.__spread({},  this.submitButtonProps(), {ref: "submitButton", key: "submit_button"})));
     return submitButton;
   },
 
@@ -2845,18 +2845,18 @@ var GridFilter = React.createClass({displayName: "GridFilter",
     var component = [];
 
     component.push(
-        React.createElement("ul", {className: "collapsible", "data-collapsible": "accordion", ref: "collapsible"}, 
-          React.createElement("li", null, 
-            React.createElement("div", {className: "collapsible-header"}, 
-              React.createElement("span", null, "Filtrar"), 
-              React.createElement("i", {className: "material-icons"}, "filter_list")
-            ), 
-            React.createElement("div", {className: "collapsible-body"}, 
-              this.renderFormFilters()
-            )
+      React.createElement("ul", {className: "collapsible", "data-collapsible": "accordion", ref: "collapsible", key: "collapsible_form"}, 
+        React.createElement("li", null, 
+          React.createElement("div", {className: "collapsible-header"}, 
+            React.createElement("span", null, "Filtrar"), 
+            React.createElement("i", {className: "material-icons"}, "filter_list")
+          ), 
+          React.createElement("div", {className: "collapsible-body"}, 
+            this.renderFormFilters()
           )
         )
-      );
+      )
+    );
 
     return component;
   },

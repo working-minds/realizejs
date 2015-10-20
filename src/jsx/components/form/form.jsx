@@ -89,7 +89,7 @@ var Form = React.createClass({
     }
 
     var submitButton = [];
-    submitButton.push(<Button {...this.submitButtonProps()} ref="submitButton" />);
+    submitButton.push(<Button {...this.submitButtonProps()} ref="submitButton" key='submit_button' />);
     return submitButton;
   },
 
