@@ -14,9 +14,9 @@ var InputMasked = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.text',
-      mask:'',
-      typeMask:'',
-      regex:'',
+      mask: '',
+      typeMask: '',
+      regex: '',
       predefinedMasks: {
         cpf: {
           mask:'999.999.999-99'
