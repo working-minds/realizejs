@@ -4315,11 +4315,21 @@ var InputDatepicker = React.createClass({displayName: "InputDatepicker",
   render: function() {
     return (
       React.createElement("span", null, 
-        React.createElement(InputMasked, React.__spread({},  this.props, {type: "date", className: this.className(), onChange: this._handleChange, plugin_params: {typeMask: 'date', showMaskOnHover: false}, ref: "input"})), 
+        React.createElement(InputMasked, React.__spread({},  this.props, {value: this.formatDateValue(), type: "date", className: this.className(), onChange: this._handleChange, plugin_params: {typeMask: 'date', showMaskOnHover: false}, ref: "input"})), 
         React.createElement(Label, React.__spread({},  this.propsWithoutCSS())), 
         React.createElement(Button, {disabled: this.props.disabled, icon: {type: "calendar"}, className: "input-datepicker__button prefix", type: "button", ref: "button"})
       )
     );
+  },
+
+  formatDateValue: function() {
+    var date = moment(this.props.value);
+    var formattedValue = date.format(Realize.t('masks.date').toUpperCase());
+    if(formattedValue == "Invalid date") {
+      return this.props.value;
+    }
+
+    return formattedValue;
   }
 });
 
@@ -4446,9 +4456,9 @@ var InputMasked = React.createClass({displayName: "InputMasked",
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.text',
-      mask:'',
-      typeMask:'',
-      regex:'',
+      mask: '',
+      typeMask: '',
+      regex: '',
       predefinedMasks: {
         cpf: {
           mask:'999.999.999-99'
