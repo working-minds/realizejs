@@ -5013,7 +5013,8 @@ var Modal = React.createClass({displayName: "Modal",
     headerHeight: React.PropTypes.number,
     contentHeight: React.PropTypes.number,
     footerHeight: React.PropTypes.number,
-    useAvailableHeight: React.PropTypes.bool
+    useAvailableHeight: React.PropTypes.bool,
+    openModalCallback: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5028,7 +5029,8 @@ var Modal = React.createClass({displayName: "Modal",
       headerHeight: 0,
       contentHeight: 0,
       footerHeight: 0,
-      useAvailableHeight: false
+      useAvailableHeight: false,
+      openModalCallback: null
     };
   },
 
@@ -5094,8 +5096,16 @@ var Modal = React.createClass({displayName: "Modal",
     var $modal = $(React.findDOMNode(this.refs.modal));
 
     $modal.openModal({
-      ready: this.resizeContent
+      ready: this.openModalCallback
     });
+  },
+
+  openModalCallback: function() {
+    this.resizeContent();
+
+    if(!!this.props.openModalCallback) {
+      this.props.openModalCallback()
+    }
   },
 
   resizeContent: function() {
