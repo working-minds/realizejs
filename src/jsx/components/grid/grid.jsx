@@ -97,6 +97,20 @@ var Grid = React.createClass({
     }.bind(this));
   },
 
+  backToInitialState: function() {
+    this.setState({
+      selectedRowIds: [],
+      allSelected: false,
+      page: 1
+    });
+
+    this.setState({
+      filterData: this.getInitialFilterData()
+    }, function() {
+      this.loadData();
+    }.bind(this));
+  },
+
   render: function() {
     return (
       <div className={this.gridClassName()} ref="grid">

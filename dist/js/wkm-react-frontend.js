@@ -1476,7 +1476,7 @@ var ModalRendererMixin = {
     modalContainerId: React.PropTypes.string
   },
 
-  getDefaultPropst: function() {
+  getDefaultProps: function() {
     return {
       modalContainerId: "modal-container"
     };
@@ -2551,6 +2551,20 @@ var Grid = React.createClass({displayName: "Grid",
       if(!!this.props.eagerLoad) {
         this.loadData();
       }
+    }.bind(this));
+  },
+
+  backToInitialState: function() {
+    this.setState({
+      selectedRowIds: [],
+      allSelected: false,
+      page: 1
+    });
+
+    this.setState({
+      filterData: this.getInitialFilterData()
+    }, function() {
+      this.loadData();
     }.bind(this));
   },
 
