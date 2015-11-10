@@ -2180,6 +2180,7 @@ var Form = React.createClass({displayName: "Form",
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
     contentType: React.PropTypes.string,
+    multipart: React.PropTypes.bool,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
     submitButton: React.PropTypes.object,
@@ -2197,6 +2198,7 @@ var Form = React.createClass({displayName: "Form",
       method: 'POST',
       dataType: undefined,
       contentType: undefined,
+      multipart: false,
       submitButton: {
         name: 'actions.send',
         icon: 'send'
@@ -2322,7 +2324,7 @@ var Form = React.createClass({displayName: "Form",
 
   submit: function(postData) {
     var submitOptions = {
-      url: this.props.action,
+      url: this.props.action, 
       method: this.props.method,
       data: postData,
       success: this.handleSuccess,
@@ -2339,6 +2341,17 @@ var Form = React.createClass({displayName: "Form",
       if(submitOptions.contentType == "application/json") {
         submitOptions.data = JSON.stringify(postData);
       }
+    }
+
+    if(this.props.multipart){
+      var fd = new FormData(React.findDOMNode(this.refs.form));
+      var multipartOptions = {
+          data: fd,
+          enctype: 'multipart/form-data',
+          processData: false,
+          contentType: false
+      }
+      submitOptions = $.extend({},submitOptions,multipartOptions);
     }
 
     $.ajax(submitOptions);
