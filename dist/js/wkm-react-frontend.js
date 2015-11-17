@@ -987,7 +987,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'edit',
-        href: this.getActionUrl('edit')
+        href: this.getRestActionUrl('edit')
       },
       {
         icon: 'destroy',
@@ -1009,22 +1009,22 @@ var GridActionsMixin = {
       {
         name: 'actions.new',
         context: 'none',
-        href: this.getActionUrl('add')
+        href: this.getRestActionUrl('add')
       }
     ];
   },
 
   addAction: function(event) {
-    window.location = this.getActionUrl('add');
+    window.location = this.getRestActionUrl('add');
   },
 
   editAction: function(event, id) {
-    window.location = this.getActionUrl('edit', id);
+    window.location = this.getRestActionUrl('edit', id);
   },
 
   destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
@@ -1476,7 +1476,7 @@ var ModalRendererMixin = {
     modalContainerId: React.PropTypes.string
   },
 
-  getDefaultPropst: function() {
+  getDefaultProps: function() {
     return {
       modalContainerId: "modal-container"
     };
@@ -1605,14 +1605,15 @@ var RestActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionUrls: Realize.config.restUrls,
-      actionMethods: Realize.config.restMethods,
+      actionUrls: null,
+      actionMethods: null,
       destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
 
-  getActionUrl: function(action, id) {
-    var actionUrl = this.props.actionUrls[action];
+  getRestActionUrl: function(action, id) {
+    var actionUrls = this.props.actionUrls || Realize.config.restUrls;
+    var actionUrl = actionUrls[action];
     actionUrl = actionUrl.replace(/:url/, this.props.url);
     if(!!id) {
       actionUrl = actionUrl.replace(/:id/, id);
@@ -1621,10 +1622,10 @@ var RestActionsMixin = {
     return actionUrl;
   },
 
-  getActionMethod: function(action) {
-    return this.props.actionMethods[action];
+  getRestActionMethod: function(action) {
+    var actionMethods = this.props.actionMethods || Realize.config.restMethods;
+    return actionMethods[action];
   }
-
 };
 var UtilsMixin = {
 
@@ -2180,6 +2181,7 @@ var Form = React.createClass({displayName: "Form",
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
     contentType: React.PropTypes.string,
+    multipart: React.PropTypes.bool,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
     submitButton: React.PropTypes.object,
@@ -2197,6 +2199,7 @@ var Form = React.createClass({displayName: "Form",
       method: 'POST',
       dataType: undefined,
       contentType: undefined,
+      multipart: false,
       submitButton: {
         name: 'actions.send',
         icon: 'send'
@@ -2339,6 +2342,17 @@ var Form = React.createClass({displayName: "Form",
       if(submitOptions.contentType == "application/json") {
         submitOptions.data = JSON.stringify(postData);
       }
+    }
+
+    if(this.props.multipart){
+      var fd = new FormData(React.findDOMNode(this.refs.form));
+      var multipartOptions = {
+          data: fd,
+          enctype: 'multipart/form-data',
+          processData: false,
+          contentType: false
+      }
+      submitOptions = $.extend({},submitOptions,multipartOptions);
     }
 
     $.ajax(submitOptions);
@@ -2554,6 +2568,20 @@ var Grid = React.createClass({displayName: "Grid",
     }.bind(this));
   },
 
+  backToInitialState: function() {
+    this.setState({
+      selectedRowIds: [],
+      allSelected: false,
+      page: 1
+    });
+
+    this.setState({
+      filterData: this.getInitialFilterData()
+    }, function() {
+      this.loadData();
+    }.bind(this));
+  },
+
   render: function() {
     return (
       React.createElement("div", {className: this.gridClassName(), ref: "grid"}, 
@@ -2691,7 +2719,7 @@ var Grid = React.createClass({displayName: "Grid",
     var postData = this.buildPostData();
 
     $.ajax({
-      url: this.getActionUrl('index'),
+      url: this.getRestActionUrl('index'),
       method: 'GET',
       dataType: 'json',
       data: postData,
@@ -3040,11 +3068,11 @@ var GridForm = React.createClass({displayName: "GridForm",
   },
 
   getFormAction: function() {
-    return this.getActionUrl(this.state.formAction, this.state.selectedRowId);
+    return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 
   getFormMethod: function() {
-    return this.getActionMethod(this.state.formAction);
+    return this.getRestActionMethod(this.state.formAction);
   },
 
   getFormSubmitButton: function() {
@@ -3137,8 +3165,8 @@ var GridForm = React.createClass({displayName: "GridForm",
   },
 
   destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
@@ -5013,7 +5041,8 @@ var Modal = React.createClass({displayName: "Modal",
     headerHeight: React.PropTypes.number,
     contentHeight: React.PropTypes.number,
     footerHeight: React.PropTypes.number,
-    useAvailableHeight: React.PropTypes.bool
+    useAvailableHeight: React.PropTypes.bool,
+    openModalCallback: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -5028,7 +5057,8 @@ var Modal = React.createClass({displayName: "Modal",
       headerHeight: 0,
       contentHeight: 0,
       footerHeight: 0,
-      useAvailableHeight: false
+      useAvailableHeight: false,
+      openModalCallback: null
     };
   },
 
@@ -5094,8 +5124,16 @@ var Modal = React.createClass({displayName: "Modal",
     var $modal = $(React.findDOMNode(this.refs.modal));
 
     $modal.openModal({
-      ready: this.resizeContent
+      ready: this.openModalCallback
     });
+  },
+
+  openModalCallback: function() {
+    this.resizeContent();
+
+    if(!!this.props.openModalCallback) {
+      this.props.openModalCallback()
+    }
   },
 
   resizeContent: function() {

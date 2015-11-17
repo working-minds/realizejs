@@ -3,7 +3,7 @@ var ModalRendererMixin = {
     modalContainerId: React.PropTypes.string
   },
 
-  getDefaultPropst: function() {
+  getDefaultProps: function() {
     return {
       modalContainerId: "modal-container"
     };
