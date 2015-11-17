@@ -35,7 +35,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'edit',
-        href: this.getActionUrl('edit')
+        href: this.getRestActionUrl('edit')
       },
       {
         icon: 'destroy',
@@ -57,22 +57,22 @@ var GridActionsMixin = {
       {
         name: 'actions.new',
         context: 'none',
-        href: this.getActionUrl('add')
+        href: this.getRestActionUrl('add')
       }
     ];
   },
 
   addAction: function(event) {
-    window.location = this.getActionUrl('add');
+    window.location = this.getRestActionUrl('add');
   },
 
   editAction: function(event, id) {
-    window.location = this.getActionUrl('edit', id);
+    window.location = this.getRestActionUrl('edit', id);
   },
 
   destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});

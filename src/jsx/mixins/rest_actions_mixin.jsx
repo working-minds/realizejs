@@ -7,14 +7,15 @@ var RestActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionUrls: Realize.config.restUrls,
-      actionMethods: Realize.config.restMethods,
+      actionUrls: null,
+      actionMethods: null,
       destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
 
-  getActionUrl: function(action, id) {
-    var actionUrl = this.props.actionUrls[action];
+  getRestActionUrl: function(action, id) {
+    var actionUrls = this.props.actionUrls || Realize.config.restUrls;
+    var actionUrl = actionUrls[action];
     actionUrl = actionUrl.replace(/:url/, this.props.url);
     if(!!id) {
       actionUrl = actionUrl.replace(/:id/, id);
@@ -23,8 +24,8 @@ var RestActionsMixin = {
     return actionUrl;
   },
 
-  getActionMethod: function(action) {
-    return this.props.actionMethods[action];
+  getRestActionMethod: function(action) {
+    var actionMethods = this.props.actionMethods || Realize.config.restMethods;
+    return actionMethods[action];
   }
-
 };

@@ -248,7 +248,7 @@ var Grid = React.createClass({
     var postData = this.buildPostData();
 
     $.ajax({
-      url: this.getActionUrl('index'),
+      url: this.getRestActionUrl('index'),
       method: 'GET',
       dataType: 'json',
       data: postData,

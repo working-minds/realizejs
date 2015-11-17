@@ -987,7 +987,7 @@ var GridActionsMixin = {
     return [
       {
         icon: 'edit',
-        href: this.getActionUrl('edit')
+        href: this.getRestActionUrl('edit')
       },
       {
         icon: 'destroy',
@@ -1009,22 +1009,22 @@ var GridActionsMixin = {
       {
         name: 'actions.new',
         context: 'none',
-        href: this.getActionUrl('add')
+        href: this.getRestActionUrl('add')
       }
     ];
   },
 
   addAction: function(event) {
-    window.location = this.getActionUrl('add');
+    window.location = this.getRestActionUrl('add');
   },
 
   editAction: function(event, id) {
-    window.location = this.getActionUrl('edit', id);
+    window.location = this.getRestActionUrl('edit', id);
   },
 
   destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
@@ -1605,14 +1605,15 @@ var RestActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionUrls: Realize.config.restUrls,
-      actionMethods: Realize.config.restMethods,
+      actionUrls: null,
+      actionMethods: null,
       destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
 
-  getActionUrl: function(action, id) {
-    var actionUrl = this.props.actionUrls[action];
+  getRestActionUrl: function(action, id) {
+    var actionUrls = this.props.actionUrls || Realize.config.restUrls;
+    var actionUrl = actionUrls[action];
     actionUrl = actionUrl.replace(/:url/, this.props.url);
     if(!!id) {
       actionUrl = actionUrl.replace(/:id/, id);
@@ -1621,10 +1622,10 @@ var RestActionsMixin = {
     return actionUrl;
   },
 
-  getActionMethod: function(action) {
-    return this.props.actionMethods[action];
+  getRestActionMethod: function(action) {
+    var actionMethods = this.props.actionMethods || Realize.config.restMethods;
+    return actionMethods[action];
   }
-
 };
 var UtilsMixin = {
 
@@ -2324,7 +2325,7 @@ var Form = React.createClass({displayName: "Form",
 
   submit: function(postData) {
     var submitOptions = {
-      url: this.props.action, 
+      url: this.props.action,
       method: this.props.method,
       data: postData,
       success: this.handleSuccess,
@@ -2718,7 +2719,7 @@ var Grid = React.createClass({displayName: "Grid",
     var postData = this.buildPostData();
 
     $.ajax({
-      url: this.getActionUrl('index'),
+      url: this.getRestActionUrl('index'),
       method: 'GET',
       dataType: 'json',
       data: postData,
@@ -3067,11 +3068,11 @@ var GridForm = React.createClass({displayName: "GridForm",
   },
 
   getFormAction: function() {
-    return this.getActionUrl(this.state.formAction, this.state.selectedRowId);
+    return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 
   getFormMethod: function() {
-    return this.getActionMethod(this.state.formAction);
+    return this.getRestActionMethod(this.state.formAction);
   },
 
   getFormSubmitButton: function() {
@@ -3164,8 +3165,8 @@ var GridForm = React.createClass({displayName: "GridForm",
   },
 
   destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});

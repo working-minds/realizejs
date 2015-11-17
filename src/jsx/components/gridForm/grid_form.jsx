@@ -110,11 +110,11 @@ var GridForm = React.createClass({
   },
 
   getFormAction: function() {
-    return this.getActionUrl(this.state.formAction, this.state.selectedRowId);
+    return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 
   getFormMethod: function() {
-    return this.getActionMethod(this.state.formAction);
+    return this.getRestActionMethod(this.state.formAction);
   },
 
   getFormSubmitButton: function() {
@@ -207,8 +207,8 @@ var GridForm = React.createClass({
   },
 
   destroyAction: function(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({isLoading: true});
