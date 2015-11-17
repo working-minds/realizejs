@@ -33,7 +33,11 @@ module.exports = function(grunt) {
       files: ['Gruntfile.js', 'src/jsx/**/*.jsx']
     },
 
-    react: {
+    babel: {
+      options: {
+        sourceMaps: true,
+        presets: ['es2015', 'stage-2', 'react']
+      },
       build: {
         files: [
           {
@@ -61,10 +65,9 @@ module.exports = function(grunt) {
       }
     },
 
-    concat: {
+    concat_sourcemap: {
       options: {
-        banner: '<%= banner %>',
-        stripBanners: false
+        sourcesContent: true
       },
       js: {
         src: [
@@ -114,6 +117,22 @@ module.exports = function(grunt) {
       }
     },
 
+    usebanner: {
+      build: {
+        options: {
+          position: 'top',
+          banner: '<%= banner %>',
+          linebreak: true
+        },
+        files: {
+          src: [
+            'dist/**/*.css',
+            'dist/**/*.js'
+          ]
+        }
+      }
+    },
+
     clean: {
       build: {
         src: ["tmp"]
@@ -124,15 +143,25 @@ module.exports = function(grunt) {
   // Load dos plugins Grunt do NPM
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-concat-sourcemap');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-jsxhint');
-  grunt.loadNpmTasks('grunt-react');
+  grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-banner');
 
+  grunt.registerTask('build', [
+    'babel:build',
+    'sass:build',
+    'concat_sourcemap:js',
+    'concat_sourcemap:css',
+    'uglify',
+    'cssmin',
+    'usebanner:build',
+    'clean'
+  ]);
 
-  grunt.registerTask('build', ['react:build', 'sass:build', 'concat:js', 'concat:css', 'uglify', 'cssmin', 'clean']);
   grunt.registerTask('default', ['build']);
 };
