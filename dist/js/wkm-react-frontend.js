@@ -3,6 +3,11 @@
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
 
+/*!
+ * WKM Frontend v0.0.0 (http://www.wkm.com.br)
+ * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
+ */
+
 var Realize = {};
 
 Realize.config = {
@@ -323,7 +328,7 @@ Realize.themes.materialize = {
   },
 
   table: {
-    cssClass: 'table striped responsive-table',
+    cssClass: 'table striped',
 
     wrapper: {
       cssClass: 'table-wrapper'
@@ -1007,7 +1012,7 @@ var GridActionsMixin = {
   getDefaultMemberActionButtons: function getDefaultMemberActionButtons() {
     return [{
       icon: 'edit',
-      href: this.getActionUrl('edit')
+      href: this.getRestActionUrl('edit')
     }, {
       icon: 'destroy',
       onClick: this.destroyAction
@@ -1026,21 +1031,21 @@ var GridActionsMixin = {
     return [{
       name: 'actions.new',
       context: 'none',
-      href: this.getActionUrl('add')
+      href: this.getRestActionUrl('add')
     }];
   },
 
   addAction: function addAction(event) {
-    window.location = this.getActionUrl('add');
+    window.location = this.getRestActionUrl('add');
   },
 
   editAction: function editAction(event, id) {
-    window.location = this.getActionUrl('edit', id);
+    window.location = this.getRestActionUrl('edit', id);
   },
 
   destroyAction: function destroyAction(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if (!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({ isLoading: true });
@@ -1054,8 +1059,9 @@ var GridActionsMixin = {
     }
   },
 
-  handleDestroy: function handleDestroy(data) {
+  handleDestroy: function handleDestroy(data, status, xhr) {
     this.loadData(data);
+    this.handleSuccess(data, status, xhr);
   },
 
   handleDestroyError: function handleDestroyError(xhr, status, error) {
@@ -1517,7 +1523,7 @@ var ModalRendererMixin = {
     modalContainerId: React.PropTypes.string
   },
 
-  getDefaultPropst: function getDefaultPropst() {
+  getDefaultProps: function getDefaultProps() {
     return {
       modalContainerId: "modal-container"
     };
@@ -1658,14 +1664,15 @@ var RestActionsMixin = {
 
   getDefaultProps: function getDefaultProps() {
     return {
-      actionUrls: Realize.config.restUrls,
-      actionMethods: Realize.config.restMethods,
+      actionUrls: null,
+      actionMethods: null,
       destroyConfirm: 'Tem certeza que deseja remover este item?'
     };
   },
 
-  getActionUrl: function getActionUrl(action, id) {
-    var actionUrl = this.props.actionUrls[action];
+  getRestActionUrl: function getRestActionUrl(action, id) {
+    var actionUrls = this.props.actionUrls || Realize.config.restUrls;
+    var actionUrl = actionUrls[action];
     actionUrl = actionUrl.replace(/:url/, this.props.url);
     if (!!id) {
       actionUrl = actionUrl.replace(/:id/, id);
@@ -1674,10 +1681,10 @@ var RestActionsMixin = {
     return actionUrl;
   },
 
-  getActionMethod: function getActionMethod(action) {
-    return this.props.actionMethods[action];
+  getRestActionMethod: function getRestActionMethod(action) {
+    var actionMethods = this.props.actionMethods || Realize.config.restMethods;
+    return actionMethods[action];
   }
-
 };
 //
 
@@ -1700,12 +1707,1365 @@ var UtilsMixin = {
 
 'use strict';
 
+var EditPermissions = React.createClass({
+  displayName: 'EditPermissions',
+
+  mixins: [RequestHandlerMixin],
+
+  PropTypes: {
+    principal: React.PropTypes.object,
+    principalType: React.PropTypes.string,
+    resource: React.PropTypes.object,
+    resourceType: React.PropTypes.string,
+    title: React.PropTypes.string,
+    saveOnSelect: React.PropTypes.bool,
+    principalPermissions: React.PropTypes.object,
+    permissionsBaseUrl: React.PropTypes.permissionsBaseUrl
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      principal: null,
+      principalType: 'User',
+      resource: null,
+      resourceType: null,
+      title: '',
+      saveOnSelect: false,
+      principalPermissions: null,
+      permissionsBaseUrl: '/permissions'
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      permissions: [],
+      permissionsChecked: this.initialPrincipalPermissions()
+    };
+  },
+
+  componentDidMount: function componentDidMount() {
+    this.getPermissions();
+  },
+
+  componentDidUpdate: function componentDidUpdate() {
+    $('.permission-manager-modal').resize();
+  },
+
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    this.setState({
+      permissionsChecked: nextProps.principalPermission
+    });
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: 'row permissions-manager' },
+      this.renderTitle(),
+      React.createElement(
+        'div',
+        { className: 'box-edit-permissions' },
+        this.renderHiddenInputs(),
+        this.renderPermissionGroup()
+      )
+    );
+  },
+
+  initialPrincipalPermissions: function initialPrincipalPermissions() {
+    if (!!this.props.principalPermissions) {
+      return this.props.principalPermissions;
+    } else {
+      return [];
+    }
+  },
+
+  checked: function checked(permission) {
+    var permissionsChecked = !!this.state.permissionsChecked ? this.state.permissionsChecked.permissions : [];
+    var checked = false;
+
+    if (!!permissionsChecked) {
+      for (var i = 0; i < permissionsChecked.length; i++) {
+        var permissions = permissionsChecked[i].permission;
+        var implies = permissionsChecked[i].implies;
+        if (permissions.indexOf(permission) !== -1 || implies.indexOf(permission) !== -1) checked = true;
+      }
+    }
+
+    return checked;
+  },
+
+  disabled: function disabled(permission) {
+    var permissionsChecked = !!this.state.permissionsChecked ? this.state.permissionsChecked.permissions : [];
+    var disabled = false;
+
+    if (!!permissionsChecked) {
+      for (var i = 0; i < permissionsChecked.length; i++) {
+        var permission_name = permissionsChecked[i].permission;
+        var implies = permissionsChecked[i].implies;
+        var inherited = permissionsChecked[i].inherited;
+        if (implies.indexOf(permission) !== -1 || permission_name == permission && inherited == true) disabled = true;
+      }
+    }
+
+    return disabled;
+  },
+
+  handleChange: function handleChange(permission, event) {
+    var checkbox = React.findDOMNode(this.refs['checkbox_' + permission]);
+    var checked = $($(checkbox).find('input')).is(':checked');
+    if (!!this.props.saveOnSelect) {
+      if (checked) {
+        this.grantPermission(permission);
+      } else {
+        this.revokePermission(permission);
+      }
+    } else {
+      if (checked) {
+        if (!this.belongsToPermissionsChecked(permission)) {
+          this.addPermissionChecked(permission);
+        }
+      } else {
+        this.removePermissionChecked(permission);
+      }
+    }
+  },
+
+  grantPermission: function grantPermission(permission) {
+    var url = this.props.permissionsBaseUrl;
+    var data = { principal_id: this.props.principal.id,
+      principal_type: 'User',
+      resource_id: this.props.resource.id,
+      resourceType: this.props.resourceType,
+      permissions: [permission]
+    };
+
+    this.performRequest(url, data, 'POST', 'json');
+  },
+
+  revokePermission: function revokePermission(permission) {
+    var url = this.props.permissionsBaseUrl + "/" + this.props.principal.id;
+    var data = { principal_id: this.props.principal.id,
+      principal_type: 'User',
+      resource_id: this.props.resource.id,
+      resource_type: this.props.resourceType,
+      permissions: [permission]
+    };
+
+    this.performRequest(url, data, 'DELETE', 'json');
+  },
+
+  getPermissions: function getPermissions() {
+    $.ajax({
+      url: this.props.permissionsBaseUrl + "/" + this.props.principal.id,
+      method: 'GET',
+      dataType: 'json',
+      data: {
+        principal_type: this.props.principalType,
+        principal_id: this.props.principal.id,
+        resource_id: this.props.resource.id,
+        resource_type: this.props.resourceType
+      },
+      success: (function (data) {
+        this.setState({
+          permissions: data.permissions
+        });
+      }).bind(this)
+    });
+  },
+
+  onSuccess: function onSuccess() {
+    this.getPermissions();
+  },
+
+  addPermissionChecked: function addPermissionChecked(permission) {
+    this.props.handleAddPermissionChecked(permission);
+  },
+
+  removePermissionChecked: function removePermissionChecked(permission) {
+    this.props.handleRemovePermissionChecked(permission);
+  },
+
+  belongsToPermissionsChecked: function belongsToPermissionsChecked(permission) {
+    var permissionsChecked = !!this.state.permissionsChecked ? this.state.permissionsChecked.permissions : [];
+    belongs = false;
+
+    for (var i = 0; i < permissionsChecked.length; i++) {
+      if (permissionsChecked[i].permissions === permission) {
+        belongs = true;
+      }
+    }
+
+    return belongs;
+  },
+
+  checkboxId: function checkboxId(permission) {
+    return 'permissions_' + permission + '_';
+  },
+
+  checkboxName: function checkboxName() {
+    return 'permissions[]';
+  },
+
+  renderPermissionGroup: function renderPermissionGroup() {
+    var component = [];
+    var permissions = this.state.permissions;
+    var resourceId = this.props.resource.id;
+
+    if (!!permissions) {
+      permissions.forEach((function (permission) {
+        component.push(React.createElement(Input, { key: resourceId + '_' + permission + '_' + Math.random(),
+          component: 'checkbox',
+          ref: 'checkbox_' + permission,
+          label: I18n.t('permissions.' + permission),
+          value: permission,
+          checked: this.checked(permission),
+          disabled: this.disabled(permission),
+          onChange: this.handleChange.bind(this, permission),
+          id: this.checkboxId(permission),
+          name: this.checkboxName(),
+          className: 'col s12'
+        }));
+      }).bind(this));
+    }
+
+    return component;
+  },
+
+  renderTitle: function renderTitle() {
+    var component = [];
+    if (!!this.props.title) component.push(React.createElement(
+      'h3',
+      null,
+      this.props.title
+    ));
+
+    return component;
+  },
+
+  renderHiddenInputs: function renderHiddenInputs() {
+    var component = [];
+    component.push(React.createElement('input', { type: 'hidden', name: '_method', value: 'put' }));
+    component.push(React.createElement('input', { type: 'hidden', name: 'resource_type', value: this.props.resourceType }));
+    component.push(React.createElement('input', { type: 'hidden', name: 'resource_id', value: this.props.resource.id }));
+    component.push(React.createElement('input', { type: 'hidden', name: 'principal_type', value: this.props.principalType }));
+    component.push(React.createElement('input', { type: 'hidden', name: 'principal_id', value: this.props.principal.id }));
+
+    return component;
+  }
+
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var IndexPermissions = React.createClass({
+  displayName: 'IndexPermissions',
+
+  mixins: [RequestHandlerMixin, ModalRendererMixin],
+
+  PropTypes: {
+    principal: React.PropTypes.object,
+    resourceType: React.PropTypes.string,
+    gridProps: React.PropTypes.object,
+    className: React.PropTypes.string,
+    editPermissionBaseUrl: React.PropTypes.object
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      principal: null,
+      principalType: null,
+      resourceType: '',
+      className: 'index-permissions',
+      editPermissionBaseUrl: '/permission_managers',
+      gridProps: {
+        url: '/permissions',
+        selectable: false,
+        pagination: false,
+        eagerLoad: true,
+        tableClassName: 'table striped bordered'
+      },
+      editPermissionsProps: {
+        url: null,
+        actionCallback: null
+      }
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      hasResource: true
+    };
+  },
+
+  render: function render() {
+    var hasResource = this.state.hasResource;
+    hasResource ? display = 'block' : display = 'none';
+
+    return React.createElement(
+      'div',
+      { className: this.props.className, style: { 'display': display } },
+      React.createElement(Grid, _extends({}, this.props.gridProps, { ref: 'grid', columns: this.getColumns(), filter: this.filters(), onLoadSuccess: this.onLoadSuccess, actionButtons: this.getActionButtons() }))
+    );
+  },
+
+  openEditPermission: function openEditPermission(event, dataRowId, data) {
+    var permissionEditURL = this.props.editPermissionBaseUrl;
+    var data = {
+      principal_id: this.props.principal.id,
+      principal_type: this.props.principalType,
+      resource_type: this.props.resourceType,
+      resource_id: data.resource_id
+    };
+
+    this.performRequest(permissionEditURL, data);
+  },
+
+  onSuccess: function onSuccess(responseData) {
+    this.renderModalHtml(responseData);
+  },
+
+  getActionButtons: function getActionButtons() {
+    var gridProps = this.props.gridProps;
+    if (!!gridProps.actionButtons) return gridProps.actionButtons;else {
+      return {
+        member: [{
+          icon: 'edit',
+          onClick: this.openEditPermission
+        }],
+        collection: []
+      };
+    }
+  },
+
+  getColumns: function getColumns() {
+    var gridProps = this.props.gridProps;
+
+    if (!!gridProps.columns) {
+      return gridProps.columns;
+    } else {
+      var resourceType = this.props.resourceType;
+      return this.defaultColumns(resourceType);
+    }
+  },
+
+  defaultColumns: function defaultColumns(resourceType) {
+    return {
+      resource_name: {
+        label: I18n.t('models.' + resourceType)
+      },
+      permission: {
+        label: 'Permissão',
+        component: 'LabelPermission'
+      }
+    };
+  },
+
+  filters: function filters() {
+    return {
+      resource: 'q',
+      inputs: {
+        principal_id: {
+          value: this.props.principal.id,
+          component: 'hidden',
+          scope: 'global'
+        },
+        principal_type: {
+          value: this.props.principalType,
+          component: 'hidden',
+          scope: 'global'
+        },
+        resource_type: {
+          value: this.props.resourceType,
+          component: 'hidden',
+          scope: 'global'
+        }
+      }
+    };
+  },
+
+  onLoadSuccess: function onLoadSuccess() {
+    var dataRows = this.refs.grid.state.dataRows;
+    if (dataRows.length == 0) {
+      this.setState({
+        hasResource: false
+      });
+    }
+  }
+
+});
+//
+
+'use strict';
+
+var LabelPermission = React.createClass({
+  displayName: 'LabelPermission',
+
+  PropTypes: {
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      className: ''
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: this.props.className },
+      this.renderLabel()
+    );
+  },
+
+  renderLabel: function renderLabel() {
+    var component = [];
+    var permissions = this.props.value;
+
+    if (permissions.length == 0) {
+      component.push(React.createElement(
+        'div',
+        null,
+        ' - '
+      ));
+    } else {
+      permissions.forEach(function (permission) {
+        component.push(React.createElement(
+          'div',
+          null,
+          I18n.t('permissions.' + permission)
+        ));
+      });
+    }
+
+    return component;
+  }
+
+});
+//
+
+'use strict';
+
+var AclModalsWrapper = React.createClass({
+  displayName: 'AclModalsWrapper',
+
+  mixins: [RequestHandlerMixin],
+
+  PropTypes: {
+    principal: React.PropTypes.object,
+    principalType: React.PropTypes.string,
+    resource: React.PropTypes.object,
+    resourceType: React.PropTypes.string,
+    urlProps: React.PropTypes.object
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      principal: null,
+      principalType: '',
+      resource: null,
+      resourceType: '',
+      urlProps: {
+        principalsBaseUrl: '/principals',
+        potentialPrincipalsBaseUrl: 'principals/potential_principals',
+        principalsTypeBaseUrl: '/principals/types',
+        updatePermissionsBaseUrl: '/bulk_permissions',
+        principalsPermissionsBaseUrl: '/principals/principals_permissions'
+      }
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'div',
+        null,
+        this.renderPermissionManagerModal(),
+        this.renderAddPrincipalsModal()
+      )
+    );
+  },
+
+  renderPermissionManagerModal: function renderPermissionManagerModal() {
+    var component = [];
+    component.push(React.createElement(PermissionManagerModal, {
+      ref: 'permissionManagerModal',
+      resource: this.props.resource,
+      resourceType: this.props.resourceType,
+      principal: this.props.principal,
+      principalType: this.props.principalType,
+      principalsBaseUrl: this.props.urlProps.principalsBaseUrl,
+      principalsPermissionsBaseUrl: this.props.urlProps.principalsPermissionsBaseUrl,
+      updatePermissionsBaseUrl: this.props.urlProps.updatePermissionsBaseUrl,
+      handleRemovePrincipal: this.handleRemovePrincipal
+    }));
+
+    return component;
+  },
+
+  renderAddPrincipalsModal: function renderAddPrincipalsModal() {
+    var component = [];
+    if (!this.props.principal) {
+      component.push(React.createElement(AddPrincipalsModal, {
+        potentialPrincipalsBaseUrl: this.props.urlProps.potentialPrincipalsBaseUrl,
+        principalsTypeBaseUrl: this.props.urlProps.principalsTypeBaseUrl,
+        handleAddPrincipal: this.handleAddPrincipal,
+        resource: this.props.resource,
+        resourceType: this.props.resourceType
+      }));
+    }
+
+    return component;
+  },
+
+  handleAddPrincipal: function handleAddPrincipal(selectedDatas) {
+    var url = this.props.urlProps.principalsBaseUrl;
+    var data = { principals: selectedDatas, resource_id: this.props.resource.id, resource_type: this.props.resourceType };
+    this.performRequest(url, data, 'POST');
+    $('#add-principals-modal').closeModal();
+    this.refs.permissionManagerModal.loadPrincipalsPermissions(selectedDatas);
+  },
+
+  handleRemovePrincipal: function handleRemovePrincipal(selectedPrincipal) {
+    if (confirm("Você tem certeza que deseja retirar as permissões desse usuário/grupo?")) {
+      var url = this.props.urlProps.principalsBaseUrl;
+      data = {
+        resource_id: this.props.resource.id,
+        resource_type: this.props.resourceType,
+        principal_id: selectedPrincipal.id,
+        principal_type: selectedPrincipal.principal_type
+      };
+
+      this.performRequest(url, data, 'DELETE');
+    }
+  },
+
+  onSuccess: function onSuccess() {
+    this.forceUpdate();
+  }
+
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var AddPrincipalsModal = React.createClass({
+  displayName: 'AddPrincipalsModal',
+
+  mixins: [RequestHandlerMixin],
+
+  PropTypes: {
+    resource: React.PropTypes.object,
+    resourceType: React.PropTypes.string,
+    className: React.PropTypes.string,
+    modalId: React.PropTypes.string,
+    potentialPrincipalsBaseUrl: React.PropTypes.string,
+    principalsTypeBaseUrl: React.PropTypes.string
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      className: 'add-principals-modal',
+      modalId: 'add-principals-modal',
+      potentialPrincipalsBaseUrl: 'principals/potential_principals',
+      principalsTypeBaseUrl: '/principals/types',
+      gridProps: {
+        selectable: true,
+        paginationOnTop: false,
+        paginationConfigs: {
+          perPage: 10,
+          window: 4,
+          param: 'p'
+        },
+        columns: {
+          name: {
+            label: 'Nome'
+          },
+          principal_type: {
+            label: 'Tipo'
+          }
+        },
+        tableClassName: 'table bordered',
+        actionButtons: {
+          member: [],
+          collection: []
+        }
+      }
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      selectedPrincipal: null,
+      potentialPrincipals: [],
+      principalType: null
+    };
+  },
+
+  componentWillMount: function componentWillMount() {
+    $.ajax({
+      url: this.props.principalsTypeBaseUrl,
+      method: 'GET',
+      dataType: 'json',
+      success: (function (data) {
+        this.setState({
+          principalType: data[0].name
+        });
+      }).bind(this)
+    });
+  },
+
+  componentWillReceiveProps: function componentWillReceiveProps() {
+    this.refs.grid.backToInitialState();
+  },
+
+  render: function render() {
+    return React.createElement(
+      Modal,
+      { id: this.props.modalId, style: { 'z-index': '9000' }, className: this.props.className, headerSize: this.props.headerSize, ref: 'add-principals-modal' },
+      React.createElement(
+        ModalHeader,
+        null,
+        React.createElement(
+          'h5',
+          null,
+          'Selecionar Usuário/Grupo'
+        )
+      ),
+      React.createElement(
+        ModalContent,
+        null,
+        React.createElement(
+          'div',
+          { className: 'principal-modal-content' },
+          React.createElement(Grid, _extends({
+            ref: 'grid'
+          }, this.props.gridProps, {
+            url: this.props.potentialPrincipalsBaseUrl,
+            filter: this.filters(),
+            eagerLoad: true,
+            onClickRow: this.handleSelectPrincipal
+          }))
+        )
+      ),
+      React.createElement(
+        ModalFooter,
+        null,
+        React.createElement(
+          'div',
+          { className: 'modal-footer', style: { 'float': 'right' } },
+          React.createElement(CloseModalButton, { modalId: this.props.modalId }),
+          React.createElement(Button, { name: 'Adicionar', element: 'a', onClick: this.handleAddPrincipal })
+        )
+      )
+    );
+  },
+
+  filters: function filters() {
+    return {
+      resource: 'q',
+      inputs: {
+        name_cont: {
+          label: 'Nome',
+          className: 'col s12 l6 m6'
+        },
+        principal_type: {
+          label: 'Tipo',
+          component: 'autocomplete',
+          optionsUrl: '/principals/types',
+          searchParam: 'principal_type',
+          className: 'col s12 l6 m6',
+          scope: 'global'
+        },
+        resource_id: {
+          value: this.props.resource.id,
+          component: 'hidden',
+          scope: 'global'
+        },
+        resource_type: {
+          value: this.props.resourceType,
+          component: 'hidden',
+          scope: 'global'
+        },
+        per_page: {
+          value: 10,
+          component: 'hidden',
+          scope: 'global'
+        }
+      }
+    };
+  },
+
+  handleSelectPrincipal: function handleSelectPrincipal(event, data) {
+    this.setState({
+      selectedPrincipal: data
+    });
+  },
+
+  handleAddPrincipal: function handleAddPrincipal() {
+    var selectedDatas = this.getSelectedDatas();
+    if (selectedDatas.length == 0) {
+      alert('Necessário selecionar alguém para adicionar');
+    } else {
+      this.addPrincipal(selectedDatas);
+    }
+  },
+
+  getSelectedDatas: function getSelectedDatas() {
+    var selectedRowsIds = this.refs.grid.state.selectedRowIds;
+    var dataRows = this.refs.grid.state.dataRows;
+    var selectedDatas = [];
+
+    selectedRowsIds.forEach(function (rowId) {
+      dataRows.forEach(function (data) {
+        if (data.id == rowId) {
+          selectedDatas.push({ principal_id: data.id, principal_type: data.principal_type });
+        }
+      });
+    });
+
+    return selectedDatas;
+  },
+
+  addPrincipal: function addPrincipal(selectedDatas) {
+    this.props.handleAddPrincipal(selectedDatas);
+  },
+
+  getData: function getData() {
+    return {
+      dataRows: this.state.potentialPrincipals,
+      count: this.state.potentialPrincipals.length
+    };
+  }
+
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var CloseModalButton = React.createClass({
+  displayName: 'CloseModalButton',
+
+  PropTypes: {
+    name: React.PropTypes.string,
+    className: React.PropTypes.string,
+    clearTheme: React.PropTypes.bool,
+    element: React.PropTypes.string,
+    modalId: React.PropTypes.string
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      name: 'Fechar',
+      className: 'btn waves-effect waves-light close-button grey lighten-4',
+      clearTheme: true,
+      element: 'a'
+    };
+  },
+
+  render: function render() {
+    return React.createElement(Button, _extends({}, this.props, { onClick: this.closeModal }));
+  },
+
+  closeModal: function closeModal() {
+    if (!!this.props.modalId) {
+      $('#' + this.props.modalId).closeModal();
+    }
+  }
+
+});
+//
+
+'use strict';
+
+var PermissionManagerModal = React.createClass({
+  displayName: 'PermissionManagerModal',
+
+  mixins: [RequestHandlerMixin],
+
+  PropTypes: {
+    permissionManagerInModal: React.PropTypes.bool,
+    principal: React.PropTypes.object,
+    principalType: React.PropTypes.string,
+    resource: React.PropTypes.object,
+    resourceType: React.PropTypes.string,
+    className: React.PropTypes.string,
+    modalId: React.PropTypes.string,
+    updatePermissionsBaseUrl: React.PropTypes.string,
+    principalsBaseUrl: React.PropTypes.string,
+    principalsPermissionsBaseUrl: React.PropTypes.string
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      permissionManagerInModal: true,
+      principal: null,
+      principalType: '',
+      resource: null,
+      resourceType: '',
+      className: 'permission-manager-modal',
+      modalId: 'permission-manager-modal',
+      updatePermissionsBaseUrl: '/bulk_permissions',
+      principalsBaseUrl: '/principals',
+      principalsPermissionsBaseUrl: '/principals/principals_permissions'
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      Modal,
+      { id: this.props.modalId, className: this.props.className, headerSize: this.props.headerSize, opened: true, ref: 'modal' },
+      React.createElement(
+        ModalHeader,
+        null,
+        React.createElement(
+          'h5',
+          null,
+          'Gerenciar Permissões - ',
+          this.props.resource.name
+        )
+      ),
+      React.createElement(
+        ModalContent,
+        null,
+        React.createElement(
+          'div',
+          { className: 'permissions-modal-content' },
+          React.createElement(PermissionManager, {
+            ref: 'permissionManager',
+            handleRemovePrincipal: this.props.handleRemovePrincipal,
+            permissionManagerInModal: this.props.permissionManagerInModal,
+            principal: this.props.principal,
+            principalType: this.props.principalType,
+            resource: this.props.resource,
+            resourceType: this.props.resourceType,
+            principalsBaseUrl: this.props.principalsBaseUrl,
+            principalsPermissionsBaseUrl: this.props.principalsPermissionsBaseUrl
+          })
+        )
+      ),
+      React.createElement(
+        ModalFooter,
+        null,
+        React.createElement(
+          'div',
+          { className: 'modal-footer', style: { 'float': 'right' } },
+          React.createElement(CloseModalButton, { modalId: this.props.modalId }),
+          React.createElement(UpdatePermissionsButton, { handleUpdatePermissions: this.handleUpdatePermissions })
+        )
+      )
+    );
+  },
+
+  loadPrincipalsPermissions: function loadPrincipalsPermissions(selectedDatas) {
+    this.refs.permissionManager.createPrincipalsPermissions(selectedDatas);
+  },
+
+  getPostData: function getPostData() {
+    var principalPermissions = this.refs.permissionManager.state.principalsPermissions;
+    var postData = [];
+
+    for (var i = 0; i < principalPermissions.length; i++) {
+      if (!!principalPermissions[i].changed) {
+        var permissionsByPrincipal = principalPermissions[i].permissions;
+        var permissions = permissionsByPrincipal.map(function (a) {
+          return a.permission;
+        });
+        var implies = permissionsByPrincipal.map(function (a) {
+          return a.implies;
+        });
+        implies = [].concat.apply([], implies);
+        permissions = _.difference(permissions, implies);
+
+        postData.push({
+          principal_id: principalPermissions[i].principal_id,
+          principal_type: principalPermissions[i].principal_type,
+          permissions: permissions
+        });
+      }
+    }
+
+    return { resource_id: this.props.resource.id, resource_type: this.props.resourceType, permissions_by_principal: postData };
+  },
+
+  handleUpdatePermissions: function handleUpdatePermissions(event) {
+    var url = this.props.updatePermissionsBaseUrl;
+    var postData = this.getPostData();
+    var method = 'PUT';
+    this.performRequest(url, postData, method);
+  },
+
+  onSuccess: function onSuccess() {
+    $('#' + this.props.modalId).closeModal();
+    window.location.reload();
+  }
+
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var PermissionManager = React.createClass({
+  displayName: 'PermissionManager',
+
+  mixins: [RequestHandlerMixin],
+
+  ////// SPECIFICATIONS //////
+
+  PropTypes: {
+    principal: React.PropTypes.object,
+    principalType: React.PropTypes.string,
+    resource: React.PropTypes.object,
+    resourceType: React.PropTypes.string,
+    PrincipalGridProps: React.PropTypes.object,
+    permissionManagerInModal: React.PropTypes.bool,
+    principalsBaseUrl: React.PropTypes.string,
+    principalsPermissionsBaseUrl: React.PropTypes.string,
+    permissionsBaseUrl: React.PropTypes.string
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      principal: null,
+      principalType: '',
+      resource: null,
+      resourceType: '',
+      permissionManagerInModal: false,
+      principalsBaseUrl: '/principals',
+      principalsPermissionsBaseUrl: '/principals/principals_permissions',
+      permissionsBaseUrl: '/permissions',
+      PrincipalGridProps: {
+        selectable: false,
+        pagination: false,
+        columns: {
+          name: {
+            label: 'Nome'
+          },
+          principal_type: {
+            label: 'Tipo'
+          }
+        },
+        tableClassName: 'table bordered',
+        clearThemeTable: true,
+        actionButtons: {
+          member: [],
+          collection: []
+        }
+      }
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      principalsPermissions: {},
+      selectedPrincipal: this.props.principal,
+      principals: []
+    };
+  },
+
+  //// LIFECYCLES ////
+
+  componentDidMount: function componentDidMount() {
+    this.loadPrincipals();
+    this.loadPrincipalsPermissions();
+  },
+
+  componentWillReceiveProps: function componentWillReceiveProps() {
+    this.loadPrincipals();
+  },
+
+  ////// RENDER //////
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      null,
+      this.renderPrincipalsGrid(),
+      this.renderEditPermission(),
+      this.renderAddPrincipalsModal()
+    );
+  },
+
+  renderPrincipalsGrid: function renderPrincipalsGrid() {
+    var component = [];
+    var principal = this.props.principal;
+
+    if (!principal) {
+      component.push(React.createElement(
+        'h5',
+        null,
+        'Usuários/Grupo:'
+      ));
+      component.push(React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'div',
+          { className: 'principal-grid' },
+          React.createElement(Grid, _extends({ ref: 'grid'
+          }, this.props.PrincipalGridProps, {
+            key: Math.random(),
+            onClickRow: this.handleSelectPrincipal,
+            tableRowCssClass: this.rowCssClass,
+            data: this.dataGridPrincipals()
+          }))
+        ),
+        this.renderActionButtons()
+      ));
+    }
+
+    return component;
+  },
+
+  renderActionButtons: function renderActionButtons() {
+    var component = [];
+
+    component.push(React.createElement(PrincipalActionButtons, {
+      handleRemovePrincipal: this.handleRemovePrincipal,
+      handleOpenPrincipalModal: this.handleOpenPrincipalModal,
+      modalContainerId: 'principals-modal'
+    }));
+
+    return component;
+  },
+
+  renderEditPermission: function renderEditPermission() {
+    var component = [];
+    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+    var principal_type = !!this.state.selectedPrincipal ? selectedPrincipal.principal_type : this.props.principalType;
+
+    if (!!selectedPrincipal) {
+      component.push(React.createElement(
+        'h5',
+        null,
+        'Permissões de ',
+        selectedPrincipal.name,
+        ':'
+      ));
+      component.push(React.createElement(EditPermissions, {
+        principal: selectedPrincipal,
+        principalType: principal_type,
+        principalPermission: this.principalPermission(),
+        resource: this.props.resource,
+        resourceType: this.props.resourceType,
+        handleRemovePermissionChecked: this.handleRemovePermissionChecked,
+        handleAddPermissionChecked: this.handleAddPermissionChecked
+      }));
+    }
+
+    return component;
+  },
+
+  renderAddPrincipalsModal: function renderAddPrincipalsModal() {
+    var permissionManagerInModal = this.props.permissionManagerInModal;
+    if (!permissionManagerInModal) {
+      var component = [];
+      component.push(React.createElement(IndexPrincipal, { handleAddPrincipal: this.handleAddPrincipal }));
+
+      return component;
+    }
+  },
+
+  ////// CHECK/UNCHECK PERMISSIONS METHODS //////
+
+  handleRemovePermissionChecked: function handleRemovePermissionChecked(permission) {
+    var principalPermission = this.principalPermission();
+    var permissions = principalPermission.permissions;
+
+    for (var i = 0; i < permissions.length; i++) {
+      if (permissions[i].permission === permission) {
+        permissions.splice(i, 1);
+      }
+    }
+
+    principalPermission['permissions'] = permissions;
+    principalPermission.changed = true;
+    var principalsPermissions = this.switchPrincipalPermissions(principalPermission);
+
+    this.setState({
+      principalPermissions: principalsPermissions
+    });
+  },
+
+  handleAddPermissionChecked: function handleAddPermissionChecked(permission) {
+    var principalId = !!this.state.selectedPrincipal ? this.state.selectedPrincipal.id : this.props.principal.id;
+
+    $.ajax({
+      url: this.props.permissionsBaseUrl + "/" + principalId,
+      method: 'GET',
+      dataType: 'json',
+      data: {
+        principal_type: 'User',
+        permission: permission,
+        resource_id: this.props.resource.id,
+        resource_type: this.props.resourceType
+      },
+      success: (function (data) {
+        this.addPermissionChecked(data.permissions);
+      }).bind(this)
+    });
+  },
+
+  addPermissionChecked: function addPermissionChecked(permissions) {
+    var principalsPermissions = this.state.principalsPermissions;
+    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+
+    for (var i = 0; i < principalsPermissions.length; i++) {
+      if (selectedPrincipal.id == principalsPermissions[i].principal_id) {
+        principalsPermissions[i].permissions.push(permissions);
+        principalsPermissions[i].changed = true;
+      }
+    }
+
+    if (principalsPermissions.length == 0) {
+      principalsPermissions.push({
+        principal_id: selectedPrincipal.id,
+        principal_type: this.props.principalType,
+        permissions: [permissions],
+        changed: true
+      });
+    }
+
+    this.setState({
+      principalPermissions: principalsPermissions
+    });
+  },
+
+  switchPrincipalPermissions: function switchPrincipalPermissions(principalPermission) {
+    var principalsPermissions = this.state.principalsPermissions;
+    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+
+    for (var i = 0; i < principalsPermissions.length; i++) {
+      if (selectedPrincipal.id == principalsPermissions[i].principal_id) {
+        principalsPermissions.splice(i, 1);
+      }
+    }
+
+    principalsPermissions.push(principalPermission);
+    return principalsPermissions;
+  },
+
+  ////// PRINCIPALS GRID METHODS //////
+
+  handleSelectPrincipal: function handleSelectPrincipal(event, data) {
+
+    this.setState({
+      selectedPrincipal: data
+    });
+  },
+
+  principalPermission: function principalPermission() {
+    var principalsPermissions = this.state.principalsPermissions;
+    var principalPermissions = null;
+    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+
+    for (var i = 0; i < principalsPermissions.length; i++) {
+      if (selectedPrincipal.id == principalsPermissions[i].principal_id) {
+        principalPermissions = principalsPermissions[i];
+      }
+    }
+
+    return principalPermissions;
+  },
+
+  rowCssClass: function rowCssClass(data) {
+    var selectedPrincipal = this.state.selectedPrincipal;
+    if (!!data && !!selectedPrincipal) {
+      if (data.id == selectedPrincipal.id) return 'row-selected';
+    }
+  },
+
+  dataGridPrincipals: function dataGridPrincipals() {
+    return {
+      dataRows: this.state.principals,
+      count: 10
+    };
+  },
+
+  handleRemovePrincipal: function handleRemovePrincipal() {
+    this.props.handleRemovePrincipal(this.state.selectedPrincipal);
+  },
+
+  handleOpenPrincipalModal: function handleOpenPrincipalModal() {
+    $('#add-principals-modal').openModal();
+    $(window).resize();
+  },
+
+  createPrincipalsPermissions: function createPrincipalsPermissions(principals) {
+    var principalsPermissions = this.state.principalsPermissions;
+
+    for (var i = 0; i < principals.length; i++) {
+      if (!this.alreadyExistPrincipalPermissions(principals[i])) {
+        principalsPermissions.push({ principal_id: principals[i].principal_id, principal_type: principals[i].principal_type, permissions: [] });
+      }
+    }
+
+    this.setState({
+      principalsPermissions: principalsPermissions
+    });
+  },
+
+  alreadyExistPrincipalPermissions: function alreadyExistPrincipalPermissions(principal) {
+    var principalsPermissions = this.state.principalsPermissions;
+    var belongs = false;
+
+    for (var i = 0; i < principalsPermissions.length; i++) {
+      if (principalsPermissions[i].principal_id == principal.id) {
+        belongs = true;
+        break;
+      }
+    }
+
+    return belongs;
+  },
+
+  ////// LOAD STATES METHODS //////
+
+  loadPrincipals: function loadPrincipals() {
+    $.ajax({
+      url: this.props.principalsBaseUrl,
+      dataType: 'json',
+      data: {
+        resource_id: this.props.resource.id,
+        resource_type: this.props.resourceType
+      },
+      success: (function (data) {
+        this.setState({
+          principals: data.principals,
+          selectedPrincipal: data.principals[0]
+        });
+      }).bind(this)
+    });
+  },
+
+  loadPrincipalsPermissions: function loadPrincipalsPermissions() {
+    $.ajax({
+      url: this.props.principalsPermissionsBaseUrl,
+      dataType: 'json',
+      data: {
+        resource_id: this.props.resource.id,
+        resource_type: this.props.resourceType
+      },
+      success: (function (data) {
+        this.setState({
+          principalsPermissions: data.principals
+        });
+      }).bind(this)
+    });
+  }
+
+});
+//
+
+'use strict';
+
+var PrincipalActionButtons = React.createClass({
+  displayName: 'PrincipalActionButtons',
+
+  mixins: [RequestHandlerMixin, ModalRendererMixin],
+
+  PropTypes: {
+    className: React.PropTypes.string,
+    handleOpenPrincipalModal: React.PropTypes.func,
+    handleRemovePrincipal: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      className: 'principal-action-buttons',
+      handleAddPrincipal: null,
+      handleRemovePrincipal: null
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: this.props.className },
+      this.renderAddPrincipalButton(),
+      this.renderRemovePrincipalButton(),
+      React.createElement('div', { style: { 'clear': 'both' } })
+    );
+  },
+
+  renderRemovePrincipalButton: function renderRemovePrincipalButton() {
+    var component = [];
+    component.push(React.createElement(Button, {
+      name: 'Remover',
+      onClick: this.props.handleRemovePrincipal
+    }));
+
+    return component;
+  },
+
+  renderAddPrincipalButton: function renderAddPrincipalButton() {
+    var component = [];
+    component.push(React.createElement(Button, {
+      name: 'Adicionar',
+      onClick: this.props.handleOpenPrincipalModal
+    }));
+
+    return component;
+  }
+
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var UpdatePermissionsButton = React.createClass({
+  displayName: 'UpdatePermissionsButton',
+
+  PropTypes: {
+    name: React.PropTypes.string,
+    className: React.PropTypes.string,
+    clearTheme: React.PropTypes.bool,
+    element: React.PropTypes.string,
+    handleUpdatePermissions: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      name: 'Atualizar',
+      className: 'btn waves-effect waves-grey button-modal ',
+      clearTheme: true,
+      element: 'a',
+      handleUpdatePermissions: function handleUpdatePermissions() {
+        return null;
+      }
+    };
+  },
+
+  render: function render() {
+    return React.createElement(Button, _extends({}, this.props, {
+      onClick: this.props.handleUpdatePermissions
+    }));
+  }
+
+});
+//
+
+'use strict';
+
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var Button = React.createClass({
   displayName: 'Button',
 
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, RequestHandlerMixin],
   propTypes: {
     name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
@@ -1714,6 +3074,8 @@ var Button = React.createClass({
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,
     onClick: React.PropTypes.func,
+    actionUrl: React.PropTypes.string,
+    actionData: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
     disableWith: Realize.PropTypes.localizedString,
     confirmsWith: Realize.PropTypes.localizedString,
@@ -1731,6 +3093,8 @@ var Button = React.createClass({
       icon: null,
       href: null,
       onClick: null,
+      actionUrl: null,
+      actionData: {},
       disableWith: 'loading',
       confirmsWith: null,
       element: 'button',
@@ -1773,7 +3137,7 @@ var Button = React.createClass({
     return React.createElement(this.props.element, {
       className: this.getClassName(),
       type: this.props.type,
-      disabled: this.props.disabled,
+      disabled: this.props.disabled || this.props.isLoading,
       href: this.getHref(),
       onClick: this.handleClick,
       'data-method': this.getMethod(),
@@ -1833,10 +3197,14 @@ var Button = React.createClass({
   },
 
   handleClick: function handleClick(event) {
-    if (!!this.props.onClick) {
+    var buttonOnClick = this.props.onClick;
+    var buttonAction = this.props.actionUrl;
+
+    if ($.isFunction(buttonOnClick)) {
       this.props.onClick(event);
-    } else if (!!this.props.href && this.props.element !== 'a') {
-      window.location = this.props.href;
+    } else if (!!buttonAction) {
+      var actionData = this.props.actionData;
+      this.performRequest(buttonAction, actionData, this.getMethod() || 'POST');
     }
   },
 
@@ -2267,6 +3635,7 @@ var Form = React.createClass({
     method: React.PropTypes.string,
     dataType: React.PropTypes.string,
     contentType: React.PropTypes.string,
+    multipart: React.PropTypes.bool,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
     submitButton: React.PropTypes.object,
@@ -2284,6 +3653,7 @@ var Form = React.createClass({
       method: 'POST',
       dataType: undefined,
       contentType: undefined,
+      multipart: false,
       submitButton: {
         name: 'actions.send',
         icon: 'send'
@@ -2332,9 +3702,19 @@ var Form = React.createClass({
         'div',
         { className: Realize.themes.getCssClass('form.buttonGroup') },
         this.renderOtherButtons(),
-        React.createElement(Button, _extends({}, this.submitButtonProps(), { ref: 'submitButton' }))
+        this.renderSubmitButton()
       )
     );
+  },
+
+  renderSubmitButton: function renderSubmitButton() {
+    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()) {
+      return '';
+    }
+
+    var submitButton = [];
+    submitButton.push(React.createElement(Button, _extends({}, this.submitButtonProps(), { ref: 'submitButton', key: 'submit_button' })));
+    return submitButton;
   },
 
   renderInputs: function renderInputs() {
@@ -2346,6 +3726,10 @@ var Form = React.createClass({
   },
 
   renderOtherButtons: function renderOtherButtons() {
+    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()) {
+      return '';
+    }
+
     var otherButtonsProps = this.props.otherButtons;
     var otherButtons = [];
 
@@ -2355,6 +3739,16 @@ var Form = React.createClass({
     }
 
     return otherButtons;
+  },
+
+  isAllInputsFilterHidden: function isAllInputsFilterHidden() {
+    allIsHidden = true;
+    var inputs = this.props.inputs;
+    for (var property in inputs) {
+      if (inputs[property].component !== 'hidden') return allIsHidden = false;
+    }
+
+    return allIsHidden;
   },
 
   submitButtonProps: function submitButtonProps() {
@@ -2401,6 +3795,17 @@ var Form = React.createClass({
       if (submitOptions.contentType == "application/json") {
         submitOptions.data = JSON.stringify(postData);
       }
+    }
+
+    if (this.props.multipart) {
+      var fd = new FormData(React.findDOMNode(this.refs.form));
+      var multipartOptions = {
+        data: fd,
+        enctype: 'multipart/form-data',
+        processData: false,
+        contentType: false
+      };
+      submitOptions = $.extend({}, submitOptions, multipartOptions);
     }
 
     $.ajax(submitOptions);
@@ -2536,7 +3941,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 var Grid = React.createClass({
   displayName: 'Grid',
 
-  mixins: [CssClassMixin, RestActionsMixin, GridActionsMixin],
+  mixins: [CssClassMixin, RequestHandlerMixin, RestActionsMixin, GridActionsMixin],
 
   propTypes: {
     url: React.PropTypes.string,
@@ -2562,7 +3967,8 @@ var Grid = React.createClass({
     onClickRow: React.PropTypes.func,
     tableRowCssClass: React.PropTypes.func,
     paginationOnTop: React.PropTypes.bool,
-    clearThemeTable: React.PropTypes.bool
+    clearThemeTable: React.PropTypes.bool,
+    pagination: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -2600,7 +4006,8 @@ var Grid = React.createClass({
       onClickRow: null,
       tableRowCssClass: null,
       paginationOnTop: true,
-      clearThemeTable: false
+      clearThemeTable: false,
+      pagination: true
     };
   },
 
@@ -2613,7 +4020,7 @@ var Grid = React.createClass({
       page: 1,
       filterData: {},
       sortData: this.props.sortData,
-      isLoading: this.props.isLoading
+      gridIsLoading: this.props.isLoading
     };
   },
 
@@ -2624,6 +4031,20 @@ var Grid = React.createClass({
       if (!!this.props.eagerLoad) {
         this.loadData();
       }
+    }).bind(this));
+  },
+
+  backToInitialState: function backToInitialState() {
+    this.setState({
+      selectedRowIds: [],
+      allSelected: false,
+      page: 1
+    });
+
+    this.setState({
+      filterData: this.getInitialFilterData()
+    }, (function () {
+      this.loadData();
     }).bind(this));
   },
 
@@ -2644,7 +4065,7 @@ var Grid = React.createClass({
 
   gridClassName: function gridClassName() {
     var className = this.className();
-    if (this.state.isLoading) {
+    if (this.state.gridIsLoading) {
       className += ' loading';
     }
 
@@ -2670,7 +4091,7 @@ var Grid = React.createClass({
     return React.createElement(GridFilter, _extends({
       action: this.props.url
     }, this.props.filter, {
-      isLoading: this.state.isLoading,
+      isLoading: this.state.gridIsLoading,
       onSubmit: this.onFilterSubmit,
       ref: 'filter'
     }));
@@ -2705,17 +4126,19 @@ var Grid = React.createClass({
   },
 
   renderPagination: function renderPagination() {
-    var totalRowsCount = this.state.count;
-    var pageRowsCount = this.state.dataRows.length;
-    if (totalRowsCount <= pageRowsCount) {
-      return null;
-    }
+    if (this.props.pagination) {
+      var totalRowsCount = this.state.count;
+      var pageRowsCount = this.state.dataRows.length;
+      if (totalRowsCount <= pageRowsCount) {
+        return null;
+      }
 
-    return React.createElement(GridPagination, _extends({}, this.props.paginationConfigs, {
-      page: this.state.page,
-      count: this.state.count,
-      onPagination: this.onPagination
-    }));
+      return React.createElement(GridPagination, _extends({}, this.props.paginationConfigs, {
+        page: this.state.page,
+        count: this.state.count,
+        onPagination: this.onPagination
+      }));
+    }
   },
 
   /* Event handlers */
@@ -2749,11 +4172,11 @@ var Grid = React.createClass({
   /* Data load handler */
 
   loadData: function loadData() {
-    this.setState({ isLoading: true });
+    this.setState({ gridIsLoading: true });
     var postData = this.buildPostData();
 
     $.ajax({
-      url: this.getActionUrl('index'),
+      url: this.getRestActionUrl('index'),
       method: 'GET',
       dataType: 'json',
       data: postData,
@@ -2764,7 +4187,7 @@ var Grid = React.createClass({
 
   handleLoad: function handleLoad(data) {
     this.setState({
-      isLoading: false,
+      gridIsLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
     }, (function () {
@@ -2774,7 +4197,7 @@ var Grid = React.createClass({
 
   handleLoadError: function handleLoadError(xhr, status, error) {
     this.props.onLoadError(xhr, status, error);
-    this.setState({ isLoading: false });
+    this.setState({ gridIsLoading: false });
     console.log('Grid Load Error:' + error);
   },
 
@@ -2903,12 +4326,19 @@ var GridFilter = React.createClass({
     }
   },
 
+  componentDidUpdate: function componentDidUpdate() {
+    var collapsible = React.findDOMNode(this.refs.collapsible);
+    if (!!collapsible) {
+      $(collapsible).collapsible();
+    }
+  },
+
   renderCollapsibleFilter: function renderCollapsibleFilter() {
     var component = [];
 
     component.push(React.createElement(
       'ul',
-      { className: 'collapsible', 'data-collapsible': 'accordion' },
+      { className: 'collapsible', 'data-collapsible': 'accordion', ref: 'collapsible', key: 'collapsible_form' },
       React.createElement(
         'li',
         null,
@@ -3139,11 +4569,11 @@ var GridForm = React.createClass({
   },
 
   getFormAction: function getFormAction() {
-    return this.getActionUrl(this.state.formAction, this.state.selectedRowId);
+    return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 
   getFormMethod: function getFormMethod() {
-    return this.getActionMethod(this.state.formAction);
+    return this.getRestActionMethod(this.state.formAction);
   },
 
   getFormSubmitButton: function getFormSubmitButton() {
@@ -3233,8 +4663,8 @@ var GridForm = React.createClass({
   },
 
   destroyAction: function destroyAction(event, id) {
-    var destroyUrl = this.getActionUrl('destroy', id);
-    var destroyMethod = this.getActionMethod('destroy');
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
 
     if (!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
       this.setState({ isLoading: true });
@@ -4515,10 +5945,20 @@ var InputDatepicker = React.createClass({
     return React.createElement(
       'span',
       null,
-      React.createElement(InputMasked, _extends({}, this.props, { type: 'date', className: this.className(), onChange: this._handleChange, plugin_params: { typeMask: 'date', showMaskOnHover: false }, ref: 'input' })),
+      React.createElement(InputMasked, _extends({}, this.props, { value: this.formatDateValue(), type: 'date', className: this.className(), onChange: this._handleChange, plugin_params: { typeMask: 'date', showMaskOnHover: false }, ref: 'input' })),
       React.createElement(Label, this.propsWithoutCSS()),
       React.createElement(Button, { disabled: this.props.disabled, icon: { type: "calendar" }, className: 'input-datepicker__button prefix', type: 'button', ref: 'button' })
     );
+  },
+
+  formatDateValue: function formatDateValue() {
+    var date = moment(this.props.value);
+    var formattedValue = date.format(Realize.t('masks.date').toUpperCase());
+    if (formattedValue == "Invalid date") {
+      return this.props.value;
+    }
+
+    return formattedValue;
   }
 });
 //
@@ -5279,7 +6719,8 @@ var Modal = React.createClass({
     headerHeight: React.PropTypes.number,
     contentHeight: React.PropTypes.number,
     footerHeight: React.PropTypes.number,
-    useAvailableHeight: React.PropTypes.bool
+    useAvailableHeight: React.PropTypes.bool,
+    openModalCallback: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -5294,7 +6735,8 @@ var Modal = React.createClass({
       headerHeight: 0,
       contentHeight: 0,
       footerHeight: 0,
-      useAvailableHeight: false
+      useAvailableHeight: false,
+      openModalCallback: null
     };
   },
 
@@ -5363,8 +6805,16 @@ var Modal = React.createClass({
     var $modal = $(React.findDOMNode(this.refs.modal));
 
     $modal.openModal({
-      ready: this.resizeContent
+      ready: this.openModalCallback
     });
+  },
+
+  openModalCallback: function openModalCallback() {
+    this.resizeContent();
+
+    if (!!this.props.openModalCallback) {
+      this.props.openModalCallback();
+    }
   },
 
   resizeContent: function resizeContent() {
@@ -5981,6 +7431,11 @@ var Table = React.createClass({
   },
 
   renderActions: function renderActions() {
+    var collectionButtons = this.props.actionButtons.collection || [];
+    if (!this.props.selectable && collectionButtons.length == 0) {
+      return '';
+    }
+
     return React.createElement(TableActions, {
       dataRows: this.state.dataRows,
       selectedRowIds: this.state.selectedRowIds,
@@ -6186,7 +7641,8 @@ var TableActionButton = React.createClass({
     disabled: React.PropTypes.bool,
     selectionContext: React.PropTypes.oneOf(['none', 'atLeastOne']),
     conditionToShowActionButton: React.PropTypes.func,
-    component: React.PropTypes.string
+    component: React.PropTypes.string,
+    params: React.PropTypes.object
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -6198,6 +7654,7 @@ var TableActionButton = React.createClass({
       disabled: false,
       selectionContext: 'none',
       component: null,
+      params: null,
       conditionToShowActionButton: function conditionToShowActionButton(data) {
         return true;
       }
@@ -6261,7 +7718,15 @@ var TableActionButton = React.createClass({
     }
 
     var selectedData = this.getSelectedData();
-    return buttonHref + '?' + $.param(selectedData);
+    buttonHref = buttonHref + '?' + $.param(selectedData);
+
+    if (!!this.props.params) {
+      for (var property in this.props.params) {
+        buttonHref = buttonHref + '&' + property + '=' + this.props.params[property];
+      }
+    }
+
+    return buttonHref;
   },
 
   actionButtonClick: function actionButtonClick(event) {
@@ -6445,7 +7910,7 @@ var TableCell = React.createClass({
       value = value / 100.0;
     }
 
-    return numeral(value).format('0.0%');
+    return numeral(value).format('0.00%');
   },
 
   currencyValue: function currencyValue(value) {
@@ -6772,9 +8237,19 @@ var TableRowActionButton = React.createClass({
     return buttonHref;
   },
 
+  actionButtonUrl: function actionButtonUrl() {
+    var buttonActionUrl = this.props.actionUrl;
+    if (!!buttonActionUrl) {
+      var dataRowId = this.props.data[this.props.dataRowIdField];
+      buttonActionUrl = buttonActionUrl.replace(/:id/, dataRowId);
+    }
+
+    return buttonActionUrl;
+  },
+
   actionButtonClick: function actionButtonClick(event) {
     var buttonOnClick = this.props.onClick;
-    var buttonAction = this.props.actionUrl;
+    var buttonAction = this.actionButtonUrl();
 
     if ($.isFunction(buttonOnClick)) {
       var dataRowId = this.props.data[this.props.dataRowIdField];
@@ -7096,10 +8571,17 @@ var Tabs = React.createClass({
 
   mixins: [CssClassMixin, ContainerMixin],
 
+  propTypes: {
+    themeClassKey: React.PropTypes.string,
+    className: React.PropTypes.string,
+    activeTab: React.PropTypes.number
+  },
+
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'tabs',
-      className: 's12'
+      className: 's12',
+      activeTab: 1
     };
   },
 
@@ -7129,7 +8611,7 @@ var Tabs = React.createClass({
     var children = this.getChildren();
 
     React.Children.forEach(children, (function (child, i) {
-      var isActive = i === 0;
+      var isActive = i === this.props.activeTab - 1;
       tabs.push(React.createElement(TabButton, _extends({}, child.props, { active: isActive, key: "tab_" + i })));
     }).bind(this));
 
