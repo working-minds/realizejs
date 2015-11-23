@@ -12,6 +12,7 @@ var PermissionManager = React.createClass({
     permissionManagerInModal: React.PropTypes.bool,
     principalsBaseUrl: React.PropTypes.string,
     principalsPermissionsBaseUrl: React.PropTypes.string,
+    impliesPermissionBaseUrl: React.PropTypes.string,
     permissionsBaseUrl: React.PropTypes.string
   },
 
@@ -24,6 +25,7 @@ var PermissionManager = React.createClass({
       permissionManagerInModal: false,
       principalsBaseUrl: '/principals',
       principalsPermissionsBaseUrl: '/principals/principals_permissions',
+      impliesPermissionBaseUrl: '/implies',
       permissionsBaseUrl: '/permissions',
       PrincipalGridProps: {
         selectable: false,
@@ -172,10 +174,11 @@ var PermissionManager = React.createClass({
     var principalId = !!this.state.selectedPrincipal ? this.state.selectedPrincipal.id : this.props.principal.id;
 
     $.ajax({
-      url: this.props.permissionsBaseUrl + "/" + principalId,
+      url: this.props.impliesPermissionBaseUrl,
       method: 'GET',
       dataType: 'json',
       data: {
+        principal_id: principalId,
         principal_type: 'User',
         permission: permission,
         resource_id: this.props.resource.id,
