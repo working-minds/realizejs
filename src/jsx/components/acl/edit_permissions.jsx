@@ -21,7 +21,7 @@ var EditPermissions = React.createClass({
       title: '',
       saveOnSelect: false,
       principalPermissions: null,
-      permissionsBaseUrl: '/permissions'
+      permissionsBaseUrl: '/wkm_acl_ui/permissions'
     }
   },
 

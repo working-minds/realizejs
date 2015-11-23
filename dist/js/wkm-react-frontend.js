@@ -1727,7 +1727,7 @@ var EditPermissions = React.createClass({
       title: '',
       saveOnSelect: false,
       principalPermissions: null,
-      permissionsBaseUrl: '/permissions'
+      permissionsBaseUrl: '/wkm_acl_ui/permissions'
     };
   },
 
@@ -1974,9 +1974,9 @@ var IndexPermissions = React.createClass({
       principalType: null,
       resourceType: '',
       className: 'index-permissions',
-      editPermissionBaseUrl: '/permission_managers',
+      editPermissionBaseUrl: '/wkm_acl_ui/permission_managers',
       gridProps: {
-        url: '/permissions',
+        url: '/wkm_acl_ui/permissions',
         selectable: false,
         pagination: false,
         eagerLoad: true,
@@ -2164,11 +2164,11 @@ var AclModalsWrapper = React.createClass({
       resource: null,
       resourceType: '',
       urlProps: {
-        principalsBaseUrl: '/principals',
-        potentialPrincipalsBaseUrl: 'principals/potential_principals',
-        principalsTypeBaseUrl: '/principals/types',
-        updatePermissionsBaseUrl: '/bulk_permissions',
-        principalsPermissionsBaseUrl: '/principals/principals_permissions'
+        principalsBaseUrl: '/wkm_acl_ui/principals',
+        potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
+        principalsTypeBaseUrl: '/wkm_acl_ui/wkm_acl_ui/principals/types',
+        updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
+        principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
       }
     };
   },
@@ -2269,8 +2269,8 @@ var AddPrincipalsModal = React.createClass({
     return {
       className: 'add-principals-modal',
       modalId: 'add-principals-modal',
-      potentialPrincipalsBaseUrl: 'principals/potential_principals',
-      principalsTypeBaseUrl: '/principals/types',
+      potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
+      principalsTypeBaseUrl: '/wkm_acl_ui/principals/types',
       gridProps: {
         selectable: true,
         paginationOnTop: false,
@@ -2509,9 +2509,9 @@ var PermissionManagerModal = React.createClass({
       resourceType: '',
       className: 'permission-manager-modal',
       modalId: 'permission-manager-modal',
-      updatePermissionsBaseUrl: '/bulk_permissions',
-      principalsBaseUrl: '/principals',
-      principalsPermissionsBaseUrl: '/principals/principals_permissions'
+      updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
+      principalsBaseUrl: '/wkm_acl_ui/principals',
+      principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
     };
   },
 
@@ -2638,10 +2638,10 @@ var PermissionManager = React.createClass({
       resource: null,
       resourceType: '',
       permissionManagerInModal: false,
-      principalsBaseUrl: '/principals',
-      principalsPermissionsBaseUrl: '/principals/principals_permissions',
-      impliesPermissionBaseUrl: '/implies',
-      permissionsBaseUrl: '/permissions',
+      principalsBaseUrl: '/wkm_acl_ui/principals',
+      principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions',
+      impliesPermissionBaseUrl: '/wkm_acl_ui/implies',
+      permissionsBaseUrl: '/wkm_acl_ui/permissions',
       PrincipalGridProps: {
         selectable: false,
         pagination: false,

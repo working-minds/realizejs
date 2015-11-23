@@ -14,8 +14,8 @@ var AddPrincipalsModal = React.createClass({
     return {
       className: 'add-principals-modal',
       modalId: 'add-principals-modal',
-      potentialPrincipalsBaseUrl: 'principals/potential_principals',
-      principalsTypeBaseUrl: '/principals/types',
+      potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
+      principalsTypeBaseUrl: '/wkm_acl_ui/principals/types',
       gridProps: {
         selectable: true,
         paginationOnTop: false,

@@ -23,9 +23,9 @@ var PermissionManagerModal = React.createClass({
       resourceType: '',
       className: 'permission-manager-modal',
       modalId: 'permission-manager-modal',
-      updatePermissionsBaseUrl: '/bulk_permissions',
-      principalsBaseUrl: '/principals',
-      principalsPermissionsBaseUrl: '/principals/principals_permissions'
+      updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
+      principalsBaseUrl: '/wkm_acl_ui/principals',
+      principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
     }
   },
 

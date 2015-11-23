@@ -16,11 +16,11 @@ var AclModalsWrapper = React.createClass({
       resource: null,
       resourceType: '',
       urlProps: {
-        principalsBaseUrl: '/principals',
-        potentialPrincipalsBaseUrl: 'principals/potential_principals',
-        principalsTypeBaseUrl: '/principals/types',
-        updatePermissionsBaseUrl: '/bulk_permissions',
-        principalsPermissionsBaseUrl: '/principals/principals_permissions'
+        principalsBaseUrl: '/wkm_acl_ui/principals',
+        potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
+        principalsTypeBaseUrl: '/wkm_acl_ui/wkm_acl_ui/principals/types',
+        updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
+        principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
       }
     }
   },

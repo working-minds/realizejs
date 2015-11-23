@@ -15,9 +15,9 @@ var IndexPermissions = React.createClass({
       principalType: null,
       resourceType: '',
       className: 'index-permissions',
-      editPermissionBaseUrl: '/permission_managers',
+      editPermissionBaseUrl: '/wkm_acl_ui/permission_managers',
       gridProps: {
-        url: '/permissions',
+        url: '/wkm_acl_ui/permissions',
         selectable: false,
         pagination: false,
         eagerLoad: true,
