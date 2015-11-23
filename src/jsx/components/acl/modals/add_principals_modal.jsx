@@ -107,7 +107,7 @@ var AddPrincipalsModal = React.createClass({
         principal_type: {
           label: 'Tipo',
           component: 'autocomplete',
-          optionsUrl: '/principals/types',
+          optionsUrl: this.props.principalsTypeBaseUrl,
           searchParam: 'principal_type',
           className: 'col s12 l6 m6',
           scope: 'global'

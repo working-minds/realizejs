@@ -18,7 +18,7 @@ var AclModalsWrapper = React.createClass({
       urlProps: {
         principalsBaseUrl: '/wkm_acl_ui/principals',
         potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
-        principalsTypeBaseUrl: '/wkm_acl_ui/wkm_acl_ui/principals/types',
+        principalsTypeBaseUrl: '/wkm_acl_ui/principals/types',
         updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
         principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
       }
