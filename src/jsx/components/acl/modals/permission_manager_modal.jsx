@@ -11,7 +11,8 @@ var PermissionManagerModal = React.createClass({
     modalId: React.PropTypes.string,
     updatePermissionsBaseUrl: React.PropTypes.string,
     principalsBaseUrl: React.PropTypes.string,
-    principalsPermissionsBaseUrl: React.PropTypes.string
+    principalsPermissionsBaseUrl: React.PropTypes.string,
+    title: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -21,6 +22,7 @@ var PermissionManagerModal = React.createClass({
       principalType: '',
       resource: null,
       resourceType: '',
+      title: null,
       className: 'permission-manager-modal',
       modalId: 'permission-manager-modal',
       updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
@@ -60,6 +62,21 @@ var PermissionManagerModal = React.createClass({
         </ModalFooter>
       </Modal>
     )
+  },
+
+  renderTitle: function() {
+    var component = [];
+    if (!!this.props.title) {
+     var title = this.props.title
+    } else {
+      var title = this.props.resource.name
+    }
+
+    component.push(
+      <h5>Gerenciar Permissões - {title}</h5>
+    );
+
+    return component;
   },
 
   loadPrincipalsPermissions: function(selectedDatas) {

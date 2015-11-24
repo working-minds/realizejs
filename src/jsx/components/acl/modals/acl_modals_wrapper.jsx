@@ -6,7 +6,8 @@ var AclModalsWrapper = React.createClass({
     principalType: React.PropTypes.string,
     resource: React.PropTypes.object,
     resourceType: React.PropTypes.string,
-    urlProps: React.PropTypes.object
+    urlProps: React.PropTypes.object,
+    title: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -15,6 +16,7 @@ var AclModalsWrapper = React.createClass({
       principalType: '',
       resource: null,
       resourceType: '',
+      title: null,
       urlProps: {
         principalsBaseUrl: '/wkm_acl_ui/principals',
         potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
@@ -40,6 +42,7 @@ var AclModalsWrapper = React.createClass({
     var component = [];
     component.push(<PermissionManagerModal
       ref='permissionManagerModal'
+      title={this.props.title}
       resource={this.props.resource}
       resourceType={this.props.resourceType}
       principal={this.props.principal}
