@@ -2154,7 +2154,8 @@ var AclModalsWrapper = React.createClass({
     principalType: React.PropTypes.string,
     resource: React.PropTypes.object,
     resourceType: React.PropTypes.string,
-    urlProps: React.PropTypes.object
+    urlProps: React.PropTypes.object,
+    title: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -2163,6 +2164,7 @@ var AclModalsWrapper = React.createClass({
       principalType: '',
       resource: null,
       resourceType: '',
+      title: null,
       urlProps: {
         principalsBaseUrl: '/wkm_acl_ui/principals',
         potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
@@ -2190,6 +2192,7 @@ var AclModalsWrapper = React.createClass({
     var component = [];
     component.push(React.createElement(PermissionManagerModal, {
       ref: 'permissionManagerModal',
+      title: this.props.title,
       resource: this.props.resource,
       resourceType: this.props.resourceType,
       principal: this.props.principal,
@@ -2497,7 +2500,8 @@ var PermissionManagerModal = React.createClass({
     modalId: React.PropTypes.string,
     updatePermissionsBaseUrl: React.PropTypes.string,
     principalsBaseUrl: React.PropTypes.string,
-    principalsPermissionsBaseUrl: React.PropTypes.string
+    principalsPermissionsBaseUrl: React.PropTypes.string,
+    title: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -2507,6 +2511,7 @@ var PermissionManagerModal = React.createClass({
       principalType: '',
       resource: null,
       resourceType: '',
+      title: null,
       className: 'permission-manager-modal',
       modalId: 'permission-manager-modal',
       updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
@@ -2559,6 +2564,24 @@ var PermissionManagerModal = React.createClass({
         )
       )
     );
+  },
+
+  renderTitle: function renderTitle() {
+    var component = [];
+    if (!!this.props.title) {
+      var title = this.props.title;
+    } else {
+      var title = this.props.resource.name;
+    }
+
+    component.push(React.createElement(
+      'h5',
+      null,
+      'Gerenciar Permissões - ',
+      title
+    ));
+
+    return component;
   },
 
   loadPrincipalsPermissions: function loadPrincipalsPermissions(selectedDatas) {
@@ -7050,6 +7073,299 @@ var ModalHeader = React.createClass({
 
     return className;
   }
+});
+//
+
+'use strict';
+
+var HeaderNotifications = React.createClass({
+  displayName: 'HeaderNotifications',
+
+  propTypes: {
+    className: React.PropTypes.string,
+    text: React.PropTypes.string,
+    icon: React.PropTypes.string,
+    baseUrl: React.PropTypes.string
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      className: 'notifications',
+      icon: 'add_alert',
+      text: '',
+      baseUrl: '/notifications'
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      count: 0,
+      active: false
+    };
+  },
+
+  handleClick: function handleClick() {
+    var list = React.findDOMNode(this.refs.notificationsList);
+    $(list).slideDown();
+    this.state.active = !this.state.active;
+    this.forceUpdate();
+  },
+
+  closeList: function closeList() {
+    this.setState({
+      active: false
+    });
+  },
+
+  componentDidMount: function componentDidMount() {
+    //TODO: alterar estes event handlers para o React.
+    $('html').on('click', this.closeList);
+
+    $('.notifications-list').mouseover(function () {
+      $('body').addClass('noscroll');
+    });
+
+    $('.notifications-list').mouseout(function () {
+      $('body').removeClass('noscroll');
+    });
+
+    this.loadNotifications();
+  },
+
+  loadNotifications: function loadNotifications() {
+    $.ajax({
+      url: this.props.baseUrl,
+      dataType: 'json',
+      data: {
+        per_page: 50,
+        q: {
+          s: 'created_at desc'
+        }
+      },
+      success: (function (data) {
+        this.setState({
+          notifications: data.notifications,
+          count: data.unread_count
+        });
+      }).bind(this)
+    });
+  },
+
+  renderIcon: function renderIcon() {
+    var component = [];
+
+    if (this.state.count > 0) {
+      component.push(React.createElement(
+        'i',
+        { className: 'material-icons', key: 'notification_icon' },
+        'notifications'
+      ));
+    } else {
+      component.push(React.createElement(
+        'i',
+        { className: 'material-icons', key: 'notification_icon' },
+        'notifications_none'
+      ));
+    }
+
+    return component;
+  },
+
+  handleClickItem: function handleClickItem(responseData) {
+    $.ajax({
+      url: this.props.baseUrl,
+      dataType: 'json',
+      data: {
+        per_page: 50,
+        q: {
+          s: 'created_at desc'
+        }
+      },
+      success: (function (data) {
+        this.setState({
+          notifications: data.notifications,
+          count: data.not_read_count
+        });
+      }).bind(this)
+    });
+  },
+
+  render: function render() {
+    return React.createElement(
+      'li',
+      { className: this.props.className },
+      React.createElement(
+        'a',
+        { onClick: this.handleClick },
+        this.renderIcon(),
+        React.createElement(NotificationNumber, { count: this.state.count })
+      ),
+      React.createElement(NotificationsList, { ref: 'notificationsList',
+        active: this.state.active,
+        baseUrl: this.props.baseUrl,
+        handleClickItem: this.handleClickItem,
+        notifications: this.state.notifications
+      })
+    );
+  }
+
+});
+
+var NotificationNumber = React.createClass({
+  displayName: 'NotificationNumber',
+
+  propTypes: {
+    className: React.PropTypes.string,
+    count: React.PropTypes.number
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      className: 'notification-number',
+      count: 0
+    };
+  },
+
+  unreadNotificationNumber: function unreadNotificationNumber() {
+    var component = [];
+    if (!!this.props.count && this.props.count > 0) component.push(React.createElement(
+      'span',
+      { className: this.props.className, key: 'notification_count' },
+      this.props.count
+    ));
+    return component;
+  },
+
+  render: function render() {
+    return React.createElement(
+      'span',
+      { className: 'jewelCount' },
+      this.unreadNotificationNumber()
+    );
+  }
+
+});
+//
+
+'use strict';
+
+var NotificationsList = React.createClass({
+  displayName: 'NotificationsList',
+
+  mixins: [RequestHandlerMixin, ModalRendererMixin],
+
+  propTypes: {
+    className: React.PropTypes.string,
+    active: React.PropTypes.bool,
+    notifications: React.PropTypes.array,
+    handleClickItem: React.PropTypes.func,
+    baseUrl: React.PropTypes.string
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      className: 'notifications-list z-depth-1',
+      active: false,
+      notifications: [],
+      baseUrl: '/notifications',
+      handleClickItem: function handleClickItem(data) {}
+    };
+  },
+
+  handleClick: function handleClick(event, id) {
+    var url = this.props.baseUrl + '/' + id;
+    this.performRequest(url);
+  },
+
+  onSuccess: function onSuccess(responseData) {
+    this.renderModalHtml(responseData);
+    this.props.handleClickItem(responseData);
+  },
+
+  renderNotification: function renderNotification() {
+    var component = [];
+    var notifications = this.props.notifications;
+
+    for (var i = 0; i < notifications.length; i++) {
+      var notification = notifications[i];
+      var liClass = !!notification.read_by_user ? '' : 'not-read';
+
+      component.push(React.createElement(
+        'li',
+        { className: liClass, key: "notification_item_" + i },
+        React.createElement(
+          'a',
+          { onClick: this.handleClick.bind(this, event, notification.id) },
+          React.createElement(
+            'span',
+            null,
+            notification.message
+          ),
+          React.createElement(
+            'div',
+            { className: 'created_at-notification' },
+            'Criado em: ',
+            moment(notification.created_at).format("DD/MM/YYYY HH:mm")
+          )
+        )
+      ));
+    }
+
+    return component;
+  },
+
+  renderSeeAll: function renderSeeAll() {
+    var component = [];
+
+    if (this.props.notifications.length === 0) {
+      component.push(React.createElement(
+        'div',
+        { className: 'box-see-all', key: 'notification_see_all' },
+        React.createElement('div', { className: 'divider' }),
+        React.createElement(
+          'span',
+          null,
+          React.createElement(
+            'a',
+            null,
+            I18n.t('labels.not-notifications')
+          )
+        )
+      ));
+    } else {
+      component.push(React.createElement(
+        'div',
+        { className: 'box-see-all', key: 'notification_see_all' },
+        React.createElement('div', { className: 'divider' }),
+        React.createElement(
+          'span',
+          null,
+          React.createElement(
+            'a',
+            { href: '/notifications' },
+            I18n.t('buttons.see-all')
+          )
+        )
+      ));
+    }
+
+    return component;
+  },
+
+  render: function render() {
+    var display = this.props.active ? 'block' : 'none';
+    return React.createElement(
+      'div',
+      { className: this.props.className, style: { display: display } },
+      React.createElement(
+        'ul',
+        null,
+        this.renderNotification()
+      ),
+      this.renderSeeAll()
+    );
+  }
+
 });
 //
 

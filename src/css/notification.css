@@ -1,0 +1,87 @@
+.notifications a {
+  position: relative;
+}
+
+.jewelCount {
+  z-index: 150;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+}
+
+.jewelCount .notification-number {
+  background-color: red;
+  font-size: 11px;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
+.notifications-list {
+  position: absolute;
+  background-color: white;
+  min-width: 300px;
+  max-width: 350px;
+}
+
+.notifications-list ul {
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.notifications-list li {
+  float: none;
+  padding: 10px;
+  cursor: pointer;
+  line-height: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.notifications-list li:hover {
+  background-color: #e0e0e0;
+}
+
+.notifications-list li a {
+  font-size: 12px;
+}
+
+.notifications-list li a .created_at-notification {
+  margin-top: 10px;
+  color: #757575;
+}
+
+.notifications-list .not-read {
+  background-color: #f5f5f5;
+}
+
+.notifications-list a {
+  color: #039be5;
+}
+
+.notifications-list .box-see-all {
+  text-align: center;
+  line-height: 40px;
+  height: 40px;
+}
+
+@media screen and (max-width: 992px) {
+  .header-icon-notification {
+    display: block !important;
+  }
+
+  .notifications-list {
+    right: 42px !important;
+    width: 19rem !important;
+    max-width: 20rem !important;
+    min-width: 18rem !important;
+  }
+
+  .notifications i {
+    line-height: 56px;
+    max-height: 56px;
+  }
+
+  .notifications .jewelCount {
+    right: 15px;
+    top: 8px
+  }
+}
