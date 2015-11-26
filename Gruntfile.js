@@ -30,7 +30,7 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: ['Gruntfile.js', 'src/jsx/**/*.jsx']
+      files: ['Gruntfile.js', 'src/jsx/**/*.jsx', 'src/js/**/*.js']
     },
 
     babel: {
