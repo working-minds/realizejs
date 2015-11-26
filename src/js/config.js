@@ -4,7 +4,7 @@ Realize.config = {
   theme: 'materialize',
   locale: 'en',
   restUrls: {
-    index: ':url.json',
+    index: ':url',
     show: ':url/:id',
     add: ':url/new',
     create: ':url',

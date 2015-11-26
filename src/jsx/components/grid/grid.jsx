@@ -246,11 +246,14 @@ var Grid = React.createClass({
   loadData: function() {
     this.setState({gridIsLoading: true});
     var postData = this.buildPostData();
+    var filterProps = this.props.filter;
+    var filterMethod = filterProps.method || 'GET';
+    var filterDataType = filterProps.dataType || 'json';
 
     $.ajax({
       url: this.getRestActionUrl('index'),
-      method: 'GET',
-      dataType: 'json',
+      method: filterMethod,
+      dataType: filterDataType,
       data: postData,
       success: this.handleLoad,
       error: this.handleLoadError

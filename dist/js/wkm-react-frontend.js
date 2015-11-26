@@ -9,7 +9,7 @@ Realize.config = {
   theme: 'materialize',
   locale: 'en',
   restUrls: {
-    index: ':url.json',
+    index: ':url',
     show: ':url/:id',
     add: ':url/new',
     create: ':url',
@@ -4195,11 +4195,14 @@ var Grid = React.createClass({
   loadData: function loadData() {
     this.setState({ gridIsLoading: true });
     var postData = this.buildPostData();
+    var filterProps = this.props.filter;
+    var filterMethod = filterProps.method || 'GET';
+    var filterDataType = filterProps.dataType || 'json';
 
     $.ajax({
       url: this.getRestActionUrl('index'),
-      method: 'GET',
-      dataType: 'json',
+      method: filterMethod,
+      dataType: filterDataType,
       data: postData,
       success: this.handleLoad,
       error: this.handleLoadError
