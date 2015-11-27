@@ -21,5 +21,23 @@ Realize.config = {
     edit: 'GET',
     update: 'PUT',
     destroy: 'DELETE'
+  },
+
+  grid: {
+    pagination: {
+      param: 'p',
+      perPage: 20,
+      window: 4
+    },
+    sort: {
+      param: 's',
+      directionParam: 's_dir',
+      fieldValueFormat: '%{field}',
+      sortFieldName: 'name'
+    }
   }
+};
+
+Realize.setConfig = function(newConfig) {
+  $.extend(true, Realize.config, newConfig);
 };

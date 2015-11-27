@@ -25,6 +25,8 @@ var Table = React.createClass({
     tableRowCssClass: React.PropTypes.func
   },
 
+  sortConfigs: null,
+
   getDefaultProps: function() {
     return {
       themeClassKey: 'table',
@@ -32,11 +34,7 @@ var Table = React.createClass({
       dataRowIdField: 'id',
       selectedRowIdsParam: 'rowIds',
       selectable: false,
-      sortConfigs: {
-        param: 's',
-        valueFormat: '%{field} %{direction}',
-        sortFieldName: 'name'
-      },
+      sortConfigs: {},
       sortData: {},
       dataRows: [],
       count: 0,
@@ -80,10 +78,11 @@ var Table = React.createClass({
   },
 
   componentDidMount: function () {
-    if(!!this.props.customTableHeader)
-    {
+    this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
+
+    if(!!this.props.customTableHeader) {
       var $thead = $(React.findDOMNode(this.refs.thead));
-      $thead.prepend(this.props.customTableHeader)
+      $thead.prepend(this.props.customTableHeader);
     }
   },
 
@@ -163,7 +162,7 @@ var Table = React.createClass({
       if(columns.hasOwnProperty(columnName)) {
         var columnProps = columns[columnName];
         headerComponents.push(
-          <TableHeader {...columnProps} {...this.props.sortConfigs}
+          <TableHeader {...columnProps} {...this.sortConfigs}
             name={columnName}
             key={columnName}
             sortDirection={this.sortDirectionForColumn(columnName)}

@@ -17,9 +17,7 @@ var TableHeader = React.createClass({
       sortable: true,
       sortDirection: null,
       sortFieldName: 'name',
-      onSort: function(sortData) {
-        return true;
-      }
+      onSort: function(sortData) { return true; }
     };
   },
 
