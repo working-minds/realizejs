@@ -56,7 +56,7 @@ var Modal = React.createClass({
     var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
 
     if(header == '' && content == '' && footer == '')
-      content = <ModalContent {...this.propTypes}>{this.props.children}</ModalContent>;
+      content = (<ModalContent {...this.propTypes}>{this.props.children}</ModalContent>);
 
     return (
       <div id={this.props.id} className={this.className()} ref="modal">
@@ -143,13 +143,13 @@ var Modal = React.createClass({
     return contentHeight;
   },
 
-
-
-  filterChildren : function(area) {
+  filterChildren : function(childType) {
     var result = null;
-    React.Children.map(this.props.children, function(x) {
-      if (x.type == area)
-        result =  x;
+    React.Children.map(this.props.children, function(child) {
+      if (child.type == childType) {
+        result = child;
+        return false;
+      }
     });
 
     return result;

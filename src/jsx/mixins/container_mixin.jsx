@@ -31,7 +31,6 @@ var ContainerMixin = {
   },
 
   buildChildPropsToKeep: function(child) {
-
     var defaultChildProps = {};
     var keepProps = [];
 

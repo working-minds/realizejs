@@ -24,7 +24,7 @@ var TableActionButton = React.createClass({
       conditionParams: null,
       disabled: false,
       selectionContext: 'none',
-      component: null,
+      component: 'Button',
       params: null,
       conditionToShowActionButton: function(data) { return true }
     };
@@ -40,21 +40,21 @@ var TableActionButton = React.createClass({
 
   renderButton: function(){
     var component = [];
-    if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      if(!!this.props.component){
-        return React.createElement(eval(this.props.component), this.props)
-      } else {
-        component.push(
-          <Button {...this.props}
-            isLoading={this.state.isLoading}
-            disabled={this.isDisabled()}
-            method={this.actionButtonMethod()}
-            href={this.actionButtonHref()}
-            onClick={this.actionButtonClick}
-            key={this.props.name}
-          />
-        );
-      }
+    if(!this.props.conditionToShowActionButton(this.props.conditionParams)) {
+      return component;
+    }
+
+    var buttonProps = React.__spread(this.props, {
+      isLoading: this.state.isLoading,
+      disabled: this.isDisabled(),
+      method: this.actionButtonMethod(),
+      href: this.actionButtonHref(),
+      onClick: this.actionButtonClick,
+      key: this.props.name
+    });
+
+    var buttonComponent = React.createElement(eval(this.props.component), buttonProps);
+    component.push(buttonComponent);
 
     return component;
   },
