@@ -1,10 +1,12 @@
 {
-  "name": "wkm-react-frontend",
-  "version": "0.6.3",
+  "name": "realize",
+  "version": "0.6.4",
   "authors": [
-    "Pedro Jesus <pjesus@wkm.com.br>"
+    "Pedro Jesus <pjesus@wkm.com.br>",
+    "Lucas Toledo <ltoledo@wkm.com.br>",
+    "Hudson Gomes <hgomes@wkm.com.br>"
   ],
-  "description": "Elementos de Frontend, utilizando ReactJS",
+  "description": "Elementos de Frontend, utilizando ReactJS e Materialize",
   "moduleType": [
     "es6"
   ],
@@ -24,7 +26,7 @@
   ],
 
   "dependencies": {
-    "react": "*",
+    "react": "~0.13.0",
     "materialize": "0.97.0",
     "moment": "~2.10.3",
     "numeral": "~1.5.3",
