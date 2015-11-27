@@ -34,36 +34,23 @@ var Grid = React.createClass({
     pagination: React.PropTypes.bool
   },
 
+  paginationConfigs: null,
+  sortConfigs: null,
+
   getDefaultProps: function() {
     return {
       themeClassKey: 'grid',
       eagerLoad: false,
-      paginationConfigs: {
-        param: 'p',
-        perPage: 20,
-        window: 4
-      },
-      sortConfigs: {
-        param: 's',
-        valueFormat: '%{field} %{direction}',
-        sortFieldName: 'name'
-      },
+      paginationConfigs: {},
+      sortConfigs: {},
       sortData: {},
       filter: {},
-      columns: {
-        name: { label: 'Nome' }
-      },
+      columns: {},
       dataRowsParam: 'data',
       countParam: 'count',
       selectedRowIdsParam: 'rowIds',
-      data: {
-        dataRows: [],
-        count: 0
-      },
       isLoading: false,
       selectable: true,
-      onLoadSuccess: function(data) {},
-      onLoadError: function(xhr, status, error) {},
       rowSelectableFilter: null,
       customTableHeader: null,
       forceShowSelectAllButton: false,
@@ -71,7 +58,13 @@ var Grid = React.createClass({
       tableRowCssClass: null,
       paginationOnTop: true,
       clearThemeTable: false,
-      pagination: true
+      pagination: true,
+      onLoadSuccess: function(data) {},
+      onLoadError: function(xhr, status, error) {},
+      data: {
+        dataRows: [],
+        count: 0
+      }
     };
   },
 
@@ -89,6 +82,9 @@ var Grid = React.createClass({
   },
 
   componentDidMount: function() {
+    this.paginationConfigs = $.extend({}, Realize.config.grid.pagination, this.props.paginationConfigs);
+    this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
+
     this.setState({
       filterData: this.getInitialFilterData()
     }, function() {
@@ -170,7 +166,7 @@ var Grid = React.createClass({
       <GridTable
         resource={this.props.resource}
         columns={this.props.columns}
-        sortConfigs={this.props.sortConfigs}
+        sortConfigs={this.sortConfigs}
         sortData={this.state.sortData}
         dataRows={this.state.dataRows}
         selectable={this.props.selectable}
@@ -205,7 +201,7 @@ var Grid = React.createClass({
 
       return (
         <GridPagination
-          {...this.props.paginationConfigs}
+          {...this.paginationConfigs}
           page={this.state.page}
           count={this.state.count}
           onPagination={this.onPagination}
@@ -279,7 +275,9 @@ var Grid = React.createClass({
 
   buildPostData: function() {
     var postData = $.extend({}, this.state.filterData);
-    postData[this.props.paginationConfigs.param] = this.state.page;
+    var paginationParam = this.paginationConfigs.param;
+    postData[paginationParam] = this.state.page;
+
     if(!$.isEmptyObject(this.state.sortData)) {
       $.extend(postData, this.buildSortPostData());
     }
@@ -288,17 +286,23 @@ var Grid = React.createClass({
   },
 
   buildSortPostData: function() {
-    var sortParam = this.props.sortConfigs.param;
+    var sortParam = this.sortConfigs.param;
+    var sortDirectionParam = this.sortConfigs.directionParam;
     var sortPostData = {};
     sortPostData[sortParam] = this.parseSortPostDataValue();
+    sortPostData[sortDirectionParam] = this.state.sortData.direction;
 
     return sortPostData;
   },
 
   parseSortPostDataValue: function() {
-    var sortValueFormat = this.props.sortConfigs.valueFormat;
+    var sortValueFormat = this.sortConfigs.fieldValueFormat;
     var field = this.state.sortData.field;
     var direction = this.state.sortData.direction;
+
+    if(!sortValueFormat) {
+      return field;
+    }
 
     return sortValueFormat.replace(/%\{field}/, field).replace(/%\{direction}/, direction);
   },
