@@ -26,7 +26,25 @@ Realize.config = {
     edit: 'GET',
     update: 'PUT',
     destroy: 'DELETE'
+  },
+
+  grid: {
+    pagination: {
+      param: 'p',
+      perPage: 20,
+      window: 4
+    },
+    sort: {
+      param: 's',
+      directionParam: 's_dir',
+      fieldValueFormat: '%{field}',
+      sortFieldName: 'name'
+    }
   }
+};
+
+Realize.setConfig = function(newConfig) {
+  $.extend(true, Realize.config, newConfig);
 };
 
 $.extend(FormSerializer.patterns, {
@@ -3992,35 +4010,23 @@ var Grid = React.createClass({
     pagination: React.PropTypes.bool
   },
 
+  paginationConfigs: null,
+  sortConfigs: null,
+
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'grid',
       eagerLoad: false,
-      paginationConfigs: {
-        param: 'p',
-        perPage: 20,
-        window: 4
-      },
-      sortConfigs: {
-        param: 's',
-        valueFormat: '%{field} %{direction}'
-      },
+      paginationConfigs: {},
+      sortConfigs: {},
       sortData: {},
       filter: {},
-      columns: {
-        name: { label: 'Nome' }
-      },
+      columns: {},
       dataRowsParam: 'data',
       countParam: 'count',
       selectedRowIdsParam: 'rowIds',
-      data: {
-        dataRows: [],
-        count: 0
-      },
       isLoading: false,
       selectable: true,
-      onLoadSuccess: function onLoadSuccess(data) {},
-      onLoadError: function onLoadError(xhr, status, error) {},
       rowSelectableFilter: null,
       customTableHeader: null,
       forceShowSelectAllButton: false,
@@ -4028,7 +4034,13 @@ var Grid = React.createClass({
       tableRowCssClass: null,
       paginationOnTop: true,
       clearThemeTable: false,
-      pagination: true
+      pagination: true,
+      onLoadSuccess: function onLoadSuccess(data) {},
+      onLoadError: function onLoadError(xhr, status, error) {},
+      data: {
+        dataRows: [],
+        count: 0
+      }
     };
   },
 
@@ -4046,6 +4058,9 @@ var Grid = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
+    this.paginationConfigs = $.extend({}, Realize.config.grid.pagination, this.props.paginationConfigs);
+    this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
+
     this.setState({
       filterData: this.getInitialFilterData()
     }, (function () {
@@ -4122,7 +4137,7 @@ var Grid = React.createClass({
     return React.createElement(GridTable, {
       resource: this.props.resource,
       columns: this.props.columns,
-      sortConfigs: this.props.sortConfigs,
+      sortConfigs: this.sortConfigs,
       sortData: this.state.sortData,
       dataRows: this.state.dataRows,
       selectable: this.props.selectable,
@@ -4154,7 +4169,7 @@ var Grid = React.createClass({
         return null;
       }
 
-      return React.createElement(GridPagination, _extends({}, this.props.paginationConfigs, {
+      return React.createElement(GridPagination, _extends({}, this.paginationConfigs, {
         page: this.state.page,
         count: this.state.count,
         onPagination: this.onPagination
@@ -4227,7 +4242,9 @@ var Grid = React.createClass({
 
   buildPostData: function buildPostData() {
     var postData = $.extend({}, this.state.filterData);
-    postData[this.props.paginationConfigs.param] = this.state.page;
+    var paginationParam = this.paginationConfigs.param;
+    postData[paginationParam] = this.state.page;
+
     if (!$.isEmptyObject(this.state.sortData)) {
       $.extend(postData, this.buildSortPostData());
     }
@@ -4236,17 +4253,23 @@ var Grid = React.createClass({
   },
 
   buildSortPostData: function buildSortPostData() {
-    var sortParam = this.props.sortConfigs.param;
+    var sortParam = this.sortConfigs.param;
+    var sortDirectionParam = this.sortConfigs.directionParam;
     var sortPostData = {};
     sortPostData[sortParam] = this.parseSortPostDataValue();
+    sortPostData[sortDirectionParam] = this.state.sortData.direction;
 
     return sortPostData;
   },
 
   parseSortPostDataValue: function parseSortPostDataValue() {
-    var sortValueFormat = this.props.sortConfigs.valueFormat;
+    var sortValueFormat = this.sortConfigs.fieldValueFormat;
     var field = this.state.sortData.field;
     var direction = this.state.sortData.direction;
+
+    if (!sortValueFormat) {
+      return field;
+    }
 
     return sortValueFormat.replace(/%\{field}/, field).replace(/%\{direction}/, direction);
   },
@@ -7651,6 +7674,8 @@ var Table = React.createClass({
     tableRowCssClass: React.PropTypes.func
   },
 
+  sortConfigs: null,
+
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'table',
@@ -7658,10 +7683,7 @@ var Table = React.createClass({
       dataRowIdField: 'id',
       selectedRowIdsParam: 'rowIds',
       selectable: false,
-      sortConfigs: {
-        param: 's',
-        valueFormat: '%{field} %{direction}'
-      },
+      sortConfigs: {},
       sortData: {},
       dataRows: [],
       count: 0,
@@ -7705,6 +7727,8 @@ var Table = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
+    this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
+
     if (!!this.props.customTableHeader) {
       var $thead = $(React.findDOMNode(this.refs.thead));
       $thead.prepend(this.props.customTableHeader);
@@ -7790,7 +7814,7 @@ var Table = React.createClass({
     for (var columnName in columns) {
       if (columns.hasOwnProperty(columnName)) {
         var columnProps = columns[columnName];
-        headerComponents.push(React.createElement(TableHeader, _extends({}, columnProps, this.props.sortConfigs, {
+        headerComponents.push(React.createElement(TableHeader, _extends({}, columnProps, this.sortConfigs, {
           name: columnName,
           key: columnName,
           sortDirection: this.sortDirectionForColumn(columnName),
@@ -8259,10 +8283,12 @@ var TableHeader = React.createClass({
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
 
   propTypes: {
+    name: React.PropTypes.string,
     label: Realize.PropTypes.localizedString,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
+    sortFieldName: React.PropTypes.string,
     onSort: React.PropTypes.func
   },
 
@@ -8271,6 +8297,7 @@ var TableHeader = React.createClass({
       themeClassKey: 'table.header',
       sortable: true,
       sortDirection: null,
+      sortFieldName: 'name',
       onSort: function onSort(sortData) {
         return true;
       }
@@ -8335,7 +8362,7 @@ var TableHeader = React.createClass({
   },
 
   buildSortData: function buildSortData() {
-    var sortField = this.props.name;
+    var sortField = this.props[this.props.sortFieldName];
     var sortDirection = this.getSortDirection();
 
     return {
