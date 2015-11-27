@@ -28,7 +28,11 @@ var ModalButton = React.createClass({
 
   render: function() {
     return (
-      <Button {...this.props} className={this.getClassName()} href="#!" onClick={this.openModal} ref="modalButton" />
+      <Button {...this.props}
+        className={this.getClassName()}
+        onClick={this.openModal}
+        ref="modalButton"
+      />
     );
   },
 
@@ -40,7 +44,7 @@ var ModalButton = React.createClass({
     return className;
   },
 
-  getModalToOpen: function() {
+  getModalElement: function() {
     return $("#" + this.props.modalId);
   },
 
@@ -49,21 +53,21 @@ var ModalButton = React.createClass({
     event.stopPropagation();
     event.preventDefault();
 
-    $modalToOpen = this.getModalToOpen();
-    $modalToOpen.openModal({
+    var $modal = this.getModalElement();
+    $modal.openModal({
       top:this.props.top,
-      dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
-      opacity: this.props.opacity, // Opacity of modal background
-      inDuration: this.props.inDuration, // Transition in duration
-      outDuration: this.props.outDuration, // Transition out duration
-      ready: this.handleReady, // Callback for Modal open
-      complete: this.handleComplete // Callback for Modal close,
+      dismissible: this.props.dismissible,  // Modal can be dismissed by clicking outside of the modal
+      opacity: this.props.opacity,          // Opacity of modal background
+      inDuration: this.props.inDuration,    // Transition in duration
+      outDuration: this.props.outDuration,  // Transition out duration
+      ready: this.handleReady,              // Callback for Modal open
+      complete: this.handleComplete         // Callback for Modal close
     });
   },
 
   handleReady: function() {
-    $modalToOpen = this.getModalToOpen();
-    $modalToOpen.trigger('resize');
+    var $modal = this.getModalElement();
+    $modal.trigger('resize');
 
     if(typeof this.props.ready === "function") {
       this.props.ready();

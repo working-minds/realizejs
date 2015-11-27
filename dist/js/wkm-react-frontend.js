@@ -669,7 +669,6 @@ var ContainerMixin = {
   },
 
   buildChildPropsToKeep: function buildChildPropsToKeep(child) {
-
     var defaultChildProps = {};
     var keepProps = [];
 
@@ -6900,10 +6899,13 @@ var Modal = React.createClass({
     return contentHeight;
   },
 
-  filterChildren: function filterChildren(area) {
+  filterChildren: function filterChildren(childType) {
     var result = null;
-    React.Children.map(this.props.children, function (x) {
-      if (x.type == area) result = x;
+    React.Children.map(this.props.children, function (child) {
+      if (child.type == childType) {
+        result = child;
+        return false;
+      }
     });
 
     return result;
@@ -6951,7 +6953,11 @@ var ModalButton = React.createClass({
   },
 
   render: function render() {
-    return React.createElement(Button, _extends({}, this.props, { className: this.getClassName(), href: '#!', onClick: this.openModal, ref: 'modalButton' }));
+    return React.createElement(Button, _extends({}, this.props, {
+      className: this.getClassName(),
+      onClick: this.openModal,
+      ref: 'modalButton'
+    }));
   },
 
   getClassName: function getClassName() {
@@ -6961,7 +6967,7 @@ var ModalButton = React.createClass({
     return className;
   },
 
-  getModalToOpen: function getModalToOpen() {
+  getModalElement: function getModalElement() {
     return $("#" + this.props.modalId);
   },
 
@@ -6970,21 +6976,21 @@ var ModalButton = React.createClass({
     event.stopPropagation();
     event.preventDefault();
 
-    $modalToOpen = this.getModalToOpen();
-    $modalToOpen.openModal({
+    var $modal = this.getModalElement();
+    $modal.openModal({
       top: this.props.top,
       dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
       opacity: this.props.opacity, // Opacity of modal background
       inDuration: this.props.inDuration, // Transition in duration
       outDuration: this.props.outDuration, // Transition out duration
       ready: this.handleReady, // Callback for Modal open
-      complete: this.handleComplete // Callback for Modal close,
+      complete: this.handleComplete // Callback for Modal close
     });
   },
 
   handleReady: function handleReady() {
-    $modalToOpen = this.getModalToOpen();
-    $modalToOpen.trigger('resize');
+    var $modal = this.getModalElement();
+    $modal.trigger('resize');
 
     if (typeof this.props.ready === "function") {
       this.props.ready();
@@ -7006,23 +7012,20 @@ var ModalContent = React.createClass({
   displayName: 'ModalContent',
 
   mixins: [CssClassMixin],
+
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'modal.content'
     };
   },
+
   render: function render() {
     return React.createElement(
       'div',
-      { className: this.getClassName() },
+      { className: this.className() },
       this.props.children
     );
-  },
-
-  getClassName: function getClassName() {
-    return Realize.themes.getCssClass(this.props.themeClassKey);
   }
-
 });
 //
 
@@ -7964,8 +7967,6 @@ var Table = React.createClass({
 
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var TableActionButton = React.createClass({
   displayName: 'TableActionButton',
 
@@ -7994,7 +7995,7 @@ var TableActionButton = React.createClass({
       conditionParams: null,
       disabled: false,
       selectionContext: 'none',
-      component: null,
+      component: 'Button',
       params: null,
       conditionToShowActionButton: function conditionToShowActionButton(data) {
         return true;
@@ -8012,18 +8013,21 @@ var TableActionButton = React.createClass({
 
   renderButton: function renderButton() {
     var component = [];
-    if (this.props.conditionToShowActionButton(this.props.conditionParams)) if (!!this.props.component) {
-      return React.createElement(eval(this.props.component), this.props);
-    } else {
-      component.push(React.createElement(Button, _extends({}, this.props, {
-        isLoading: this.state.isLoading,
-        disabled: this.isDisabled(),
-        method: this.actionButtonMethod(),
-        href: this.actionButtonHref(),
-        onClick: this.actionButtonClick,
-        key: this.props.name
-      })));
+    if (!this.props.conditionToShowActionButton(this.props.conditionParams)) {
+      return component;
     }
+
+    var buttonProps = React.__spread(this.props, {
+      isLoading: this.state.isLoading,
+      disabled: this.isDisabled(),
+      method: this.actionButtonMethod(),
+      href: this.actionButtonHref(),
+      onClick: this.actionButtonClick,
+      key: this.props.name
+    });
+
+    var buttonComponent = React.createElement(eval(this.props.component), buttonProps);
+    component.push(buttonComponent);
 
     return component;
   },
