@@ -45,7 +45,8 @@ var Grid = React.createClass({
       },
       sortConfigs: {
         param: 's',
-        valueFormat: '%{field} %{direction}'
+        valueFormat: '%{field} %{direction}',
+        sortFieldName: 'name'
       },
       sortData: {},
       filter: {},
