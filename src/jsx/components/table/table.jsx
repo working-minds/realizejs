@@ -34,7 +34,8 @@ var Table = React.createClass({
       selectable: false,
       sortConfigs: {
         param: 's',
-        valueFormat: '%{field} %{direction}'
+        valueFormat: '%{field} %{direction}',
+        sortFieldName: 'name'
       },
       sortData: {},
       dataRows: [],

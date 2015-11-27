@@ -2,10 +2,12 @@ var TableHeader = React.createClass({
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
 
   propTypes: {
+    name: React.PropTypes.string,
     label: Realize.PropTypes.localizedString,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
+    sortFieldName: React.PropTypes.string,
     onSort: React.PropTypes.func
   },
 
@@ -14,6 +16,7 @@ var TableHeader = React.createClass({
       themeClassKey: 'table.header',
       sortable: true,
       sortDirection: null,
+      sortFieldName: 'name',
       onSort: function(sortData) {
         return true;
       }
@@ -76,7 +79,7 @@ var TableHeader = React.createClass({
   },
 
   buildSortData: function() {
-    var sortField = this.props.name;
+    var sortField = this.props[this.props.sortFieldName];
     var sortDirection = this.getSortDirection();
 
     return {
