@@ -17,7 +17,7 @@ var CheckboxComponentMixin = {
   },
 
   componentDidMount: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
     inputNode.indeterminate = this.props.renderAsIndeterminate;
 
     var $form = $(inputNode.form);
@@ -25,7 +25,7 @@ var CheckboxComponentMixin = {
   },
 
   componentWillUnmount: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
     var $form = $(inputNode.form);
     $form.off('reset', this._handleCheckboxReset);
   },

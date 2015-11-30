@@ -31,8 +31,8 @@ var InputFile = React.createClass({
   handleChange: function(event) {
     this._handleChange(event);
 
-    var fileInput = React.findDOMNode(this.refs.input);
-    var filePathInput = React.findDOMNode(this.refs.filePath);
+    var fileInput = ReactDOM.findDOMNode(this.refs.input);
+    var filePathInput = ReactDOM.findDOMNode(this.refs.filePath);
 
     $(filePathInput).val(fileInput.files[0].name);
   },

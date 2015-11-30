@@ -1,5 +1,8 @@
 var Modal = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [
+    CssClassMixin,
+    ContainerMixin
+  ],
 
   propTypes: {
     id: React.PropTypes.string,
@@ -42,7 +45,7 @@ var Modal = React.createClass({
     }
   },
 
-  componentDidUnmount: function() {
+  componentWillUnmount: function() {
     $(window).off('resize', this.resizeContent);
   },
 
@@ -56,7 +59,7 @@ var Modal = React.createClass({
     var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
 
     if(header == '' && content == '' && footer == '')
-      content = (<ModalContent {...this.propTypes}>{this.props.children}</ModalContent>);
+      content = (<ModalContent {...this.props}>{this.props.children}</ModalContent>);
 
     return (
       <div id={this.props.id} className={this.className()} ref="modal">
@@ -92,7 +95,7 @@ var Modal = React.createClass({
   },
 
   openModal: function() {
-    var $modal = $(React.findDOMNode(this.refs.modal));
+    var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.openModal({
       ready: this.openModalCallback
@@ -108,8 +111,8 @@ var Modal = React.createClass({
   },
 
   resizeContent: function() {
-    var modal = React.findDOMNode(this.refs.modal);
-    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    var modal = ReactDOM.findDOMNode(this.refs.modal);
+    var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
 
     $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter));
     $(modal).css("width", this.props.width);
@@ -127,32 +130,20 @@ var Modal = React.createClass({
   },
 
   getAvailableHeight: function() {
-    var headerContainer = React.findDOMNode(this.refs.headerContainer);
-    var footerContainer = React.findDOMNode(this.refs.footerContainer);
+    var headerContainer = ReactDOM.findDOMNode(this.refs.headerContainer);
+    var footerContainer = ReactDOM.findDOMNode(this.refs.footerContainer);
 
     return ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
   },
 
   getContentHeight: function() {
-    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
     var contentHeight = 0;
     $(contentContainer).find("> *").each(function(i, content) {
       contentHeight += $(content).outerHeight();
     });
 
     return contentHeight;
-  },
-
-  filterChildren : function(childType) {
-    var result = null;
-    React.Children.map(this.props.children, function(child) {
-      if (child.type == childType) {
-        result = child;
-        return false;
-      }
-    });
-
-    return result;
   }
 
 });

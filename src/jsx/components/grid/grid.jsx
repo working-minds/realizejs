@@ -137,7 +137,7 @@ var Grid = React.createClass({
   /* Initializers */
 
   getInitialFilterData: function() {
-    var gridFilterNode = React.findDOMNode(this.refs.filter);
+    var gridFilterNode = ReactDOM.findDOMNode(this.refs.filter);
     var filterForm = $(gridFilterNode).find('form');
 
     return filterForm.serializeObject();

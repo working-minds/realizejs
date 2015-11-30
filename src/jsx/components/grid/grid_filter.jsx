@@ -62,7 +62,7 @@ var GridFilter = React.createClass({
   },
 
   componentDidUpdate: function(){
-    var collapsible = React.findDOMNode(this.refs.collapsible);
+    var collapsible = ReactDOM.findDOMNode(this.refs.collapsible);
     if (!!collapsible) {
       $(collapsible).collapsible();
     }

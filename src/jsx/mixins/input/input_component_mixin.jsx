@@ -37,7 +37,7 @@ var InputComponentMixin = {
   getInputFormNode: function() {
     var inputRef = this.refs.input;
     if(!!inputRef) {
-      return React.findDOMNode(inputRef).form;
+      return ReactDOM.findDOMNode(inputRef).form;
     }
 
     return null;
@@ -81,7 +81,7 @@ var InputComponentMixin = {
   },
 
   inputNodeIsCheckbox: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
     return (!!inputNode && inputNode.type === "checkbox");
   }
 

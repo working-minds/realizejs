@@ -91,9 +91,9 @@ var InputMasked = React.createClass({
 
   renderBaseMask: function(type, params) {
     if(type !== undefined && type !== '')
-      $(React.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));
+      $(ReactDOM.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));
     else
-      $(React.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
+      $(ReactDOM.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
   },
 
   maskMapping: function(type) {

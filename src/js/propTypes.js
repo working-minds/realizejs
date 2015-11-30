@@ -3,7 +3,7 @@ Realize.PropTypes = {};
 Realize.PropTypes.localizedString = function(props, propName, componentName) {
   var value = props[propName];
   if(value === null || value === undefined || (typeof value === "string" && value.length === 0)) {
-    return true;
+    return null;
   }
 
   var translatedValue = Realize.t(value);
