@@ -657,7 +657,16 @@ var ContainerMixin = {
     return this.cloneChildrenWithProps();
   },
 
-  getAllDescendants: function getAllDescendants() {},
+  filterChildren: function filterChildren(childType) {
+    var result = [];
+    React.Children.map(this.props.children, function (child) {
+      if (!!child && child.type == childType) {
+        result.push(child);
+      }
+    });
+
+    return result;
+  },
 
   cloneChildrenWithProps: function cloneChildrenWithProps() {
     var props = this.buildPropsToForward();
@@ -3676,7 +3685,7 @@ var Form = React.createClass({
     multipart: React.PropTypes.bool,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
-    submitButton: React.PropTypes.object,
+    submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
     onSubmit: React.PropTypes.func,
@@ -3736,23 +3745,8 @@ var Form = React.createClass({
       this.renderFlashSuccess(),
       this.renderInputs(),
       this.renderChildren(),
-      React.createElement(
-        'div',
-        { className: Realize.themes.getCssClass('form.buttonGroup') },
-        this.renderOtherButtons(),
-        this.renderSubmitButton()
-      )
+      React.createElement(FormButtonGroup, _extends({}, this.propsWithoutCSS(), { isLoading: this.isLoading() }))
     );
-  },
-
-  renderSubmitButton: function renderSubmitButton() {
-    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()) {
-      return '';
-    }
-
-    var submitButton = [];
-    submitButton.push(React.createElement(Button, _extends({}, this.submitButtonProps(), { ref: 'submitButton', key: 'submit_button' })));
-    return submitButton;
   },
 
   renderInputs: function renderInputs() {
@@ -3761,41 +3755,6 @@ var Form = React.createClass({
     }
 
     return React.createElement(InputGroup, _extends({}, this.propsWithoutCSS(), { formStyle: this.props.style, errors: this.state.errors }));
-  },
-
-  renderOtherButtons: function renderOtherButtons() {
-    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()) {
-      return '';
-    }
-
-    var otherButtonsProps = this.props.otherButtons;
-    var otherButtons = [];
-
-    for (var i = 0; i < otherButtonsProps.length; i++) {
-      var otherButtonProps = otherButtonsProps[i];
-      otherButtons.push(React.createElement(Button, _extends({}, otherButtonProps, { key: otherButtonProps.name })));
-    }
-
-    return otherButtons;
-  },
-
-  isAllInputsFilterHidden: function isAllInputsFilterHidden() {
-    allIsHidden = true;
-    var inputs = this.props.inputs;
-    for (var property in inputs) {
-      if (inputs[property].component !== 'hidden') return allIsHidden = false;
-    }
-
-    return allIsHidden;
-  },
-
-  submitButtonProps: function submitButtonProps() {
-    var isLoading = this.isLoading();
-    return $.extend({}, this.props.submitButton, {
-      type: "submit",
-      disabled: isLoading,
-      isLoading: isLoading
-    });
   },
 
   handleSubmit: function handleSubmit(event) {
@@ -3856,6 +3815,95 @@ var Form = React.createClass({
     }
 
     return isLoading;
+  }
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var FormButtonGroup = React.createClass({
+  displayName: 'FormButtonGroup',
+
+  mixins: [CssClassMixin],
+
+  propTypes: {
+    inputs: React.PropTypes.object,
+    submitButton: React.PropTypes.object,
+    otherButtons: React.PropTypes.array,
+    isLoading: React.PropTypes.bool
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      themeClassKey: 'form.buttonGroup',
+      inputs: {},
+      submitButton: {
+        name: 'actions.send',
+        icon: 'send'
+      },
+      otherButtons: [],
+      isLoading: false
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: this.className() },
+      this.renderOtherButtons(),
+      this.renderSubmitButton()
+    );
+  },
+
+  renderOtherButtons: function renderOtherButtons() {
+    if (!_.isEmpty(this.props.inputs) && this.isAllInputsHidden()) {
+      return '';
+    }
+
+    var otherButtonsProps = this.props.otherButtons;
+    var otherButtons = [];
+
+    for (var i = 0; i < otherButtonsProps.length; i++) {
+      var otherButtonProps = otherButtonsProps[i];
+      otherButtons.push(React.createElement(Button, _extends({}, otherButtonProps, { key: otherButtonProps.name })));
+    }
+
+    return otherButtons;
+  },
+
+  renderSubmitButton: function renderSubmitButton() {
+    if (!_.isEmpty(this.props.inputs) && this.isAllInputsHidden() || !this.props.submitButton) {
+      return '';
+    }
+
+    var submitButton = [];
+    submitButton.push(React.createElement(Button, _extends({}, this.submitButtonProps(), { ref: 'submitButton', key: 'submit_button' })));
+    return submitButton;
+  },
+
+  isAllInputsHidden: function isAllInputsHidden() {
+    var allHidden = true;
+    var inputs = this.props.inputs;
+
+    for (var property in inputs) {
+      if (inputs.hasOwnProperty(property)) {
+        var input = inputs[property];
+        if (input.component !== 'hidden') return allHidden = false;
+      }
+    }
+
+    return allHidden;
+  },
+
+  submitButtonProps: function submitButtonProps() {
+    var isLoading = this.props.isLoading;
+    return $.extend({}, this.props.submitButton, {
+      type: "submit",
+      disabled: isLoading,
+      isLoading: isLoading
+    });
   }
 });
 //
@@ -6752,7 +6800,7 @@ var MenuItem = React.createClass({
 var Modal = React.createClass({
   displayName: 'Modal',
 
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, ContainerMixin],
 
   propTypes: {
     id: React.PropTypes.string,
@@ -6810,7 +6858,7 @@ var Modal = React.createClass({
 
     if (header == '' && content == '' && footer == '') content = React.createElement(
       ModalContent,
-      this.propTypes,
+      this.props,
       this.props.children
     );
 
@@ -6897,18 +6945,6 @@ var Modal = React.createClass({
     });
 
     return contentHeight;
-  },
-
-  filterChildren: function filterChildren(childType) {
-    var result = null;
-    React.Children.map(this.props.children, function (child) {
-      if (child.type == childType) {
-        result = child;
-        return false;
-      }
-    });
-
-    return result;
   }
 
 });
@@ -7064,6 +7100,136 @@ var ModalFooter = React.createClass({
     }
 
     return className;
+  }
+});
+//
+
+"use strict";
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var ModalForm = React.createClass({
+  displayName: "ModalForm",
+
+  mixins: [CssClassMixin, ContainerMixin],
+
+  propTypes: {
+    title: React.PropTypes.string,
+    form: React.PropTypes.object
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      title: "",
+      form: {}
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      isLoading: false
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      Modal,
+      this.props,
+      this.renderHeader(),
+      this.renderContent(),
+      this.renderFooter()
+    );
+  },
+
+  renderHeader: function renderHeader() {
+    var modalHeader = this.filterChildren(ModalHeader);
+    if (!modalHeader || modalHeader.length == 0) {
+      modalHeader.push(React.createElement(
+        ModalHeader,
+        { key: "modal-header" },
+        React.createElement(
+          "h5",
+          null,
+          this.props.title
+        )
+      ));
+    }
+
+    return modalHeader;
+  },
+
+  renderContent: function renderContent() {
+    return React.createElement(
+      ModalContent,
+      null,
+      React.createElement(
+        Form,
+        _extends({}, this.props.form, {
+          submitButton: false,
+          otherButtons: [],
+          onError: this.handleSubmitError,
+          onSuccess: this.handleSubmitSuccess,
+          ref: "form" }),
+        this.props.children
+      )
+    );
+  },
+
+  renderFooter: function renderFooter() {
+    return React.createElement(
+      ModalFooter,
+      null,
+      React.createElement(FormButtonGroup, _extends({}, this.props.form, { submitButton: this.submitButtonProps(), isLoading: this.state.isLoading }))
+    );
+  },
+
+  submitButtonProps: function submitButtonProps() {
+    var submitButtonProps = this.props.form.submitButton || this.defaultSubmitButtonProps();
+    submitButtonProps.onClick = this.submitForm;
+
+    return submitButtonProps;
+  },
+
+  defaultSubmitButtonProps: function defaultSubmitButtonProps() {
+    return {
+      name: 'actions.send',
+      icon: 'send'
+    };
+  },
+
+  submitForm: function submitForm(event) {
+    var formRef = this.refs.form;
+
+    formRef.handleSubmit(event);
+    this.setState({
+      isLoading: true
+    });
+  },
+
+  handleSubmitSuccess: function handleSubmitSuccess(data, status, xhr) {
+    var onSuccessCallback = this.props.form.onSuccess;
+    if (typeof onSuccessCallback == "function") {
+      this.props.onSuccess(data, status, xhr);
+    }
+
+    this.setState({
+      isLoading: false
+    });
+
+    return true;
+  },
+
+  handleSubmitError: function handleSubmitError(xhr, status, error) {
+    var onErrorCallback = this.props.form.onError;
+    if (typeof onErrorCallback == "function") {
+      this.props.onError(xhr, status, error);
+    }
+
+    this.setState({
+      isLoading: false
+    });
+
+    return true;
   }
 });
 //
@@ -8017,7 +8183,7 @@ var TableActionButton = React.createClass({
       return component;
     }
 
-    var buttonProps = React.__spread(this.props, {
+    var buttonProps = React.__spread({}, this.props, {
       isLoading: this.state.isLoading,
       disabled: this.isDisabled(),
       method: this.actionButtonMethod(),

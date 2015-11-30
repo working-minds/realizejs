@@ -17,8 +17,15 @@ var ContainerMixin = {
     return this.cloneChildrenWithProps();
   },
 
-  getAllDescendants: function() {
+  filterChildren : function(childType) {
+    var result = [];
+    React.Children.map(this.props.children, function(child) {
+      if (!!child && child.type == childType) {
+        result.push(child);
+      }
+    });
 
+    return result;
   },
 
   cloneChildrenWithProps: function() {
