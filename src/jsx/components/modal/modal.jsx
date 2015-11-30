@@ -1,5 +1,8 @@
 var Modal = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [
+    CssClassMixin,
+    ContainerMixin
+  ],
 
   propTypes: {
     id: React.PropTypes.string,
@@ -56,7 +59,7 @@ var Modal = React.createClass({
     var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
 
     if(header == '' && content == '' && footer == '')
-      content = (<ModalContent {...this.propTypes}>{this.props.children}</ModalContent>);
+      content = (<ModalContent {...this.props}>{this.props.children}</ModalContent>);
 
     return (
       <div id={this.props.id} className={this.className()} ref="modal">
@@ -141,18 +144,6 @@ var Modal = React.createClass({
     });
 
     return contentHeight;
-  },
-
-  filterChildren : function(childType) {
-    var result = null;
-    React.Children.map(this.props.children, function(child) {
-      if (child.type == childType) {
-        result = child;
-        return false;
-      }
-    });
-
-    return result;
   }
 
 });

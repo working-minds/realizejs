@@ -16,7 +16,7 @@ var Form = React.createClass({
     multipart: React.PropTypes.bool,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
-    submitButton: React.PropTypes.object,
+    submitButton: React.PropTypes.node,
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
     onSubmit: React.PropTypes.func,
