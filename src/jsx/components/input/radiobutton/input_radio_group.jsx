@@ -42,7 +42,7 @@ var InputRadioGroup = React.createClass({
         optionProps.className = 'with-gap';
 
       selectOptions.push(
-        <p key={"p_input_" + i}>
+        <p key={"p_input_" + i} id={'input_'+optionProps.value}>
           <input {...optionProps } name={this.props.name} onChange={this._handleChange} />
           <Label id={optionProps.id} label={optionProps.name} />
         </p>

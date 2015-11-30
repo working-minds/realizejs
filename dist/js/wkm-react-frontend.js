@@ -6485,7 +6485,7 @@ var InputRadioGroup = React.createClass({
 
       selectOptions.push(React.createElement(
         'p',
-        { key: "p_input_" + i },
+        { key: "p_input_" + i, id: 'input_' + optionProps.value },
         React.createElement('input', _extends({}, optionProps, { name: this.props.name, onChange: this._handleChange })),
         React.createElement(Label, { id: optionProps.id, label: optionProps.name })
       ));
