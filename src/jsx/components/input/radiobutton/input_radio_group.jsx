@@ -43,7 +43,7 @@ var InputRadioGroup = React.createClass({
 
       selectOptions.push(
         <p key={"p_input_" + i}>
-          <input {...optionProps } name={this.props.name} />
+          <input {...optionProps } name={this.props.name} onChange={this._handleChange} />
           <Label id={optionProps.id} label={optionProps.name} />
         </p>
       );
