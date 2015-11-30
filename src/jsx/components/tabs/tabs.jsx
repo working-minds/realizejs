@@ -19,7 +19,7 @@ var Tabs = React.createClass({
   },
 
   componentDidMount: function () {
-    $(React.findDOMNode(this.refs.tabsContainer)).tabs();
+    $(ReactDOM.findDOMNode(this.refs.tabsContainer)).tabs();
   },
 
   render: function () {

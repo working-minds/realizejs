@@ -23,7 +23,7 @@ var HeaderNotifications = React.createClass({
   },
 
   handleClick: function(){
-    var list = React.findDOMNode(this.refs.notificationsList);
+    var list = ReactDOM.findDOMNode(this.refs.notificationsList);
     $(list).slideDown();
     this.state.active = !this.state.active;
     this.forceUpdate();

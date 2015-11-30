@@ -81,7 +81,7 @@ var Table = React.createClass({
     this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
 
     if(!!this.props.customTableHeader) {
-      var $thead = $(React.findDOMNode(this.refs.thead));
+      var $thead = $(ReactDOM.findDOMNode(this.refs.thead));
       $thead.prepend(this.props.customTableHeader);
     }
   },

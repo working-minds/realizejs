@@ -20,6 +20,7 @@ var InputAutocompleteValues = React.createClass({
         id={this.props.id}
         name={this.valueInputName()}
         value={this.selectedOptionsValues()}
+        readOnly={true}
         style={{display: "none"}}>
         {this.renderValueInputs()}
       </select>

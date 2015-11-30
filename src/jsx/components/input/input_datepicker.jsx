@@ -11,8 +11,8 @@ var InputDatepicker = React.createClass({
   },
 
   componentDidMount: function() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    var buttonNode = React.findDOMNode(this.refs.button);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
+    var buttonNode = ReactDOM.findDOMNode(this.refs.button);
 
     var input = $(inputNode).pickadate({
       editable: true,

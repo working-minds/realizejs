@@ -44,7 +44,7 @@ var HeaderMenu = React.createClass({
   },
 
   componentDidMount: function(){
-    $(React.findDOMNode(this.refs.readerMenu)).dropdown();
+    $(ReactDOM.findDOMNode(this.refs.readerMenu)).dropdown();
   }
 
 });

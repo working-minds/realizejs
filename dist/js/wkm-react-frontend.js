@@ -72,7 +72,7 @@ Realize.PropTypes = {};
 Realize.PropTypes.localizedString = function(props, propName, componentName) {
   var value = props[propName];
   if(value === null || value === undefined || (typeof value === "string" && value.length === 0)) {
-    return true;
+    return null;
   }
 
   var translatedValue = Realize.t(value);
@@ -1113,7 +1113,7 @@ var CheckboxComponentMixin = {
   },
 
   componentDidMount: function componentDidMount() {
-    var inputNode = React.findDOMNode(this.refs.input);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
     inputNode.indeterminate = this.props.renderAsIndeterminate;
 
     var $form = $(inputNode.form);
@@ -1121,7 +1121,7 @@ var CheckboxComponentMixin = {
   },
 
   componentWillUnmount: function componentWillUnmount() {
-    var inputNode = React.findDOMNode(this.refs.input);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
     var $form = $(inputNode.form);
     $form.off('reset', this._handleCheckboxReset);
   },
@@ -1208,7 +1208,7 @@ var InputComponentMixin = {
   getInputFormNode: function getInputFormNode() {
     var inputRef = this.refs.input;
     if (!!inputRef) {
-      return React.findDOMNode(inputRef).form;
+      return ReactDOM.findDOMNode(inputRef).form;
     }
 
     return null;
@@ -1252,7 +1252,7 @@ var InputComponentMixin = {
   },
 
   inputNodeIsCheckbox: function inputNodeIsCheckbox() {
-    var inputNode = React.findDOMNode(this.refs.input);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
     return !!inputNode && inputNode.type === "checkbox";
   }
 
@@ -1273,7 +1273,7 @@ var MaterializeSelectMixin = {
   },
 
   applyMaterialize: function applyMaterialize(onMount) {
-    var selectElement = React.findDOMNode(this.refs.select);
+    var selectElement = ReactDOM.findDOMNode(this.refs.select);
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
 
     if (!onMount) {
@@ -1481,7 +1481,7 @@ var SelectComponentMixin = {
   },
 
   triggerDependableChanged: function triggerDependableChanged() {
-    var $valuesElement = $(React.findDOMNode(this.refs.select));
+    var $valuesElement = $(ReactDOM.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
 
     $valuesElement.trigger('dependable_changed', [optionValues]);
@@ -3116,7 +3116,7 @@ var Button = React.createClass({
   propTypes: {
     name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
-    icon: React.PropTypes.node,
+    icon: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
     style: React.PropTypes.oneOf(['danger', 'primary', 'warning', 'cancel']),
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,
@@ -3769,7 +3769,7 @@ var Form = React.createClass({
   },
 
   serialize: function serialize() {
-    var form = React.findDOMNode(this.refs.form);
+    var form = ReactDOM.findDOMNode(this.refs.form);
     return $(form).serializeObject();
   },
 
@@ -3795,7 +3795,7 @@ var Form = React.createClass({
     }
 
     if (this.props.multipart) {
-      var fd = new FormData(React.findDOMNode(this.refs.form));
+      var fd = new FormData(ReactDOM.findDOMNode(this.refs.form));
       var multipartOptions = {
         data: fd,
         enctype: 'multipart/form-data',
@@ -3830,7 +3830,7 @@ var FormButtonGroup = React.createClass({
 
   propTypes: {
     inputs: React.PropTypes.object,
-    submitButton: React.PropTypes.object,
+    submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool
   },
@@ -4158,7 +4158,7 @@ var Grid = React.createClass({
   /* Initializers */
 
   getInitialFilterData: function getInitialFilterData() {
-    var gridFilterNode = React.findDOMNode(this.refs.filter);
+    var gridFilterNode = ReactDOM.findDOMNode(this.refs.filter);
     var filterForm = $(gridFilterNode).find('form');
 
     return filterForm.serializeObject();
@@ -4421,7 +4421,7 @@ var GridFilter = React.createClass({
   },
 
   componentDidUpdate: function componentDidUpdate() {
-    var collapsible = React.findDOMNode(this.refs.collapsible);
+    var collapsible = ReactDOM.findDOMNode(this.refs.collapsible);
     if (!!collapsible) {
       $(collapsible).collapsible();
     }
@@ -4788,7 +4788,7 @@ var GridForm = React.createClass({
   },
 
   resetForm: function resetForm() {
-    var formNode = React.findDOMNode(this.refs.form);
+    var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.reset();
   },
 
@@ -4953,7 +4953,7 @@ var HeaderMenu = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    $(React.findDOMNode(this.refs.readerMenu)).dropdown();
+    $(ReactDOM.findDOMNode(this.refs.readerMenu)).dropdown();
   }
 
 });
@@ -5144,13 +5144,13 @@ var InputAutocomplete = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.on('reset', this.clearSelection);
   },
 
   componentWillUnmount: function componentWillUnmount() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
   },
@@ -5188,8 +5188,8 @@ var InputAutocomplete = React.createClass({
   },
 
   handleDocumentClick: function handleDocumentClick(event) {
-    var $resultNode = $(React.findDOMNode(this.refs.result));
-    var $containerNode = $(React.findDOMNode(this.refs.container));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
     var searchInput = $resultNode.find('input[type=text]')[0];
 
     if ($containerNode.find(event.target).length === 0) {
@@ -5201,7 +5201,7 @@ var InputAutocomplete = React.createClass({
 
   hideResult: function hideResult() {
     $(document).off('click', this.handleDocumentClick);
-    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
     var $searchInput = $resultNode.find('input[type=text]');
     $resultNode.hide();
     $searchInput.val('');
@@ -5218,7 +5218,7 @@ var InputAutocomplete = React.createClass({
     }
 
     $(document).on('click', this.handleDocumentClick);
-    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
     var searchInput = $resultNode.find('input[type=text]')[0];
 
     $resultNode.show();
@@ -5255,7 +5255,7 @@ var InputAutocomplete = React.createClass({
   },
 
   moveActiveDown: function moveActiveDown() {
-    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
     var resultListCount = $resultNode.find('li').length;
 
     this.setState({
@@ -5646,6 +5646,7 @@ var InputAutocompleteValues = React.createClass({
         id: this.props.id,
         name: this.valueInputName(),
         value: this.selectedOptionsValues(),
+        readOnly: true,
         style: { display: "none" } },
       this.renderValueInputs()
     );
@@ -6011,8 +6012,8 @@ var InputDatepicker = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    var inputNode = React.findDOMNode(this.refs.input);
-    var buttonNode = React.findDOMNode(this.refs.button);
+    var inputNode = ReactDOM.findDOMNode(this.refs.input);
+    var buttonNode = ReactDOM.findDOMNode(this.refs.button);
 
     var input = $(inputNode).pickadate({
       editable: true,
@@ -6148,8 +6149,8 @@ var InputFile = React.createClass({
   handleChange: function handleChange(event) {
     this._handleChange(event);
 
-    var fileInput = React.findDOMNode(this.refs.input);
-    var filePathInput = React.findDOMNode(this.refs.filePath);
+    var fileInput = ReactDOM.findDOMNode(this.refs.input);
+    var filePathInput = ReactDOM.findDOMNode(this.refs.filePath);
 
     $(filePathInput).val(fileInput.files[0].name);
   },
@@ -6277,7 +6278,7 @@ var InputMasked = React.createClass({
   },
 
   renderBaseMask: function renderBaseMask(type, params) {
-    if (type !== undefined && type !== '') $(React.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));else $(React.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
+    if (type !== undefined && type !== '') $(ReactDOM.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));else $(ReactDOM.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
   },
 
   maskMapping: function maskMapping(type) {
@@ -6575,13 +6576,13 @@ var InputSelect = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.on('reset', this.clearSelection);
   },
 
   componentWillUnmount: function componentWillUnmount() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
   },
@@ -6636,7 +6637,7 @@ var InputSelect = React.createClass({
     this.props.onChange(event);
 
     if (!event.isDefaultPrevented()) {
-      var selectElement = React.findDOMNode(this.refs.select);
+      var selectElement = ReactDOM.findDOMNode(this.refs.select);
 
       this.setState({
         value: this.ensureIsArray(selectElement.value)
@@ -6843,7 +6844,7 @@ var Modal = React.createClass({
     }
   },
 
-  componentDidUnmount: function componentDidUnmount() {
+  componentWillUnmount: function componentWillUnmount() {
     $(window).off('resize', this.resizeContent);
   },
 
@@ -6896,7 +6897,7 @@ var Modal = React.createClass({
   },
 
   openModal: function openModal() {
-    var $modal = $(React.findDOMNode(this.refs.modal));
+    var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.openModal({
       ready: this.openModalCallback
@@ -6912,8 +6913,8 @@ var Modal = React.createClass({
   },
 
   resizeContent: function resizeContent() {
-    var modal = React.findDOMNode(this.refs.modal);
-    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    var modal = ReactDOM.findDOMNode(this.refs.modal);
+    var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
 
     $(modal).css("max-height", $(window).height() - this.props.marginHeaderFooter);
     $(modal).css("width", this.props.width);
@@ -6931,14 +6932,14 @@ var Modal = React.createClass({
   },
 
   getAvailableHeight: function getAvailableHeight() {
-    var headerContainer = React.findDOMNode(this.refs.headerContainer);
-    var footerContainer = React.findDOMNode(this.refs.footerContainer);
+    var headerContainer = ReactDOM.findDOMNode(this.refs.headerContainer);
+    var footerContainer = ReactDOM.findDOMNode(this.refs.footerContainer);
 
     return $(window).height() - this.props.marginHeaderFooter - ($(headerContainer).height() + $(footerContainer).height());
   },
 
   getContentHeight: function getContentHeight() {
-    var contentContainer = React.findDOMNode(this.refs.contentContainer);
+    var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
     var contentHeight = 0;
     $(contentContainer).find("> *").each(function (i, content) {
       contentHeight += $(content).outerHeight();
@@ -7300,7 +7301,7 @@ var HeaderNotifications = React.createClass({
   },
 
   handleClick: function handleClick() {
-    var list = React.findDOMNode(this.refs.notificationsList);
+    var list = ReactDOM.findDOMNode(this.refs.notificationsList);
     $(list).slideDown();
     this.state.active = !this.state.active;
     this.forceUpdate();
@@ -7804,7 +7805,7 @@ var SideNav = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    $(React.findDOMNode(this.refs.sideNav)).sideNav();
+    $(ReactDOM.findDOMNode(this.refs.sideNav)).sideNav();
   }
 
 });
@@ -7899,7 +7900,7 @@ var Table = React.createClass({
     this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
 
     if (!!this.props.customTableHeader) {
-      var $thead = $(React.findDOMNode(this.refs.thead));
+      var $thead = $(ReactDOM.findDOMNode(this.refs.thead));
       $thead.prepend(this.props.customTableHeader);
     }
   },
@@ -9100,7 +9101,7 @@ var Tabs = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    $(React.findDOMNode(this.refs.tabsContainer)).tabs();
+    $(ReactDOM.findDOMNode(this.refs.tabsContainer)).tabs();
   },
 
   render: function render() {

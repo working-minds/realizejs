@@ -3,7 +3,7 @@ var Button = React.createClass({
   propTypes: {
     name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,
-    icon: React.PropTypes.node,
+    icon: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
     style: React.PropTypes.oneOf(['danger', 'primary', 'warning', 'cancel']),
     disabled: React.PropTypes.bool,
     href: React.PropTypes.string,

@@ -35,7 +35,7 @@ var SideNav = React.createClass({
   },
 
   componentDidMount: function(){
-    $(React.findDOMNode(this.refs.sideNav)).sideNav();
+    $(ReactDOM.findDOMNode(this.refs.sideNav)).sideNav();
   }
 
 });

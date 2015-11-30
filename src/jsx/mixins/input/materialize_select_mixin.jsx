@@ -10,7 +10,7 @@ var MaterializeSelectMixin = {
   },
 
   applyMaterialize: function(onMount) {
-    var selectElement = React.findDOMNode(this.refs.select);
+    var selectElement = ReactDOM.findDOMNode(this.refs.select);
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
 
     if(!onMount) {

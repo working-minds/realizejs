@@ -5,7 +5,7 @@ var FormButtonGroup = React.createClass({
 
   propTypes: {
     inputs: React.PropTypes.object,
-    submitButton: React.PropTypes.object,
+    submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool
   },

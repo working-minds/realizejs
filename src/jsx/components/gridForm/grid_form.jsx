@@ -238,7 +238,7 @@ var GridForm = React.createClass({
   },
 
   resetForm: function() {
-    var formNode = React.findDOMNode(this.refs.form);
+    var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.reset();
   },
 

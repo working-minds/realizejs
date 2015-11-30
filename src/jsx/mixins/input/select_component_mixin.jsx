@@ -183,7 +183,7 @@ var SelectComponentMixin = {
   },
 
   triggerDependableChanged: function() {
-    var $valuesElement = $(React.findDOMNode(this.refs.select));
+    var $valuesElement = $(ReactDOM.findDOMNode(this.refs.select));
     var optionValues = this.state.value;
 
     $valuesElement.trigger('dependable_changed', [optionValues]);

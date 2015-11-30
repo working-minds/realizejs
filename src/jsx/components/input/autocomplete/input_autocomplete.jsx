@@ -32,13 +32,13 @@ var InputAutocomplete = React.createClass({
   },
 
   componentDidMount: function() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.on('reset', this.clearSelection);
   },
 
   componentWillUnmount: function() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
   },
@@ -79,8 +79,8 @@ var InputAutocomplete = React.createClass({
   },
 
   handleDocumentClick: function(event) {
-    var $resultNode = $(React.findDOMNode(this.refs.result));
-    var $containerNode = $(React.findDOMNode(this.refs.container));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
     var searchInput = $resultNode.find('input[type=text]')[0];
 
     if($containerNode.find(event.target).length === 0) {
@@ -92,7 +92,7 @@ var InputAutocomplete = React.createClass({
 
   hideResult: function() {
     $(document).off('click', this.handleDocumentClick);
-    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
     var $searchInput = $resultNode.find('input[type=text]');
     $resultNode.hide();
     $searchInput.val('');
@@ -109,7 +109,7 @@ var InputAutocomplete = React.createClass({
     }
 
     $(document).on('click', this.handleDocumentClick);
-    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
     var searchInput = $resultNode.find('input[type=text]')[0];
 
     $resultNode.show();
@@ -146,7 +146,7 @@ var InputAutocomplete = React.createClass({
   },
 
   moveActiveDown: function() {
-    var $resultNode = $(React.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
     var resultListCount = $resultNode.find('li').length;
 
     this.setState({

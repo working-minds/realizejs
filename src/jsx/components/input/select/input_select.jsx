@@ -20,13 +20,13 @@ var InputSelect = React.createClass({
   },
 
   componentDidMount: function() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.on('reset', this.clearSelection);
   },
 
   componentWillUnmount: function() {
-    var valuesSelect = React.findDOMNode(this.refs.select);
+    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
   },
@@ -81,7 +81,7 @@ var InputSelect = React.createClass({
     this.props.onChange(event);
 
     if(!event.isDefaultPrevented()) {
-      var selectElement = React.findDOMNode(this.refs.select);
+      var selectElement = ReactDOM.findDOMNode(this.refs.select);
 
       this.setState({
         value: this.ensureIsArray(selectElement.value)

@@ -102,7 +102,7 @@ var Form = React.createClass({
   },
 
   serialize : function() {
-    var form = React.findDOMNode(this.refs.form);
+    var form = ReactDOM.findDOMNode(this.refs.form);
     return $(form).serializeObject();
   },
 
@@ -128,7 +128,7 @@ var Form = React.createClass({
     }
 
     if(this.props.multipart){
-      var fd = new FormData(React.findDOMNode(this.refs.form));
+      var fd = new FormData(ReactDOM.findDOMNode(this.refs.form));
       var multipartOptions = {
           data: fd,
           enctype: 'multipart/form-data',
