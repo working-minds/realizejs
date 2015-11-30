@@ -3685,7 +3685,7 @@ var Form = React.createClass({
     multipart: React.PropTypes.bool,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
-    submitButton: React.PropTypes.node,
+    submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     isLoading: React.PropTypes.bool,
     onSubmit: React.PropTypes.func,
@@ -8183,7 +8183,7 @@ var TableActionButton = React.createClass({
       return component;
     }
 
-    var buttonProps = React.__spread(this.props, {
+    var buttonProps = React.__spread({}, this.props, {
       isLoading: this.state.isLoading,
       disabled: this.isDisabled(),
       method: this.actionButtonMethod(),

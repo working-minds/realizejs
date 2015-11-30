@@ -44,7 +44,7 @@ var TableActionButton = React.createClass({
       return component;
     }
 
-    var buttonProps = React.__spread(this.props, {
+    var buttonProps = React.__spread({}, this.props, {
       isLoading: this.state.isLoading,
       disabled: this.isDisabled(),
       method: this.actionButtonMethod(),

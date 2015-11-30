@@ -26,7 +26,7 @@
   ],
 
   "dependencies": {
-    "react": "~0.13.0",
+    "react": "~0.14.0",
     "materialize": "0.97.0",
     "moment": "~2.10.3",
     "numeral": "~1.5.3",
