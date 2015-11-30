@@ -77,22 +77,9 @@ var Form = React.createClass({
         {this.renderInputs()}
         {this.renderChildren()}
 
-        <div className={Realize.themes.getCssClass('form.buttonGroup')}>
-          {this.renderOtherButtons()}
-          {this.renderSubmitButton()}
-        </div>
+        <FormButtonGroup {...this.propsWithoutCSS()} isLoading={this.isLoading()} />
       </form>
     );
-  },
-
-  renderSubmitButton: function(){
-    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()){
-      return '';
-    }
-
-    var submitButton = [];
-    submitButton.push(<Button {...this.submitButtonProps()} ref="submitButton" key='submit_button' />);
-    return submitButton;
   },
 
   renderInputs: function() {
@@ -101,42 +88,6 @@ var Form = React.createClass({
     }
 
     return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} />;
-  },
-
-  renderOtherButtons: function() {
-    if (!_.isEmpty(this.props.inputs) && this.isAllInputsFilterHidden()){
-      return '';
-    }
-
-    var otherButtonsProps = this.props.otherButtons;
-    var otherButtons = [];
-
-    for(var i = 0; i < otherButtonsProps.length; i++) {
-      var otherButtonProps = otherButtonsProps[i];
-      otherButtons.push(<Button {...otherButtonProps} key={otherButtonProps.name} />);
-    }
-
-    return otherButtons;
-  },
-
-  isAllInputsFilterHidden: function(){
-    allIsHidden = true;
-    var inputs = this.props.inputs;
-    for( var property in inputs ){
-      if (inputs[property].component !== 'hidden')
-        return allIsHidden = false;
-    }
-
-    return allIsHidden;
-  },
-
-  submitButtonProps: function() {
-    var isLoading = this.isLoading();
-    return $.extend({}, this.props.submitButton, {
-      type: "submit",
-      disabled: isLoading,
-      isLoading: isLoading
-    });
   },
 
   handleSubmit: function(event) {
@@ -183,7 +134,7 @@ var Form = React.createClass({
           enctype: 'multipart/form-data',
           processData: false,
           contentType: false
-      }
+      };
       submitOptions = $.extend({},submitOptions,multipartOptions);
     }
 
