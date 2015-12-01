@@ -6,6 +6,7 @@ var InputAutocompleteResult = React.createClass({
     selectedOptions: React.PropTypes.array,
     active: React.PropTypes.number,
     searchValue: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
     onKeyDown: React.PropTypes.func,
     onChange: React.PropTypes.func,
     onSelect: React.PropTypes.func,
@@ -27,6 +28,7 @@ var InputAutocompleteResult = React.createClass({
         {this.renderSearchInput()}
         {this.renderClearButton()}
         {this.renderResult()}
+        {this.renderActionButtons()}
       </div>
     );
   },
@@ -80,7 +82,32 @@ var InputAutocompleteResult = React.createClass({
         {Realize.t("inputs.autocomplete.emptyResult")}
       </div>
     );
+  },
+
+  renderActionButtons: function() {
+    var actionButtons = [];
+    var actionButtonsProps = this.props.actionButtons;
+
+    for(var i = 0; i < actionButtonsProps.length; i++) {
+      var actionButtonProps = actionButtonsProps[i];
+      actionButtons.push(this.renderActionButton(actionButtonProps, i));
+    }
+
+    return (
+      <div className="input-autocomplete__action-buttons">
+        {actionButtons}
+      </div>
+    );
+  },
+
+  renderActionButton: function(actionButtonProps, i) {
+    var buttonComponent = (actionButtonProps.component || 'Button');
+    var buttonProps = React.__spread({}, actionButtonProps, {
+      themeClassKey: 'input.autocomplete.actionButton',
+      element: "a",
+      key: ("action_" + i)
+    });
+
+    return React.createElement(eval(buttonComponent), buttonProps);
   }
-
 });
-

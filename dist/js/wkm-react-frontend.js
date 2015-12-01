@@ -463,6 +463,10 @@ Realize.themes.materialize = {
 
       select: {
         cssClass: 'select-wrapper initialized'
+      },
+
+      actionButton: {
+        cssClass: 'button btn waves-effect waves-light black-text grey lighten-2'
       }
     },
 
@@ -5136,7 +5140,8 @@ var InputAutocomplete = React.createClass({
   propTypes: {
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
-    searchParam: React.PropTypes.string
+    searchParam: React.PropTypes.string,
+    actionButtons: React.PropTypes.array
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -5144,7 +5149,8 @@ var InputAutocomplete = React.createClass({
       maxOptions: 99,
       maxOptionsParam: 'limit',
       searchParam: 'query',
-      themeClassKey: 'input.autocomplete'
+      themeClassKey: 'input.autocomplete',
+      actionButtons: []
     };
   },
 
@@ -5186,6 +5192,7 @@ var InputAutocomplete = React.createClass({
         options: this.state.options,
         active: this.state.active,
         searchValue: this.state.searchValue,
+        actionButtons: this.props.actionButtons,
         onKeyDown: this.handleSearchNavigation,
         onChange: this.searchOptions,
         onSelect: this.handleSelect,
@@ -5514,6 +5521,7 @@ var InputAutocompleteResult = React.createClass({
     selectedOptions: React.PropTypes.array,
     active: React.PropTypes.number,
     searchValue: React.PropTypes.string,
+    actionButtons: React.PropTypes.array,
     onKeyDown: React.PropTypes.func,
     onChange: React.PropTypes.func,
     onSelect: React.PropTypes.func,
@@ -5535,7 +5543,8 @@ var InputAutocompleteResult = React.createClass({
       { className: this.className() },
       this.renderSearchInput(),
       this.renderClearButton(),
-      this.renderResult()
+      this.renderResult(),
+      this.renderActionButtons()
     );
   },
 
@@ -5585,8 +5594,34 @@ var InputAutocompleteResult = React.createClass({
       { className: "input-autocomplete__empty-message" },
       Realize.t("inputs.autocomplete.emptyResult")
     );
-  }
+  },
 
+  renderActionButtons: function renderActionButtons() {
+    var actionButtons = [];
+    var actionButtonsProps = this.props.actionButtons;
+
+    for (var i = 0; i < actionButtonsProps.length; i++) {
+      var actionButtonProps = actionButtonsProps[i];
+      actionButtons.push(this.renderActionButton(actionButtonProps, i));
+    }
+
+    return React.createElement(
+      "div",
+      { className: "input-autocomplete__action-buttons" },
+      actionButtons
+    );
+  },
+
+  renderActionButton: function renderActionButton(actionButtonProps, i) {
+    var buttonComponent = actionButtonProps.component || 'Button';
+    var buttonProps = React.__spread({}, actionButtonProps, {
+      themeClassKey: 'input.autocomplete.actionButton',
+      element: "a",
+      key: "action_" + i
+    });
+
+    return React.createElement(eval(buttonComponent), buttonProps);
+  }
 });
 //
 

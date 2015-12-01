@@ -150,9 +150,7 @@ hr {
   min-height: 4rem;
 }
 
-.input-autocomplete {
-
-}
+.input-autocomplete {}
 
 .input-autocomplete__result {
   width: 100%;
@@ -187,6 +185,10 @@ hr {
   margin-bottom: 5px;
 }
 
+.input-autocomplete__action-buttons > a {
+  display: block;
+}
+
 .input-autocomplete__empty-message {
   font-size: 1.0rem;
   padding: 0.4rem 1rem 0.8rem 1rem;
@@ -195,7 +197,7 @@ hr {
 .input-autocomplete__list {
   margin-top: 0;
   margin-bottom: 0;
-  max-height: 450px;
+  max-height: 315px;
   overflow-y: auto;
   overflow-x: hidden;
 }
