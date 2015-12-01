@@ -24,26 +24,63 @@ var InputAutocompleteResult = React.createClass({
   render: function() {
     return (
       <div className={this.className()}>
-        <div className="input-autocomplete__search">
-          <Icon type="search" className="prefix" />
-          <InputText onKeyDown={this.props.onKeyDown} value={this.props.searchValue} onChange={this.props.onChange} autoComplete="off" />
-        </div>
+        {this.renderSearchInput()}
+        {this.renderClearButton()}
+        {this.renderResult()}
+      </div>
+    );
+  },
 
-        <a href="#!" className="input-autocomplete__clear-button" onClick={this.props.onClear}>
-          Limpar itens selecionados
-        </a>
+  renderSearchInput: function() {
+    return (
+      <div className="input-autocomplete__search">
+        <Icon type="search" className="prefix" />
+        <InputText onKeyDown={this.props.onKeyDown} value={this.props.searchValue} onChange={this.props.onChange} autoComplete="off" />
+      </div>
+    );
+  },
 
-        <InputAutocompleteList
-          id={this.props.id}
-          selectedOptions={this.props.selectedOptions}
-          options={this.props.options}
-          active={this.props.active}
-          onSelect={this.props.onSelect}
-          onOptionMouseEnter={this.props.onOptionMouseEnter}
-          ref="list"
-        />
+  renderClearButton: function() {
+    return (
+      <a href="#!"
+         className="input-autocomplete__clear-button"
+         onClick={this.props.onClear}>
+
+        {Realize.t("inputs.autocomplete.clear")}
+      </a>
+    );
+  },
+
+  renderResult: function() {
+    var options = this.props.options;
+    if(options.length > 0) {
+      return this.renderList();
+    } else {
+      return this.renderEmptyMessage();
+    }
+  },
+
+  renderList: function() {
+    return (
+      <InputAutocompleteList
+        id={this.props.id}
+        selectedOptions={this.props.selectedOptions}
+        options={this.props.options}
+        active={this.props.active}
+        onSelect={this.props.onSelect}
+        onOptionMouseEnter={this.props.onOptionMouseEnter}
+        ref="list"
+      />
+    );
+  },
+
+  renderEmptyMessage: function() {
+    return (
+      <div className="input-autocomplete__empty-message">
+        {Realize.t("inputs.autocomplete.emptyResult")}
       </div>
     );
   }
+
 });
 

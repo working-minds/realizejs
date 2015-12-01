@@ -40,6 +40,11 @@
   margin-bottom: 5px;
 }
 
+.input-autocomplete__empty-message {
+  font-size: 1.0rem;
+  padding: 0.4rem 1rem 0.8rem 1rem;
+}
+
 .input-autocomplete__list {
   margin-top: 0;
   margin-bottom: 0;

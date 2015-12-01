@@ -160,6 +160,13 @@ Realize.i18n.registerLocale({
     date: 'mm/dd/yyyy'
   },
 
+  inputs: {
+    autocomplete: {
+      emptyResult: 'No items found.',
+      clear: 'Clear selected items'
+    }
+  },
+
   date: {
     formats: {
       default: 'MM/DD/YYYY HH:mm',
@@ -198,6 +205,13 @@ Realize.i18n.registerLocale({
 
   masks: {
     date: 'dd/mm/yyyy'
+  },
+
+  inputs: {
+    autocomplete: {
+      emptyResult: 'Nenhum item foi encontrado.',
+      clear: 'Limpar itens selecionados'
+    }
   },
 
   date: {
@@ -5519,28 +5533,60 @@ var InputAutocompleteResult = React.createClass({
     return React.createElement(
       "div",
       { className: this.className() },
-      React.createElement(
-        "div",
-        { className: "input-autocomplete__search" },
-        React.createElement(Icon, { type: "search", className: "prefix" }),
-        React.createElement(InputText, { onKeyDown: this.props.onKeyDown, value: this.props.searchValue, onChange: this.props.onChange, autoComplete: "off" })
-      ),
-      React.createElement(
-        "a",
-        { href: "#!", className: "input-autocomplete__clear-button", onClick: this.props.onClear },
-        "Limpar itens selecionados"
-      ),
-      React.createElement(InputAutocompleteList, {
-        id: this.props.id,
-        selectedOptions: this.props.selectedOptions,
-        options: this.props.options,
-        active: this.props.active,
-        onSelect: this.props.onSelect,
-        onOptionMouseEnter: this.props.onOptionMouseEnter,
-        ref: "list"
-      })
+      this.renderSearchInput(),
+      this.renderClearButton(),
+      this.renderResult()
+    );
+  },
+
+  renderSearchInput: function renderSearchInput() {
+    return React.createElement(
+      "div",
+      { className: "input-autocomplete__search" },
+      React.createElement(Icon, { type: "search", className: "prefix" }),
+      React.createElement(InputText, { onKeyDown: this.props.onKeyDown, value: this.props.searchValue, onChange: this.props.onChange, autoComplete: "off" })
+    );
+  },
+
+  renderClearButton: function renderClearButton() {
+    return React.createElement(
+      "a",
+      { href: "#!",
+        className: "input-autocomplete__clear-button",
+        onClick: this.props.onClear },
+      Realize.t("inputs.autocomplete.clear")
+    );
+  },
+
+  renderResult: function renderResult() {
+    var options = this.props.options;
+    if (options.length > 0) {
+      return this.renderList();
+    } else {
+      return this.renderEmptyMessage();
+    }
+  },
+
+  renderList: function renderList() {
+    return React.createElement(InputAutocompleteList, {
+      id: this.props.id,
+      selectedOptions: this.props.selectedOptions,
+      options: this.props.options,
+      active: this.props.active,
+      onSelect: this.props.onSelect,
+      onOptionMouseEnter: this.props.onOptionMouseEnter,
+      ref: "list"
+    });
+  },
+
+  renderEmptyMessage: function renderEmptyMessage() {
+    return React.createElement(
+      "div",
+      { className: "input-autocomplete__empty-message" },
+      Realize.t("inputs.autocomplete.emptyResult")
     );
   }
+
 });
 //
 
