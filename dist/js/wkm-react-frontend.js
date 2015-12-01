@@ -1443,11 +1443,13 @@ var SelectComponentMixin = {
 
   listenToDependableChange: function listenToDependableChange() {
     var dependableId = this.props.dependsOn.dependableId;
+    dependableId = dependableId.replace(/(:|\.|\[|]|,)/g, "\\$1");
     $('body').delegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
   unbindDependableChangeListener: function unbindDependableChangeListener() {
     var dependableId = this.props.dependsOn.dependableId;
+    dependableId = dependableId.replace(/(:|\.|\[|]|,)/g, "\\$1");
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
@@ -6329,7 +6331,12 @@ var InputNumber = React.createClass({
     return React.createElement(
       'span',
       null,
-      React.createElement(InputMasked, _extends({}, this.props, { type: 'number', plugin_params: { typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy }, className: this.className(), ref: 'input' })),
+      React.createElement(InputMasked, _extends({}, this.props, {
+        type: 'number',
+        plugin_params: { typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy },
+        className: this.className(),
+        ref: 'input'
+      })),
       React.createElement(Label, this.propsWithoutCSS())
     );
   }

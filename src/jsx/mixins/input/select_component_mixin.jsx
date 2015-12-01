@@ -145,11 +145,13 @@ var SelectComponentMixin = {
 
   listenToDependableChange: function() {
     var dependableId = this.props.dependsOn.dependableId;
+    dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
     $('body').delegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
   unbindDependableChangeListener: function() {
     var dependableId = this.props.dependsOn.dependableId;
+    dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
