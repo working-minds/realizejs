@@ -3,6 +3,8 @@
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
 
+'use strict';
+
 var Realize = {};
 
 Realize.config = {
@@ -43,52 +45,67 @@ Realize.config = {
   }
 };
 
-Realize.setConfig = function(newConfig) {
+Realize.setConfig = function (newConfig) {
   $.extend(true, Realize.config, newConfig);
 };
+//
+
+"use strict";
 
 $.extend(FormSerializer.patterns, {
   validate: /^[a-z_][a-z0-9#_\.-]*(?:\[(?:\d*|[a-z0-9#_\.-]+)\])*$/i,
   key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
   named: /^[a-z0-9#_\.-]+$/i
 });
+//
+
+'use strict';
+
 Realize.utils = {};
 
-Realize.utils.getProp = function(key, obj) {
+Realize.utils.getProp = function (key, obj) {
   var keyArr = key.split('.');
   var prop = obj;
 
   try {
-    while(keyArr.length > 0) {
+    while (keyArr.length > 0) {
       prop = prop[keyArr.shift()];
     }
-  } catch(err) {
+  } catch (err) {
     return '';
   }
   return prop;
 };
+//
+
+"use strict";
+
 Realize.PropTypes = {};
 
-Realize.PropTypes.localizedString = function(props, propName, componentName) {
+Realize.PropTypes.localizedString = function (props, propName, componentName) {
   var value = props[propName];
-  if(value === null || value === undefined || (typeof value === "string" && value.length === 0)) {
+  if (value === null || value === undefined || typeof value === "string" && value.length === 0) {
     return null;
   }
 
   var translatedValue = Realize.t(value);
-  if(typeof value !== "string" || typeof translatedValue !== "string" || translatedValue.length === 0) {
+  if (typeof value !== "string" || typeof translatedValue !== "string" || translatedValue.length === 0) {
     return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
   }
 };
+//
+
+'use strict';
+
 Realize.i18n = {};
 Realize.i18n.locales = {};
 
-Realize.i18n.registerLocale = function(newLocaleObj, locale) {
-  if(!$.isPlainObject(newLocaleObj)) {
-    throw 'Invalid Locale Object.'
+Realize.i18n.registerLocale = function (newLocaleObj, locale) {
+  if (!$.isPlainObject(newLocaleObj)) {
+    throw 'Invalid Locale Object.';
   }
 
-  if(!locale) {
+  if (!locale) {
     throw 'Invalid Locale Name.';
   }
 
@@ -96,17 +113,17 @@ Realize.i18n.registerLocale = function(newLocaleObj, locale) {
   Realize.i18n.locales[locale] = $.extend({}, currentLocaleObj, newLocaleObj);
 };
 
-Realize.i18n.setLocale = function(locale) {
+Realize.i18n.setLocale = function (locale) {
   Realize.config.locale = locale;
 };
 
-Realize.i18n.translate = function(key, throwsException) {
-  if(throwsException === undefined) {
+Realize.i18n.translate = function (key, throwsException) {
+  if (throwsException === undefined) {
     throwsException = false;
   }
 
-  if(typeof key !== "string") {
-    if(throwsException) {
+  if (typeof key !== "string") {
+    if (throwsException) {
       throw 'Key is not a string';
     }
 
@@ -117,8 +134,8 @@ Realize.i18n.translate = function(key, throwsException) {
   var localeObj = Realize.i18n.locales[currentLocale];
 
   var translatedString = Realize.utils.getProp(key, localeObj);
-  if(!translatedString) {
-    if(throwsException) {
+  if (!translatedString) {
+    if (throwsException) {
       throw 'Key not found in locale object';
     }
 
@@ -129,6 +146,10 @@ Realize.i18n.translate = function(key, throwsException) {
 };
 
 Realize.t = Realize.i18n.translate;
+//
+
+'use strict';
+
 Realize.i18n.registerLocale({
   true: 'Yes',
   false: 'No',
@@ -174,8 +195,11 @@ Realize.i18n.registerLocale({
     }
   }
 
-
 }, 'en');
+//
+
+'use strict';
+
 Realize.i18n.registerLocale({
   true: 'Sim',
   false: 'Não',
@@ -222,17 +246,21 @@ Realize.i18n.registerLocale({
   }
 
 }, 'pt-BR');
+//
+
+'use strict';
+
 Realize.themes = {};
 
-Realize.themes.getCurrent = function() {
+Realize.themes.getCurrent = function () {
   var defaultTheme = Realize.themes.default;
   var currentTheme = Realize.themes[Realize.config.theme];
 
   return $.extend({}, defaultTheme, currentTheme);
 };
 
-Realize.themes.getProp = function(key) {
-  if(!key) {
+Realize.themes.getProp = function (key) {
+  if (!key) {
     return '';
   }
 
@@ -240,11 +268,11 @@ Realize.themes.getProp = function(key) {
   return Realize.utils.getProp(key, currentTheme);
 };
 
-Realize.themes.getCssClass = function(keys) {
+Realize.themes.getCssClass = function (keys) {
   var keysArr = keys.split(' ');
   var themeClass = "";
 
-  while(keysArr.length > 0) {
+  while (keysArr.length > 0) {
     var key = keysArr.shift();
     var classKey = key + '.cssClass';
 
@@ -253,6 +281,9 @@ Realize.themes.getCssClass = function(keys) {
 
   return themeClass.trim();
 };
+//
+
+'use strict';
 
 Realize.themes.default = {
   grid: {
@@ -335,6 +366,10 @@ Realize.themes.default = {
     }
   }
 };
+//
+
+'use strict';
+
 Realize.themes.materialize = {
   grid: {
     cssClass: 'grid row',
@@ -639,7 +674,6 @@ Realize.themes.materialize = {
     }
   },
 
-
   icon: {
     cssClass: 'material-icons',
 
@@ -654,6 +688,37 @@ Realize.themes.materialize = {
     destroy: 'delete'
   }
 };
+//
+
+'use strict';
+
+var ModalActions = Reflux.createActions(['open', 'openFinished']);
+
+var ModalStore = Reflux.createStore({
+  listenables: [ModalActions],
+  optionProps: ['dismissible', 'opacity', 'inDuration', 'outDuration', 'ready', 'complete'],
+
+  modalId: '',
+  shouldOpen: false,
+  options: {},
+
+  onOpen: function onOpen(props) {
+    this.modalId = props.modalId;
+    this.shouldOpen = true;
+    this.options = $.grep(props, (function (prop) {
+      return this.optionProps.indexOf(prop) > 0;
+    }).bind(this));
+
+    this.trigger(this);
+  },
+
+  onOpenFinished: function onOpenFinished() {
+    this.shouldOpen = false;
+    this.trigger(this);
+  }
+});
+//
+
 'use strict';
 
 var ContainerMixin = {
@@ -6889,46 +6954,61 @@ var MenuItem = React.createClass({
 var Modal = React.createClass({
   displayName: 'Modal',
 
-  mixins: [CssClassMixin, ContainerMixin],
+  mixins: [Reflux.connect(ModalStore, 'modalStore'), CssClassMixin, ContainerMixin],
 
   propTypes: {
     id: React.PropTypes.string,
     opened: React.PropTypes.bool,
-    headerSize: React.PropTypes.number,
-    footerSize: React.PropTypes.number,
     marginHeaderFooter: React.PropTypes.number,
     width: React.PropTypes.string,
-    modalHeight: React.PropTypes.number,
-    headerHeight: React.PropTypes.number,
-    contentHeight: React.PropTypes.number,
-    footerHeight: React.PropTypes.number,
+    minContentHeight: React.PropTypes.number,
     useAvailableHeight: React.PropTypes.bool,
-    openModalCallback: React.PropTypes.func
+
+    dismissible: React.PropTypes.bool,
+    opacity: React.PropTypes.number,
+    inDuration: React.PropTypes.number,
+    outDuration: React.PropTypes.number,
+    ready: React.PropTypes.func,
+    complete: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
+      id: '',
       themeClassKey: 'modal',
       opened: false,
-      headerSize: 50,
-      footerSize: 50,
       marginHeaderFooter: 100,
       width: '60%',
-      modalHeight: 0,
-      headerHeight: 0,
-      contentHeight: 0,
-      footerHeight: 0,
+      minContentHeight: 0,
       useAvailableHeight: false,
-      openModalCallback: null
+
+      dismissible: true,
+      opacity: 0.4,
+      inDuration: 300,
+      outDuration: 200,
+      ready: function ready() {
+        return true;
+      },
+      complete: function complete() {
+        return true;
+      }
     };
   },
+
+  getInitialState: function getInitialState() {
+    return {
+      modalStore: null
+    };
+  },
+
+  /* Lifecycle functions */
 
   componentDidMount: function componentDidMount() {
     this.resizeContent();
     $(window).on('resize', this.resizeContent);
 
     if (!!this.props.opened) {
-      this.openModal();
+      this.open();
     }
   },
 
@@ -6938,7 +7018,26 @@ var Modal = React.createClass({
 
   componentDidUpdate: function componentDidUpdate() {
     this.resizeContent();
+    if (!!this.state.opened) {
+      this.open();
+    }
+
+    if (this.state.modalStore) {
+      this.handleModalStoreState();
+    }
   },
+
+  handleModalStoreState: function handleModalStoreState() {
+    var modalStore = this.state.modalStore;
+    var shouldOpenModal = modalStore.shouldOpen;
+    var modalToOpenId = modalStore.modalId;
+
+    if (shouldOpenModal && modalToOpenId == this.props.id) {
+      this.open();
+    }
+  },
+
+  /* Rendering functions */
 
   render: function render() {
     var header = this.filterChildren(ModalHeader) ? this.renderHeader() : '';
@@ -6984,21 +7083,31 @@ var Modal = React.createClass({
     );
   },
 
-  openModal: function openModal() {
+  /* Modal opener handlers */
+
+  open: function open(options) {
     var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.openModal({
-      ready: this.openModalCallback
+      dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
+      opacity: this.props.opacity, // Opacity of modal background
+      inDuration: this.props.inDuration, // Transition in duration
+      outDuration: this.props.outDuration, // Transition out duration
+      ready: this.handleReady, // Callback for Modal open
+      complete: this.props.complete // Callback for Modal close
     });
   },
 
-  openModalCallback: function openModalCallback() {
+  handleReady: function handleReady(readyFunction) {
     this.resizeContent();
+    ModalActions.openFinished();
 
-    if (!!this.props.openModalCallback) {
-      this.props.openModalCallback();
+    if (typeof readyFunction === "function") {
+      readyFunction();
     }
   },
+
+  /* Modal resize handlers */
 
   resizeContent: function resizeContent() {
     var modal = ReactDOM.findDOMNode(this.refs.modal);
@@ -7028,12 +7137,14 @@ var Modal = React.createClass({
 
   getContentHeight: function getContentHeight() {
     var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
+    var minContentHeight = this.props.minContentHeight;
     var contentHeight = 0;
+
     $(contentContainer).find("> *").each(function (i, content) {
       contentHeight += $(content).outerHeight();
     });
 
-    return contentHeight;
+    return Math.max(minContentHeight, contentHeight);
   }
 
 });
@@ -7049,31 +7160,12 @@ var ModalButton = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    top: React.PropTypes.number,
-    modalId: React.PropTypes.string,
-    dismissible: React.PropTypes.bool,
-    opacity: React.PropTypes.number,
-    inDuration: React.PropTypes.number,
-    outDuration: React.PropTypes.number,
-    ready: React.PropTypes.func,
-    complete: React.PropTypes.func
+    modalId: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
-      top: 0,
-      modalId: '',
-      dismissible: true,
-      className: 'btn',
-      opacity: 0.4,
-      inDuration: 300,
-      outDuration: 200,
-      ready: function ready() {
-        return true;
-      },
-      complete: function complete() {
-        return true;
-      }
+      modalId: ''
     };
   },
 
@@ -7092,40 +7184,12 @@ var ModalButton = React.createClass({
     return className;
   },
 
-  getModalElement: function getModalElement() {
-    return $("#" + this.props.modalId);
-  },
-
   openModal: function openModal(event) {
     event.nativeEvent.preventDefault();
     event.stopPropagation();
     event.preventDefault();
 
-    var $modal = this.getModalElement();
-    $modal.openModal({
-      top: this.props.top,
-      dismissible: this.props.dismissible, // Modal can be dismissed by clicking outside of the modal
-      opacity: this.props.opacity, // Opacity of modal background
-      inDuration: this.props.inDuration, // Transition in duration
-      outDuration: this.props.outDuration, // Transition out duration
-      ready: this.handleReady, // Callback for Modal open
-      complete: this.handleComplete // Callback for Modal close
-    });
-  },
-
-  handleReady: function handleReady() {
-    var $modal = this.getModalElement();
-    $modal.trigger('resize');
-
-    if (typeof this.props.ready === "function") {
-      this.props.ready();
-    }
-  },
-
-  handleComplete: function handleComplete() {
-    if (typeof this.props.complete === "function") {
-      this.props.complete();
-    }
+    ModalActions.open(this.props);
   }
 
 });

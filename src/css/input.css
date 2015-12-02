@@ -42,6 +42,14 @@
   display: block;
 }
 
+.input-autocomplete__action-buttons > a > i {
+  float: none !important;
+  line-height: 1.3rem;
+  margin-left: 0.5rem;
+  position: relative;
+  top: 0.3rem;
+}
+
 .input-autocomplete__empty-message {
   font-size: 1.0rem;
   padding: 0.4rem 1rem 0.8rem 1rem;
