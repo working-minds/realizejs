@@ -28,13 +28,20 @@ var ContainerMixin = {
     return result;
   },
 
-  cloneChildrenWithProps: function() {
+  cloneChildrenWithProps: function(options) {
     var props = this.buildPropsToForward();
 
-    return React.Children.map(this.props.children, function(child) {
-      var forwardedProps = $.extend({}, this.props.forwardedProps, props);
-      return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
-    }.bind(this));
+    if (!!options && !!options.childrenType) {
+      return React.Children.map(this.filterChildren(options.childrenType), function(child) {
+        var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
+      }.bind(this));
+    } else {
+      return React.Children.map(this.props.children, function(child) {
+        var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
+      }.bind(this));
+    }
   },
 
   buildChildPropsToKeep: function(child) {
