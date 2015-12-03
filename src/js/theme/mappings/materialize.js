@@ -126,6 +126,10 @@ Realize.themes.materialize = {
 
       select: {
         cssClass: 'select-wrapper initialized'
+      },
+
+      actionButton: {
+        cssClass: 'button btn waves-effect waves-light black-text grey lighten-2'
       }
     },
 
