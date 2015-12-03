@@ -27,6 +27,7 @@
 
   "dependencies": {
     "react": "~0.14.0",
+    "reflux": "~0.2.0",
     "materialize": "0.97.0",
     "moment": "~2.10.3",
     "numeral": "~1.5.3",

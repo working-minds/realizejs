@@ -10,17 +10,9 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: [
-          'src/js/config.js',
-          'src/js/serializer.js',
-          'src/js/utils.js',
-          'src/js/propTypes.js',
-          'src/js/i18n/i18n.js',
-          'src/js/i18n/locales/**/*.js',
-          'src/js/theme/theme.js',
-          'src/js/theme/mappings/**/*.js',
-          'src/jsx/**/*.jsx',
-          'src/css/**/*.css',
-          'src/scss/**/*.scss'
+          'src/js/**/*.js',
+          'src/js/**/*.jsx',
+          'src/css/**/*.css'
         ],
         tasks: ['build'],
         options: {
@@ -30,7 +22,7 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: ['Gruntfile.js', 'src/jsx/**/*.jsx', 'src/js/**/*.js']
+      files: ['Gruntfile.js', 'src/js/**/*.jsx', 'src/js/**/*.js']
     },
 
     babel: {
@@ -42,8 +34,8 @@ module.exports = function(grunt) {
         files: [
           {
             expand: true,
-            cwd: 'src/jsx',
-            src: ['**/*.jsx'],
+            cwd: 'src/js',
+            src: ['**/*.jsx', '**/*.js'],
             dest: 'tmp/js',
             ext: '.js'
           }
@@ -71,14 +63,15 @@ module.exports = function(grunt) {
       },
       js: {
         src: [
-          'src/js/config.js',
-          'src/js/serializer.js',
-          'src/js/utils.js',
-          'src/js/propTypes.js',
-          'src/js/i18n/i18n.js',
-          'src/js/i18n/locales/**/*.js',
-          'src/js/theme/theme.js',
-          'src/js/theme/mappings/**/*.js',
+          'tmp/js/config.js',
+          'tmp/js/serializer.js',
+          'tmp/js/utils.js',
+          'tmp/js/propTypes.js',
+          'tmp/js/i18n/i18n.js',
+          'tmp/js/i18n/locales/**/*.js',
+          'tmp/js/theme/theme.js',
+          'tmp/js/theme/mappings/**/*.js',
+          'tmp/js/stores/**/*.js',
           'tmp/js/mixins/**/*.js',
           'tmp/js/components/**/*.js'
         ],

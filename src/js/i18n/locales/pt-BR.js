@@ -29,6 +29,13 @@ Realize.i18n.registerLocale({
     date: 'dd/mm/yyyy'
   },
 
+  inputs: {
+    autocomplete: {
+      emptyResult: 'Nenhum item foi encontrado.',
+      clear: 'Limpar itens selecionados'
+    }
+  },
+
   date: {
     formats: {
       default: 'DD/MM/YYYY HH:mm',

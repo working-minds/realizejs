@@ -1,5 +1,6 @@
 var Modal = React.createClass({
   mixins: [
+    Reflux.connect(ModalStore, 'modalStore'),
     CssClassMixin,
     ContainerMixin
   ],
@@ -7,41 +8,52 @@ var Modal = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     opened: React.PropTypes.bool,
-    headerSize: React.PropTypes.number,
-    footerSize: React.PropTypes.number,
-    marginHeaderFooter:React.PropTypes.number,
+    marginHeaderFooter: React.PropTypes.number,
     width: React.PropTypes.string,
-    modalHeight: React.PropTypes.number,
-    headerHeight: React.PropTypes.number,
-    contentHeight: React.PropTypes.number,
-    footerHeight: React.PropTypes.number,
+    minContentHeight: React.PropTypes.number,
     useAvailableHeight: React.PropTypes.bool,
-    openModalCallback: React.PropTypes.func
+
+    dismissible: React.PropTypes.bool,
+    opacity: React.PropTypes.number,
+    inDuration: React.PropTypes.number,
+    outDuration: React.PropTypes.number,
+    ready: React.PropTypes.func,
+    complete: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
+      id: '',
       themeClassKey: 'modal',
       opened: false,
-      headerSize: 50,
-      footerSize: 50,
       marginHeaderFooter: 100,
       width: '60%',
-      modalHeight: 0,
-      headerHeight: 0,
-      contentHeight: 0,
-      footerHeight: 0,
+      minContentHeight: 0,
       useAvailableHeight: false,
-      openModalCallback: null
+
+      dismissible: true,
+      opacity: 0.4,
+      inDuration: 300,
+      outDuration: 200,
+      ready: function() { return true; },
+      complete: function() { return true; }
     };
   },
+
+  getInitialState: function() {
+    return {
+      modalStore: null
+    };
+  },
+
+  /* Lifecycle functions */
 
   componentDidMount: function() {
     this.resizeContent();
     $(window).on('resize', this.resizeContent);
 
     if(!!this.props.opened) {
-      this.openModal();
+      this.open();
     }
   },
 
@@ -51,7 +63,26 @@ var Modal = React.createClass({
 
   componentDidUpdate: function() {
     this.resizeContent();
+    if(!!this.state.opened) {
+      this.open();
+    }
+
+    if(this.state.modalStore) {
+      this.handleModalStoreState();
+    }
   },
+
+  handleModalStoreState: function() {
+    var modalStore = this.state.modalStore;
+    var shouldOpenModal = modalStore.shouldOpen;
+    var modalToOpenId = modalStore.modalId;
+
+    if(shouldOpenModal && modalToOpenId == this.props.id) {
+      this.open();
+    }
+  },
+
+  /* Rendering functions */
 
   render: function() {
     var header = this.filterChildren(ModalHeader)? this.renderHeader() : '';
@@ -94,21 +125,31 @@ var Modal = React.createClass({
     );
   },
 
-  openModal: function() {
+  /* Modal opener handlers */
+
+  open: function(options) {
     var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.openModal({
-      ready: this.openModalCallback
+      dismissible: this.props.dismissible,  // Modal can be dismissed by clicking outside of the modal
+      opacity: this.props.opacity,          // Opacity of modal background
+      inDuration: this.props.inDuration,    // Transition in duration
+      outDuration: this.props.outDuration,  // Transition out duration
+      ready: this.handleReady,              // Callback for Modal open
+      complete: this.props.complete         // Callback for Modal close
     });
   },
 
-  openModalCallback: function() {
+  handleReady: function(readyFunction) {
     this.resizeContent();
+    ModalActions.openFinished();
 
-    if(!!this.props.openModalCallback) {
-      this.props.openModalCallback()
+    if(typeof readyFunction === "function") {
+      readyFunction();
     }
   },
+
+  /* Modal resize handlers */
 
   resizeContent: function() {
     var modal = ReactDOM.findDOMNode(this.refs.modal);
@@ -138,12 +179,15 @@ var Modal = React.createClass({
 
   getContentHeight: function() {
     var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
+    var minContentHeight = this.props.minContentHeight;
     var contentHeight = 0;
+
     $(contentContainer).find("> *").each(function(i, content) {
       contentHeight += $(content).outerHeight();
     });
 
-    return contentHeight;
+
+    return Math.max(minContentHeight, contentHeight);
   }
 
 });

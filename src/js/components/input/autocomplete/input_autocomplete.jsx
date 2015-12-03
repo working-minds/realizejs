@@ -8,7 +8,8 @@ var InputAutocomplete = React.createClass({
   propTypes: {
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
-    searchParam: React.PropTypes.string
+    searchParam: React.PropTypes.string,
+    actionButtons: React.PropTypes.array
   },
 
   getDefaultProps: function() {
@@ -16,7 +17,8 @@ var InputAutocomplete = React.createClass({
       maxOptions: 99,
       maxOptionsParam: 'limit',
       searchParam: 'query',
-      themeClassKey: 'input.autocomplete'
+      themeClassKey: 'input.autocomplete',
+      actionButtons: []
     };
   },
 
@@ -59,6 +61,7 @@ var InputAutocomplete = React.createClass({
           options={this.state.options}
           active={this.state.active}
           searchValue={this.state.searchValue}
+          actionButtons={this.props.actionButtons}
           onKeyDown={this.handleSearchNavigation}
           onChange={this.searchOptions}
           onSelect={this.handleSelect}
