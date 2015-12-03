@@ -140,12 +140,12 @@ var Modal = React.createClass({
     });
   },
 
-  handleReady: function(readyFunction) {
+  handleReady: function() {
     this.resizeContent();
     ModalActions.openFinished();
 
-    if(typeof readyFunction === "function") {
-      readyFunction();
+    if(typeof this.props.ready === "function") {
+      this.props.ready();
     }
   },
 
