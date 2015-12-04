@@ -38,7 +38,16 @@ var InputDatepicker = React.createClass({
   render: function() {
     return (
       <span>
-        <InputMasked {...this.props} value={this.formatDateValue()} type="date" className={this.className()} onChange={this._handleChange} plugin_params={{typeMask: 'date', showMaskOnHover: false}} ref="input" />
+        <InputMasked
+          {...this.props}
+          value={this.formatDateValue()}
+          type="date"
+          className={this.className()}
+          onChange={this._handleChange}
+          plugin_params={{typeMask: 'date', showMaskOnHover: false}}
+          ref="input"
+        />
+
         <Label {...this.propsWithoutCSS()} />
         <Button disabled={this.props.disabled} icon={{type: "calendar"}} className="input-datepicker__button prefix" type="button" ref="button"/>
       </span>
@@ -46,6 +55,7 @@ var InputDatepicker = React.createClass({
   },
 
   formatDateValue: function() {
+    // d -> D, m -> M, y -> Y, h -> H, s -> m
     var date = moment(this.props.value);
     var formattedValue = date.format(Realize.t('masks.date').toUpperCase());
     if(formattedValue == "Invalid date") {
