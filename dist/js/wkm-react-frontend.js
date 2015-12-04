@@ -133,16 +133,16 @@ Realize.i18n.translate = function (key, throwsException) {
   var currentLocale = Realize.config.locale;
   var localeObj = Realize.i18n.locales[currentLocale];
 
-  var translatedString = Realize.utils.getProp(key, localeObj);
-  if (!translatedString) {
+  var translation = Realize.utils.getProp(key, localeObj);
+  if (!translation) {
     if (throwsException) {
       throw 'Key not found in locale object';
     }
 
-    translatedString = key;
+    translation = key;
   }
 
-  return translatedString;
+  return translation;
 };
 
 Realize.t = Realize.i18n.translate;
@@ -178,7 +178,24 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'mm/dd/yyyy'
+    date: 'mm/dd/yyyy',
+    datetime: {
+      mask: 'm/d/y h:s',
+      placeholder: 'mm/dd/yyyy, hh:ss'
+    },
+    cpf: '999.999.999-99',
+    cnpj: '99.999.999/9999-99',
+    phone: '(99) 9999[9]-9999',
+    decimal: {
+      mask: '999.999.999,99',
+      numericInput: true,
+      rightAlign: true
+    },
+    currency: {
+      mask: '$ 999.999.999,99',
+      numericInput: true,
+      rightAlign: true
+    }
   },
 
   inputs: {
@@ -228,7 +245,24 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'dd/mm/yyyy'
+    date: 'dd/mm/yyyy',
+    datetime: {
+      mask: 'd/m/y h:s',
+      placeholder: 'dd/mm/yyyy, hh:ss'
+    },
+    cpf: '999.999.999-99',
+    cnpj: '99.999.999/9999-99',
+    phone: '(99) 9999[9]-9999',
+    decimal: {
+      mask: '999.999.999,99',
+      numericInput: true,
+      rightAlign: true
+    },
+    currency: {
+      mask: 'R$ 999.999.999,99',
+      numericInput: true,
+      rightAlign: true
+    }
   },
 
   inputs: {
@@ -6195,13 +6229,21 @@ var InputDatepicker = React.createClass({
     return React.createElement(
       'span',
       null,
-      React.createElement(InputMasked, _extends({}, this.props, { value: this.formatDateValue(), type: 'date', className: this.className(), onChange: this._handleChange, plugin_params: { typeMask: 'date', showMaskOnHover: false }, ref: 'input' })),
+      React.createElement(InputMasked, _extends({}, this.props, {
+        value: this.formatDateValue(),
+        type: 'date',
+        className: this.className(),
+        onChange: this._handleChange,
+        plugin_params: { typeMask: 'date', showMaskOnHover: false },
+        ref: 'input'
+      })),
       React.createElement(Label, this.propsWithoutCSS()),
       React.createElement(Button, { disabled: this.props.disabled, icon: { type: "calendar" }, className: 'input-datepicker__button prefix', type: 'button', ref: 'button' })
     );
   },
 
   formatDateValue: function formatDateValue() {
+    // d -> D, m -> M, y -> Y, h -> H, s -> m
     var date = moment(this.props.value);
     var formattedValue = date.format(Realize.t('masks.date').toUpperCase());
     if (formattedValue == "Invalid date") {
@@ -6347,6 +6389,8 @@ var InputHidden = React.createClass({
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 var InputMasked = React.createClass({
   displayName: 'InputMasked',
 
@@ -6354,8 +6398,7 @@ var InputMasked = React.createClass({
 
   propTypes: {
     mask: React.PropTypes.string,
-    typeMask: React.PropTypes.string,
-    predefinedMasks: React.PropTypes.object,
+    maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
     onComplete: React.PropTypes.func,
     onIncomplete: React.PropTypes.func,
@@ -6366,100 +6409,98 @@ var InputMasked = React.createClass({
     return {
       themeClassKey: 'input.text',
       mask: '',
-      typeMask: '',
-      regex: '',
-      predefinedMasks: {
-        cpf: {
-          mask: '999.999.999-99'
-        },
-        cnpj: {
-          mask: '99.999.999/9999-99'
-        },
-        phone: {
-          mask: '(99) 9999[9]-9999'
-        },
-        cell_phone: {
-          mask: '(99) 9999[9]-9999'
-        },
-        currency: {
-          mask: '999.999.999,99',
-          numericInput: true,
-          rightAlign: true
-        }
-      },
+      maskType: null,
+      regex: null,
+
       onComplete: function onComplete() {},
       onIncomplete: function onIncomplete() {},
       onCleared: function onCleared() {}
     };
   },
 
+  predefinedMasks: function predefinedMasks() {
+    var localeMasks = Realize.t("masks");
+    var predefinedMasks = {};
+
+    for (var maskName in localeMasks) {
+      if (localeMasks.hasOwnProperty(maskName)) {
+        var mask = localeMasks[maskName];
+        if (typeof mask == "string") {
+          predefinedMasks[maskName] = {
+            mask: mask
+          };
+        } else if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) == "object") {
+          predefinedMasks[maskName] = mask;
+        }
+      }
+    }
+
+    return predefinedMasks;
+  },
+
   render: function render() {
     return React.createElement(
       'input',
-      _extends({}, this.props, this.props.field_params, { value: this.state.value, className: this.inputClassName(), onKeyUp: this.props.onChange, ref: 'input', type: 'text' }),
+      _extends({}, this.props, {
+        value: this.state.value,
+        placeholder: this.getPlaceholder(),
+        className: this.inputClassName(),
+        onChange: this._handleChange,
+        type: 'text',
+        ref: 'input' }),
       this.props.children
     );
   },
 
   componentDidMount: function componentDidMount() {
-    if (this.isRegexMask()) this.renderRegexMask();else {
-      if (this.isAPredefinedMask()) this.renderPredefinedMask();else this.renderCustomMask();
+    if (!!this.props.regex) {
+      this.applyRegexMask();
+    } else {
+      this.applyMask();
     }
   },
 
-  renderRegexMask: function renderRegexMask() {
-    var params = {};
-    params.regex = this.props.plugin_params.regex;
-    this.renderBaseMask('Regex', params);
+  applyRegexMask: function applyRegexMask() {
+    var $input = $(this.getInputElement());
+    $input.inputmask('Regex', this.parseMaskOptions());
   },
 
-  renderCustomMask: function renderCustomMask() {
-    var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params.placeholder;
-    delete this.props.plugin_params.typeMask;
+  applyMask: function applyMask() {
+    var maskType = this.props.maskType;
+    var predefinedMasks = this.predefinedMasks();
+    var predefinedMask = predefinedMasks[maskType];
 
-    if (typeMask) this.renderBaseMask(typeMask, this.props.plugin_params);else this.renderBaseMask('', this.props.plugin_params);
-  },
-
-  renderPredefinedMask: function renderPredefinedMask() {
-    var params = this.maskMapping(this.props.plugin_params.mask);
-    var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params.mask;
-    delete this.props.plugin_params.placeholder;
-    delete this.props.plugin_params.typeMask;
-
-    params = $.extend(params, this.props.plugin_params);
-    this.renderBaseMask(typeMask, params);
-  },
-
-  renderBaseMask: function renderBaseMask(type, params) {
-    if (type !== undefined && type !== '') $(ReactDOM.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));else $(ReactDOM.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
-  },
-
-  maskMapping: function maskMapping(type) {
-    var typesMask = this.props.predefinedMasks;
-    return typesMask[type] === undefined ? type : typesMask[type];
-  },
-
-  isAPredefinedMask: function isAPredefinedMask() {
-    return this.props.plugin_params.mask in this.props.predefinedMasks;
-  },
-
-  isRegexMask: function isRegexMask() {
-    return this.props.plugin_params != null && 'regex' in this.props.plugin_params;
-  },
-
-  paramsWithEvents: function paramsWithEvents(params) {
-    if (!params) {
-      params = {};
+    if (!!predefinedMask) {
+      this.applyPredefinedMask(predefinedMask);
+    } else {
+      this.applyCustomMask();
     }
+  },
 
-    params.oncomplete = this.props.onComplete;
-    params.onincomplete = this.props.onIncomplete;
-    params.oncleared = this.props.onCleared;
-    return params;
+  applyPredefinedMask: function applyPredefinedMask(predefinedMask) {
+    var $input = $(this.getInputElement());
+    var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
+
+    $input.inputmask(predefinedMaskOptions);
+  },
+
+  applyCustomMask: function applyCustomMask() {
+    var $input = $(this.getInputElement());
+    $input.inputmask(this.parseMaskOptions());
+  },
+
+  getInputElement: function getInputElement() {
+    return ReactDOM.findDOMNode(this.refs.input);
+  },
+
+  parseMaskOptions: function parseMaskOptions() {
+    var maskOptions = $.extend({}, this.props);
+    maskOptions.oncomplete = this.props.onComplete;
+    maskOptions.onincomplete = this.props.onIncomplete;
+    maskOptions.oncleared = this.props.onCleared;
+
+    return maskOptions;
   }
-
 });
 //
 

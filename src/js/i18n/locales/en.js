@@ -26,7 +26,24 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'mm/dd/yyyy'
+    date: 'mm/dd/yyyy',
+    datetime: {
+      mask: 'm/d/y h:s',
+      placeholder: 'mm/dd/yyyy, hh:ss'
+    },
+    cpf: '999.999.999-99',
+    cnpj: '99.999.999/9999-99',
+    phone: '(99) 9999[9]-9999',
+    decimal: {
+      mask: '999.999.999,99',
+      numericInput: true,
+      rightAlign: true
+    },
+    currency: {
+      mask: '$ 999.999.999,99',
+      numericInput: true,
+      rightAlign: true
+    }
   },
 
   inputs: {
@@ -41,7 +58,9 @@ Realize.i18n.registerLocale({
       default: 'MM/DD/YYYY HH:mm',
       date: 'MM/DD/YYYY'
     }
-  }
+  },
+
+
 
 
 }, 'en');
