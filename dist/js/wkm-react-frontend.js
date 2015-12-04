@@ -187,18 +187,14 @@ Realize.i18n.registerLocale({
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
     integer: {
-      mask: '9',
-      repeat: '*',
-      greedy: false
+      alias: "integer"
     },
     decimal: {
-      mask: '999.999.999,99',
-      numericInput: true,
-      rightAlign: true
+      alias: "decimal"
     },
     currency: {
-      mask: '$ 999.999.999,99',
-      numericInput: true
+      prefix: "$ ",
+      alias: "currency"
     }
   },
 
@@ -258,18 +254,21 @@ Realize.i18n.registerLocale({
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
     integer: {
-      mask: '9',
-      repeat: '*',
-      greedy: false
+      alias: "integer"
     },
     decimal: {
-      mask: '999.999.999,99',
-      numericInput: true,
-      rightAlign: true
+      alias: "decimal",
+      groupSeparator: ".",
+      radixPoint: ",",
+      removeMaskOnSubmit: true
     },
     currency: {
-      mask: '$ 999.999.999,99',
-      numericInput: true
+      alias: "currency",
+      prefix: "R$ ",
+      groupSeparator: ".",
+      radixPoint: ",",
+      placeholder: "0",
+      removeMaskOnSubmit: true
     }
   },
 
@@ -1440,7 +1439,8 @@ var SelectComponentMixin = {
     valueField: React.PropTypes.string,
     multiple: React.PropTypes.bool,
     onLoad: React.PropTypes.func,
-    onLoadError: React.PropTypes.func
+    onLoadError: React.PropTypes.func,
+    onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -1451,6 +1451,7 @@ var SelectComponentMixin = {
       valueField: 'id',
       options: [],
       multiple: false,
+      onSelect: null,
       onLoad: function onLoad(data) {
         return true;
       },
@@ -6401,14 +6402,14 @@ var InputHidden = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 var InputMasked = React.createClass({
-  displayName: 'InputMasked',
+  displayName: "InputMasked",
 
   mixins: [CssClassMixin, InputComponentMixin],
 
@@ -6424,13 +6425,19 @@ var InputMasked = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.text',
-      mask: '',
+      mask: null,
       maskType: null,
       regex: null,
 
       onComplete: function onComplete() {},
       onIncomplete: function onIncomplete() {},
       onCleared: function onCleared() {}
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      placeholder: this.getPlaceholder()
     };
   },
 
@@ -6445,7 +6452,7 @@ var InputMasked = React.createClass({
           predefinedMasks[maskName] = {
             mask: mask
           };
-        } else if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) == "object") {
+        } else if ((typeof mask === "undefined" ? "undefined" : _typeof(mask)) == "object") {
           predefinedMasks[maskName] = mask;
         }
       }
@@ -6456,14 +6463,14 @@ var InputMasked = React.createClass({
 
   render: function render() {
     return React.createElement(
-      'input',
+      "input",
       _extends({}, this.props, {
         value: this.state.value,
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
         onChange: this._handleChange,
-        type: 'text',
-        ref: 'input' }),
+        type: "text",
+        ref: "input" }),
       this.props.children
     );
   },
@@ -6478,7 +6485,10 @@ var InputMasked = React.createClass({
 
   applyRegexMask: function applyRegexMask() {
     var $input = $(this.getInputElement());
-    $input.inputmask('Regex', this.parseMaskOptions());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask('Regex', maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
   applyMask: function applyMask() {
@@ -6498,11 +6508,15 @@ var InputMasked = React.createClass({
     var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
 
     $input.inputmask(predefinedMaskOptions);
+    this.setMaskPlaceholder(predefinedMaskOptions);
   },
 
   applyCustomMask: function applyCustomMask() {
     var $input = $(this.getInputElement());
-    $input.inputmask(this.parseMaskOptions());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask(maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
   getInputElement: function getInputElement() {
@@ -6513,13 +6527,37 @@ var InputMasked = React.createClass({
     var maskOptions = $.extend({
       showMaskOnHover: false,
       clearIncomplete: true
-    }, this.props);
+    }, this.filterMaskOptionProps());
 
     maskOptions.oncomplete = this.props.onComplete;
     maskOptions.onincomplete = this.props.onIncomplete;
     maskOptions.oncleared = this.props.onCleared;
 
     return maskOptions;
+  },
+
+  filterMaskOptionProps: function filterMaskOptionProps() {
+    var maskOptionProps = {};
+    var propsToFilter = ['onComplete', 'onIncomplete', 'onCleared'];
+    for (var propName in this.props) {
+      if (this.props.hasOwnProperty(propName)) {
+        var prop = this.props[propName];
+        if (!!prop && propsToFilter.indexOf(propName) < 0) {
+          maskOptionProps[propName] = prop;
+        }
+      }
+    }
+
+    return maskOptionProps;
+  },
+
+  setMaskPlaceholder: function setMaskPlaceholder(appliedMaskOptions) {
+    var appliedPlaceholder = appliedMaskOptions.placeholder;
+    //.inputmask('getemptymask').join('')
+    if (!!appliedPlaceholder) {
+      var $input = $(this.getInputElement());
+      this.setState({ placeholder: $input.val() });
+    }
   }
 });
 //

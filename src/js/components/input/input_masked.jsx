@@ -16,7 +16,7 @@ var InputMasked = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.text',
-      mask: '',
+      mask: null,
       maskType: null,
       regex: null,
 
@@ -24,6 +24,12 @@ var InputMasked = React.createClass({
       onIncomplete: function() {},
       onCleared: function() {}
     };
+  },
+
+  getInitialState: function() {
+    return {
+      placeholder: this.getPlaceholder()
+    }
   },
 
   predefinedMasks: function() {
@@ -72,7 +78,10 @@ var InputMasked = React.createClass({
 
   applyRegexMask: function() {
     var $input = $(this.getInputElement());
-    $input.inputmask('Regex', this.parseMaskOptions());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask('Regex', maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
   applyMask: function() {
@@ -92,11 +101,15 @@ var InputMasked = React.createClass({
     var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
 
     $input.inputmask(predefinedMaskOptions);
+    this.setMaskPlaceholder(predefinedMaskOptions);
   },
 
   applyCustomMask: function() {
     var $input = $(this.getInputElement());
-    $input.inputmask(this.parseMaskOptions());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask(maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
   getInputElement: function() {
@@ -107,12 +120,36 @@ var InputMasked = React.createClass({
     var maskOptions = $.extend({
       showMaskOnHover: false,
       clearIncomplete: true
-    }, this.props);
+    }, this.filterMaskOptionProps());
 
     maskOptions.oncomplete = this.props.onComplete;
     maskOptions.onincomplete = this.props.onIncomplete;
     maskOptions.oncleared = this.props.onCleared;
 
     return maskOptions;
+  },
+
+  filterMaskOptionProps: function() {
+    var maskOptionProps = {};
+    var propsToFilter = ['onComplete', 'onIncomplete', 'onCleared'];
+    for(var propName in this.props) {
+      if(this.props.hasOwnProperty(propName)) {
+        var prop = this.props[propName];
+        if(!!prop && propsToFilter.indexOf(propName) < 0) {
+          maskOptionProps[propName] = prop;
+        }
+      }
+    }
+
+    return maskOptionProps;
+  },
+
+  setMaskPlaceholder: function(appliedMaskOptions) {
+    var appliedPlaceholder = appliedMaskOptions.placeholder;
+    //.inputmask('getemptymask').join('')
+    if(!!appliedPlaceholder) {
+      var $input = $(this.getInputElement());
+      this.setState({placeholder: $input.val()});
+    }
   }
 });

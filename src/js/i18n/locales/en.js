@@ -35,18 +35,14 @@ Realize.i18n.registerLocale({
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
     integer: {
-      mask: '9',
-      repeat: '*',
-      greedy: false
+      alias: "integer"
     },
     decimal: {
-      mask: '999.999.999,99',
-      numericInput: true,
-      rightAlign: true
+      alias: "decimal"
     },
     currency: {
-      mask: '$ 999.999.999,99',
-      numericInput: true
+      prefix: "$ ",
+      alias: "currency"
     }
   },
 
@@ -62,9 +58,6 @@ Realize.i18n.registerLocale({
       default: 'MM/DD/YYYY HH:mm',
       date: 'MM/DD/YYYY'
     }
-  },
-
-
-
+  }
 
 }, 'en');

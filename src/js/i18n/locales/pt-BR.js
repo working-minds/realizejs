@@ -35,18 +35,21 @@ Realize.i18n.registerLocale({
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
     integer: {
-      mask: '9',
-      repeat: '*',
-      greedy: false
+      alias: "integer"
     },
     decimal: {
-      mask: '999.999.999,99',
-      numericInput: true,
-      rightAlign: true
+      alias: "decimal",
+      groupSeparator: ".",
+      radixPoint: ",",
+      removeMaskOnSubmit: true
     },
     currency: {
-      mask: '$ 999.999.999,99',
-      numericInput: true
+      alias: "currency",
+      prefix: "R$ ",
+      groupSeparator: ".",
+      radixPoint: ",",
+      placeholder: "0",
+      removeMaskOnSubmit: true
     }
   },
 
