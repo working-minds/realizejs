@@ -5416,6 +5416,10 @@ var InputAutocomplete = React.createClass({
     this.setState({
       value: []
     }, this.triggerDependableChanged);
+
+    if (!!this.props.onSelect) {
+      this.props.onSelect(this.props.id, []);
+    }
   },
 
   handleOptionMouseEnter: function handleOptionMouseEnter(position) {
@@ -5439,6 +5443,10 @@ var InputAutocomplete = React.createClass({
 
     this.forceUpdate();
     this.triggerDependableChanged();
+
+    if (!!this.props.onSelect) {
+      this.props.onSelect(this.props.id, this.state.value);
+    }
   }
 
 });
