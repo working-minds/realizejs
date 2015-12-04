@@ -34,15 +34,19 @@ Realize.i18n.registerLocale({
     cpf: '999.999.999-99',
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
+    integer: {
+      mask: '9',
+      repeat: '*',
+      greedy: false
+    },
     decimal: {
       mask: '999.999.999,99',
       numericInput: true,
       rightAlign: true
     },
     currency: {
-      mask: 'R$ 999.999.999,99',
-      numericInput: true,
-      rightAlign: true
+      mask: '$ 999.999.999,99',
+      numericInput: true
     }
   },
 

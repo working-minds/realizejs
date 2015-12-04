@@ -186,6 +186,11 @@ Realize.i18n.registerLocale({
     cpf: '999.999.999-99',
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
+    integer: {
+      mask: '9',
+      repeat: '*',
+      greedy: false
+    },
     decimal: {
       mask: '999.999.999,99',
       numericInput: true,
@@ -193,8 +198,7 @@ Realize.i18n.registerLocale({
     },
     currency: {
       mask: '$ 999.999.999,99',
-      numericInput: true,
-      rightAlign: true
+      numericInput: true
     }
   },
 
@@ -253,15 +257,19 @@ Realize.i18n.registerLocale({
     cpf: '999.999.999-99',
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
+    integer: {
+      mask: '9',
+      repeat: '*',
+      greedy: false
+    },
     decimal: {
       mask: '999.999.999,99',
       numericInput: true,
       rightAlign: true
     },
     currency: {
-      mask: 'R$ 999.999.999,99',
-      numericInput: true,
-      rightAlign: true
+      mask: '$ 999.999.999,99',
+      numericInput: true
     }
   },
 
@@ -6443,7 +6451,7 @@ var InputMasked = React.createClass({
       'input',
       _extends({}, this.props, {
         value: this.state.value,
-        placeholder: this.getPlaceholder(),
+        placeholder: this.state.placeholder,
         className: this.inputClassName(),
         onChange: this._handleChange,
         type: 'text',
@@ -6494,7 +6502,11 @@ var InputMasked = React.createClass({
   },
 
   parseMaskOptions: function parseMaskOptions() {
-    var maskOptions = $.extend({}, this.props);
+    var maskOptions = $.extend({
+      showMaskOnHover: false,
+      clearIncomplete: true
+    }, this.props);
+
     maskOptions.oncomplete = this.props.onComplete;
     maskOptions.onincomplete = this.props.onIncomplete;
     maskOptions.oncleared = this.props.onCleared;

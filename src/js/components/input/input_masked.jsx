@@ -51,7 +51,7 @@ var InputMasked = React.createClass({
       <input
         {...this.props}
         value={this.state.value}
-        placeholder={this.getPlaceholder()}
+        placeholder={this.state.placeholder}
         className={this.inputClassName()}
         onChange={this._handleChange}
         type="text"
@@ -104,7 +104,11 @@ var InputMasked = React.createClass({
   },
 
   parseMaskOptions: function() {
-    var maskOptions = $.extend({}, this.props);
+    var maskOptions = $.extend({
+      showMaskOnHover: false,
+      clearIncomplete: true
+    }, this.props);
+
     maskOptions.oncomplete = this.props.onComplete;
     maskOptions.onincomplete = this.props.onIncomplete;
     maskOptions.oncleared = this.props.onCleared;
