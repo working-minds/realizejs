@@ -8,7 +8,8 @@ var SelectComponentMixin = {
     valueField: React.PropTypes.string,
     multiple: React.PropTypes.bool,
     onLoad: React.PropTypes.func,
-    onLoadError: React.PropTypes.func
+    onLoadError: React.PropTypes.func,
+    onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -19,6 +20,7 @@ var SelectComponentMixin = {
       valueField: 'id',
       options: [],
       multiple: false,
+      onSelect: null,
       onLoad: function(data) {
         return true;
       },

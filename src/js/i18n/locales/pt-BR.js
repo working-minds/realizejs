@@ -26,7 +26,34 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'dd/mm/yyyy'
+    date: {
+      alias: 'dd/mm/yyyy',
+      placeholder: 'dd/mm/yyyy'
+    },
+    datetime: {
+      mask: 'd/m/y h:s',
+      placeholder: 'dd/mm/yyyy, hh:ss'
+    },
+    cpf: '999.999.999-99',
+    cnpj: '99.999.999/9999-99',
+    phone: '(99) 9999[9]-9999',
+    integer: {
+      alias: "integer"
+    },
+    decimal: {
+      alias: "decimal",
+      groupSeparator: ".",
+      radixPoint: ",",
+      removeMaskOnSubmit: true
+    },
+    currency: {
+      alias: "currency",
+      prefix: "R$ ",
+      groupSeparator: ".",
+      radixPoint: ",",
+      placeholder: "0",
+      removeMaskOnSubmit: true
+    }
   },
 
   inputs: {

@@ -34,16 +34,16 @@ Realize.i18n.translate = function(key, throwsException) {
   var currentLocale = Realize.config.locale;
   var localeObj = Realize.i18n.locales[currentLocale];
 
-  var translatedString = Realize.utils.getProp(key, localeObj);
-  if(!translatedString) {
+  var translation = Realize.utils.getProp(key, localeObj);
+  if(!translation) {
     if(throwsException) {
       throw 'Key not found in locale object';
     }
 
-    translatedString = key;
+    translation = key;
   }
 
-  return translatedString;
+  return translation;
 };
 
 Realize.t = Realize.i18n.translate;

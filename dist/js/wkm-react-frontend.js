@@ -133,16 +133,16 @@ Realize.i18n.translate = function (key, throwsException) {
   var currentLocale = Realize.config.locale;
   var localeObj = Realize.i18n.locales[currentLocale];
 
-  var translatedString = Realize.utils.getProp(key, localeObj);
-  if (!translatedString) {
+  var translation = Realize.utils.getProp(key, localeObj);
+  if (!translation) {
     if (throwsException) {
       throw 'Key not found in locale object';
     }
 
-    translatedString = key;
+    translation = key;
   }
 
-  return translatedString;
+  return translation;
 };
 
 Realize.t = Realize.i18n.translate;
@@ -178,7 +178,27 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'mm/dd/yyyy'
+    date: {
+      alias: 'mm/dd/yyyy',
+      placeholder: 'mm/dd/yyyy'
+    },
+    datetime: {
+      mask: 'm/d/y h:s',
+      placeholder: 'mm/dd/yyyy, hh:ss'
+    },
+    cpf: '999.999.999-99',
+    cnpj: '99.999.999/9999-99',
+    phone: '(99) 9999[9]-9999',
+    integer: {
+      alias: "integer"
+    },
+    decimal: {
+      alias: "decimal"
+    },
+    currency: {
+      prefix: "$ ",
+      alias: "currency"
+    }
   },
 
   inputs: {
@@ -228,7 +248,34 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'dd/mm/yyyy'
+    date: {
+      alias: 'dd/mm/yyyy',
+      placeholder: 'dd/mm/yyyy'
+    },
+    datetime: {
+      mask: 'd/m/y h:s',
+      placeholder: 'dd/mm/yyyy, hh:ss'
+    },
+    cpf: '999.999.999-99',
+    cnpj: '99.999.999/9999-99',
+    phone: '(99) 9999[9]-9999',
+    integer: {
+      alias: "integer"
+    },
+    decimal: {
+      alias: "decimal",
+      groupSeparator: ".",
+      radixPoint: ",",
+      removeMaskOnSubmit: true
+    },
+    currency: {
+      alias: "currency",
+      prefix: "R$ ",
+      groupSeparator: ".",
+      radixPoint: ",",
+      placeholder: "0",
+      removeMaskOnSubmit: true
+    }
   },
 
   inputs: {
@@ -1398,7 +1445,8 @@ var SelectComponentMixin = {
     valueField: React.PropTypes.string,
     multiple: React.PropTypes.bool,
     onLoad: React.PropTypes.func,
-    onLoadError: React.PropTypes.func
+    onLoadError: React.PropTypes.func,
+    onSelect: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -1409,6 +1457,7 @@ var SelectComponentMixin = {
       valueField: 'id',
       options: [],
       multiple: false,
+      onSelect: null,
       onLoad: function onLoad(data) {
         return true;
       },
@@ -5374,6 +5423,10 @@ var InputAutocomplete = React.createClass({
     this.setState({
       value: []
     }, this.triggerDependableChanged);
+
+    if (!!this.props.onSelect) {
+      this.props.onSelect(this.props.id, []);
+    }
   },
 
   handleOptionMouseEnter: function handleOptionMouseEnter(position) {
@@ -5397,6 +5450,10 @@ var InputAutocomplete = React.createClass({
 
     this.forceUpdate();
     this.triggerDependableChanged();
+
+    if (!!this.props.onSelect) {
+      this.props.onSelect(this.props.id, this.state.value);
+    }
   }
 
 });
@@ -6148,62 +6205,88 @@ var Input = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputDatepicker = React.createClass({
-  displayName: 'InputDatepicker',
+  displayName: "InputDatepicker",
 
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    format: Realize.PropTypes.localizedString
+    mask: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
-      themeClassKey: 'input.datepicker'
+      themeClassKey: 'input.datepicker',
+      mask: null
     };
   },
 
   componentDidMount: function componentDidMount() {
-    var inputNode = ReactDOM.findDOMNode(this.refs.input);
-    var buttonNode = ReactDOM.findDOMNode(this.refs.button);
-
-    var input = $(inputNode).pickadate({
-      editable: true,
-      selectMonths: true,
-      selectYears: true,
-      format: Realize.t('masks.date')
-    });
-
-    var picker = input.pickadate('picker');
-    picker.on('close', this.props.onChange);
-
-    // TODO: should close on date click - materialize currently broke it
-    $(buttonNode).on('click', function (e) {
-      if (picker.get('open')) {
-        picker.close();
-      } else {
-        picker.open();
-      }
-      e.stopPropagation();
-    });
+    this.setPickadatePlugin();
   },
 
   render: function render() {
     return React.createElement(
-      'span',
+      "span",
       null,
-      React.createElement(InputMasked, _extends({}, this.props, { value: this.formatDateValue(), type: 'date', className: this.className(), onChange: this._handleChange, plugin_params: { typeMask: 'date', showMaskOnHover: false }, ref: 'input' })),
+      React.createElement(InputMasked, _extends({}, this.props, {
+        value: this.formatDateValue(),
+        type: "date",
+        className: this.className(),
+        onChange: this._handleChange,
+        maskType: "date",
+        ref: "input"
+      })),
       React.createElement(Label, this.propsWithoutCSS()),
-      React.createElement(Button, { disabled: this.props.disabled, icon: { type: "calendar" }, className: 'input-datepicker__button prefix', type: 'button', ref: 'button' })
+      React.createElement(Button, {
+        disabled: this.props.disabled,
+        icon: { type: "calendar" },
+        className: "input-datepicker__button prefix",
+        onClick: this.handleCalendarClick,
+        type: "button",
+        ref: "button"
+      })
     );
   },
 
+  getMask: function getMask() {
+    return this.props.mask || Realize.t('masks.date').placeholder;
+  },
+
+  setPickadatePlugin: function setPickadatePlugin() {
+    var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
+    $inputNode.pickadate({
+      editable: true,
+      selectMonths: true,
+      selectYears: true,
+      format: this.getMask()
+    });
+
+    var picker = $inputNode.pickadate('picker');
+    picker.on('close', this.props.onChange);
+  },
+
+  handleCalendarClick: function handleCalendarClick(event) {
+    var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
+    var picker = $inputNode.pickadate('picker');
+
+    // TODO: should close on date click - materialize currently broke it
+    if (picker.get('open')) {
+      picker.close();
+    } else {
+      picker.open();
+    }
+
+    event.stopPropagation();
+  },
+
   formatDateValue: function formatDateValue() {
+    // d -> D, m -> M, y -> Y, h -> H, s -> m
     var date = moment(this.props.value);
-    var formattedValue = date.format(Realize.t('masks.date').toUpperCase());
+    var formattedValue = date.format(this.getMask().toUpperCase());
     if (formattedValue == "Invalid date") {
       return this.props.value;
     }
@@ -6343,19 +6426,20 @@ var InputHidden = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 var InputMasked = React.createClass({
-  displayName: 'InputMasked',
+  displayName: "InputMasked",
 
   mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
     mask: React.PropTypes.string,
-    typeMask: React.PropTypes.string,
-    predefinedMasks: React.PropTypes.object,
+    maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
     onComplete: React.PropTypes.func,
     onIncomplete: React.PropTypes.func,
@@ -6365,101 +6449,140 @@ var InputMasked = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.text',
-      mask: '',
-      typeMask: '',
-      regex: '',
-      predefinedMasks: {
-        cpf: {
-          mask: '999.999.999-99'
-        },
-        cnpj: {
-          mask: '99.999.999/9999-99'
-        },
-        phone: {
-          mask: '(99) 9999[9]-9999'
-        },
-        cell_phone: {
-          mask: '(99) 9999[9]-9999'
-        },
-        currency: {
-          mask: '999.999.999,99',
-          numericInput: true,
-          rightAlign: true
-        }
-      },
+      mask: null,
+      maskType: null,
+      regex: null,
+
       onComplete: function onComplete() {},
       onIncomplete: function onIncomplete() {},
       onCleared: function onCleared() {}
     };
   },
 
+  getInitialState: function getInitialState() {
+    return {
+      placeholder: this.getPlaceholder()
+    };
+  },
+
+  predefinedMasks: function predefinedMasks() {
+    var localeMasks = Realize.t("masks");
+    var predefinedMasks = {};
+
+    for (var maskName in localeMasks) {
+      if (localeMasks.hasOwnProperty(maskName)) {
+        var mask = localeMasks[maskName];
+        if (typeof mask == "string") {
+          predefinedMasks[maskName] = {
+            mask: mask
+          };
+        } else if ((typeof mask === "undefined" ? "undefined" : _typeof(mask)) == "object") {
+          predefinedMasks[maskName] = mask;
+        }
+      }
+    }
+
+    return predefinedMasks;
+  },
+
   render: function render() {
     return React.createElement(
-      'input',
-      _extends({}, this.props, this.props.field_params, { value: this.state.value, className: this.inputClassName(), onKeyUp: this.props.onChange, ref: 'input', type: 'text' }),
+      "input",
+      _extends({}, this.props, {
+        value: this.state.value,
+        placeholder: this.state.placeholder,
+        className: this.inputClassName(),
+        onChange: this._handleChange,
+        type: "text",
+        ref: "input" }),
       this.props.children
     );
   },
 
   componentDidMount: function componentDidMount() {
-    if (this.isRegexMask()) this.renderRegexMask();else {
-      if (this.isAPredefinedMask()) this.renderPredefinedMask();else this.renderCustomMask();
+    if (!!this.props.regex) {
+      this.applyRegexMask();
+    } else {
+      this.applyMask();
     }
   },
 
-  renderRegexMask: function renderRegexMask() {
-    var params = {};
-    params.regex = this.props.plugin_params.regex;
-    this.renderBaseMask('Regex', params);
+  applyRegexMask: function applyRegexMask() {
+    var $input = $(this.getInputElement());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask('Regex', maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
-  renderCustomMask: function renderCustomMask() {
-    var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params.placeholder;
-    delete this.props.plugin_params.typeMask;
+  applyMask: function applyMask() {
+    var maskType = this.props.maskType;
+    var predefinedMasks = this.predefinedMasks();
+    var predefinedMask = predefinedMasks[maskType];
 
-    if (typeMask) this.renderBaseMask(typeMask, this.props.plugin_params);else this.renderBaseMask('', this.props.plugin_params);
+    if (!!predefinedMask) {
+      this.applyPredefinedMask(predefinedMask);
+    } else {
+      this.applyCustomMask();
+    }
   },
 
-  renderPredefinedMask: function renderPredefinedMask() {
-    var params = this.maskMapping(this.props.plugin_params.mask);
-    var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params.mask;
-    delete this.props.plugin_params.placeholder;
-    delete this.props.plugin_params.typeMask;
+  applyPredefinedMask: function applyPredefinedMask(predefinedMask) {
+    var $input = $(this.getInputElement());
+    var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
 
-    params = $.extend(params, this.props.plugin_params);
-    this.renderBaseMask(typeMask, params);
+    $input.inputmask(predefinedMaskOptions);
+    this.setMaskPlaceholder(predefinedMaskOptions);
   },
 
-  renderBaseMask: function renderBaseMask(type, params) {
-    if (type !== undefined && type !== '') $(ReactDOM.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));else $(ReactDOM.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
+  applyCustomMask: function applyCustomMask() {
+    var $input = $(this.getInputElement());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask(maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
-  maskMapping: function maskMapping(type) {
-    var typesMask = this.props.predefinedMasks;
-    return typesMask[type] === undefined ? type : typesMask[type];
+  getInputElement: function getInputElement() {
+    return ReactDOM.findDOMNode(this.refs.input);
   },
 
-  isAPredefinedMask: function isAPredefinedMask() {
-    return this.props.plugin_params.mask in this.props.predefinedMasks;
+  parseMaskOptions: function parseMaskOptions() {
+    var maskOptions = $.extend({
+      showMaskOnHover: false,
+      clearIncomplete: true
+    }, this.filterMaskOptionProps());
+
+    maskOptions.oncomplete = this.props.onComplete;
+    maskOptions.onincomplete = this.props.onIncomplete;
+    maskOptions.oncleared = this.props.onCleared;
+
+    return maskOptions;
   },
 
-  isRegexMask: function isRegexMask() {
-    return this.props.plugin_params != null && 'regex' in this.props.plugin_params;
-  },
-
-  paramsWithEvents: function paramsWithEvents(params) {
-    if (!params) {
-      params = {};
+  filterMaskOptionProps: function filterMaskOptionProps() {
+    var maskOptionProps = {};
+    var propsToFilter = ['onComplete', 'onIncomplete', 'onCleared'];
+    for (var propName in this.props) {
+      if (this.props.hasOwnProperty(propName)) {
+        var prop = this.props[propName];
+        if (!!prop && propsToFilter.indexOf(propName) < 0) {
+          maskOptionProps[propName] = prop;
+        }
+      }
     }
 
-    params.oncomplete = this.props.onComplete;
-    params.onincomplete = this.props.onIncomplete;
-    params.oncleared = this.props.onCleared;
-    return params;
+    return maskOptionProps;
+  },
+
+  setMaskPlaceholder: function setMaskPlaceholder(appliedMaskOptions) {
+    var appliedPlaceholder = appliedMaskOptions.placeholder;
+    //.inputmask('getemptymask').join('')
+    if (!!appliedPlaceholder) {
+      var $input = $(this.getInputElement());
+      this.setState({ placeholder: $input.val() });
+    }
   }
-
 });
 //
 

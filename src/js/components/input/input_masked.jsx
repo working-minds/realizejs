@@ -1,10 +1,12 @@
 var InputMasked = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [
+    CssClassMixin,
+    InputComponentMixin
+  ],
 
   propTypes: {
     mask: React.PropTypes.string,
-    typeMask: React.PropTypes.string,
-    predefinedMasks: React.PropTypes.object,
+    maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
     onComplete: React.PropTypes.func,
     onIncomplete: React.PropTypes.func,
@@ -14,110 +16,140 @@ var InputMasked = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.text',
-      mask: '',
-      typeMask: '',
-      regex: '',
-      predefinedMasks: {
-        cpf: {
-          mask:'999.999.999-99'
-        },
-        cnpj:{
-          mask: '99.999.999/9999-99'
-        },
-        phone:{
-          mask: '(99) 9999[9]-9999'
-        },
-        cell_phone:{
-          mask: '(99) 9999[9]-9999'
-        },
-        currency:{
-          mask:'999.999.999,99',
-          numericInput: true,
-          rightAlign: true
-        }
-      },
+      mask: null,
+      maskType: null,
+      regex: null,
+
       onComplete: function() {},
       onIncomplete: function() {},
       onCleared: function() {}
     };
   },
 
+  getInitialState: function() {
+    return {
+      placeholder: this.getPlaceholder()
+    }
+  },
+
+  predefinedMasks: function() {
+    var localeMasks = Realize.t("masks");
+    var predefinedMasks = {};
+
+    for(var maskName in localeMasks) {
+      if(localeMasks.hasOwnProperty(maskName)) {
+        var mask = localeMasks[maskName];
+        if(typeof mask == "string") {
+          predefinedMasks[maskName] = {
+            mask: mask
+          }
+        } else if(typeof mask == "object") {
+          predefinedMasks[maskName] = mask;
+        }
+      }
+    }
+
+    return predefinedMasks;
+  },
+
   render: function() {
     return (
-      <input {...this.props} {...this.props.field_params} value={this.state.value} className={this.inputClassName()} onKeyUp={this.props.onChange} ref="input" type="text" >
+      <input
+        {...this.props}
+        value={this.state.value}
+        placeholder={this.state.placeholder}
+        className={this.inputClassName()}
+        onChange={this._handleChange}
+        type="text"
+        ref="input">
+
         {this.props.children}
       </input>
     );
   },
 
   componentDidMount: function() {
-    if(this.isRegexMask())
-      this.renderRegexMask();
-    else{
-      if(this.isAPredefinedMask())
-        this.renderPredefinedMask();
-      else
-        this.renderCustomMask();
+    if(!!this.props.regex) {
+      this.applyRegexMask();
+    } else {
+      this.applyMask();
     }
   },
 
-  renderRegexMask: function() {
-    var params = {};
-    params.regex = this.props.plugin_params.regex;
-    this.renderBaseMask('Regex', params);
+  applyRegexMask: function() {
+    var $input = $(this.getInputElement());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask('Regex', maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
-  renderCustomMask: function() {
-    var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params.placeholder;
-    delete this.props.plugin_params.typeMask;
+  applyMask: function() {
+    var maskType = this.props.maskType;
+    var predefinedMasks = this.predefinedMasks();
+    var predefinedMask = predefinedMasks[maskType];
 
-    if(typeMask)
-      this.renderBaseMask(typeMask, this.props.plugin_params);
-    else
-      this.renderBaseMask('', this.props.plugin_params);
+    if(!!predefinedMask) {
+      this.applyPredefinedMask(predefinedMask);
+    } else {
+      this.applyCustomMask();
+    }
   },
 
-  renderPredefinedMask: function() {
-    var params = this.maskMapping(this.props.plugin_params.mask);
-    var typeMask = this.props.plugin_params.typeMask;
-    delete this.props.plugin_params.mask;
-    delete this.props.plugin_params.placeholder;
-    delete this.props.plugin_params.typeMask;
+  applyPredefinedMask: function(predefinedMask) {
+    var $input = $(this.getInputElement());
+    var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
 
-    params = $.extend(params, this.props.plugin_params);
-    this.renderBaseMask(typeMask, params);
+    $input.inputmask(predefinedMaskOptions);
+    this.setMaskPlaceholder(predefinedMaskOptions);
   },
 
-  renderBaseMask: function(type, params) {
-    if(type !== undefined && type !== '')
-      $(ReactDOM.findDOMNode(this.refs.input)).inputmask(type, this.paramsWithEvents(params));
-    else
-      $(ReactDOM.findDOMNode(this.refs.input)).inputmask(this.paramsWithEvents(params));
+  applyCustomMask: function() {
+    var $input = $(this.getInputElement());
+    var maskOptions = this.parseMaskOptions();
+
+    $input.inputmask(maskOptions);
+    this.setMaskPlaceholder(maskOptions);
   },
 
-  maskMapping: function(type) {
-    var typesMask = this.props.predefinedMasks;
-    return typesMask[type] === undefined ? type : typesMask[type];
+  getInputElement: function() {
+    return ReactDOM.findDOMNode(this.refs.input);
   },
 
-  isAPredefinedMask: function() {
-    return this.props.plugin_params.mask in this.props.predefinedMasks;
+  parseMaskOptions: function() {
+    var maskOptions = $.extend({
+      showMaskOnHover: false,
+      clearIncomplete: true
+    }, this.filterMaskOptionProps());
+
+    maskOptions.oncomplete = this.props.onComplete;
+    maskOptions.onincomplete = this.props.onIncomplete;
+    maskOptions.oncleared = this.props.onCleared;
+
+    return maskOptions;
   },
 
-  isRegexMask: function() {
-    return (this.props.plugin_params != null) && ('regex' in this.props.plugin_params);
-  },
-
-  paramsWithEvents: function(params) {
-    if(!params) {
-      params = {};
+  filterMaskOptionProps: function() {
+    var maskOptionProps = {};
+    var propsToFilter = ['onComplete', 'onIncomplete', 'onCleared'];
+    for(var propName in this.props) {
+      if(this.props.hasOwnProperty(propName)) {
+        var prop = this.props[propName];
+        if(!!prop && propsToFilter.indexOf(propName) < 0) {
+          maskOptionProps[propName] = prop;
+        }
+      }
     }
 
-    params.oncomplete = this.props.onComplete;
-    params.onincomplete = this.props.onIncomplete;
-    params.oncleared = this.props.onCleared;
-    return params;
+    return maskOptionProps;
+  },
+
+  setMaskPlaceholder: function(appliedMaskOptions) {
+    var appliedPlaceholder = appliedMaskOptions.placeholder;
+    //.inputmask('getemptymask').join('')
+    if(!!appliedPlaceholder) {
+      var $input = $(this.getInputElement());
+      this.setState({placeholder: $input.val()});
+    }
   }
-
 });
