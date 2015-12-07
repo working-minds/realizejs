@@ -178,7 +178,10 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'mm/dd/yyyy',
+    date: {
+      alias: 'mm/dd/yyyy',
+      placeholder: 'mm/dd/yyyy'
+    },
     datetime: {
       mask: 'm/d/y h:s',
       placeholder: 'mm/dd/yyyy, hh:ss'
@@ -245,7 +248,10 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'dd/mm/yyyy',
+    date: {
+      alias: 'dd/mm/yyyy',
+      placeholder: 'dd/mm/yyyy'
+    },
     datetime: {
       mask: 'd/m/y h:s',
       placeholder: 'dd/mm/yyyy, hh:ss'
@@ -6199,70 +6205,88 @@ var Input = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputDatepicker = React.createClass({
-  displayName: 'InputDatepicker',
+  displayName: "InputDatepicker",
 
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    format: Realize.PropTypes.localizedString
+    mask: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
-      themeClassKey: 'input.datepicker'
+      themeClassKey: 'input.datepicker',
+      mask: null
     };
   },
 
   componentDidMount: function componentDidMount() {
-    var inputNode = ReactDOM.findDOMNode(this.refs.input);
-    var buttonNode = ReactDOM.findDOMNode(this.refs.button);
-
-    var input = $(inputNode).pickadate({
-      editable: true,
-      selectMonths: true,
-      selectYears: true,
-      format: Realize.t('masks.date')
-    });
-
-    var picker = input.pickadate('picker');
-    picker.on('close', this.props.onChange);
-
-    // TODO: should close on date click - materialize currently broke it
-    $(buttonNode).on('click', function (e) {
-      if (picker.get('open')) {
-        picker.close();
-      } else {
-        picker.open();
-      }
-      e.stopPropagation();
-    });
+    this.setPickadatePlugin();
   },
 
   render: function render() {
     return React.createElement(
-      'span',
+      "span",
       null,
       React.createElement(InputMasked, _extends({}, this.props, {
         value: this.formatDateValue(),
-        type: 'date',
+        type: "date",
         className: this.className(),
         onChange: this._handleChange,
-        plugin_params: { typeMask: 'date', showMaskOnHover: false },
-        ref: 'input'
+        maskType: "date",
+        ref: "input"
       })),
       React.createElement(Label, this.propsWithoutCSS()),
-      React.createElement(Button, { disabled: this.props.disabled, icon: { type: "calendar" }, className: 'input-datepicker__button prefix', type: 'button', ref: 'button' })
+      React.createElement(Button, {
+        disabled: this.props.disabled,
+        icon: { type: "calendar" },
+        className: "input-datepicker__button prefix",
+        onClick: this.handleCalendarClick,
+        type: "button",
+        ref: "button"
+      })
     );
+  },
+
+  getMask: function getMask() {
+    return this.props.mask || Realize.t('masks.date').placeholder;
+  },
+
+  setPickadatePlugin: function setPickadatePlugin() {
+    var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
+    $inputNode.pickadate({
+      editable: true,
+      selectMonths: true,
+      selectYears: true,
+      format: this.getMask()
+    });
+
+    var picker = $inputNode.pickadate('picker');
+    picker.on('close', this.props.onChange);
+  },
+
+  handleCalendarClick: function handleCalendarClick(event) {
+    var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
+    var picker = $inputNode.pickadate('picker');
+
+    // TODO: should close on date click - materialize currently broke it
+    if (picker.get('open')) {
+      picker.close();
+    } else {
+      picker.open();
+    }
+
+    event.stopPropagation();
   },
 
   formatDateValue: function formatDateValue() {
     // d -> D, m -> M, y -> Y, h -> H, s -> m
     var date = moment(this.props.value);
-    var formattedValue = date.format(Realize.t('masks.date').toUpperCase());
+    var formattedValue = date.format(this.getMask().toUpperCase());
     if (formattedValue == "Invalid date") {
       return this.props.value;
     }

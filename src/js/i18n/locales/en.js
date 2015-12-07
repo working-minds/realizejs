@@ -26,7 +26,10 @@ Realize.i18n.registerLocale({
   },
 
   masks: {
-    date: 'mm/dd/yyyy',
+    date: {
+      alias: 'mm/dd/yyyy',
+      placeholder: 'mm/dd/yyyy'
+    },
     datetime: {
       mask: 'm/d/y h:s',
       placeholder: 'mm/dd/yyyy, hh:ss'
