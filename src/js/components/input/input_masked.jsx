@@ -59,7 +59,7 @@ var InputMasked = React.createClass({
         value={this.state.value}
         placeholder={this.state.placeholder}
         className={this.inputClassName()}
-        onKeyUp={this.handleChange}
+        onChange={this.handleChange}
         type="text"
         ref="input">
 

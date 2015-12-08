@@ -37,6 +37,8 @@ var FormErrorHandlerMixin = {
 
   handleError: function(xhr, status, error) {
     this.setState({isLoading: false});
+
+    FormActions.error(this.props.id, xhr, status, error);
     if(this.props.onError(xhr, status, error)) {
       if(xhr.status === 422) {
         this.handleValidationError(xhr);

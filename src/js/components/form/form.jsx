@@ -7,6 +7,7 @@ var Form = React.createClass({
   ],
 
   propTypes: {
+    id: React.PropTypes.string,
     inputs: React.PropTypes.object,
     data: React.PropTypes.object,
     action: React.PropTypes.string,
@@ -25,6 +26,7 @@ var Form = React.createClass({
 
   getDefaultProps: function() {
     return {
+      id: null,
       inputs: {},
       data: {},
       action: '',
@@ -68,7 +70,7 @@ var Form = React.createClass({
       <form action={this.props.action}
         id={this.props.id}
         onSubmit={this.handleSubmit}
-        onReset={this.props.onReset}
+        onReset={this.handleReset}
         className={this.className()}
         ref="form">
 
@@ -94,11 +96,17 @@ var Form = React.createClass({
     event.nativeEvent.preventDefault();
     var postData = this.serialize();
     this.props.onSubmit(event, postData);
+    FormActions.submit(this.props.id, event, postData);
 
     if(!event.isDefaultPrevented()) {
       this.setState({isLoading: true, errors: {}, showSuccessFlash: false});
       this.submit(postData);
     }
+  },
+
+  handleReset: function(event) {
+    this.props.onReset(event);
+    FormActions.reset(this.props.id, event);
   },
 
   serialize : function() {

@@ -179,7 +179,7 @@ Realize.i18n.registerLocale({
 
   masks: {
     date: {
-      mask: 'm/d/y'
+      alias: 'mm/dd/yyyy'
     },
     datetime: {
       mask: 'm/d/y h:s',
@@ -255,7 +255,7 @@ Realize.i18n.registerLocale({
 
   masks: {
     date: {
-      mask: 'd/m/y'
+      alias: 'dd/mm/yyyy'
     },
     datetime: {
       mask: 'd/m/y h:s',
@@ -742,9 +742,73 @@ Realize.themes.materialize = {
 };
 //
 
+"use strict";
+
+var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
+//
+
 'use strict';
 
 var ModalActions = Reflux.createActions(['open', 'openFinished']);
+//
+
+'use strict';
+
+var FormStore = Reflux.createStore({
+  listenables: [FormActions],
+  formId: '',
+  action: '',
+  actionData: {},
+
+  onSubmit: function onSubmit(formId, event, postData) {
+    this.formId = formId;
+    this.action = 'submit';
+    this.actionData = {
+      event: event,
+      postData: postData
+    };
+
+    this.trigger(this);
+  },
+
+  onSuccess: function onSuccess(formId, responseData, status, xhr) {
+    this.formId = formId;
+    this.action = 'success';
+    this.actionData = {
+      responseData: responseData,
+      status: status,
+      xhr: xhr
+    };
+
+    this.trigger(this);
+  },
+
+  onError: function onError(formId, xhr, status, error) {
+    this.formId = formId;
+    this.action = 'error';
+    this.actionData = {
+      xhr: xhr,
+      status: status,
+      error: error
+    };
+
+    this.trigger(this);
+  },
+
+  onReset: function onReset(formId, event) {
+    this.formId = formId;
+    this.action = 'reset';
+    this.actionData = {
+      event: event
+    };
+
+    this.trigger(this);
+  }
+
+});
+//
+
+'use strict';
 
 var ModalStore = Reflux.createStore({
   listenables: [ModalActions],
@@ -917,6 +981,82 @@ var CssClassMixin = {
 };
 //
 
+"use strict";
+
+var FormActionsListenerMixin = {
+  propTypes: {
+    onFormSubmit: React.PropTypes.func,
+    onFormSuccess: React.PropTypes.func,
+    onFormError: React.PropTypes.func,
+    onFormReset: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      onFormSubmit: null,
+      onFormSuccess: null,
+      onFormError: null,
+      onFormReset: null
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      formState: null
+    };
+  },
+
+  componentDidMount: function componentDidMount() {
+    FormStore.listen(this.formActionListener);
+  },
+
+  formActionListener: function formActionListener(formState) {
+    this.setState({ formState: formState });
+
+    try {
+      this.executePropListener(formState);
+    } catch (e) {
+      this.executeComponentListener(formState);
+    }
+  },
+
+  executePropListener: function executePropListener(formState) {
+    var formAction = formState.action;
+    var propListenerName = "onForm" + S(formAction).capitalize().s;
+    var propListener = this.props[propListenerName];
+
+    if (typeof propListener == "function") {
+      propListener.apply(this, this.formActionParameters(formState));
+    } else {
+      throw 'Prop form listener not defined';
+    }
+  },
+
+  executeComponentListener: function executeComponentListener(formState) {
+    var formAction = formState.action;
+    var componentListenerName = "handleForm" + S(formAction).capitalize().s;
+    var componentListener = this[componentListenerName];
+
+    if (typeof componentListener == "function") {
+      componentListener.apply(this, this.formActionParameters(formState));
+    }
+  },
+
+  formActionParameters: function formActionParameters(formState) {
+    var formActionData = formState.actionData;
+    var formId = formState.formId;
+
+    var formActionParameters = $.map(formActionData, function (value, index) {
+      return [value];
+    });
+
+    formActionParameters.unshift(formId);
+    return formActionParameters;
+  }
+
+};
+//
+
 'use strict';
 
 var FormContainerMixin = {
@@ -1028,6 +1168,8 @@ var FormErrorHandlerMixin = {
 
   handleError: function handleError(xhr, status, error) {
     this.setState({ isLoading: false });
+
+    FormActions.error(this.props.id, xhr, status, error);
     if (this.props.onError(xhr, status, error)) {
       if (xhr.status === 422) {
         this.handleValidationError(xhr);
@@ -1128,6 +1270,7 @@ var FormSuccessHandlerMixin = {
       showSuccessFlash: showSuccessFlash
     });
 
+    FormActions.success(this.props.id, data, status, xhr);
     if (this.props.onSuccess(data, status, xhr)) {
       if (xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
         eval(data);
@@ -3822,6 +3965,7 @@ var Form = React.createClass({
   mixins: [CssClassMixin, ContainerMixin, FormErrorHandlerMixin, FormSuccessHandlerMixin],
 
   propTypes: {
+    id: React.PropTypes.string,
     inputs: React.PropTypes.object,
     data: React.PropTypes.object,
     action: React.PropTypes.string,
@@ -3840,6 +3984,7 @@ var Form = React.createClass({
 
   getDefaultProps: function getDefaultProps() {
     return {
+      id: null,
       inputs: {},
       data: {},
       action: '',
@@ -3884,7 +4029,7 @@ var Form = React.createClass({
       { action: this.props.action,
         id: this.props.id,
         onSubmit: this.handleSubmit,
-        onReset: this.props.onReset,
+        onReset: this.handleReset,
         className: this.className(),
         ref: 'form' },
       this.renderFlashErrors(),
@@ -3907,11 +4052,17 @@ var Form = React.createClass({
     event.nativeEvent.preventDefault();
     var postData = this.serialize();
     this.props.onSubmit(event, postData);
+    FormActions.submit(this.props.id, event, postData);
 
     if (!event.isDefaultPrevented()) {
       this.setState({ isLoading: true, errors: {}, showSuccessFlash: false });
       this.submit(postData);
     }
+  },
+
+  handleReset: function handleReset(event) {
+    this.props.onReset(event);
+    FormActions.reset(this.props.id, event);
   },
 
   serialize: function serialize() {
@@ -6496,7 +6647,7 @@ var InputMasked = React.createClass({
         value: this.state.value,
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
-        onKeyUp: this.handleChange,
+        onChange: this.handleChange,
         type: "text",
         ref: "input" }),
       this.props.children

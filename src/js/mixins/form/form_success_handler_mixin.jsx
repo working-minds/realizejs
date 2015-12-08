@@ -33,6 +33,7 @@ var FormSuccessHandlerMixin = {
       showSuccessFlash: showSuccessFlash
     });
 
+    FormActions.success(this.props.id, data, status, xhr);
     if(this.props.onSuccess(data, status, xhr)) {
       if(xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
         eval(data);
