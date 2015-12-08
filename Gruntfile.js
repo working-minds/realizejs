@@ -71,6 +71,7 @@ module.exports = function(grunt) {
           'tmp/js/i18n/locales/**/*.js',
           'tmp/js/theme/theme.js',
           'tmp/js/theme/mappings/**/*.js',
+          'tmp/js/actions/**/*.js',
           'tmp/js/stores/**/*.js',
           'tmp/js/mixins/**/*.js',
           'tmp/js/components/**/*.js'

@@ -179,8 +179,7 @@ Realize.i18n.registerLocale({
 
   masks: {
     date: {
-      alias: 'mm/dd/yyyy',
-      placeholder: 'mm/dd/yyyy'
+      alias: 'mm/dd/yyyy'
     },
     datetime: {
       mask: 'm/d/y h:s',
@@ -193,11 +192,18 @@ Realize.i18n.registerLocale({
       alias: "integer"
     },
     decimal: {
-      alias: "decimal"
+      alias: "decimal",
+      groupSeparator: ".",
+      radixPoint: ",",
+      removeMaskOnSubmit: true
     },
     currency: {
+      alias: "currency",
       prefix: "$ ",
-      alias: "currency"
+      groupSeparator: ".",
+      radixPoint: ",",
+      placeholder: "0",
+      removeMaskOnSubmit: true
     }
   },
 
@@ -249,8 +255,7 @@ Realize.i18n.registerLocale({
 
   masks: {
     date: {
-      alias: 'dd/mm/yyyy',
-      placeholder: 'dd/mm/yyyy'
+      alias: 'dd/mm/yyyy'
     },
     datetime: {
       mask: 'd/m/y h:s',
@@ -737,9 +742,73 @@ Realize.themes.materialize = {
 };
 //
 
+"use strict";
+
+var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
+//
+
 'use strict';
 
 var ModalActions = Reflux.createActions(['open', 'openFinished']);
+//
+
+'use strict';
+
+var FormStore = Reflux.createStore({
+  listenables: [FormActions],
+  formId: '',
+  action: '',
+  actionData: {},
+
+  onSubmit: function onSubmit(formId, event, postData) {
+    this.formId = formId;
+    this.action = 'submit';
+    this.actionData = {
+      event: event,
+      postData: postData
+    };
+
+    this.trigger(this);
+  },
+
+  onSuccess: function onSuccess(formId, responseData, status, xhr) {
+    this.formId = formId;
+    this.action = 'success';
+    this.actionData = {
+      responseData: responseData,
+      status: status,
+      xhr: xhr
+    };
+
+    this.trigger(this);
+  },
+
+  onError: function onError(formId, xhr, status, error) {
+    this.formId = formId;
+    this.action = 'error';
+    this.actionData = {
+      xhr: xhr,
+      status: status,
+      error: error
+    };
+
+    this.trigger(this);
+  },
+
+  onReset: function onReset(formId, event) {
+    this.formId = formId;
+    this.action = 'reset';
+    this.actionData = {
+      event: event
+    };
+
+    this.trigger(this);
+  }
+
+});
+//
+
+'use strict';
 
 var ModalStore = Reflux.createStore({
   listenables: [ModalActions],
@@ -912,6 +981,82 @@ var CssClassMixin = {
 };
 //
 
+"use strict";
+
+var FormActionsListenerMixin = {
+  propTypes: {
+    onFormSubmit: React.PropTypes.func,
+    onFormSuccess: React.PropTypes.func,
+    onFormError: React.PropTypes.func,
+    onFormReset: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      onFormSubmit: null,
+      onFormSuccess: null,
+      onFormError: null,
+      onFormReset: null
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      formState: null
+    };
+  },
+
+  componentDidMount: function componentDidMount() {
+    FormStore.listen(this.formActionListener);
+  },
+
+  formActionListener: function formActionListener(formState) {
+    this.setState({ formState: formState });
+
+    try {
+      this.executePropListener(formState);
+    } catch (e) {
+      this.executeComponentListener(formState);
+    }
+  },
+
+  executePropListener: function executePropListener(formState) {
+    var formAction = formState.action;
+    var propListenerName = "onForm" + S(formAction).capitalize().s;
+    var propListener = this.props[propListenerName];
+
+    if (typeof propListener == "function") {
+      propListener.apply(this, this.formActionParameters(formState));
+    } else {
+      throw 'Prop form listener not defined';
+    }
+  },
+
+  executeComponentListener: function executeComponentListener(formState) {
+    var formAction = formState.action;
+    var componentListenerName = "handleForm" + S(formAction).capitalize().s;
+    var componentListener = this[componentListenerName];
+
+    if (typeof componentListener == "function") {
+      componentListener.apply(this, this.formActionParameters(formState));
+    }
+  },
+
+  formActionParameters: function formActionParameters(formState) {
+    var formActionData = formState.actionData;
+    var formId = formState.formId;
+
+    var formActionParameters = $.map(formActionData, function (value, index) {
+      return [value];
+    });
+
+    formActionParameters.unshift(formId);
+    return formActionParameters;
+  }
+
+};
+//
+
 'use strict';
 
 var FormContainerMixin = {
@@ -1023,6 +1168,8 @@ var FormErrorHandlerMixin = {
 
   handleError: function handleError(xhr, status, error) {
     this.setState({ isLoading: false });
+
+    FormActions.error(this.props.id, xhr, status, error);
     if (this.props.onError(xhr, status, error)) {
       if (xhr.status === 422) {
         this.handleValidationError(xhr);
@@ -1123,6 +1270,7 @@ var FormSuccessHandlerMixin = {
       showSuccessFlash: showSuccessFlash
     });
 
+    FormActions.success(this.props.id, data, status, xhr);
     if (this.props.onSuccess(data, status, xhr)) {
       if (xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
         eval(data);
@@ -3817,6 +3965,7 @@ var Form = React.createClass({
   mixins: [CssClassMixin, ContainerMixin, FormErrorHandlerMixin, FormSuccessHandlerMixin],
 
   propTypes: {
+    id: React.PropTypes.string,
     inputs: React.PropTypes.object,
     data: React.PropTypes.object,
     action: React.PropTypes.string,
@@ -3835,6 +3984,7 @@ var Form = React.createClass({
 
   getDefaultProps: function getDefaultProps() {
     return {
+      id: null,
       inputs: {},
       data: {},
       action: '',
@@ -3879,7 +4029,7 @@ var Form = React.createClass({
       { action: this.props.action,
         id: this.props.id,
         onSubmit: this.handleSubmit,
-        onReset: this.props.onReset,
+        onReset: this.handleReset,
         className: this.className(),
         ref: 'form' },
       this.renderFlashErrors(),
@@ -3902,11 +4052,17 @@ var Form = React.createClass({
     event.nativeEvent.preventDefault();
     var postData = this.serialize();
     this.props.onSubmit(event, postData);
+    FormActions.submit(this.props.id, event, postData);
 
     if (!event.isDefaultPrevented()) {
       this.setState({ isLoading: true, errors: {}, showSuccessFlash: false });
       this.submit(postData);
     }
+  },
+
+  handleReset: function handleReset(event) {
+    this.props.onReset(event);
+    FormActions.reset(this.props.id, event);
   },
 
   serialize: function serialize() {
@@ -6205,12 +6361,12 @@ var Input = React.createClass({
 });
 //
 
-"use strict";
+'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputDatepicker = React.createClass({
-  displayName: "InputDatepicker",
+  displayName: 'InputDatepicker',
 
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
@@ -6220,7 +6376,9 @@ var InputDatepicker = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.datepicker',
-      mask: null
+      mask: null,
+      format: null,
+      maskType: 'date'
     };
   },
 
@@ -6230,30 +6388,28 @@ var InputDatepicker = React.createClass({
 
   render: function render() {
     return React.createElement(
-      "span",
+      'span',
       null,
       React.createElement(InputMasked, _extends({}, this.props, {
         value: this.formatDateValue(),
-        type: "date",
         className: this.className(),
-        onChange: this._handleChange,
-        maskType: "date",
-        ref: "input"
+        type: 'date',
+        ref: 'input'
       })),
       React.createElement(Label, this.propsWithoutCSS()),
       React.createElement(Button, {
         disabled: this.props.disabled,
         icon: { type: "calendar" },
-        className: "input-datepicker__button prefix",
+        className: 'input-datepicker__button prefix',
         onClick: this.handleCalendarClick,
-        type: "button",
-        ref: "button"
+        type: 'button',
+        ref: 'button'
       })
     );
   },
 
-  getMask: function getMask() {
-    return this.props.mask || Realize.t('masks.date').placeholder;
+  getDateFormat: function getDateFormat() {
+    return this.props.format || Realize.t('date.formats.date');
   },
 
   setPickadatePlugin: function setPickadatePlugin() {
@@ -6262,7 +6418,7 @@ var InputDatepicker = React.createClass({
       editable: true,
       selectMonths: true,
       selectYears: true,
-      format: this.getMask()
+      format: this.getDateFormat().toLowerCase()
     });
 
     var picker = $inputNode.pickadate('picker');
@@ -6284,9 +6440,8 @@ var InputDatepicker = React.createClass({
   },
 
   formatDateValue: function formatDateValue() {
-    // d -> D, m -> M, y -> Y, h -> H, s -> m
     var date = moment(this.props.value);
-    var formattedValue = date.format(this.getMask().toUpperCase());
+    var formattedValue = date.format(this.getDateFormat());
     if (formattedValue == "Invalid date") {
       return this.props.value;
     }
@@ -6492,7 +6647,7 @@ var InputMasked = React.createClass({
         value: this.state.value,
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
-        onChange: this._handleChange,
+        onChange: this.handleChange,
         type: "text",
         ref: "input" }),
       this.props.children
@@ -6500,11 +6655,32 @@ var InputMasked = React.createClass({
   },
 
   componentDidMount: function componentDidMount() {
-    if (!!this.props.regex) {
-      this.applyRegexMask();
-    } else {
-      this.applyMask();
+    var appliedMask = this.applyMask();
+    this.setMaskPlaceholder(appliedMask);
+  },
+
+  componentDidUpdate: function componentDidUpdate() {
+    this.applyMask();
+  },
+
+  handleChange: function handleChange(event) {
+    this.props.onChange(event);
+
+    if (!event.isDefaultPrevented()) {
+      var value = $(event.target).inputmask('unmaskedvalue');
+      this.setState({ value: value });
     }
+  },
+
+  applyMask: function applyMask() {
+    var appliedMask = {};
+    if (!!this.props.regex) {
+      appliedMask = this.applyRegexMask();
+    } else {
+      appliedMask = this.applyBaseMask();
+    }
+
+    return appliedMask;
   },
 
   applyRegexMask: function applyRegexMask() {
@@ -6512,19 +6688,22 @@ var InputMasked = React.createClass({
     var maskOptions = this.parseMaskOptions();
 
     $input.inputmask('Regex', maskOptions);
-    this.setMaskPlaceholder(maskOptions);
+    return maskOptions;
   },
 
-  applyMask: function applyMask() {
+  applyBaseMask: function applyBaseMask() {
     var maskType = this.props.maskType;
     var predefinedMasks = this.predefinedMasks();
     var predefinedMask = predefinedMasks[maskType];
 
+    var appliedMask = {};
     if (!!predefinedMask) {
-      this.applyPredefinedMask(predefinedMask);
+      appliedMask = this.applyPredefinedMask(predefinedMask);
     } else {
-      this.applyCustomMask();
+      appliedMask = this.applyCustomMask();
     }
+
+    return appliedMask;
   },
 
   applyPredefinedMask: function applyPredefinedMask(predefinedMask) {
@@ -6532,7 +6711,7 @@ var InputMasked = React.createClass({
     var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
 
     $input.inputmask(predefinedMaskOptions);
-    this.setMaskPlaceholder(predefinedMaskOptions);
+    return predefinedMaskOptions;
   },
 
   applyCustomMask: function applyCustomMask() {
@@ -6541,6 +6720,7 @@ var InputMasked = React.createClass({
 
     $input.inputmask(maskOptions);
     this.setMaskPlaceholder(maskOptions);
+    return maskOptions;
   },
 
   getInputElement: function getInputElement() {
@@ -6577,10 +6757,9 @@ var InputMasked = React.createClass({
 
   setMaskPlaceholder: function setMaskPlaceholder(appliedMaskOptions) {
     var appliedPlaceholder = appliedMaskOptions.placeholder;
-    //.inputmask('getemptymask').join('')
+
     if (!!appliedPlaceholder) {
-      var $input = $(this.getInputElement());
-      this.setState({ placeholder: $input.val() });
+      this.setState({ placeholder: appliedPlaceholder });
     }
   }
 });

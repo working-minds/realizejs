@@ -7,7 +7,9 @@ var InputDatepicker = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.datepicker',
-      mask: null
+      mask: null,
+      format: null,
+      maskType: 'date'
     };
   },
 
@@ -21,10 +23,8 @@ var InputDatepicker = React.createClass({
         <InputMasked
           {...this.props}
           value={this.formatDateValue()}
-          type="date"
           className={this.className()}
-          onChange={this._handleChange}
-          maskType="date"
+          type="date"
           ref="input"
         />
 
@@ -41,8 +41,8 @@ var InputDatepicker = React.createClass({
     );
   },
 
-  getMask: function() {
-    return (this.props.mask || Realize.t('masks.date').placeholder);
+  getDateFormat: function() {
+    return (this.props.format || Realize.t('date.formats.date'));
   },
 
   setPickadatePlugin: function() {
@@ -51,7 +51,7 @@ var InputDatepicker = React.createClass({
       editable: true,
       selectMonths: true,
       selectYears: true,
-      format: this.getMask()
+      format: this.getDateFormat().toLowerCase()
     });
 
     var picker = $inputNode.pickadate('picker');
@@ -73,9 +73,8 @@ var InputDatepicker = React.createClass({
   },
 
   formatDateValue: function() {
-    // d -> D, m -> M, y -> Y, h -> H, s -> m
     var date = moment(this.props.value);
-    var formattedValue = date.format(this.getMask().toUpperCase());
+    var formattedValue = date.format(this.getDateFormat());
     if(formattedValue == "Invalid date") {
       return this.props.value;
     }

@@ -27,8 +27,7 @@ Realize.i18n.registerLocale({
 
   masks: {
     date: {
-      alias: 'mm/dd/yyyy',
-      placeholder: 'mm/dd/yyyy'
+      alias: 'mm/dd/yyyy'
     },
     datetime: {
       mask: 'm/d/y h:s',
@@ -41,11 +40,18 @@ Realize.i18n.registerLocale({
       alias: "integer"
     },
     decimal: {
-      alias: "decimal"
+      alias: "decimal",
+      groupSeparator: ".",
+      radixPoint: ",",
+      removeMaskOnSubmit: true
     },
     currency: {
+      alias: "currency",
       prefix: "$ ",
-      alias: "currency"
+      groupSeparator: ".",
+      radixPoint: ",",
+      placeholder: "0",
+      removeMaskOnSubmit: true
     }
   },
 

@@ -59,7 +59,7 @@ var InputMasked = React.createClass({
         value={this.state.value}
         placeholder={this.state.placeholder}
         className={this.inputClassName()}
-        onChange={this._handleChange}
+        onChange={this.handleChange}
         type="text"
         ref="input">
 
@@ -69,11 +69,32 @@ var InputMasked = React.createClass({
   },
 
   componentDidMount: function() {
-    if(!!this.props.regex) {
-      this.applyRegexMask();
-    } else {
-      this.applyMask();
+    var appliedMask = this.applyMask();
+    this.setMaskPlaceholder(appliedMask);
+  },
+
+  componentDidUpdate: function() {
+    this.applyMask();
+  },
+
+  handleChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      var value = $(event.target).inputmask('unmaskedvalue');
+      this.setState({value: value});
     }
+  },
+
+  applyMask: function() {
+    var appliedMask = {};
+    if(!!this.props.regex) {
+      appliedMask = this.applyRegexMask();
+    } else {
+      appliedMask = this.applyBaseMask();
+    }
+
+    return appliedMask;
   },
 
   applyRegexMask: function() {
@@ -81,19 +102,22 @@ var InputMasked = React.createClass({
     var maskOptions = this.parseMaskOptions();
 
     $input.inputmask('Regex', maskOptions);
-    this.setMaskPlaceholder(maskOptions);
+    return maskOptions;
   },
 
-  applyMask: function() {
+  applyBaseMask: function() {
     var maskType = this.props.maskType;
     var predefinedMasks = this.predefinedMasks();
     var predefinedMask = predefinedMasks[maskType];
 
+    var appliedMask = {};
     if(!!predefinedMask) {
-      this.applyPredefinedMask(predefinedMask);
+      appliedMask = this.applyPredefinedMask(predefinedMask);
     } else {
-      this.applyCustomMask();
+      appliedMask = this.applyCustomMask();
     }
+
+    return appliedMask;
   },
 
   applyPredefinedMask: function(predefinedMask) {
@@ -101,7 +125,7 @@ var InputMasked = React.createClass({
     var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
 
     $input.inputmask(predefinedMaskOptions);
-    this.setMaskPlaceholder(predefinedMaskOptions);
+    return predefinedMaskOptions;
   },
 
   applyCustomMask: function() {
@@ -110,6 +134,7 @@ var InputMasked = React.createClass({
 
     $input.inputmask(maskOptions);
     this.setMaskPlaceholder(maskOptions);
+    return maskOptions;
   },
 
   getInputElement: function() {
@@ -146,10 +171,9 @@ var InputMasked = React.createClass({
 
   setMaskPlaceholder: function(appliedMaskOptions) {
     var appliedPlaceholder = appliedMaskOptions.placeholder;
-    //.inputmask('getemptymask').join('')
+
     if(!!appliedPlaceholder) {
-      var $input = $(this.getInputElement());
-      this.setState({placeholder: $input.val()});
+      this.setState({ placeholder: appliedPlaceholder });
     }
   }
 });

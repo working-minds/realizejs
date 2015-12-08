@@ -1,7 +1,3 @@
-var ModalActions = Reflux.createActions([
-  'open', 'openFinished'
-]);
-
 var ModalStore = Reflux.createStore({
   listenables: [ModalActions],
   optionProps: [
