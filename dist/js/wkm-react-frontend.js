@@ -211,6 +211,11 @@ Realize.i18n.registerLocale({
     autocomplete: {
       emptyResult: 'No items found.',
       clear: 'Clear selected items'
+    },
+
+    datefilter: {
+      from: 'From',
+      to: 'To'
     }
   },
 
@@ -287,6 +292,11 @@ Realize.i18n.registerLocale({
     autocomplete: {
       emptyResult: 'Nenhum item foi encontrado.',
       clear: 'Limpar itens selecionados'
+    },
+
+    datefilter: {
+      from: 'De',
+      to: 'Até'
     }
   },
 
@@ -515,6 +525,10 @@ Realize.themes.materialize = {
 
       filter: {
         cssClass: 'col l3 m4 s12'
+      },
+
+      oneLine: {
+        cssClass: 'col s12'
       }
     },
 
@@ -6163,17 +6177,18 @@ var InputCheckboxGroup = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputDatefilter = React.createClass({
-  displayName: 'InputDatefilter',
+  displayName: "InputDatefilter",
 
   mixins: [CssClassMixin],
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
+    resource: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     fromFilterInput: React.PropTypes.object,
     toFilterInput: React.PropTypes.object,
@@ -6182,34 +6197,33 @@ var InputDatefilter = React.createClass({
 
   getDefaultProps: function getDefaultProps() {
     return {
-      id: '',
-      name: '',
       themeClassKey: 'input.datefilter',
-      disabled: false,
-      fromFilterInput: {},
-      toFilterInput: {},
-      okButton: {
-        name: 'actions.ok'
-      },
-      cancelButton: {
-        name: 'actions.cancel',
-        style: 'cancel'
-      }
+      disabled: false
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      selectedDates: []
     };
   },
 
   render: function render() {
     return React.createElement(
-      'div',
-      { className: this.className(), ref: 'container' },
+      "div",
+      { className: this.className(), ref: "container" },
       React.createElement(InputDatefilterSelect, _extends({}, this.propsWithoutCSS(), {
+        selectedDates: this.state.selectedDates,
         onFocus: this.showFilterBody
       })),
       React.createElement(InputDatefilterBody, _extends({}, this.propsWithoutCSS(), {
-        ref: 'body'
+        onSelectDate: this.handleSelectDate,
+        ref: "body"
       }))
     );
   },
+
+  /* Input focus handlers */
 
   showFilterBody: function showFilterBody(event) {
     if (this.props.disabled) {
@@ -6218,7 +6232,10 @@ var InputDatefilter = React.createClass({
 
     $(document).on('click', this.handleDocumentClick);
     var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    var firstFilterInput = $bodyNode.find('input[type=text]')[0];
+
     $bodyNode.show();
+    firstFilterInput.focus();
   },
 
   hideResult: function hideResult() {
@@ -6232,17 +6249,21 @@ var InputDatefilter = React.createClass({
     if ($containerNode.find(event.target).length === 0) {
       this.hideResult();
     }
-  }
+  },
+
+  /* Date selection handlers */
+
+  handleSelectDate: function handleSelectDate(selectedDates) {}
 
 });
 //
 
-"use strict";
+'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputDatefilterBody = React.createClass({
-  displayName: "InputDatefilterBody",
+  displayName: 'InputDatefilterBody',
 
   mixins: [CssClassMixin],
   propTypes: {
@@ -6250,21 +6271,28 @@ var InputDatefilterBody = React.createClass({
     name: React.PropTypes.string,
     fromFilterInput: React.PropTypes.object,
     toFilterInput: React.PropTypes.object,
-    okButton: React.PropTypes.object,
-    cancelButton: React.PropTypes.object
+    okButton: React.PropTypes.object
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.datefilter.body',
-      options: [],
-      selectedOptions: []
+      id: null,
+      name: null,
+      resource: null,
+      fromFilterInput: {},
+      toFilterInput: {},
+      okButton: {
+        name: 'actions.ok'
+      }
     };
   },
 
+  /* Renderers */
+
   render: function render() {
     return React.createElement(
-      "div",
+      'div',
       { className: this.className() },
       this.renderFromInput(),
       this.renderToInput(),
@@ -6274,36 +6302,88 @@ var InputDatefilterBody = React.createClass({
 
   renderFromInput: function renderFromInput() {
     return React.createElement(
-      "div",
-      { className: "input-datefilter__filter" },
-      React.createElement(Input, _extends({
-        component: "datepicker"
-      }, this.fromInputProps()))
+      'div',
+      { className: 'input-datefilter__filter' },
+      React.createElement(Input, _extends({}, this.fromInputProps(), {
+        component: 'datepicker',
+        ref: 'fromInput'
+      }))
     );
+  },
+
+  fromInputProps: function fromInputProps() {
+    return this.filterInputProps("from");
   },
 
   renderToInput: function renderToInput() {
     return React.createElement(
-      "div",
-      { className: "input-datefilter__filter" },
-      React.createElement(Input, _extends({
-        component: "datepicker"
-      }, this.toInputProps()))
+      'div',
+      { className: 'input-datefilter__filter' },
+      React.createElement(Input, _extends({}, this.toInputProps(), {
+        component: 'datepicker',
+        ref: 'toInput'
+      }))
     );
+  },
+
+  toInputProps: function toInputProps() {
+    return this.filterInputProps("to");
   },
 
   renderUpdateButton: function renderUpdateButton() {
     return React.createElement(
-      "div",
-      { className: "input-datefilter__buttons" },
-      React.createElement(Button, { name: "update", element: "a" })
+      'div',
+      { className: 'input-datefilter__button' },
+      React.createElement(Button, { name: 'update', element: 'a' })
     );
   },
 
-  fromInputProps: function fromInputProps() {},
+  /* Date selection handlers */
 
-  toInputProps: function toInputProps() {}
+  selectDate: function selectDate(event) {
+    var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput));
+    var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput));
 
+    console.log($fromInput.val());
+    console.log($toInput.val());
+  },
+
+  /* Props parser methods */
+
+  filterInputProps: function filterInputProps(filterType) {
+    var inputProps = {
+      formStyle: 'oneLine',
+      resource: this.props.resource,
+      id: this.getFilterInputId(filterType),
+      name: this.getFilterInputName(filterType),
+      label: this.getFilterInputLabel(filterType)
+    };
+
+    $.extend(inputProps, this.props[filterType + "FilterInput"]);
+    return inputProps;
+  },
+
+  getFilterInputId: function getFilterInputId(filterType) {
+    var inputId = this.props.id;
+    if (!!inputId) {
+      return inputId + "_" + filterType;
+    }
+
+    return null;
+  },
+
+  getFilterInputName: function getFilterInputName(filterType) {
+    var inputName = this.props.name;
+    if (!!inputName) {
+      return inputName + "_" + filterType;
+    }
+
+    return null;
+  },
+
+  getFilterInputLabel: function getFilterInputLabel(filterType) {
+    return Realize.t("inputs.datefilter." + filterType);
+  }
 });
 //
 
@@ -6386,7 +6466,7 @@ var Input = React.createClass({
     label: React.PropTypes.string,
     value: React.PropTypes.node,
     component: React.PropTypes.string,
-    formStyle: React.PropTypes.oneOf(['default', 'filter']),
+    formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,

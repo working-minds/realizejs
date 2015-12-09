@@ -6,7 +6,7 @@ var Input = React.createClass({
     label: React.PropTypes.string,
     value: React.PropTypes.node,
     component: React.PropTypes.string,
-    formStyle: React.PropTypes.oneOf(['default', 'filter']),
+    formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,

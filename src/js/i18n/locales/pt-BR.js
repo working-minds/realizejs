@@ -59,6 +59,11 @@ Realize.i18n.registerLocale({
     autocomplete: {
       emptyResult: 'Nenhum item foi encontrado.',
       clear: 'Limpar itens selecionados'
+    },
+
+    datefilter: {
+      from: 'De',
+      to: 'Até'
     }
   },
 

@@ -10,3 +10,8 @@
   background-color: white;
   padding-top: 15px;
 }
+
+.input-datefilter__button {
+  float: right;
+  margin: 0 0.8rem 0.8rem;
+}

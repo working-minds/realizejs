@@ -3,6 +3,7 @@ var InputDatefilter = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
+    resource: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     fromFilterInput: React.PropTypes.object,
     toFilterInput: React.PropTypes.object,
@@ -11,20 +12,15 @@ var InputDatefilter = React.createClass({
 
   getDefaultProps: function() {
     return {
-      id: '',
-      name: '',
       themeClassKey: 'input.datefilter',
-      disabled: false,
-      fromFilterInput: {},
-      toFilterInput: {},
-      okButton: {
-        name: 'actions.ok'
-      },
-      cancelButton: {
-        name: 'actions.cancel',
-        style: 'cancel'
-      }
+      disabled: false
     };
+  },
+
+  getInitialState: function() {
+    return {
+      selectedDates: []
+    }
   },
 
   render: function() {
@@ -32,16 +28,20 @@ var InputDatefilter = React.createClass({
       <div className={this.className()} ref="container">
         <InputDatefilterSelect
           {...this.propsWithoutCSS()}
+          selectedDates={this.state.selectedDates}
           onFocus={this.showFilterBody}
         />
 
         <InputDatefilterBody
           {...this.propsWithoutCSS()}
+          onSelectDate={this.handleSelectDate}
           ref="body"
         />
       </div>
     );
   },
+
+  /* Input focus handlers */
 
   showFilterBody: function(event) {
     if(this.props.disabled) {
@@ -50,7 +50,10 @@ var InputDatefilter = React.createClass({
 
     $(document).on('click', this.handleDocumentClick);
     var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    var firstFilterInput = $bodyNode.find('input[type=text]')[0];
+
     $bodyNode.show();
+    firstFilterInput.focus();
   },
 
   hideResult: function() {
@@ -64,8 +67,13 @@ var InputDatefilter = React.createClass({
     if($containerNode.find(event.target).length === 0) {
       this.hideResult();
     }
-  }
+  },
 
+  /* Date selection handlers */
+
+  handleSelectDate: function(selectedDates) {
+
+  }
 
 });
 

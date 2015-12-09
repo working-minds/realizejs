@@ -91,6 +91,10 @@ Realize.themes.materialize = {
 
       filter: {
         cssClass: 'col l3 m4 s12'
+      },
+
+      oneLine: {
+        cssClass: 'col s12'
       }
     },
 
