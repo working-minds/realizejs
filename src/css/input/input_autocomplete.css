@@ -1,8 +1,3 @@
-.input-field {
-  position: relative;
-  min-height: 4rem;
-}
-
 .input-autocomplete {}
 
 .input-autocomplete__result {
@@ -74,28 +69,9 @@
   background-color: #E3E3E3;
 }
 
-.input-datepicker__button {
-  padding: 0;
-  right: 1rem;
-}
-
-.input-checkbox-group.align-horizontal p{
-  float: left;
-  margin-left: 15px;
-}
-
-
-.select-wrapper > input[type=text] {
-  cursor: pointer;
-}
-
 .input-autocomplete__option label {
   top: 0;
   left: 0;
   color: black;
   padding-left: 30px;
-}
-.input-radio-group.align-horizontal p{
-  float: left;
-  margin-left: 15px;
 }

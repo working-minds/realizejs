@@ -137,6 +137,18 @@ Realize.themes.materialize = {
       cssClass: ''
     },
 
+    datefilter: {
+      cssClass: 'input-datefilter',
+
+      select: {
+        cssClass: 'input-datefilter__select select-wrapper initialized'
+      },
+
+      body: {
+        cssClass: 'input-datefilter__body z-depth-1'
+      }
+    },
+
     datepicker: {
       cssClass: 'datepicker'
     },

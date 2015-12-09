@@ -561,6 +561,18 @@ Realize.themes.materialize = {
       cssClass: ''
     },
 
+    datefilter: {
+      cssClass: 'input-datefilter',
+
+      select: {
+        cssClass: 'input-datefilter__select select-wrapper initialized'
+      },
+
+      body: {
+        cssClass: 'input-datefilter__body z-depth-1'
+      }
+    },
+
     datepicker: {
       cssClass: 'datepicker'
     },
@@ -5922,8 +5934,7 @@ var InputAutocompleteSelect = React.createClass({
   propTypes: {
     selectedOptions: React.PropTypes.array,
     placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func,
-    onBlur: React.PropTypes.func
+    onFocus: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -5932,9 +5943,6 @@ var InputAutocompleteSelect = React.createClass({
       themeClassKey: 'input.autocomplete.select',
       placeholder: 'select',
       onFocus: function onFocus() {
-        return true;
-      },
-      onBlur: function onBlur() {
         return true;
       }
     };
@@ -6159,6 +6167,215 @@ var InputCheckboxGroup = React.createClass({
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+var InputDatefilter = React.createClass({
+  displayName: 'InputDatefilter',
+
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    fromFilterInput: React.PropTypes.object,
+    toFilterInput: React.PropTypes.object,
+    okButton: React.PropTypes.object
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      id: '',
+      name: '',
+      themeClassKey: 'input.datefilter',
+      disabled: false,
+      fromFilterInput: {},
+      toFilterInput: {},
+      okButton: {
+        name: 'actions.ok'
+      },
+      cancelButton: {
+        name: 'actions.cancel',
+        style: 'cancel'
+      }
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: this.className(), ref: 'container' },
+      React.createElement(InputDatefilterSelect, _extends({}, this.propsWithoutCSS(), {
+        onFocus: this.showFilterBody
+      })),
+      React.createElement(InputDatefilterBody, _extends({}, this.propsWithoutCSS(), {
+        ref: 'body'
+      }))
+    );
+  },
+
+  showFilterBody: function showFilterBody(event) {
+    if (this.props.disabled) {
+      return;
+    }
+
+    $(document).on('click', this.handleDocumentClick);
+    var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    $bodyNode.show();
+  },
+
+  hideResult: function hideResult() {
+    $(document).off('click', this.handleDocumentClick);
+    var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    $bodyNode.hide();
+  },
+
+  handleDocumentClick: function handleDocumentClick(event) {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    if ($containerNode.find(event.target).length === 0) {
+      this.hideResult();
+    }
+  }
+
+});
+//
+
+"use strict";
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var InputDatefilterBody = React.createClass({
+  displayName: "InputDatefilterBody",
+
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    fromFilterInput: React.PropTypes.object,
+    toFilterInput: React.PropTypes.object,
+    okButton: React.PropTypes.object,
+    cancelButton: React.PropTypes.object
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      themeClassKey: 'input.datefilter.body',
+      options: [],
+      selectedOptions: []
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      "div",
+      { className: this.className() },
+      this.renderFromInput(),
+      this.renderToInput(),
+      this.renderUpdateButton()
+    );
+  },
+
+  renderFromInput: function renderFromInput() {
+    return React.createElement(
+      "div",
+      { className: "input-datefilter__filter" },
+      React.createElement(Input, _extends({
+        component: "datepicker"
+      }, this.fromInputProps()))
+    );
+  },
+
+  renderToInput: function renderToInput() {
+    return React.createElement(
+      "div",
+      { className: "input-datefilter__filter" },
+      React.createElement(Input, _extends({
+        component: "datepicker"
+      }, this.toInputProps()))
+    );
+  },
+
+  renderUpdateButton: function renderUpdateButton() {
+    return React.createElement(
+      "div",
+      { className: "input-datefilter__buttons" },
+      React.createElement(Button, { name: "update", element: "a" })
+    );
+  },
+
+  fromInputProps: function fromInputProps() {},
+
+  toInputProps: function toInputProps() {}
+
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var InputDatefilterSelect = React.createClass({
+  displayName: 'InputDatefilterSelect',
+
+  mixins: [CssClassMixin, UtilsMixin, InputComponentMixin],
+
+  propTypes: {
+    selectedDates: React.PropTypes.array,
+    placeholder: Realize.PropTypes.localizedString,
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      selectedDates: [],
+      themeClassKey: 'input.datefilter.select',
+      placeholder: 'select',
+      onFocus: function onFocus() {
+        return true;
+      }
+    };
+  },
+
+  //TODO: este e um componente do materialize. Tornar este componente generico.
+  render: function render() {
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'div',
+        { className: this.className() },
+        React.createElement(
+          'span',
+          { className: 'caret' },
+          '▼'
+        ),
+        React.createElement(InputText, {
+          id: this.selectId(),
+          value: this.renderSelectedDates(),
+          disabled: this.props.disabled,
+          placeholder: this.props.placeholder,
+          onFocus: this.props.onFocus,
+          errors: this.props.errors,
+          key: "datefilter_select_" + this.generateUUID()
+        })
+      ),
+      React.createElement(Label, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
+    );
+  },
+
+  selectId: function selectId() {
+    return 'datefilter_select_' + this.props.id;
+  },
+
+  renderSelectedDates: function renderSelectedDates() {
+    var dates = this.props.selectedDates;
+    return dates.join(' - ');
+  }
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var Input = React.createClass({
   displayName: 'Input',
 
@@ -6227,49 +6444,37 @@ var Input = React.createClass({
     );
   },
 
-  renderAutocompleteInput: function renderAutocompleteInput() {
+  renderInputWithoutLabel: function renderInputWithoutLabel() {
     return React.createElement(
       'div',
       { className: this.inputClassName() },
       this.renderComponentInput(),
       this.renderInputErrors()
     );
+  },
+
+  renderAutocompleteInput: function renderAutocompleteInput() {
+    return this.renderInputWithoutLabel();
+  },
+
+  renderDatefilterInput: function renderDatefilterInput() {
+    return this.renderInputWithoutLabel();
   },
 
   renderDatepickerInput: function renderDatepickerInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderNumberInput: function renderNumberInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderSwitchInput: function renderSwitchInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderFileInput: function renderFileInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderHiddenInput: function renderHiddenInput() {
@@ -6305,6 +6510,7 @@ var Input = React.createClass({
       text: InputText,
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
+      datefilter: InputDatefilter,
       datepicker: InputDatepicker,
       number: InputNumber,
       file: InputFile,

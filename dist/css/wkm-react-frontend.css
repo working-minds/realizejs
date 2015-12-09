@@ -150,6 +150,24 @@ hr {
   min-height: 4rem;
 }
 
+.input-datepicker__button {
+  padding: 0;
+  right: 1rem;
+}
+
+.input-checkbox-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
+}
+
+.select-wrapper > input[type=text] {
+  cursor: pointer;
+}
+
+.input-radio-group.align-horizontal p{
+  float: left;
+  margin-left: 15px;
+}
 .input-autocomplete {}
 
 .input-autocomplete__result {
@@ -221,30 +239,23 @@ hr {
   background-color: #E3E3E3;
 }
 
-.input-datepicker__button {
-  padding: 0;
-  right: 1rem;
-}
-
-.input-checkbox-group.align-horizontal p{
-  float: left;
-  margin-left: 15px;
-}
-
-
-.select-wrapper > input[type=text] {
-  cursor: pointer;
-}
-
 .input-autocomplete__option label {
   top: 0;
   left: 0;
   color: black;
   padding-left: 30px;
 }
-.input-radio-group.align-horizontal p{
-  float: left;
-  margin-left: 15px;
+.input-datefilter {}
+
+.input-datefilter__body {
+  width: 100%;
+  display: none;
+  position: absolute;
+  top: 35px;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  padding-top: 15px;
 }
 .input-field .select-wrapper + label.active {
   -webkit-transform: translateY(0%);

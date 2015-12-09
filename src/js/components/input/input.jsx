@@ -64,49 +64,37 @@ var Input = React.createClass({
     );
   },
 
-  renderAutocompleteInput: function() {
+  renderInputWithoutLabel: function() {
     return (
       <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
     );
+  },
+
+  renderAutocompleteInput: function() {
+    return this.renderInputWithoutLabel();
+  },
+
+  renderDatefilterInput: function() {
+    return this.renderInputWithoutLabel();
   },
 
   renderDatepickerInput: function() {
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderNumberInput: function(){
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderSwitchInput: function(){
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderFileInput: function() {
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderHiddenInput: function() {
@@ -144,6 +132,7 @@ var Input = React.createClass({
       text: InputText,
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
+      datefilter: InputDatefilter,
       datepicker: InputDatepicker,
       number: InputNumber,
       file: InputFile,
