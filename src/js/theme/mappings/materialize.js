@@ -91,6 +91,10 @@ Realize.themes.materialize = {
 
       filter: {
         cssClass: 'col l3 m4 s12'
+      },
+
+      oneLine: {
+        cssClass: 'col s12'
       }
     },
 
@@ -135,6 +139,18 @@ Realize.themes.materialize = {
 
     checkbox: {
       cssClass: ''
+    },
+
+    datefilter: {
+      cssClass: 'input-datefilter',
+
+      select: {
+        cssClass: 'input-datefilter__select select-wrapper initialized'
+      },
+
+      body: {
+        cssClass: 'input-datefilter__body z-depth-1'
+      }
     },
 
     datepicker: {
