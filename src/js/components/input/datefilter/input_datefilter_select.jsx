@@ -1,4 +1,4 @@
-var InputAutocompleteSelect = React.createClass({
+var InputDatefilterSelect = React.createClass({
   mixins: [
     CssClassMixin,
     UtilsMixin,
@@ -6,23 +6,18 @@ var InputAutocompleteSelect = React.createClass({
   ],
 
   propTypes: {
-    selectedOptions: React.PropTypes.array,
+    selectedDates: React.PropTypes.array,
     placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
-      selectedOptions: [],
-      themeClassKey: 'input.autocomplete.select',
+      selectedDates: [],
+      themeClassKey: 'input.datefilter.select',
       placeholder: 'select',
       onFocus: function() { return true; }
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      options: []
     };
   },
 
@@ -34,12 +29,12 @@ var InputAutocompleteSelect = React.createClass({
           <span className="caret">▼</span>
           <InputText
             id={this.selectId()}
-            value={this.renderSelectedOptions()}
+            value={this.renderSelectedDates()}
             disabled={this.props.disabled}
             placeholder={this.props.placeholder}
             onFocus={this.props.onFocus}
             errors={this.props.errors}
-            key={"autocomplete_select_" + this.generateUUID()}
+            key={"datefilter_select_" + this.generateUUID()}
           />
         </div>
         <Label {...this.propsWithoutCSS()} id={this.selectId()} />
@@ -48,14 +43,11 @@ var InputAutocompleteSelect = React.createClass({
   },
 
   selectId: function() {
-    return 'autocomplete_select_' + this.props.id;
+    return 'datefilter_select_' + this.props.id;
   },
 
-  renderSelectedOptions: function() {
-    var options = this.props.selectedOptions;
-
-    return $.map(options, function(option) {
-      return option.name;
-    }).join(', ');
+  renderSelectedDates: function() {
+    var dates = this.props.selectedDates;
+    return dates.join(' - ');
   }
 });

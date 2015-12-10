@@ -153,6 +153,7 @@ Realize.t = Realize.i18n.translate;
 Realize.i18n.registerLocale({
   true: 'Yes',
   false: 'No',
+  ok: 'Ok',
   loading: 'Loading...',
   select: 'Select',
   actions: {
@@ -211,6 +212,11 @@ Realize.i18n.registerLocale({
     autocomplete: {
       emptyResult: 'No items found.',
       clear: 'Clear selected items'
+    },
+
+    datefilter: {
+      from: 'From',
+      to: 'To'
     }
   },
 
@@ -229,6 +235,7 @@ Realize.i18n.registerLocale({
 Realize.i18n.registerLocale({
   true: 'Sim',
   false: 'Não',
+  ok: 'Ok',
   loading: 'Carregando...',
   select: 'Selecione',
   actions: {
@@ -287,6 +294,11 @@ Realize.i18n.registerLocale({
     autocomplete: {
       emptyResult: 'Nenhum item foi encontrado.',
       clear: 'Limpar itens selecionados'
+    },
+
+    datefilter: {
+      from: 'De',
+      to: 'Até'
     }
   },
 
@@ -515,6 +527,10 @@ Realize.themes.materialize = {
 
       filter: {
         cssClass: 'col l3 m4 s12'
+      },
+
+      oneLine: {
+        cssClass: 'col s12'
       }
     },
 
@@ -559,6 +575,18 @@ Realize.themes.materialize = {
 
     checkbox: {
       cssClass: ''
+    },
+
+    datefilter: {
+      cssClass: 'input-datefilter',
+
+      select: {
+        cssClass: 'input-datefilter__select select-wrapper initialized'
+      },
+
+      body: {
+        cssClass: 'input-datefilter__body z-depth-1'
+      }
     },
 
     datepicker: {
@@ -5922,8 +5950,7 @@ var InputAutocompleteSelect = React.createClass({
   propTypes: {
     selectedOptions: React.PropTypes.array,
     placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func,
-    onBlur: React.PropTypes.func
+    onFocus: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -5932,9 +5959,6 @@ var InputAutocompleteSelect = React.createClass({
       themeClassKey: 'input.autocomplete.select',
       placeholder: 'select',
       onFocus: function onFocus() {
-        return true;
-      },
-      onBlur: function onBlur() {
         return true;
       }
     };
@@ -6155,6 +6179,332 @@ var InputCheckboxGroup = React.createClass({
 });
 //
 
+"use strict";
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var InputDatefilter = React.createClass({
+  displayName: "InputDatefilter",
+
+  mixins: [CssClassMixin],
+  propTypes: {
+    originalId: React.PropTypes.string,
+    originalName: React.PropTypes.string,
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    resource: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    fromFilterInput: React.PropTypes.object,
+    toFilterInput: React.PropTypes.object,
+    okButton: React.PropTypes.object
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      themeClassKey: 'input.datefilter',
+      disabled: false
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      selectedDates: []
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      "div",
+      { className: this.className(), ref: "container" },
+      React.createElement(InputDatefilterSelect, _extends({}, this.propsWithoutCSS(), {
+        selectedDates: this.state.selectedDates,
+        onFocus: this.showFilterBody
+      })),
+      React.createElement(InputDatefilterBody, _extends({}, this.propsWithoutCSS(), {
+        id: this.props.originalId,
+        name: this.props.originalName,
+        onSelectDate: this.handleSelectDate,
+        ref: "body"
+      }))
+    );
+  },
+
+  /* Input focus handlers */
+
+  showFilterBody: function showFilterBody(event) {
+    if (this.props.disabled) {
+      return;
+    }
+
+    $(document).on('click', this.handleDocumentClick);
+    var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    var firstFilterInput = $bodyNode.find('input[type=text]')[0];
+
+    $bodyNode.show();
+    firstFilterInput.focus();
+  },
+
+  hideFilterBody: function hideFilterBody() {
+    $(document).off('click', this.handleDocumentClick);
+    var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    $bodyNode.hide();
+  },
+
+  handleDocumentClick: function handleDocumentClick(event) {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    if ($containerNode.find(event.target).length === 0) {
+      this.hideFilterBody();
+    }
+  },
+
+  /* Date selection handlers */
+
+  handleSelectDate: function handleSelectDate(selectedDates) {
+    this.setState({
+      selectedDates: selectedDates
+    });
+
+    this.hideFilterBody();
+  }
+
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var InputDatefilterBody = React.createClass({
+  displayName: 'InputDatefilterBody',
+
+  mixins: [CssClassMixin],
+  propTypes: {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    fromFilterInput: React.PropTypes.object,
+    toFilterInput: React.PropTypes.object,
+    okButton: React.PropTypes.object
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      themeClassKey: 'input.datefilter.body',
+      id: null,
+      name: null,
+      resource: null,
+      fromFilterInput: {},
+      toFilterInput: {},
+      okButton: {
+        name: 'ok'
+      }
+    };
+  },
+
+  /* Renderers */
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: this.className(), onClick: this.handleFilterBodyClick, ref: 'filterBody' },
+      this.renderFromInput(),
+      this.renderToInput(),
+      this.renderUpdateButton()
+    );
+  },
+
+  renderFromInput: function renderFromInput() {
+    return React.createElement(
+      'div',
+      { className: 'input-datefilter__filter' },
+      React.createElement(Input, _extends({}, this.fromInputProps(), {
+        onKeyDown: this.handleInputKeypress,
+        component: 'datepicker',
+        ref: 'fromInput'
+      }))
+    );
+  },
+
+  fromInputProps: function fromInputProps() {
+    return this.filterInputProps("from");
+  },
+
+  renderToInput: function renderToInput() {
+    return React.createElement(
+      'div',
+      { className: 'input-datefilter__filter' },
+      React.createElement(Input, _extends({}, this.toInputProps(), {
+        onKeyDown: this.handleInputKeypress,
+        component: 'datepicker',
+        ref: 'toInput'
+      }))
+    );
+  },
+
+  toInputProps: function toInputProps() {
+    return this.filterInputProps("to");
+  },
+
+  renderUpdateButton: function renderUpdateButton() {
+    return React.createElement(
+      'div',
+      { className: 'input-datefilter__button' },
+      React.createElement(Button, _extends({}, this.props.okButton, {
+        element: 'a',
+        onClick: this.selectDate
+      }))
+    );
+  },
+
+  /* Event handlers */
+
+  handleFilterBodyClick: function handleFilterBodyClick(event) {
+    var filterBody = ReactDOM.findDOMNode(this.refs.filterBody);
+    var fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
+
+    if (event.target == filterBody) {
+      fromInput.focus();
+    }
+  },
+
+  handleInputKeypress: function handleInputKeypress(event) {
+    var keyCode = event.keyCode;
+
+    if (keyCode == 13 || keyCode == 9) {
+      this.handleInputTabKeypress(event);
+    } else if (keyCode == 27) {
+      event.preventDefault();
+      this.selectDate();
+    }
+  },
+
+  handleInputTabKeypress: function handleInputTabKeypress(event) {
+    event.preventDefault();
+    var fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
+    var toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input')[0];
+
+    if (event.target == fromInput) {
+      toInput.focus();
+    } else {
+      this.selectDate();
+    }
+  },
+
+  /* Date selection handlers */
+
+  selectDate: function selectDate() {
+    var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
+    var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
+    var selectedDates = $.grep([$fromInput.val(), $toInput.val()], function (date) {
+      return !!date;
+    });
+
+    this.props.onSelectDate(selectedDates);
+  },
+
+  /* Props parser methods */
+
+  filterInputProps: function filterInputProps(filterType) {
+    var inputProps = {
+      formStyle: 'oneLine',
+      resource: this.props.resource,
+      id: this.getFilterInputId(filterType),
+      name: this.getFilterInputName(filterType),
+      label: this.getFilterInputLabel(filterType)
+    };
+
+    $.extend(inputProps, this.props[filterType + "FilterInput"]);
+    return inputProps;
+  },
+
+  getFilterInputId: function getFilterInputId(filterType) {
+    var inputId = this.props.id;
+    if (!!inputId) {
+      return inputId + "_" + filterType;
+    }
+
+    return null;
+  },
+
+  getFilterInputName: function getFilterInputName(filterType) {
+    var inputName = this.props.name;
+    if (!!inputName) {
+      return inputName + "_" + filterType;
+    }
+
+    return null;
+  },
+
+  getFilterInputLabel: function getFilterInputLabel(filterType) {
+    return Realize.t("inputs.datefilter." + filterType);
+  }
+});
+//
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var InputDatefilterSelect = React.createClass({
+  displayName: 'InputDatefilterSelect',
+
+  mixins: [CssClassMixin, UtilsMixin, InputComponentMixin],
+
+  propTypes: {
+    selectedDates: React.PropTypes.array,
+    placeholder: Realize.PropTypes.localizedString,
+    onFocus: React.PropTypes.func,
+    onBlur: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      selectedDates: [],
+      themeClassKey: 'input.datefilter.select',
+      placeholder: 'select',
+      onFocus: function onFocus() {
+        return true;
+      }
+    };
+  },
+
+  //TODO: este e um componente do materialize. Tornar este componente generico.
+  render: function render() {
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'div',
+        { className: this.className() },
+        React.createElement(
+          'span',
+          { className: 'caret' },
+          '▼'
+        ),
+        React.createElement(InputText, {
+          id: this.selectId(),
+          value: this.renderSelectedDates(),
+          disabled: this.props.disabled,
+          placeholder: this.props.placeholder,
+          onFocus: this.props.onFocus,
+          errors: this.props.errors,
+          key: "datefilter_select_" + this.generateUUID()
+        })
+      ),
+      React.createElement(Label, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
+    );
+  },
+
+  selectId: function selectId() {
+    return 'datefilter_select_' + this.props.id;
+  },
+
+  renderSelectedDates: function renderSelectedDates() {
+    var dates = this.props.selectedDates;
+    return dates.join(' - ');
+  }
+});
+//
+
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -6169,7 +6519,7 @@ var Input = React.createClass({
     label: React.PropTypes.string,
     value: React.PropTypes.node,
     component: React.PropTypes.string,
-    formStyle: React.PropTypes.oneOf(['default', 'filter']),
+    formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
@@ -6227,49 +6577,37 @@ var Input = React.createClass({
     );
   },
 
-  renderAutocompleteInput: function renderAutocompleteInput() {
+  renderInputWithoutLabel: function renderInputWithoutLabel() {
     return React.createElement(
       'div',
       { className: this.inputClassName() },
       this.renderComponentInput(),
       this.renderInputErrors()
     );
+  },
+
+  renderAutocompleteInput: function renderAutocompleteInput() {
+    return this.renderInputWithoutLabel();
+  },
+
+  renderDatefilterInput: function renderDatefilterInput() {
+    return this.renderInputWithoutLabel();
   },
 
   renderDatepickerInput: function renderDatepickerInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderNumberInput: function renderNumberInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderSwitchInput: function renderSwitchInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderFileInput: function renderFileInput() {
-    return React.createElement(
-      'div',
-      { className: this.inputClassName() },
-      this.renderComponentInput(),
-      this.renderInputErrors()
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderHiddenInput: function renderHiddenInput() {
@@ -6279,6 +6617,8 @@ var Input = React.createClass({
   renderComponentInput: function renderComponentInput() {
     var componentInputClass = this.getInputComponentClass(this.props.component);
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
+      originalId: this.props.id,
+      originalName: this.props.name,
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),
@@ -6305,6 +6645,7 @@ var Input = React.createClass({
       text: InputText,
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
+      datefilter: InputDatefilter,
       datepicker: InputDatepicker,
       number: InputNumber,
       file: InputFile,

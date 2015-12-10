@@ -1,0 +1,17 @@
+.input-datefilter {}
+
+.input-datefilter__body {
+  width: 100%;
+  display: none;
+  position: absolute;
+  top: 35px;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  padding-top: 15px;
+}
+
+.input-datefilter__button {
+  float: right;
+  margin: 0 0.8rem 0.8rem;
+}

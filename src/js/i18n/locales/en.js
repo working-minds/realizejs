@@ -1,6 +1,7 @@
 Realize.i18n.registerLocale({
   true: 'Yes',
   false: 'No',
+  ok: 'Ok',
   loading: 'Loading...',
   select: 'Select',
   actions: {
@@ -59,6 +60,11 @@ Realize.i18n.registerLocale({
     autocomplete: {
       emptyResult: 'No items found.',
       clear: 'Clear selected items'
+    },
+
+    datefilter: {
+      from: 'From',
+      to: 'To'
     }
   },
 

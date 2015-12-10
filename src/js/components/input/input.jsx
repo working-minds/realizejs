@@ -6,7 +6,7 @@ var Input = React.createClass({
     label: React.PropTypes.string,
     value: React.PropTypes.node,
     component: React.PropTypes.string,
-    formStyle: React.PropTypes.oneOf(['default', 'filter']),
+    formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
@@ -64,49 +64,37 @@ var Input = React.createClass({
     );
   },
 
-  renderAutocompleteInput: function() {
+  renderInputWithoutLabel: function() {
     return (
       <div className={this.inputClassName()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
     );
+  },
+
+  renderAutocompleteInput: function() {
+    return this.renderInputWithoutLabel();
+  },
+
+  renderDatefilterInput: function() {
+    return this.renderInputWithoutLabel();
   },
 
   renderDatepickerInput: function() {
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderNumberInput: function(){
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderSwitchInput: function(){
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderFileInput: function() {
-    return (
-      <div className={this.inputClassName()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
+    return this.renderInputWithoutLabel();
   },
 
   renderHiddenInput: function() {
@@ -116,6 +104,8 @@ var Input = React.createClass({
   renderComponentInput: function() {
     var componentInputClass = this.getInputComponentClass(this.props.component);
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
+      originalId: this.props.id,
+      originalName: this.props.name,
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),
@@ -144,6 +134,7 @@ var Input = React.createClass({
       text: InputText,
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
+      datefilter: InputDatefilter,
       datepicker: InputDatepicker,
       number: InputNumber,
       file: InputFile,
