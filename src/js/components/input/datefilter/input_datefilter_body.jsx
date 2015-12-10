@@ -17,7 +17,7 @@ var InputDatefilterBody = React.createClass({
       fromFilterInput: {},
       toFilterInput: {},
       okButton: {
-        name: 'actions.ok'
+        name: 'ok'
       }
     };
   },
@@ -67,7 +67,10 @@ var InputDatefilterBody = React.createClass({
   renderUpdateButton: function() {
     return (
       <div className="input-datefilter__button">
-        <Button name="update" element="a" />
+        <Button {...this.props.okButton}
+          element="a"
+          onClick={this.selectDate}
+        />
       </div>
     );
   },
@@ -75,11 +78,13 @@ var InputDatefilterBody = React.createClass({
   /* Date selection handlers */
 
   selectDate: function(event) {
-    var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput));
-    var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput));
+    var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
+    var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
+    var selectedDates = $.grep([$fromInput.val(), $toInput.val()], function(date) {
+      return !!date;
+    });
 
-    console.log($fromInput.val());
-    console.log($toInput.val());
+    this.props.onSelectDate(selectedDates);
   },
 
   /* Props parser methods */

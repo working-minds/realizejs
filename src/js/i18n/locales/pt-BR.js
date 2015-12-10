@@ -1,6 +1,7 @@
 Realize.i18n.registerLocale({
   true: 'Sim',
   false: 'Não',
+  ok: 'Ok',
   loading: 'Carregando...',
   select: 'Selecione',
   actions: {

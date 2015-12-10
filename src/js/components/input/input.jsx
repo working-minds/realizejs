@@ -104,6 +104,8 @@ var Input = React.createClass({
   renderComponentInput: function() {
     var componentInputClass = this.getInputComponentClass(this.props.component);
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
+      originalId: this.props.id,
+      originalName: this.props.name,
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),

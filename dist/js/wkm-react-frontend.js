@@ -153,6 +153,7 @@ Realize.t = Realize.i18n.translate;
 Realize.i18n.registerLocale({
   true: 'Yes',
   false: 'No',
+  ok: 'Ok',
   loading: 'Loading...',
   select: 'Select',
   actions: {
@@ -234,6 +235,7 @@ Realize.i18n.registerLocale({
 Realize.i18n.registerLocale({
   true: 'Sim',
   false: 'Não',
+  ok: 'Ok',
   loading: 'Carregando...',
   select: 'Selecione',
   actions: {
@@ -6186,6 +6188,8 @@ var InputDatefilter = React.createClass({
 
   mixins: [CssClassMixin],
   propTypes: {
+    originalId: React.PropTypes.string,
+    originalName: React.PropTypes.string,
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     resource: React.PropTypes.string,
@@ -6217,6 +6221,8 @@ var InputDatefilter = React.createClass({
         onFocus: this.showFilterBody
       })),
       React.createElement(InputDatefilterBody, _extends({}, this.propsWithoutCSS(), {
+        id: this.props.originalId,
+        name: this.props.originalName,
         onSelectDate: this.handleSelectDate,
         ref: "body"
       }))
@@ -6253,7 +6259,11 @@ var InputDatefilter = React.createClass({
 
   /* Date selection handlers */
 
-  handleSelectDate: function handleSelectDate(selectedDates) {}
+  handleSelectDate: function handleSelectDate(selectedDates) {
+    this.setState({
+      selectedDates: selectedDates
+    });
+  }
 
 });
 //
@@ -6283,7 +6293,7 @@ var InputDatefilterBody = React.createClass({
       fromFilterInput: {},
       toFilterInput: {},
       okButton: {
-        name: 'actions.ok'
+        name: 'ok'
       }
     };
   },
@@ -6334,18 +6344,23 @@ var InputDatefilterBody = React.createClass({
     return React.createElement(
       'div',
       { className: 'input-datefilter__button' },
-      React.createElement(Button, { name: 'update', element: 'a' })
+      React.createElement(Button, _extends({}, this.props.okButton, {
+        element: 'a',
+        onClick: this.selectDate
+      }))
     );
   },
 
   /* Date selection handlers */
 
   selectDate: function selectDate(event) {
-    var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput));
-    var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput));
+    var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
+    var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
+    var selectedDates = $.grep([$fromInput.val(), $toInput.val()], function (date) {
+      return !!date;
+    });
 
-    console.log($fromInput.val());
-    console.log($toInput.val());
+    this.props.onSelectDate(selectedDates);
   },
 
   /* Props parser methods */
@@ -6564,6 +6579,8 @@ var Input = React.createClass({
   renderComponentInput: function renderComponentInput() {
     var componentInputClass = this.getInputComponentClass(this.props.component);
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
+      originalId: this.props.id,
+      originalName: this.props.name,
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),

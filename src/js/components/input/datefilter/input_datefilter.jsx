@@ -1,6 +1,8 @@
 var InputDatefilter = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
+    originalId: React.PropTypes.string,
+    originalName: React.PropTypes.string,
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     resource: React.PropTypes.string,
@@ -34,6 +36,8 @@ var InputDatefilter = React.createClass({
 
         <InputDatefilterBody
           {...this.propsWithoutCSS()}
+          id={this.props.originalId}
+          name={this.props.originalName}
           onSelectDate={this.handleSelectDate}
           ref="body"
         />
@@ -72,7 +76,9 @@ var InputDatefilter = React.createClass({
   /* Date selection handlers */
 
   handleSelectDate: function(selectedDates) {
-
+    this.setState({
+      selectedDates: selectedDates
+    });
   }
 
 });
