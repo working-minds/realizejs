@@ -60,7 +60,7 @@ var InputDatefilter = React.createClass({
     firstFilterInput.focus();
   },
 
-  hideResult: function() {
+  hideFilterBody: function() {
     $(document).off('click', this.handleDocumentClick);
     var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
     $bodyNode.hide();
@@ -69,7 +69,7 @@ var InputDatefilter = React.createClass({
   handleDocumentClick: function(event) {
     var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
     if($containerNode.find(event.target).length === 0) {
-      this.hideResult();
+      this.hideFilterBody();
     }
   },
 
@@ -79,6 +79,8 @@ var InputDatefilter = React.createClass({
     this.setState({
       selectedDates: selectedDates
     });
+
+    this.hideFilterBody();
   }
 
 });

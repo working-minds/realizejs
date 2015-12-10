@@ -6244,7 +6244,7 @@ var InputDatefilter = React.createClass({
     firstFilterInput.focus();
   },
 
-  hideResult: function hideResult() {
+  hideFilterBody: function hideFilterBody() {
     $(document).off('click', this.handleDocumentClick);
     var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
     $bodyNode.hide();
@@ -6253,7 +6253,7 @@ var InputDatefilter = React.createClass({
   handleDocumentClick: function handleDocumentClick(event) {
     var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
     if ($containerNode.find(event.target).length === 0) {
-      this.hideResult();
+      this.hideFilterBody();
     }
   },
 
@@ -6263,6 +6263,8 @@ var InputDatefilter = React.createClass({
     this.setState({
       selectedDates: selectedDates
     });
+
+    this.hideFilterBody();
   }
 
 });
@@ -6303,7 +6305,7 @@ var InputDatefilterBody = React.createClass({
   render: function render() {
     return React.createElement(
       'div',
-      { className: this.className() },
+      { className: this.className(), onClick: this.handleFilterBodyClick, ref: 'filterBody' },
       this.renderFromInput(),
       this.renderToInput(),
       this.renderUpdateButton()
@@ -6315,6 +6317,7 @@ var InputDatefilterBody = React.createClass({
       'div',
       { className: 'input-datefilter__filter' },
       React.createElement(Input, _extends({}, this.fromInputProps(), {
+        onKeyDown: this.handleInputKeypress,
         component: 'datepicker',
         ref: 'fromInput'
       }))
@@ -6330,6 +6333,7 @@ var InputDatefilterBody = React.createClass({
       'div',
       { className: 'input-datefilter__filter' },
       React.createElement(Input, _extends({}, this.toInputProps(), {
+        onKeyDown: this.handleInputKeypress,
         component: 'datepicker',
         ref: 'toInput'
       }))
@@ -6351,9 +6355,43 @@ var InputDatefilterBody = React.createClass({
     );
   },
 
+  /* Event handlers */
+
+  handleFilterBodyClick: function handleFilterBodyClick(event) {
+    var filterBody = ReactDOM.findDOMNode(this.refs.filterBody);
+    var fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
+
+    if (event.target == filterBody) {
+      fromInput.focus();
+    }
+  },
+
+  handleInputKeypress: function handleInputKeypress(event) {
+    var keyCode = event.keyCode;
+
+    if (keyCode == 13 || keyCode == 9) {
+      this.handleInputTabKeypress(event);
+    } else if (keyCode == 27) {
+      event.preventDefault();
+      this.selectDate();
+    }
+  },
+
+  handleInputTabKeypress: function handleInputTabKeypress(event) {
+    event.preventDefault();
+    var fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
+    var toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input')[0];
+
+    if (event.target == fromInput) {
+      toInput.focus();
+    } else {
+      this.selectDate();
+    }
+  },
+
   /* Date selection handlers */
 
-  selectDate: function selectDate(event) {
+  selectDate: function selectDate() {
     var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
     var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
     var selectedDates = $.grep([$fromInput.val(), $toInput.val()], function (date) {

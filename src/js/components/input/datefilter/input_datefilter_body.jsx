@@ -26,7 +26,7 @@ var InputDatefilterBody = React.createClass({
 
   render: function() {
     return (
-      <div className={this.className()}>
+      <div className={this.className()} onClick={this.handleFilterBodyClick} ref="filterBody">
         {this.renderFromInput()}
         {this.renderToInput()}
         {this.renderUpdateButton()}
@@ -38,6 +38,7 @@ var InputDatefilterBody = React.createClass({
     return (
       <div className="input-datefilter__filter">
         <Input {...this.fromInputProps()}
+          onKeyDown={this.handleInputKeypress}
           component="datepicker"
           ref="fromInput"
         />
@@ -53,6 +54,7 @@ var InputDatefilterBody = React.createClass({
     return (
       <div className="input-datefilter__filter">
         <Input {...this.toInputProps()}
+          onKeyDown={this.handleInputKeypress}
           component="datepicker"
           ref="toInput"
         />
@@ -75,9 +77,43 @@ var InputDatefilterBody = React.createClass({
     );
   },
 
+  /* Event handlers */
+
+  handleFilterBodyClick: function(event) {
+    var filterBody = ReactDOM.findDOMNode(this.refs.filterBody);
+    var fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
+
+    if(event.target == filterBody) {
+      fromInput.focus();
+    }
+  },
+
+  handleInputKeypress: function(event) {
+    var keyCode = event.keyCode;
+
+    if(keyCode == 13 || keyCode == 9) {
+      this.handleInputTabKeypress(event);
+    } else if(keyCode == 27) {
+      event.preventDefault();
+      this.selectDate();
+    }
+  },
+
+  handleInputTabKeypress: function(event) {
+    event.preventDefault();
+    var fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
+    var toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input')[0];
+
+    if(event.target == fromInput) {
+      toInput.focus();
+    } else {
+      this.selectDate();
+    }
+  },
+
   /* Date selection handlers */
 
-  selectDate: function(event) {
+  selectDate: function() {
     var $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
     var $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
     var selectedDates = $.grep([$fromInput.val(), $toInput.val()], function(date) {
