@@ -11,6 +11,7 @@ var ModalStore = Reflux.createStore({
   onOpen: function(props) {
     this.modalId = props.modalId;
     this.shouldOpen = true;
+    this.shouldClose = false;
     this.options = $.grep(props, function(prop) {
       return (this.optionProps.indexOf(prop) > 0);
     }.bind(this));
@@ -20,6 +21,15 @@ var ModalStore = Reflux.createStore({
 
   onOpenFinished: function() {
     this.shouldOpen = false;
+
+    this.trigger(this);
+  },
+
+  onClose: function(props) {
+    this.modalId = props.modalId;
+    this.shouldOpen = false;
+    this.shouldClose = true;
+
     this.trigger(this);
   }
 });
