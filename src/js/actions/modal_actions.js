@@ -1,4 +1,5 @@
 var ModalActions = Reflux.createActions([
   'open',
-  'openFinished'
+  'openFinished',
+  'close'
 ]);

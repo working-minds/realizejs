@@ -777,7 +777,7 @@ var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
 
 'use strict';
 
-var ModalActions = Reflux.createActions(['open', 'openFinished']);
+var ModalActions = Reflux.createActions(['open', 'openFinished', 'close']);
 //
 
 'use strict';
@@ -849,6 +849,7 @@ var ModalStore = Reflux.createStore({
   onOpen: function onOpen(props) {
     this.modalId = props.modalId;
     this.shouldOpen = true;
+    this.shouldClose = false;
     this.options = $.grep(props, (function (prop) {
       return this.optionProps.indexOf(prop) > 0;
     }).bind(this));
@@ -858,6 +859,15 @@ var ModalStore = Reflux.createStore({
 
   onOpenFinished: function onOpenFinished() {
     this.shouldOpen = false;
+
+    this.trigger(this);
+  },
+
+  onClose: function onClose(props) {
+    this.modalId = props.modalId;
+    this.shouldOpen = false;
+    this.shouldClose = true;
+
     this.trigger(this);
   }
 });
@@ -7705,10 +7715,17 @@ var Modal = React.createClass({
   handleModalStoreState: function handleModalStoreState() {
     var modalStore = this.state.modalStore;
     var shouldOpenModal = modalStore.shouldOpen;
+    var shouldCloseModal = modalStore.shouldClose;
     var modalToOpenId = modalStore.modalId;
 
-    if (shouldOpenModal && modalToOpenId == this.props.id) {
-      this.open();
+    if (modalToOpenId == this.props.id) {
+      if (shouldOpenModal) {
+        this.open();
+      }
+
+      if (shouldCloseModal) {
+        this.close();
+      }
     }
   },
 
@@ -7780,6 +7797,14 @@ var Modal = React.createClass({
     if (typeof this.props.ready === "function") {
       this.props.ready();
     }
+  },
+
+  /* Modal close handlers */
+
+  close: function close() {
+    var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
+
+    $modal.closeModal();
   },
 
   /* Modal resize handlers */
