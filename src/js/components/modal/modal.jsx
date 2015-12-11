@@ -75,11 +75,19 @@ var Modal = React.createClass({
   handleModalStoreState: function() {
     var modalStore = this.state.modalStore;
     var shouldOpenModal = modalStore.shouldOpen;
+    var shouldCloseModal = modalStore.shouldClose;
     var modalToOpenId = modalStore.modalId;
 
-    if(shouldOpenModal && modalToOpenId == this.props.id) {
-      this.open();
+    if(modalToOpenId == this.props.id) {
+      if(shouldOpenModal) {
+        this.open();
+      }
+
+      if(shouldCloseModal) {
+        this.close();
+      }
     }
+
   },
 
   /* Rendering functions */
@@ -147,6 +155,14 @@ var Modal = React.createClass({
     if(typeof this.props.ready === "function") {
       this.props.ready();
     }
+  },
+
+  /* Modal close handlers */
+
+  close: function() {
+    var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
+
+    $modal.closeModal();
   },
 
   /* Modal resize handlers */
