@@ -4003,15 +4003,17 @@ var Form = React.createClass({
     multipart: React.PropTypes.bool,
     style: React.PropTypes.string,
     resource: React.PropTypes.string,
+    ajaxSubmit: React.PropTypes.bool,
+    isLoading: React.PropTypes.bool,
     submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
-    isLoading: React.PropTypes.bool,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
+      themeClassKey: 'form',
       id: null,
       inputs: {},
       data: {},
@@ -4020,15 +4022,15 @@ var Form = React.createClass({
       dataType: undefined,
       contentType: undefined,
       multipart: false,
+      style: 'default',
+      resource: null,
+      ajaxSubmit: true,
+      isLoading: false,
       submitButton: {
         name: 'actions.send',
         icon: 'send'
       },
       otherButtons: [],
-      isLoading: false,
-      themeClassKey: 'form',
-      style: 'default',
-      resource: null,
       onSubmit: function onSubmit(event, postData) {},
       onReset: function onReset(event) {}
     };
@@ -4055,6 +4057,8 @@ var Form = React.createClass({
     return React.createElement(
       'form',
       { action: this.props.action,
+        method: this.props.method,
+        encType: this.parseFormEncType(),
         id: this.props.id,
         onSubmit: this.handleSubmit,
         onReset: this.handleReset,
@@ -4074,6 +4078,14 @@ var Form = React.createClass({
     }
 
     return React.createElement(InputGroup, _extends({}, this.propsWithoutCSS(), { formStyle: this.props.style, errors: this.state.errors }));
+  },
+
+  parseFormEncType: function parseFormEncType() {
+    if (!!this.props.multipart) {
+      return "multipart/form-data";
+    } else {
+      return "application/x-www-form-urlencoded";
+    }
   },
 
   handleSubmit: function handleSubmit(event) {
@@ -4099,6 +4111,14 @@ var Form = React.createClass({
   },
 
   submit: function submit(postData) {
+    if (!!this.props.ajaxSubmit) {
+      this.ajaxSubmit(postData);
+    } else {
+      this.formSubmit();
+    }
+  },
+
+  ajaxSubmit: function ajaxSubmit(postData) {
     var submitOptions = {
       url: this.props.action,
       method: this.props.method,
@@ -4131,6 +4151,11 @@ var Form = React.createClass({
     }
 
     $.ajax(submitOptions);
+  },
+
+  formSubmit: function formSubmit() {
+    var formNode = ReactDOM.findDOMNode(this.refs.form);
+    formNode.submit();
   },
 
   isLoading: function isLoading() {
