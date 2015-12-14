@@ -3,6 +3,11 @@
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
 
+/*!
+ * WKM Frontend v0.0.0 (http://www.wkm.com.br)
+ * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
+ */
+
 'use strict';
 
 var Realize = {};
@@ -843,11 +848,13 @@ var ModalStore = Reflux.createStore({
   optionProps: ['dismissible', 'opacity', 'inDuration', 'outDuration', 'ready', 'complete'],
 
   modalId: '',
+  openerId: '',
   shouldOpen: false,
   options: {},
 
   onOpen: function onOpen(props) {
     this.modalId = props.modalId;
+    this.openerId = props.openerId;
     this.shouldOpen = true;
     this.shouldClose = false;
     this.options = $.grep(props, (function (prop) {
@@ -6605,7 +6612,7 @@ var Input = React.createClass({
   renderInput: function renderInput() {
     return React.createElement(
       'div',
-      { className: this.inputClassName() },
+      { className: this.inputClassName(), id: this.getInputContainerId() },
       this.renderComponentInput(),
       this.renderLabel(),
       this.renderInputErrors()
@@ -6615,7 +6622,7 @@ var Input = React.createClass({
   renderInputWithoutLabel: function renderInputWithoutLabel() {
     return React.createElement(
       'div',
-      { className: this.inputClassName() },
+      { className: this.inputClassName(), id: this.getInputContainerId() },
       this.renderComponentInput(),
       this.renderInputErrors()
     );
@@ -6673,6 +6680,10 @@ var Input = React.createClass({
 
   renderInputErrors: function renderInputErrors() {
     return React.createElement(InputError, { errors: this.getInputErrors() });
+  },
+
+  getInputContainerId: function getInputContainerId() {
+    return "input__" + this.props.id;
   },
 
   getInputComponentClass: function getInputComponentClass(component) {
@@ -7860,12 +7871,14 @@ var ModalButton = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    modalId: React.PropTypes.string
+    modalId: React.PropTypes.string,
+    openerId: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
-      modalId: ''
+      modalId: '',
+      openerId: ''
     };
   },
 

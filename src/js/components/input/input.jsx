@@ -56,7 +56,7 @@ var Input = React.createClass({
 
   renderInput: function() {
     return (
-      <div className={this.inputClassName()}>
+      <div className={this.inputClassName()} id={this.getInputContainerId()}>
         {this.renderComponentInput()}
         {this.renderLabel()}
         {this.renderInputErrors()}
@@ -66,7 +66,7 @@ var Input = React.createClass({
 
   renderInputWithoutLabel: function() {
     return (
-      <div className={this.inputClassName()}>
+      <div className={this.inputClassName()} id={this.getInputContainerId()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
@@ -127,6 +127,10 @@ var Input = React.createClass({
 
   renderInputErrors: function() {
     return (<InputError errors={this.getInputErrors()} />);
+  },
+
+  getInputContainerId: function() {
+    return "input__" + this.props.id;
   },
 
   getInputComponentClass: function(component) {

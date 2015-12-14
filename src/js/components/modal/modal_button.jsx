@@ -2,12 +2,14 @@ var ModalButton = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    modalId: React.PropTypes.string
+    modalId: React.PropTypes.string,
+    openerId: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      modalId: ''
+      modalId: '',
+      openerId: ''
     };
   },
 
@@ -23,7 +25,7 @@ var ModalButton = React.createClass({
 
   getClassName: function() {
     var className = this.className();
-    if (this.props.disabled && this.props.element === 'a')
+    if(this.props.disabled && this.props.element === 'a')
       className = 'button btn-flat disable-action-button';
 
     return className;
