@@ -5,11 +5,13 @@ var ModalStore = Reflux.createStore({
   ],
 
   modalId: '',
+  openerId: '',
   shouldOpen: false,
   options: {},
 
   onOpen: function(props) {
     this.modalId = props.modalId;
+    this.openerId = props.openerId;
     this.shouldOpen = true;
     this.shouldClose = false;
     this.options = $.grep(props, function(prop) {
