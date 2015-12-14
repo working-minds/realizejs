@@ -10,7 +10,7 @@ var InputSelectActionsListenerMixin = {
     if(this.isChangedInput(changedInputId)) {
       this.setState({
         optionsCache: this.cacheSelectedOption(selectedOption),
-        value: selectedOption.value
+        value: [selectedOption.value]
       });
     }
   },
