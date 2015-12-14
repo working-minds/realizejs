@@ -26,8 +26,6 @@ var FormActionsListenerMixin = {
   },
 
   formActionListener: function(formState) {
-    this.setState({ formState: formState });
-
     try {
       this.executePropListener(formState);
     } catch(e) {

@@ -3,6 +3,7 @@ var InputSelect = React.createClass({
     CssClassMixin,
     InputComponentMixin,
     SelectComponentMixin,
+    InputSelectActionsListenerMixin,
     MaterializeSelectMixin
   ],
 

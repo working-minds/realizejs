@@ -2,7 +2,8 @@ var InputAutocomplete = React.createClass({
   mixins: [
     CssClassMixin,
     InputComponentMixin,
-    SelectComponentMixin
+    SelectComponentMixin,
+    InputSelectActionsListenerMixin
   ],
 
   propTypes: {
@@ -43,6 +44,12 @@ var InputAutocomplete = React.createClass({
     var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
+  },
+
+  componentDidUpdate: function() {
+    if(this.state.refluxStore) {
+      this.handleRefluxStoreChange();
+    }
   },
 
   render: function() {
