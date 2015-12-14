@@ -3,11 +3,6 @@
  * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
  */
 
-/*!
- * WKM Frontend v0.0.0 (http://www.wkm.com.br)
- * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
- */
-
 'use strict';
 
 var Realize = {};
@@ -782,6 +777,11 @@ var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
 
 'use strict';
 
+var InputSelectActions = Reflux.createActions(['select']);
+//
+
+'use strict';
+
 var ModalActions = Reflux.createActions(['open', 'openFinished', 'close']);
 //
 
@@ -838,6 +838,23 @@ var FormStore = Reflux.createStore({
     this.trigger(this);
   }
 
+});
+//
+
+'use strict';
+
+var InputSelectStore = Reflux.createStore({
+  listenables: [InputSelectActions],
+
+  inputId: '',
+  selectedOption: {},
+
+  onSelect: function onSelect(inputId, selectedOption) {
+    this.inputId = inputId;
+    this.selectedOption = selectedOption;
+
+    this.trigger(this);
+  }
 });
 //
 
@@ -1056,8 +1073,6 @@ var FormActionsListenerMixin = {
   },
 
   formActionListener: function formActionListener(formState) {
-    this.setState({ formState: formState });
-
     try {
       this.executePropListener(formState);
     } catch (e) {
@@ -1586,6 +1601,41 @@ var InputComponentMixin = {
     return !!inputNode && inputNode.type === "checkbox";
   }
 
+};
+//
+
+"use strict";
+
+var InputSelectActionsListenerMixin = {
+  componentDidMount: function componentDidMount() {
+    InputSelectStore.listen(this.inputSelectActionListener);
+  },
+
+  inputSelectActionListener: function inputSelectActionListener(storeState) {
+    var changedInputId = storeState.inputId;
+    var selectedOption = storeState.selectedOption;
+
+    if (this.isChangedInput(changedInputId)) {
+      this.setState({
+        optionsCache: this.cacheSelectedOption(selectedOption),
+        value: selectedOption.value
+      });
+    }
+  },
+
+  isChangedInput: function isChangedInput(changedInputId) {
+    var originalId = this.props.originalId;
+    var id = this.props.id;
+
+    return !!originalId && originalId == changedInputId || !!id && id == changedInputId;
+  },
+
+  cacheSelectedOption: function cacheSelectedOption(selectedOption) {
+    if (typeof this.cacheOptions == "function") {
+      return this.cacheOptions([selectedOption]);
+    }
+    return this.state.optionsCache;
+  }
 };
 //
 
@@ -5482,7 +5532,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 var InputAutocomplete = React.createClass({
   displayName: 'InputAutocomplete',
 
-  mixins: [CssClassMixin, InputComponentMixin, SelectComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin, SelectComponentMixin, InputSelectActionsListenerMixin],
 
   propTypes: {
     maxOptions: React.PropTypes.number,
@@ -5522,6 +5572,12 @@ var InputAutocomplete = React.createClass({
     var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
     var $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
+  },
+
+  componentDidUpdate: function componentDidUpdate() {
+    if (this.state.refluxStore) {
+      this.handleRefluxStoreChange();
+    }
   },
 
   render: function render() {
@@ -7409,7 +7465,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 var InputSelect = React.createClass({
   displayName: 'InputSelect',
 
-  mixins: [CssClassMixin, InputComponentMixin, SelectComponentMixin, MaterializeSelectMixin],
+  mixins: [CssClassMixin, InputComponentMixin, SelectComponentMixin, InputSelectActionsListenerMixin, MaterializeSelectMixin],
 
   propTypes: {
     includeBlank: React.PropTypes.bool,
