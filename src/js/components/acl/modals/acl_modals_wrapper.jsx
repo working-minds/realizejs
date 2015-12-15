@@ -82,7 +82,7 @@ var AclModalsWrapper = React.createClass({
   handleRemovePrincipal: function(selectedPrincipal) {
     if (confirm("Você tem certeza que deseja retirar as permissões desse usuário/grupo?")) {
       var url = this.props.urlProps.principalsBaseUrl;
-      data = {
+      var data = {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType,
         principal_id: selectedPrincipal.id,
