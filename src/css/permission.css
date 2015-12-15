@@ -1,0 +1,157 @@
+#permission-manager-modal {
+  max-width: 40%;
+}
+
+#permission-manager-modal .close-button {
+  color: black;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+}
+
+#permission-manager-modal .modal-content-container {
+  overflow-y: hidden !important;
+}
+
+#permission-manager-modal .input-field label.active {
+  color: black;
+  font-size: 1rem;
+}
+
+#permission-manager-modal .principal-grid th {
+  padding: 6px 2px !important;
+  height: 20px;
+}
+
+#permission-manager-modal .principal-grid td {
+  padding: 6px 2px !important;
+  height: 20px;
+}
+
+#permission-manager-modal .row {
+  margin-left: 0rem !important;
+  margin-right: 0rem !important;
+}
+
+#permission-manager-modal .principal-grid {
+  border: 1px solid #bdbdbd;
+  max-height: 230px;
+  overflow: auto;
+}
+
+#permission-manager-modal .permissions-manager {
+  border: 1px solid #bdbdbd;
+  max-height: 230px;
+  overflow: auto;
+  padding: 10px 0px;
+}
+
+#permission-manager-modal .box-edit-permissions {
+  margin-top: 20px;
+  margin-bottom: 0px;
+}
+
+#permission-manager-modal .box-edit-permissions .form__input {
+  min-height: 1rem;
+}
+
+#permission-manager-modal .collapsible {
+  box-shadow: none;
+  border: none;
+}
+
+#permission-manager-modal .collapsible .collapsible-header{
+  border: none;
+  padding: 0;
+  background-color: inherit;
+}
+
+#permission-manager-modal .principal-action-buttons {
+  margin: 10px 0px;
+}
+
+#permission-manager-modal .principal-action-buttons .button {
+  float: right;
+  margin: 0px 5px;
+}
+
+#permission-manager-modal .modal-footer a {
+  margin: 0px 5px;
+}
+
+#permission-manager-modal .row-selected {
+  background-color: #42A5F5;
+  color: white;
+}
+
+#add-principals-modal {
+  width: 30% !important;
+}
+
+#add-principals-modal .principal-modal-content .box-edit-permissions {
+  margin-bottom: 0px;
+}
+
+#add-principals-modal .principal-modal-content .box-edit-permissions button {
+  height: 20px;
+  line-height: 1px;
+  font-size: 0.8rem;
+  padding: 15px 5px;
+}
+
+#add-principals-modal .principal-modal-content .box-edit-permissions span {
+  padding-left: 5px;
+}
+
+@media screen and (max-width: 1280px) {
+  .permission-manager-modal {
+    width: 60% !important;
+    max-width: 60% !important;
+  }
+
+  #add-principals-modal {
+    width: 50% !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #permission-manager-modal {
+    width: 90% !important;
+    max-width: 90% !important;
+  }
+
+  #add-principals-modal {
+    width: 80% !important;
+  }
+
+  #add-principals-modal .principal-action-buttons button {
+    height: 20px;
+    line-height: 1px;
+    font-size: 0.8rem;
+    padding: 15px 5px;
+  }
+
+  .principal-action-buttons span {
+    padding-left: 5px;
+  }
+
+  #permission-manager-modal .modal-footer a {
+    height: 20px;
+    line-height: 1px;
+    font-size: 0.8rem;
+    padding: 15px 5px;
+  }
+
+  #add-principals-modal .modal-footer a {
+    height: 20px;
+    line-height: 1px;
+    font-size: 0.8rem;
+    padding: 15px 5px;
+  }
+
+  #permission-manager-modal .modal-footer span {
+    padding-left: 5px;
+  }
+
+  #add-principals-modal .modal-footer span {
+    padding-left: 5px;
+  }
+}

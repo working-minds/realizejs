@@ -2192,6 +2192,11 @@ var EditPermissions = React.createClass({
       for (var i = 0; i < permissionsChecked.length; i++) {
         var permissions = permissionsChecked[i].permission;
         var implies = permissionsChecked[i].implies;
+
+        if (!$.isArray(permissions)) {
+          permissions = [permissions];
+        }
+
         if (permissions.indexOf(permission) !== -1 || implies.indexOf(permission) !== -1) checked = true;
       }
     }
@@ -2292,7 +2297,7 @@ var EditPermissions = React.createClass({
 
   belongsToPermissionsChecked: function belongsToPermissionsChecked(permission) {
     var permissionsChecked = !!this.state.permissionsChecked ? this.state.permissionsChecked.permissions : [];
-    belongs = false;
+    var belongs = false;
 
     for (var i = 0; i < permissionsChecked.length; i++) {
       if (permissionsChecked[i].permissions === permission) {
@@ -2642,7 +2647,7 @@ var AclModalsWrapper = React.createClass({
   handleRemovePrincipal: function handleRemovePrincipal(selectedPrincipal) {
     if (confirm("Você tem certeza que deseja retirar as permissões desse usuário/grupo?")) {
       var url = this.props.urlProps.principalsBaseUrl;
-      data = {
+      var data = {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType,
         principal_id: selectedPrincipal.id,
@@ -2696,7 +2701,7 @@ var AddPrincipalsModal = React.createClass({
           name: {
             label: 'Nome'
           },
-          principal_type: {
+          principal_type_translated: {
             label: 'Tipo'
           }
         },
@@ -3082,7 +3087,7 @@ var PermissionManager = React.createClass({
           name: {
             label: 'Nome'
           },
-          principal_type: {
+          principal_type_translated: {
             label: 'Tipo'
           }
         },
