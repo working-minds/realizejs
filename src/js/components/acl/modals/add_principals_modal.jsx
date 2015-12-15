@@ -28,7 +28,7 @@ var AddPrincipalsModal = React.createClass({
           name: {
             label: 'Nome'
           },
-          principal_type: {
+          principal_type_translated: {
             label: 'Tipo'
           }
         },

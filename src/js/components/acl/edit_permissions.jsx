@@ -74,6 +74,11 @@ var EditPermissions = React.createClass({
       for (var i = 0; i < permissionsChecked.length; i++) {
         var permissions = permissionsChecked[i].permission;
         var implies = permissionsChecked[i].implies;
+
+        if (!$.isArray(permissions)) {
+          permissions = [permissions]
+        }
+
         if (permissions.indexOf(permission) !== -1 || implies.indexOf(permission) !== -1)
           checked = true;
       }
@@ -176,7 +181,7 @@ var EditPermissions = React.createClass({
 
   belongsToPermissionsChecked: function(permission) {
     var permissionsChecked = !!this.state.permissionsChecked ?  this.state.permissionsChecked.permissions : [];
-    belongs = false;
+    var belongs = false;
 
     for(var i = 0; i < permissionsChecked.length; i++) {
       if(permissionsChecked[i].permissions === permission) {
