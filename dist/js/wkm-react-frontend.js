@@ -716,7 +716,7 @@ Realize.themes.materialize = {
   },
 
   tabs: {
-    cssClass: 'tabs-container col',
+    cssClass: 'tabs-container',
 
     tabButton: {
       cssClass: 'tab',
@@ -9998,12 +9998,12 @@ var TabButton = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var Tabs = React.createClass({
-  displayName: 'Tabs',
+  displayName: "Tabs",
 
   mixins: [CssClassMixin, ContainerMixin],
 
@@ -10016,7 +10016,6 @@ var Tabs = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'tabs',
-      className: 's12',
       activeTab: 1
     };
   },
@@ -10027,16 +10026,16 @@ var Tabs = React.createClass({
 
   render: function render() {
     return React.createElement(
-      'div',
+      "div",
       { className: this.className() },
       React.createElement(
-        'ul',
-        { className: 'tabs z-depth-1', ref: 'tabsContainer' },
+        "ul",
+        { className: "tabs z-depth-1", ref: "tabsContainer" },
         this.renderTabButtons()
       ),
       React.createElement(
-        'div',
-        { className: 'row' },
+        "div",
+        null,
         this.renderChildren()
       )
     );
