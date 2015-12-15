@@ -280,7 +280,7 @@ Realize.themes.materialize = {
   },
 
   tabs: {
-    cssClass: 'tabs-container col',
+    cssClass: 'tabs-container',
 
     tabButton: {
       cssClass: 'tab',
