@@ -9537,13 +9537,13 @@ var TableRow = React.createClass({
     var className = this.className();
 
     if (!!this.props.onClickRow) {
-      className = className + 'clickable-row';
+      className = className + ' clickable-row';
     }
 
     if (!!this.props.tableRowCssClass) {
       var cssClass = this.props.tableRowCssClass(this.props.data);
       if (!!cssClass) {
-        className = className + '' + cssClass;
+        className = className + ' ' + cssClass;
       }
     }
 
