@@ -3775,7 +3775,7 @@ var Flash = React.createClass({
   render: function render() {
     return React.createElement(
       ReactCSSTransitionGroup,
-      { transitionName: 'dismiss', transitionAppear: true },
+      { transitionName: 'dismiss', transitionAppear: true, transitionAppearTimeout: 500 },
       this.state.dismissed ? '' : this.renderFlash()
     );
   },
@@ -8314,7 +8314,7 @@ var HeaderNotifications = React.createClass({
 
   render: function render() {
     return React.createElement(
-      'li',
+      'div',
       { className: this.props.className },
       React.createElement(
         'a',
