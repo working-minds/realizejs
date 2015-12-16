@@ -103,7 +103,7 @@ var HeaderNotifications = React.createClass({
 
   render : function(){
     return (
-      <li className={this.props.className}>
+      <div className={this.props.className}>
         <a onClick={this.handleClick}>
           {this.renderIcon()}
           <NotificationNumber count={this.state.count} />
@@ -114,7 +114,7 @@ var HeaderNotifications = React.createClass({
                            handleClickItem={this.handleClickItem}
                            notifications={this.state.notifications}
           />
-      </li>
+      </div>
     );
   }
 
