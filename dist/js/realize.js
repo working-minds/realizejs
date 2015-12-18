@@ -1,6 +1,6 @@
 /*!
- * WKM Frontend v0.0.0 (http://www.wkm.com.br)
- * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
+ * WKM Frontend v0.7.11 (http://www.wkm.com.br)
+ * Copyright 2015-2015 
  */
 
 'use strict';
@@ -10066,4 +10066,4 @@ var Tabs = React.createClass({
 });
 //
 
-//# sourceMappingURL=wkm-react-frontend.js.map
+//# sourceMappingURL=realize.js.map

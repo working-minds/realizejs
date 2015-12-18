@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "file": "wkm-react-frontend.js",
+  "file": "realize.js",
   "sources": [
     "tmp/js/config.js",
     "src/js/config.js",
