@@ -4,16 +4,20 @@ var InputComponentMixin = {
     name: React.PropTypes.string,
     value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,
     errors: React.PropTypes.node,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onFocus: React.PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       value: null,
       disabled: false,
+      readOnly: false,
       onChange: function(event) { return true; },
+      onFocus: function(event) { return true; },
       errors: []
     };
   },
@@ -57,6 +61,15 @@ var InputComponentMixin = {
     if(!event.isDefaultPrevented()) {
       var value = event.target.value;
       this.setState({value: value});
+    }
+  },
+
+  _handleFocus: function(event) {
+    this.props.onFocus(event);
+
+    if(this.props.readOnly) {
+      var inputNode = event.currentTarget;
+      inputNode.blur();
     }
   },
 

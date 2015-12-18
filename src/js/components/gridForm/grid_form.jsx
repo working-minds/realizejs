@@ -23,6 +23,8 @@ var GridForm = React.createClass({
     cancelButton: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
+    eagerLoad: React.PropTypes.bool,
+    formComponent: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
     onSuccess: React.PropTypes.func,
@@ -50,6 +52,8 @@ var GridForm = React.createClass({
         style: 'cancel'
       },
       selectable: true,
+      eagerLoad: true,
+      formComponent: Form,
       onSubmit: function(event, postData) {},
       onReset: function(event) {},
       onSuccess: function(data, status, xhr) { return true; },
@@ -68,45 +72,41 @@ var GridForm = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    this.loadGridData();
-  },
-
   render: function() {
     //TODO: adicionar os divs de card em um componente separado.
     return (
       <div className={this.className()}>
-
-        <div className="card">
-          <div className="card-content">
-            <Form
-              style={"filter"}
-              {...this.props.form}
-              action={this.getFormAction()}
-              data={this.state.selectedDataRow}
-              method={this.getFormMethod()}
-              submitButton={this.getFormSubmitButton()}
-              otherButtons={this.getFormOtherButtons()}
-              onSubmit={this.onSubmit}
-              onReset={this.onReset}
-              onSuccess={this.onSuccess}
-              onError={this.onError}
-              key={"form_" + this.generateUUID()}
-              ref="form"
-            />
-          </div>
+        <div className={this.className() + "__form"}>
+          {this.renderForm()}
         </div>
-        <div className="card">
-          <div className="card-content">
-            <Grid
-              {...this.propsWithoutCSS()}
-              actionButtons={this.getActionButtons()}
-              ref="grid"
-            />
-          </div>
+
+        <div className={this.className() + "__grid"}>
+          <Grid
+            {...this.propsWithoutCSS()}
+            actionButtons={this.getActionButtons()}
+            ref="grid"
+          />
         </div>
       </div>
     );
+  },
+
+  renderForm: function() {
+    var formProps = React.__spread({style: 'filter'}, this.props.form, {
+      action: this.getFormAction(),
+      data: this.state.selectedDataRow,
+      method: this.getFormMethod(),
+      submitButton: this.getFormSubmitButton(),
+      otherButtons: this.getFormOtherButtons(),
+      onSubmit: this.onSubmit,
+      onReset: this.onReset,
+      onSuccess: this.onSuccess,
+      onError: this.onError,
+      key: "form_" + this.generateUUID(),
+      ref: "form"
+    });
+
+    return React.createElement(this.props.formComponent, formProps, null);
   },
 
   getFormAction: function() {

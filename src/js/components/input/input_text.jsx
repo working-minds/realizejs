@@ -18,6 +18,7 @@ var InputText = React.createClass({
         placeholder={this.getPlaceholder()}
         className={this.inputClassName()}
         onChange={this._handleChange}
+        onFocus={this._handleFocus}
         ref="input"
       />
     );

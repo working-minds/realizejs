@@ -30,7 +30,7 @@ var InputDatepicker = React.createClass({
 
         <Label {...this.propsWithoutCSS()} />
         <Button
-          disabled={this.props.disabled}
+          disabled={this.props.disabled || this.props.readOnly}
           icon={{type: "calendar"}}
           className="input-datepicker__button prefix"
           onClick={this.handleCalendarClick}

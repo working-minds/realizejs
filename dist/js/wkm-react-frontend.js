@@ -1518,16 +1518,22 @@ var InputComponentMixin = {
     name: React.PropTypes.string,
     value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,
     errors: React.PropTypes.node,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onFocus: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       value: null,
       disabled: false,
+      readOnly: false,
       onChange: function onChange(event) {
+        return true;
+      },
+      onFocus: function onFocus(event) {
         return true;
       },
       errors: []
@@ -1573,6 +1579,15 @@ var InputComponentMixin = {
     if (!event.isDefaultPrevented()) {
       var value = event.target.value;
       this.setState({ value: value });
+    }
+  },
+
+  _handleFocus: function _handleFocus(event) {
+    this.props.onFocus(event);
+
+    if (this.props.readOnly) {
+      var inputNode = event.currentTarget;
+      inputNode.blur();
     }
   },
 
@@ -4988,6 +5003,8 @@ var GridForm = React.createClass({
     cancelButton: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
+    eagerLoad: React.PropTypes.bool,
+    formComponent: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
     onSuccess: React.PropTypes.func,
@@ -5015,6 +5032,8 @@ var GridForm = React.createClass({
         style: 'cancel'
       },
       selectable: true,
+      eagerLoad: true,
+      formComponent: Form,
       onSubmit: function onSubmit(event, postData) {},
       onReset: function onReset(event) {},
       onSuccess: function onSuccess(data, status, xhr) {
@@ -5037,10 +5056,6 @@ var GridForm = React.createClass({
     };
   },
 
-  componentDidMount: function componentDidMount() {
-    this.loadGridData();
-  },
-
   render: function render() {
     //TODO: adicionar os divs de card em um componente separado.
     return React.createElement(
@@ -5048,40 +5063,36 @@ var GridForm = React.createClass({
       { className: this.className() },
       React.createElement(
         'div',
-        { className: 'card' },
-        React.createElement(
-          'div',
-          { className: 'card-content' },
-          React.createElement(Form, _extends({
-            style: "filter"
-          }, this.props.form, {
-            action: this.getFormAction(),
-            data: this.state.selectedDataRow,
-            method: this.getFormMethod(),
-            submitButton: this.getFormSubmitButton(),
-            otherButtons: this.getFormOtherButtons(),
-            onSubmit: this.onSubmit,
-            onReset: this.onReset,
-            onSuccess: this.onSuccess,
-            onError: this.onError,
-            key: "form_" + this.generateUUID(),
-            ref: 'form'
-          }))
-        )
+        { className: this.className() + "__form" },
+        this.renderForm()
       ),
       React.createElement(
         'div',
-        { className: 'card' },
-        React.createElement(
-          'div',
-          { className: 'card-content' },
-          React.createElement(Grid, _extends({}, this.propsWithoutCSS(), {
-            actionButtons: this.getActionButtons(),
-            ref: 'grid'
-          }))
-        )
+        { className: this.className() + "__grid" },
+        React.createElement(Grid, _extends({}, this.propsWithoutCSS(), {
+          actionButtons: this.getActionButtons(),
+          ref: 'grid'
+        }))
       )
     );
+  },
+
+  renderForm: function renderForm() {
+    var formProps = React.__spread({ style: 'filter' }, this.props.form, {
+      action: this.getFormAction(),
+      data: this.state.selectedDataRow,
+      method: this.getFormMethod(),
+      submitButton: this.getFormSubmitButton(),
+      otherButtons: this.getFormOtherButtons(),
+      onSubmit: this.onSubmit,
+      onReset: this.onReset,
+      onSuccess: this.onSuccess,
+      onError: this.onError,
+      key: "form_" + this.generateUUID(),
+      ref: "form"
+    });
+
+    return React.createElement(this.props.formComponent, formProps, null);
   },
 
   getFormAction: function getFormAction() {
@@ -6052,18 +6063,14 @@ var InputAutocompleteSelect = React.createClass({
 
   propTypes: {
     selectedOptions: React.PropTypes.array,
-    placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func
+    placeholder: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       selectedOptions: [],
       themeClassKey: 'input.autocomplete.select',
-      placeholder: 'select',
-      onFocus: function onFocus() {
-        return true;
-      }
+      placeholder: 'select'
     };
   },
 
@@ -6555,7 +6562,6 @@ var InputDatefilterSelect = React.createClass({
   propTypes: {
     selectedDates: React.PropTypes.array,
     placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func
   },
 
@@ -6563,10 +6569,7 @@ var InputDatefilterSelect = React.createClass({
     return {
       selectedDates: [],
       themeClassKey: 'input.datefilter.select',
-      placeholder: 'select',
-      onFocus: function onFocus() {
-        return true;
-      }
+      placeholder: 'select'
     };
   },
 
@@ -6846,7 +6849,7 @@ var InputDatepicker = React.createClass({
       })),
       React.createElement(Label, this.propsWithoutCSS()),
       React.createElement(Button, {
-        disabled: this.props.disabled,
+        disabled: this.props.disabled || this.props.readOnly,
         icon: { type: "calendar" },
         className: 'input-datepicker__button prefix',
         onClick: this.handleCalendarClick,
@@ -7096,6 +7099,7 @@ var InputMasked = React.createClass({
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
         onChange: this.handleChange,
+        onFocus: this._handleFocus,
         type: "text",
         ref: "input" }),
       this.props.children
@@ -7213,32 +7217,31 @@ var InputMasked = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputNumber = React.createClass({
-  displayName: 'InputNumber',
+  displayName: "InputNumber",
 
   mixins: [CssClassMixin, InputComponentMixin],
 
   getDefaultProps: function getDefaultProps() {
     return {
-      themeClassKey: 'input.number',
-      greedy: false,
-      repeat: 10
+      themeClassKey: 'input.number'
     };
   },
 
   render: function render() {
     return React.createElement(
-      'span',
+      "span",
       null,
       React.createElement(InputMasked, _extends({}, this.props, {
-        type: 'number',
-        plugin_params: { typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy },
         className: this.className(),
-        ref: 'input'
+        onChange: this._handleChange,
+        onFocus: this._handleFocus,
+        type: "number",
+        ref: "input"
       })),
       React.createElement(Label, this.propsWithoutCSS())
     );
@@ -7270,6 +7273,7 @@ var InputPassword = React.createClass({
       placeholder: this.getPlaceholder(),
       className: this.inputClassName(),
       onChange: this._handleChange,
+      onFocus: this._handleFocus,
       type: "password", ref: "input" }));
   }
 });
@@ -7362,6 +7366,7 @@ var InputText = React.createClass({
       placeholder: this.getPlaceholder(),
       className: this.inputClassName(),
       onChange: this._handleChange,
+      onFocus: this._handleFocus,
       ref: 'input'
     }));
   }
@@ -7393,6 +7398,7 @@ var InputTextarea = React.createClass({
       placeholder: this.getPlaceholder(),
       className: this.inputClassName(),
       onChange: this._handleChange,
+      onFocus: this._handleFocus,
       ref: "input"
     }));
   }
