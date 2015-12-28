@@ -4,7 +4,8 @@ var InputFile = React.createClass({
     buttonName: React.PropTypes.string,
     wrapperClassName: React.PropTypes.string,
     buttonClassName: React.PropTypes.string,
-    filePathWrapperClassName: React.PropTypes.string
+    filePathWrapperClassName: React.PropTypes.string,
+    buttonIcon: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -18,7 +19,7 @@ var InputFile = React.createClass({
     return (
       <div className={this.wrapperClassName()}>
         <div className={this.buttonClassName()}>
-          <span>{this.props.buttonName}</span>
+          <span>{this.getButtonName()}</span>
           <input {...this.props} value={this.state.value} onChange={this.handleChange} type="file" ref="input" />
         </div>
         <div className={this.filePathWrapperClassName()}>
@@ -47,6 +48,17 @@ var InputFile = React.createClass({
 
   buttonClassName: function() {
     return this.themedClassName('input.file.button', this.props.buttonClassName);
+  },
+
+  getButtonName: function() {
+    if (!!this.props.buttonIcon) {
+      var component = [];
+      component.push(<i className="material-icons">{this.props.buttonIcon}</i>);
+
+      return component;
+    }
+
+    return this.props.buttonName;
   },
 
   getLabelName: function() {

@@ -1,3 +1,4 @@
 var InputSelectActions = Reflux.createActions([
-  'select'
+  'select',
+  'selectSearchValue'
 ]);

@@ -18,6 +18,7 @@ var InputPassword = React.createClass({
         placeholder={this.getPlaceholder()}
         className={this.inputClassName()}
         onChange={this._handleChange}
+        onFocus={this._handleFocus}
         type="password" ref="input" />
     );
   }

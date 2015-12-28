@@ -3,9 +3,7 @@ var InputNumber = React.createClass({
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.number',
-      greedy: false,
-      repeat: 10
+      themeClassKey: 'input.number'
     };
   },
 
@@ -14,9 +12,10 @@ var InputNumber = React.createClass({
       <span>
         <InputMasked
           {...this.props}
-          type="number"
-          plugin_params={{typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy}}
           className={this.className()}
+          onChange={this._handleChange}
+          onFocus={this._handleFocus}
+          type="number"
           ref="input"
         />
         <Label {...this.propsWithoutCSS()} />

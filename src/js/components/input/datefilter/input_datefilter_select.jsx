@@ -8,7 +8,6 @@ var InputDatefilterSelect = React.createClass({
   propTypes: {
     selectedDates: React.PropTypes.array,
     placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func
   },
 
@@ -16,8 +15,7 @@ var InputDatefilterSelect = React.createClass({
     return {
       selectedDates: [],
       themeClassKey: 'input.datefilter.select',
-      placeholder: 'select',
-      onFocus: function() { return true; }
+      placeholder: 'select'
     };
   },
 

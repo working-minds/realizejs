@@ -7,16 +7,14 @@ var InputAutocompleteSelect = React.createClass({
 
   propTypes: {
     selectedOptions: React.PropTypes.array,
-    placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func
+    placeholder: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function() {
     return {
       selectedOptions: [],
       themeClassKey: 'input.autocomplete.select',
-      placeholder: 'select',
-      onFocus: function() { return true; }
+      placeholder: 'select'
     };
   },
 

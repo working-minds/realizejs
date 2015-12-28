@@ -1,12 +1,12 @@
 {
   "name": "realize",
-  "version": "0.7.9",
+  "version": "0.7.11",
   "authors": [
     "Pedro Jesus <pjesus@wkm.com.br>",
     "Lucas Toledo <ltoledo@wkm.com.br>",
     "Hudson Gomes <hgomes@wkm.com.br>"
   ],
-  "description": "Elementos de Frontend, utilizando ReactJS e Materialize",
+  "description": "Elementos de Frontend, utilizando ReactJS e MaterializeCSS",
   "moduleType": [
     "es6"
   ],
@@ -21,8 +21,8 @@
   ],
 
   "main": [
-    "dist/css/wkm-react-frontend.min.css",
-    "dist/js/wkm-react-frontend.min.js"
+    "dist/css/realize.min.css",
+    "dist/js/realize.min.js"
   ],
 
   "dependencies": {

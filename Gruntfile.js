@@ -3,7 +3,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     banner: '/*!\n' +
-            ' * WKM Frontend v<%= pkg.version %> (<%= pkg.homepage %>)\n' +
+            ' * Realize v<%= pkg.version %> (<%= pkg.homepage %>)\n' +
             ' * Copyright 2015-<%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
             ' */\n',
 

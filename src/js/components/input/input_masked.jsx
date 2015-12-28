@@ -60,6 +60,7 @@ var InputMasked = React.createClass({
         placeholder={this.state.placeholder}
         className={this.inputClassName()}
         onChange={this.handleChange}
+        onFocus={this._handleFocus}
         type="text"
         ref="input">
 

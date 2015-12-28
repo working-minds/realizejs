@@ -42,7 +42,7 @@ var Flash = React.createClass({
 
   render: function() {
     return (
-      <ReactCSSTransitionGroup transitionName="dismiss" transitionAppear={true}>
+      <ReactCSSTransitionGroup transitionName="dismiss" transitionAppear={true} transitionAppearTimeout={500}>
         {this.state.dismissed ? '' : this.renderFlash()}
       </ReactCSSTransitionGroup>
     );

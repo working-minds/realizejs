@@ -1,6 +1,6 @@
 /*!
- * WKM Frontend v0.0.0 (http://www.wkm.com.br)
- * Copyright 2015-2015 Pedro Jesus <pjesus@wkm.com.br>
+ * Realize v0.7.11 (http://www.wkm.com.br)
+ * Copyright 2015-2015 
  */
 
 'use strict';
@@ -225,6 +225,13 @@ Realize.i18n.registerLocale({
       default: 'MM/DD/YYYY HH:mm',
       date: 'MM/DD/YYYY'
     }
+  },
+
+  errors: {
+    invalidAction: "Invalid action",
+    inputSelect: {
+      invalidOption: "Invalid format for select option. (Expected format: {name:\"\", value:\"\"})"
+    }
   }
 
 }, 'en');
@@ -306,6 +313,13 @@ Realize.i18n.registerLocale({
     formats: {
       default: 'DD/MM/YYYY HH:mm',
       date: 'DD/MM/YYYY'
+    }
+  },
+
+  errors: {
+    invalidAction: "Ação inválida",
+    inputSelect: {
+      invalidOption: "Formato inválido de opção de select (Formato esperado: {name:\"\", value:\"\"})"
     }
   }
 
@@ -777,7 +791,7 @@ var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
 
 'use strict';
 
-var InputSelectActions = Reflux.createActions(['select']);
+var InputSelectActions = Reflux.createActions(['select', 'selectSearchValue']);
 //
 
 'use strict';
@@ -846,12 +860,22 @@ var FormStore = Reflux.createStore({
 var InputSelectStore = Reflux.createStore({
   listenables: [InputSelectActions],
 
+  action: '',
   inputId: '',
   selectedOption: {},
 
   onSelect: function onSelect(inputId, selectedOption) {
+    this.action = 'Select';
     this.inputId = inputId;
     this.selectedOption = selectedOption;
+
+    this.trigger(this);
+  },
+
+  onSelectSearchValue: function onSelectSearchValue(inputId) {
+    this.action = 'SelectSearchValue';
+    this.inputId = inputId;
+    this.selectedOption = {};
 
     this.trigger(this);
   }
@@ -1518,16 +1542,22 @@ var InputComponentMixin = {
     name: React.PropTypes.string,
     value: React.PropTypes.node,
     disabled: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,
     errors: React.PropTypes.node,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onFocus: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       value: null,
       disabled: false,
+      readOnly: false,
       onChange: function onChange(event) {
+        return true;
+      },
+      onFocus: function onFocus(event) {
         return true;
       },
       errors: []
@@ -1576,6 +1606,15 @@ var InputComponentMixin = {
     }
   },
 
+  _handleFocus: function _handleFocus(event) {
+    this.props.onFocus(event);
+
+    if (this.props.readOnly) {
+      var inputNode = event.currentTarget;
+      inputNode.blur();
+    }
+  },
+
   inputClassName: function inputClassName() {
     var className = this.className();
     var errors = this.props.errors;
@@ -1606,6 +1645,8 @@ var InputComponentMixin = {
 
 "use strict";
 
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 var InputSelectActionsListenerMixin = {
   componentDidMount: function componentDidMount() {
     InputSelectStore.listen(this.inputSelectActionListener);
@@ -1613,13 +1654,11 @@ var InputSelectActionsListenerMixin = {
 
   inputSelectActionListener: function inputSelectActionListener(storeState) {
     var changedInputId = storeState.inputId;
-    var selectedOption = storeState.selectedOption;
 
     if (this.isChangedInput(changedInputId)) {
-      this.setState({
-        optionsCache: this.cacheSelectedOption(selectedOption),
-        value: [selectedOption.value]
-      });
+      var action = storeState.action;
+      var actionFunctionName = "handle" + action + "Action";
+      this[actionFunctionName](storeState);
     }
   },
 
@@ -1628,6 +1667,39 @@ var InputSelectActionsListenerMixin = {
     var id = this.props.id;
 
     return !!originalId && originalId == changedInputId || !!id && id == changedInputId;
+  },
+
+  handleSelectAction: function handleSelectAction(storeState) {
+    var selectedOption = storeState.selectedOption;
+    this.validateSelectedOption(selectedOption);
+
+    this.setState({
+      optionsCache: this.cacheSelectedOption(selectedOption),
+      value: [selectedOption.value]
+    });
+  },
+
+  handleSelectSearchValueAction: function handleSelectSearchValueAction(storeState) {
+    var searchValue = this.state.searchValue;
+    if (typeof searchValue != "string") {
+      throw new Error(Realize.t("errors.invalidAction"));
+    }
+
+    storeState.selectedOption = {
+      name: searchValue,
+      value: searchValue
+    };
+
+    this.handleSelectAction(storeState);
+    if (typeof this.hideResult == "function") {
+      this.hideResult();
+    }
+  },
+
+  validateSelectedOption: function validateSelectedOption(selectedOption) {
+    if ((typeof selectedOption === "undefined" ? "undefined" : _typeof(selectedOption)) != "object" || !selectedOption.name || !selectedOption.value) {
+      throw new Error(Realize.t("errors.inputSelect.invalidOption"));
+    }
   },
 
   cacheSelectedOption: function cacheSelectedOption(selectedOption) {
@@ -1716,7 +1788,8 @@ var SelectComponentMixin = {
       optionsCache: this.props.options,
       disabled: this.props.disabled,
       mustDisable: false,
-      loadParams: {}
+      loadParams: {},
+      loadData: []
     };
   },
 
@@ -1799,6 +1872,7 @@ var SelectComponentMixin = {
     }
 
     this.setState({
+      loadData: data,
       options: options,
       optionsCache: this.cacheOptions(options),
       mustDisable: !!this.props.dependsOn && options.length <= 0
@@ -3775,7 +3849,7 @@ var Flash = React.createClass({
   render: function render() {
     return React.createElement(
       ReactCSSTransitionGroup,
-      { transitionName: 'dismiss', transitionAppear: true },
+      { transitionName: 'dismiss', transitionAppear: true, transitionAppearTimeout: 500 },
       this.state.dismissed ? '' : this.renderFlash()
     );
   },
@@ -4988,6 +5062,8 @@ var GridForm = React.createClass({
     cancelButton: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
+    eagerLoad: React.PropTypes.bool,
+    formComponent: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
     onSuccess: React.PropTypes.func,
@@ -5015,6 +5091,8 @@ var GridForm = React.createClass({
         style: 'cancel'
       },
       selectable: true,
+      eagerLoad: true,
+      formComponent: Form,
       onSubmit: function onSubmit(event, postData) {},
       onReset: function onReset(event) {},
       onSuccess: function onSuccess(data, status, xhr) {
@@ -5037,10 +5115,6 @@ var GridForm = React.createClass({
     };
   },
 
-  componentDidMount: function componentDidMount() {
-    this.loadGridData();
-  },
-
   render: function render() {
     //TODO: adicionar os divs de card em um componente separado.
     return React.createElement(
@@ -5048,40 +5122,36 @@ var GridForm = React.createClass({
       { className: this.className() },
       React.createElement(
         'div',
-        { className: 'card' },
-        React.createElement(
-          'div',
-          { className: 'card-content' },
-          React.createElement(Form, _extends({
-            style: "filter"
-          }, this.props.form, {
-            action: this.getFormAction(),
-            data: this.state.selectedDataRow,
-            method: this.getFormMethod(),
-            submitButton: this.getFormSubmitButton(),
-            otherButtons: this.getFormOtherButtons(),
-            onSubmit: this.onSubmit,
-            onReset: this.onReset,
-            onSuccess: this.onSuccess,
-            onError: this.onError,
-            key: "form_" + this.generateUUID(),
-            ref: 'form'
-          }))
-        )
+        { className: this.className() + "__form" },
+        this.renderForm()
       ),
       React.createElement(
         'div',
-        { className: 'card' },
-        React.createElement(
-          'div',
-          { className: 'card-content' },
-          React.createElement(Grid, _extends({}, this.propsWithoutCSS(), {
-            actionButtons: this.getActionButtons(),
-            ref: 'grid'
-          }))
-        )
+        { className: this.className() + "__grid" },
+        React.createElement(Grid, _extends({}, this.propsWithoutCSS(), {
+          actionButtons: this.getActionButtons(),
+          ref: 'grid'
+        }))
       )
     );
+  },
+
+  renderForm: function renderForm() {
+    var formProps = React.__spread({ style: 'filter' }, this.props.form, {
+      action: this.getFormAction(),
+      data: this.state.selectedDataRow,
+      method: this.getFormMethod(),
+      submitButton: this.getFormSubmitButton(),
+      otherButtons: this.getFormOtherButtons(),
+      onSubmit: this.onSubmit,
+      onReset: this.onReset,
+      onSuccess: this.onSuccess,
+      onError: this.onError,
+      key: "form_" + this.generateUUID(),
+      ref: "form"
+    });
+
+    return React.createElement(this.props.formComponent, formProps, null);
   },
 
   getFormAction: function getFormAction() {
@@ -5579,12 +5649,6 @@ var InputAutocomplete = React.createClass({
     $form.off('reset', this.clearSelection);
   },
 
-  componentDidUpdate: function componentDidUpdate() {
-    if (this.state.refluxStore) {
-      this.handleRefluxStoreChange();
-    }
-  },
-
   render: function render() {
     return React.createElement(
       'div',
@@ -5712,7 +5776,7 @@ var InputAutocomplete = React.createClass({
     }, this.triggerDependableChanged);
 
     if (!!this.props.onSelect) {
-      this.props.onSelect(this.props.id, []);
+      this.props.onSelect(this.props.id, [], []);
     }
   },
 
@@ -5739,7 +5803,7 @@ var InputAutocomplete = React.createClass({
     this.triggerDependableChanged();
 
     if (!!this.props.onSelect) {
-      this.props.onSelect(this.props.id, this.state.value);
+      this.props.onSelect(this.props.id, this.state.value, this.state.loadData);
     }
   }
 
@@ -5969,7 +6033,12 @@ var InputAutocompleteResult = React.createClass({
       "div",
       { className: "input-autocomplete__search" },
       React.createElement(Icon, { type: "search", className: "prefix" }),
-      React.createElement(InputText, { onKeyDown: this.props.onKeyDown, value: this.props.searchValue, onChange: this.props.onChange, autoComplete: "off" })
+      React.createElement(InputText, {
+        onKeyDown: this.props.onKeyDown,
+        value: this.props.searchValue,
+        onChange: this.props.onChange,
+        autoComplete: "off"
+      })
     );
   },
 
@@ -6052,18 +6121,14 @@ var InputAutocompleteSelect = React.createClass({
 
   propTypes: {
     selectedOptions: React.PropTypes.array,
-    placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func
+    placeholder: Realize.PropTypes.localizedString
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       selectedOptions: [],
       themeClassKey: 'input.autocomplete.select',
-      placeholder: 'select',
-      onFocus: function onFocus() {
-        return true;
-      }
+      placeholder: 'select'
     };
   },
 
@@ -6555,7 +6620,6 @@ var InputDatefilterSelect = React.createClass({
   propTypes: {
     selectedDates: React.PropTypes.array,
     placeholder: Realize.PropTypes.localizedString,
-    onFocus: React.PropTypes.func,
     onBlur: React.PropTypes.func
   },
 
@@ -6563,10 +6627,7 @@ var InputDatefilterSelect = React.createClass({
     return {
       selectedDates: [],
       themeClassKey: 'input.datefilter.select',
-      placeholder: 'select',
-      onFocus: function onFocus() {
-        return true;
-      }
+      placeholder: 'select'
     };
   },
 
@@ -6846,7 +6907,7 @@ var InputDatepicker = React.createClass({
       })),
       React.createElement(Label, this.propsWithoutCSS()),
       React.createElement(Button, {
-        disabled: this.props.disabled,
+        disabled: this.props.disabled || this.props.readOnly,
         icon: { type: "calendar" },
         className: 'input-datepicker__button prefix',
         onClick: this.handleCalendarClick,
@@ -6955,7 +7016,8 @@ var InputFile = React.createClass({
     buttonName: React.PropTypes.string,
     wrapperClassName: React.PropTypes.string,
     buttonClassName: React.PropTypes.string,
-    filePathWrapperClassName: React.PropTypes.string
+    filePathWrapperClassName: React.PropTypes.string,
+    buttonIcon: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -6975,7 +7037,7 @@ var InputFile = React.createClass({
         React.createElement(
           'span',
           null,
-          this.props.buttonName
+          this.getButtonName()
         ),
         React.createElement('input', _extends({}, this.props, { value: this.state.value, onChange: this.handleChange, type: 'file', ref: 'input' }))
       ),
@@ -7006,6 +7068,21 @@ var InputFile = React.createClass({
 
   buttonClassName: function buttonClassName() {
     return this.themedClassName('input.file.button', this.props.buttonClassName);
+  },
+
+  getButtonName: function getButtonName() {
+    if (!!this.props.buttonIcon) {
+      var component = [];
+      component.push(React.createElement(
+        'i',
+        { className: 'material-icons' },
+        this.props.buttonIcon
+      ));
+
+      return component;
+    }
+
+    return this.props.buttonName;
   },
 
   getLabelName: function getLabelName() {
@@ -7096,6 +7173,7 @@ var InputMasked = React.createClass({
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
         onChange: this.handleChange,
+        onFocus: this._handleFocus,
         type: "text",
         ref: "input" }),
       this.props.children
@@ -7213,32 +7291,31 @@ var InputMasked = React.createClass({
 });
 //
 
-'use strict';
+"use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputNumber = React.createClass({
-  displayName: 'InputNumber',
+  displayName: "InputNumber",
 
   mixins: [CssClassMixin, InputComponentMixin],
 
   getDefaultProps: function getDefaultProps() {
     return {
-      themeClassKey: 'input.number',
-      greedy: false,
-      repeat: 10
+      themeClassKey: 'input.number'
     };
   },
 
   render: function render() {
     return React.createElement(
-      'span',
+      "span",
       null,
       React.createElement(InputMasked, _extends({}, this.props, {
-        type: 'number',
-        plugin_params: { typeMask: '9', repeat: this.props.repeat, greedy: this.props.greedy },
         className: this.className(),
-        ref: 'input'
+        onChange: this._handleChange,
+        onFocus: this._handleFocus,
+        type: "number",
+        ref: "input"
       })),
       React.createElement(Label, this.propsWithoutCSS())
     );
@@ -7270,6 +7347,7 @@ var InputPassword = React.createClass({
       placeholder: this.getPlaceholder(),
       className: this.inputClassName(),
       onChange: this._handleChange,
+      onFocus: this._handleFocus,
       type: "password", ref: "input" }));
   }
 });
@@ -7362,6 +7440,7 @@ var InputText = React.createClass({
       placeholder: this.getPlaceholder(),
       className: this.inputClassName(),
       onChange: this._handleChange,
+      onFocus: this._handleFocus,
       ref: 'input'
     }));
   }
@@ -7393,6 +7472,7 @@ var InputTextarea = React.createClass({
       placeholder: this.getPlaceholder(),
       className: this.inputClassName(),
       onChange: this._handleChange,
+      onFocus: this._handleFocus,
       ref: "input"
     }));
   }
@@ -8314,7 +8394,7 @@ var HeaderNotifications = React.createClass({
 
   render: function render() {
     return React.createElement(
-      'li',
+      'div',
       { className: this.props.className },
       React.createElement(
         'a',
@@ -10060,4 +10140,4 @@ var Tabs = React.createClass({
 });
 //
 
-//# sourceMappingURL=wkm-react-frontend.js.map
+//# sourceMappingURL=realize.js.map
