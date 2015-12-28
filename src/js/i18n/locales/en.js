@@ -73,6 +73,13 @@ Realize.i18n.registerLocale({
       default: 'MM/DD/YYYY HH:mm',
       date: 'MM/DD/YYYY'
     }
+  },
+
+  errors: {
+    invalidAction: "Invalid action",
+    inputSelect: {
+      invalidOption: "Invalid format for select option. (Expected format: {name:\"\", value:\"\"})"
+    }
   }
 
 }, 'en');

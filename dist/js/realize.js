@@ -1,5 +1,5 @@
 /*!
- * WKM Frontend v0.7.11 (http://www.wkm.com.br)
+ * Realize v0.7.11 (http://www.wkm.com.br)
  * Copyright 2015-2015 
  */
 
@@ -225,6 +225,13 @@ Realize.i18n.registerLocale({
       default: 'MM/DD/YYYY HH:mm',
       date: 'MM/DD/YYYY'
     }
+  },
+
+  errors: {
+    invalidAction: "Invalid action",
+    inputSelect: {
+      invalidOption: "Invalid format for select option. (Expected format: {name:\"\", value:\"\"})"
+    }
   }
 
 }, 'en');
@@ -306,6 +313,13 @@ Realize.i18n.registerLocale({
     formats: {
       default: 'DD/MM/YYYY HH:mm',
       date: 'DD/MM/YYYY'
+    }
+  },
+
+  errors: {
+    invalidAction: "Ação inválida",
+    inputSelect: {
+      invalidOption: "Formato inválido de opção de select (Formato esperado: {name:\"\", value:\"\"})"
     }
   }
 
@@ -777,7 +791,7 @@ var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
 
 'use strict';
 
-var InputSelectActions = Reflux.createActions(['select']);
+var InputSelectActions = Reflux.createActions(['select', 'selectSearchValue']);
 //
 
 'use strict';
@@ -846,12 +860,22 @@ var FormStore = Reflux.createStore({
 var InputSelectStore = Reflux.createStore({
   listenables: [InputSelectActions],
 
+  action: '',
   inputId: '',
   selectedOption: {},
 
   onSelect: function onSelect(inputId, selectedOption) {
+    this.action = 'Select';
     this.inputId = inputId;
     this.selectedOption = selectedOption;
+
+    this.trigger(this);
+  },
+
+  onSelectSearchValue: function onSelectSearchValue(inputId) {
+    this.action = 'SelectSearchValue';
+    this.inputId = inputId;
+    this.selectedOption = {};
 
     this.trigger(this);
   }
@@ -1621,6 +1645,8 @@ var InputComponentMixin = {
 
 "use strict";
 
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 var InputSelectActionsListenerMixin = {
   componentDidMount: function componentDidMount() {
     InputSelectStore.listen(this.inputSelectActionListener);
@@ -1628,13 +1654,11 @@ var InputSelectActionsListenerMixin = {
 
   inputSelectActionListener: function inputSelectActionListener(storeState) {
     var changedInputId = storeState.inputId;
-    var selectedOption = storeState.selectedOption;
 
     if (this.isChangedInput(changedInputId)) {
-      this.setState({
-        optionsCache: this.cacheSelectedOption(selectedOption),
-        value: [selectedOption.value]
-      });
+      var action = storeState.action;
+      var actionFunctionName = "handle" + action + "Action";
+      this[actionFunctionName](storeState);
     }
   },
 
@@ -1643,6 +1667,39 @@ var InputSelectActionsListenerMixin = {
     var id = this.props.id;
 
     return !!originalId && originalId == changedInputId || !!id && id == changedInputId;
+  },
+
+  handleSelectAction: function handleSelectAction(storeState) {
+    var selectedOption = storeState.selectedOption;
+    this.validateSelectedOption(selectedOption);
+
+    this.setState({
+      optionsCache: this.cacheSelectedOption(selectedOption),
+      value: [selectedOption.value]
+    });
+  },
+
+  handleSelectSearchValueAction: function handleSelectSearchValueAction(storeState) {
+    var searchValue = this.state.searchValue;
+    if (typeof searchValue != "string") {
+      throw new Error(Realize.t("errors.invalidAction"));
+    }
+
+    storeState.selectedOption = {
+      name: searchValue,
+      value: searchValue
+    };
+
+    this.handleSelectAction(storeState);
+    if (typeof this.hideResult == "function") {
+      this.hideResult();
+    }
+  },
+
+  validateSelectedOption: function validateSelectedOption(selectedOption) {
+    if ((typeof selectedOption === "undefined" ? "undefined" : _typeof(selectedOption)) != "object" || !selectedOption.name || !selectedOption.value) {
+      throw new Error(Realize.t("errors.inputSelect.invalidOption"));
+    }
   },
 
   cacheSelectedOption: function cacheSelectedOption(selectedOption) {
@@ -1731,7 +1788,8 @@ var SelectComponentMixin = {
       optionsCache: this.props.options,
       disabled: this.props.disabled,
       mustDisable: false,
-      loadParams: {}
+      loadParams: {},
+      loadData: []
     };
   },
 
@@ -1814,6 +1872,7 @@ var SelectComponentMixin = {
     }
 
     this.setState({
+      loadData: data,
       options: options,
       optionsCache: this.cacheOptions(options),
       mustDisable: !!this.props.dependsOn && options.length <= 0
@@ -5590,12 +5649,6 @@ var InputAutocomplete = React.createClass({
     $form.off('reset', this.clearSelection);
   },
 
-  componentDidUpdate: function componentDidUpdate() {
-    if (this.state.refluxStore) {
-      this.handleRefluxStoreChange();
-    }
-  },
-
   render: function render() {
     return React.createElement(
       'div',
@@ -5723,7 +5776,7 @@ var InputAutocomplete = React.createClass({
     }, this.triggerDependableChanged);
 
     if (!!this.props.onSelect) {
-      this.props.onSelect(this.props.id, []);
+      this.props.onSelect(this.props.id, [], []);
     }
   },
 
@@ -5750,7 +5803,7 @@ var InputAutocomplete = React.createClass({
     this.triggerDependableChanged();
 
     if (!!this.props.onSelect) {
-      this.props.onSelect(this.props.id, this.state.value);
+      this.props.onSelect(this.props.id, this.state.value, this.state.loadData);
     }
   }
 
@@ -5980,7 +6033,12 @@ var InputAutocompleteResult = React.createClass({
       "div",
       { className: "input-autocomplete__search" },
       React.createElement(Icon, { type: "search", className: "prefix" }),
-      React.createElement(InputText, { onKeyDown: this.props.onKeyDown, value: this.props.searchValue, onChange: this.props.onChange, autoComplete: "off" })
+      React.createElement(InputText, {
+        onKeyDown: this.props.onKeyDown,
+        value: this.props.searchValue,
+        onChange: this.props.onChange,
+        autoComplete: "off"
+      })
     );
   },
 

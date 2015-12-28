@@ -36,7 +36,8 @@ var SelectComponentMixin = {
       optionsCache: this.props.options,
       disabled: this.props.disabled,
       mustDisable: false,
-      loadParams: {}
+      loadParams: {},
+      loadData: []
     };
   },
 
@@ -121,6 +122,7 @@ var SelectComponentMixin = {
     }
 
     this.setState({
+      loadData: data,
       options: options,
       optionsCache: this.cacheOptions(options),
       mustDisable: (!!this.props.dependsOn && options.length <= 0)

@@ -5,13 +5,11 @@ var InputSelectActionsListenerMixin = {
 
   inputSelectActionListener: function(storeState) {
     var changedInputId = storeState.inputId;
-    var selectedOption = storeState.selectedOption;
 
     if(this.isChangedInput(changedInputId)) {
-      this.setState({
-        optionsCache: this.cacheSelectedOption(selectedOption),
-        value: [selectedOption.value]
-      });
+      var action = storeState.action;
+      var actionFunctionName = "handle" + action + "Action";
+      this[actionFunctionName](storeState);
     }
   },
 
@@ -23,7 +21,40 @@ var InputSelectActionsListenerMixin = {
            (!!id && id == changedInputId);
   },
 
-  cacheSelectedOption(selectedOption) {
+  handleSelectAction: function(storeState) {
+    var selectedOption = storeState.selectedOption;
+    this.validateSelectedOption(selectedOption);
+
+    this.setState({
+      optionsCache: this.cacheSelectedOption(selectedOption),
+      value: [selectedOption.value]
+    });
+  },
+
+  handleSelectSearchValueAction: function(storeState) {
+    var searchValue = this.state.searchValue;
+    if(typeof searchValue != "string") {
+      throw(new Error(Realize.t("errors.invalidAction")));
+    }
+
+    storeState.selectedOption = {
+      name: searchValue,
+      value: searchValue
+    };
+
+    this.handleSelectAction(storeState);
+    if(typeof this.hideResult == "function") {
+      this.hideResult();
+    }
+  },
+
+  validateSelectedOption: function(selectedOption) {
+    if(typeof selectedOption != "object" || !selectedOption.name || !selectedOption.value) {
+      throw(new Error(Realize.t("errors.inputSelect.invalidOption")));
+    }
+  },
+
+  cacheSelectedOption: function(selectedOption) {
     if(typeof this.cacheOptions == "function") {
       return this.cacheOptions([selectedOption])
     }

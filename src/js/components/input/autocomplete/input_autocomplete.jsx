@@ -46,12 +46,6 @@ var InputAutocomplete = React.createClass({
     $form.off('reset', this.clearSelection);
   },
 
-  componentDidUpdate: function() {
-    if(this.state.refluxStore) {
-      this.handleRefluxStoreChange();
-    }
-  },
-
   render: function() {
     return (
       <div className={this.className()} ref="container">
@@ -182,7 +176,7 @@ var InputAutocomplete = React.createClass({
     }, this.triggerDependableChanged);
 
     if(!!this.props.onSelect) {
-      this.props.onSelect(this.props.id, [])
+      this.props.onSelect(this.props.id, [], []);
     }
   },
 
@@ -209,7 +203,7 @@ var InputAutocomplete = React.createClass({
     this.triggerDependableChanged();
 
     if(!!this.props.onSelect) {
-      this.props.onSelect(this.props.id, this.state.value)
+      this.props.onSelect(this.props.id, this.state.value, this.state.loadData);
     }
   }
 

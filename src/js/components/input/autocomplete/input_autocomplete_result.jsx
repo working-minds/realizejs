@@ -37,7 +37,12 @@ var InputAutocompleteResult = React.createClass({
     return (
       <div className="input-autocomplete__search">
         <Icon type="search" className="prefix" />
-        <InputText onKeyDown={this.props.onKeyDown} value={this.props.searchValue} onChange={this.props.onChange} autoComplete="off" />
+        <InputText
+          onKeyDown={this.props.onKeyDown}
+          value={this.props.searchValue}
+          onChange={this.props.onChange}
+          autoComplete="off"
+        />
       </div>
     );
   },
