@@ -8284,6 +8284,7 @@ var HeaderNotifications = React.createClass({
   displayName: 'HeaderNotifications',
 
   propTypes: {
+    ouSlug: React.PropTypes.string,
     className: React.PropTypes.string,
     text: React.PropTypes.string,
     icon: React.PropTypes.string,
@@ -8292,6 +8293,7 @@ var HeaderNotifications = React.createClass({
 
   getDefaultProps: function getDefaultProps() {
     return {
+      ouSlug: null,
       className: 'notifications',
       icon: 'add_alert',
       text: '',
@@ -8340,6 +8342,7 @@ var HeaderNotifications = React.createClass({
       dataType: 'json',
       data: {
         per_page: 50,
+        ou_slug: this.props.ouSlug,
         q: {
           s: 'created_at desc'
         }
