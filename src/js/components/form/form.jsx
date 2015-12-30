@@ -70,7 +70,7 @@ var Form = React.createClass({
   render: function() {
     return (
       <form action={this.props.action}
-        method={this.props.method}
+        method={ (this.props.method == 'PUT' && !this.props.ajaxSubmit)? 'POST' : this.props.method}
         encType={this.parseFormEncType()}
         id={this.props.id}
         onSubmit={this.handleSubmit}
@@ -81,11 +81,18 @@ var Form = React.createClass({
         {this.renderFlashErrors()}
         {this.renderFlashSuccess()}
         {this.renderInputs()}
+        {this.renderPutSafeTag()}
         {this.renderChildren()}
 
         <FormButtonGroup {...this.propsWithoutCSS()} isLoading={this.isLoading()} />
       </form>
     );
+  },
+
+  renderPutSafeTag: function(){
+    if(this.props.method == 'PUT'){
+      return <input name="_method" type="hidden" value="PUT" />;
+    }
   },
 
   renderInputs: function() {
