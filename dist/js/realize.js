@@ -1,6 +1,6 @@
 /*!
  * Realize v0.7.12 (http://www.wkm.com.br)
- * Copyright 2015-2015 
+ * Copyright 2015-2016 
  */
 
 'use strict';
@@ -589,6 +589,10 @@ Realize.themes.materialize = {
 
     checkbox: {
       cssClass: ''
+    },
+
+    switch: {
+      cssClass: 'input-switch switch'
     },
 
     datefilter: {
@@ -1495,19 +1499,25 @@ var CheckboxComponentMixin = {
     $form.off('reset', this._handleCheckboxReset);
   },
 
+  valueIsBoolean: function valueIsBoolean() {
+    var value = this.props.value;
+    return typeof value === "boolean" || value === 0 || value === 1;
+  },
+
   getInitialChecked: function getInitialChecked() {
     var checked = this.props.checked;
-    var value = this.props.value;
     if (checked !== null && this.props.checked !== undefined) {
       return checked;
     }
 
-    if (typeof value === "boolean" || value === 0 || value === 1) {
-      return !!value;
+    if (this.valueIsBoolean()) {
+      return !!this.props.value;
     }
 
     return false;
   },
+
+  /* Event handlers */
 
   _handleCheckboxReset: function _handleCheckboxReset(event) {
     if (this.isMounted()) {
@@ -1522,9 +1532,7 @@ var CheckboxComponentMixin = {
 
     if (!event.isDefaultPrevented()) {
       var newState = { checked: event.target.checked };
-      var value = this.props.value;
-
-      if (typeof value === "boolean" || value === 0 || value === 1) {
+      if (this.valueIsBoolean()) {
         newState.value = event.target.checked;
       }
 
@@ -7378,7 +7386,6 @@ var InputSwitch = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.switch',
-      className: 'switch',
       offLabel: 'false',
       onLabel: 'true',
       label: null
@@ -7391,12 +7398,12 @@ var InputSwitch = React.createClass({
       null,
       React.createElement(
         'div',
-        { className: this.props.className },
+        { className: this.className() },
         React.createElement(
           'label',
           null,
           Realize.t(this.props.offLabel),
-          React.createElement('input', _extends({}, this.props, {
+          React.createElement('input', _extends({}, this.checkboxProps(), {
             checked: this.state.checked,
             value: this.state.value,
             className: this.inputClassName(),
@@ -7406,7 +7413,8 @@ var InputSwitch = React.createClass({
           })),
           React.createElement('span', { className: 'lever' }),
           Realize.t(this.props.onLabel)
-        )
+        ),
+        this.renderInputHidden()
       ),
       this.renderLabel()
     );
@@ -7418,6 +7426,22 @@ var InputSwitch = React.createClass({
     }
 
     return React.createElement(Label, { name: this.props.label, active: true });
+  },
+
+  renderInputHidden: function renderInputHidden() {
+    if (this.valueIsBoolean()) {
+      return React.createElement(InputHidden, _extends({}, this.props, { value: this.state.value }));
+    }
+
+    return null;
+  },
+
+  checkboxProps: function checkboxProps() {
+    if (this.valueIsBoolean()) {
+      return {};
+    }
+
+    return this.props;
   }
 });
 //

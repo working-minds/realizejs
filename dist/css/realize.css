@@ -1,6 +1,6 @@
 /*!
  * Realize v0.7.12 (http://www.wkm.com.br)
- * Copyright 2015-2015 
+ * Copyright 2015-2016 
  */
 
 button .preloader-wrapper.small {
@@ -155,7 +155,7 @@ hr {
   right: 1rem;
 }
 
-.input-checkbox-group.align-horizontal p{
+.input-checkbox-group.align-horizontal p {
   float: left;
   margin-left: 15px;
 }
@@ -164,9 +164,14 @@ hr {
   cursor: pointer;
 }
 
-.input-radio-group.align-horizontal p{
+.input-radio-group.align-horizontal p {
   float: left;
   margin-left: 15px;
+}
+
+.input-switch {
+  height: 3rem;
+  margin-bottom: 1.1rem;
 }
 .input-autocomplete {}
 

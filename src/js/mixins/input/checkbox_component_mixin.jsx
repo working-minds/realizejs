@@ -30,19 +30,25 @@ var CheckboxComponentMixin = {
     $form.off('reset', this._handleCheckboxReset);
   },
 
+  valueIsBoolean: function() {
+    var value = this.props.value;
+    return (typeof value === "boolean" || value === 0 || value === 1);
+  },
+
   getInitialChecked: function() {
     var checked = this.props.checked;
-    var value = this.props.value;
     if(checked !== null && this.props.checked !== undefined) {
       return checked;
     }
 
-    if(typeof value === "boolean" || value === 0 || value === 1) {
-      return !!value;
+    if(this.valueIsBoolean()) {
+      return !!this.props.value;
     }
 
     return false;
   },
+
+  /* Event handlers */
 
   _handleCheckboxReset: function(event) {
     if(this.isMounted()) {
@@ -57,9 +63,7 @@ var CheckboxComponentMixin = {
 
     if(!event.isDefaultPrevented()) {
       var newState = { checked: event.target.checked };
-      var value = this.props.value;
-
-      if(typeof value === "boolean" || value === 0 || value === 1) {
+      if(this.valueIsBoolean()) {
         newState.value = event.target.checked;
       }
 

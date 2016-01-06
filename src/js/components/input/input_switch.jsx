@@ -14,7 +14,6 @@ var InputSwitch = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.switch',
-      className: 'switch',
       offLabel: 'false',
       onLabel: 'true',
       label: null
@@ -24,10 +23,10 @@ var InputSwitch = React.createClass({
   render: function() {
     return (
       <div>
-        <div className={this.props.className}>
+        <div className={this.className()}>
           <label>
             {Realize.t(this.props.offLabel)}
-            <input {...this.props}
+            <input {...this.checkboxProps()}
               checked={this.state.checked}
               value={this.state.value}
               className={this.inputClassName()}
@@ -38,6 +37,8 @@ var InputSwitch = React.createClass({
             <span className="lever"></span>
             {Realize.t(this.props.onLabel)}
           </label>
+
+          {this.renderInputHidden()}
         </div>
         {this.renderLabel()}
       </div>
@@ -50,5 +51,21 @@ var InputSwitch = React.createClass({
     }
 
     return <Label name={this.props.label} active={true} />;
+  },
+
+  renderInputHidden: function() {
+    if(this.valueIsBoolean()) {
+      return <InputHidden {...this.props} value={this.state.value} />;
+    }
+
+    return null;
+  },
+
+  checkboxProps: function() {
+    if(this.valueIsBoolean()) {
+      return {};
+    }
+
+    return this.props;
   }
 });

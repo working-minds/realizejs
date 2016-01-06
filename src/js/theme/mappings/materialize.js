@@ -141,6 +141,10 @@ Realize.themes.materialize = {
       cssClass: ''
     },
 
+    switch: {
+      cssClass: 'input-switch switch'
+    },
+
     datefilter: {
       cssClass: 'input-datefilter',
 
