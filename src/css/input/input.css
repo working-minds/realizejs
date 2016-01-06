@@ -8,7 +8,7 @@
   right: 1rem;
 }
 
-.input-checkbox-group.align-horizontal p{
+.input-checkbox-group.align-horizontal p {
   float: left;
   margin-left: 15px;
 }
@@ -17,7 +17,12 @@
   cursor: pointer;
 }
 
-.input-radio-group.align-horizontal p{
+.input-radio-group.align-horizontal p {
   float: left;
   margin-left: 15px;
+}
+
+.input-switch {
+  height: 3rem;
+  margin-bottom: 1.1rem;
 }
