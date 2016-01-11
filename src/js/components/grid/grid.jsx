@@ -19,6 +19,7 @@ var Grid = React.createClass({
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
     selectedRowIdsParam: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
     tableClassName: React.PropTypes.string,
@@ -49,6 +50,7 @@ var Grid = React.createClass({
       dataRowsParam: 'data',
       countParam: 'count',
       selectedRowIdsParam: 'rowIds',
+      dataRowIdField: 'id',
       isLoading: false,
       selectable: true,
       rowSelectableFilter: null,
@@ -172,6 +174,7 @@ var Grid = React.createClass({
         selectable={this.props.selectable}
         selectedRowIds={this.state.selectedRowIds}
         selectedRowIdsParam={this.props.selectedRowIdsParam}
+        dataRowIdField={this.props.dataRowIdField}
         allSelected={this.state.allSelected}
         allSelectedData={this.state.filterData}
         count={this.state.count}
