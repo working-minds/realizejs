@@ -10,6 +10,7 @@ var TableRow = React.createClass({
     rowSelectableFilter: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func,
     onClickRow: React.PropTypes.func,
+    rowHref: React.PropTypes.string,
     tableRowCssClass: React.PropTypes.func
   },
 
@@ -24,16 +25,13 @@ var TableRow = React.createClass({
       themeClassKey: 'table.row',
       rowSelectableFilter: null,
       onClickRow: null,
+      rowHref: null,
       tableRowCssClass: null,
       onSelectToggle: function(event, dataRows, selected) {}
     };
   },
 
-  rowClick: function(event) {
-    if(!!this.props.onClickRow && typeof this.props.onClickRow === "function") {
-      this.props.onClickRow(event, this.props.data);
-    }
-  },
+  /* renderers */
 
   render: function() {
     return (
@@ -48,14 +46,14 @@ var TableRow = React.createClass({
   getClassName: function() {
     var className = this.className();
 
-    if(!!this.props.onClickRow) {
+    if(!!this.props.onClickRow || !!this.props.rowHref) {
       className = className + ' clickable-row'
     }
 
     if(!!this.props.tableRowCssClass) {
       var cssClass = this.props.tableRowCssClass(this.props.data);
       if (!!cssClass) {
-        className = className + ' ' + cssClass
+        className = className + ' ' + cssClass;
       }
     }
 
@@ -107,6 +105,28 @@ var TableRow = React.createClass({
 
     return <TableRowActions {...this.propsWithoutCSS()} ref="actions" />;
   },
+
+  /* event handlers */
+
+  rowClick: function(event) {
+    var onClickRow = this.props.onClickRow;
+    var rowHref = this.props.rowHref;
+
+    if(!!onClickRow && typeof onClickRow === "function") {
+      onClickRow(event, this.props.data);
+    } else if(!!rowHref && typeof rowHref === "string") {
+      this.goToRowHref(event);
+    }
+  },
+
+  goToRowHref: function(event) {
+    var rowHref = this.props.rowHref;
+    var dataRowId = this.props.data[this.props.dataRowIdField];
+
+    window.location.href = rowHref.replace(/:id/, dataRowId);
+  },
+
+  /* utilities */
 
   getDataRowId: function() {
     return this.props.data[this.props.dataRowIdField];

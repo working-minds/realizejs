@@ -1,12 +1,26 @@
 var GridActionsMixin = {
   propTypes: {
-    actionButtons: React.PropTypes.object
+    actionButtons: React.PropTypes.object,
+    rowHref: React.PropTypes.string,
+    useShowRowHref: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
-      actionButtons: null
+      actionButtons: null,
+      rowHref: null,
+      useShowRowHref: false
     };
+  },
+
+  getRowHref: function() {
+    var rowHref = this.props.rowHref;
+    var useShowRowHref = this.props.useShowRowHref;
+    if(!useShowRowHref || (!!rowHref && typeof rowHref == "string")) {
+      return rowHref;
+    }
+
+    return this.getRestActionUrl('show');
   },
 
   getActionButtons: function() {

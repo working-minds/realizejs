@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.14 (http://www.wkm.com.br)
+ * Realize v0.7.15 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -1372,13 +1372,27 @@ var FormSuccessHandlerMixin = {
 
 var GridActionsMixin = {
   propTypes: {
-    actionButtons: React.PropTypes.object
+    actionButtons: React.PropTypes.object,
+    rowHref: React.PropTypes.string,
+    useShowRowHref: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
-      actionButtons: null
+      actionButtons: null,
+      rowHref: null,
+      useShowRowHref: false
     };
+  },
+
+  getRowHref: function getRowHref() {
+    var rowHref = this.props.rowHref;
+    var useShowRowHref = this.props.useShowRowHref;
+    if (!useShowRowHref || !!rowHref && typeof rowHref == "string") {
+      return rowHref;
+    }
+
+    return this.getRestActionUrl('show');
   },
 
   getActionButtons: function getActionButtons() {
@@ -4715,6 +4729,7 @@ var Grid = React.createClass({
       customTableHeader: this.props.customTableHeader,
       forceShowSelectAllButton: this.props.forceShowSelectAllButton,
       onClickRow: this.props.onClickRow,
+      rowHref: this.getRowHref(),
       tableRowCssClass: this.props.tableRowCssClass,
       clearThemeTable: this.props.clearThemeTable
     });
@@ -8882,6 +8897,7 @@ var Table = React.createClass({
     rowSelectableFilter: React.PropTypes.func,
     forceShowSelectAllButton: React.PropTypes.bool,
     onClickRow: React.PropTypes.func,
+    rowHref: React.PropTypes.string,
     tableRowCssClass: React.PropTypes.func
   },
 
@@ -8913,6 +8929,7 @@ var Table = React.createClass({
       rowSelectableFilter: null,
       forceShowSelectAllButton: false,
       onClickRow: null,
+      rowHref: null,
       tableRowCssClass: null
     };
   },
@@ -9064,6 +9081,7 @@ var Table = React.createClass({
         key: "table_row_" + i,
         rowSelectableFilter: this.props.rowSelectableFilter,
         onClickRow: this.props.onClickRow,
+        rowHref: this.props.rowHref,
         tableRowCssClass: this.props.tableRowCssClass
       })));
     }
@@ -9614,6 +9632,7 @@ var TableRow = React.createClass({
     rowSelectableFilter: React.PropTypes.func,
     onSelectToggle: React.PropTypes.func,
     onClickRow: React.PropTypes.func,
+    rowHref: React.PropTypes.string,
     tableRowCssClass: React.PropTypes.func
   },
 
@@ -9628,16 +9647,13 @@ var TableRow = React.createClass({
       themeClassKey: 'table.row',
       rowSelectableFilter: null,
       onClickRow: null,
+      rowHref: null,
       tableRowCssClass: null,
       onSelectToggle: function onSelectToggle(event, dataRows, selected) {}
     };
   },
 
-  rowClick: function rowClick(event) {
-    if (!!this.props.onClickRow && typeof this.props.onClickRow === "function") {
-      this.props.onClickRow(event, this.props.data);
-    }
-  },
+  /* renderers */
 
   render: function render() {
     return React.createElement(
@@ -9652,7 +9668,7 @@ var TableRow = React.createClass({
   getClassName: function getClassName() {
     var className = this.className();
 
-    if (!!this.props.onClickRow) {
+    if (!!this.props.onClickRow || !!this.props.rowHref) {
       className = className + ' clickable-row';
     }
 
@@ -9707,6 +9723,28 @@ var TableRow = React.createClass({
     return React.createElement(TableRowActions, _extends({}, this.propsWithoutCSS(), { ref: 'actions' }));
   },
 
+  /* event handlers */
+
+  rowClick: function rowClick(event) {
+    var onClickRow = this.props.onClickRow;
+    var rowHref = this.props.rowHref;
+
+    if (!!onClickRow && typeof onClickRow === "function") {
+      onClickRow(event, this.props.data);
+    } else if (!!rowHref && typeof rowHref === "string") {
+      this.goToRowHref(event);
+    }
+  },
+
+  goToRowHref: function goToRowHref(event) {
+    var rowHref = this.props.rowHref;
+    var dataRowId = this.props.data[this.props.dataRowIdField];
+
+    window.location.href = rowHref.replace(/:id/, dataRowId);
+  },
+
+  /* utilities */
+
   getDataRowId: function getDataRowId() {
     return this.props.data[this.props.dataRowIdField];
   }
@@ -9725,7 +9763,7 @@ var TableRowActionButton = React.createClass({
 
   propTypes: {
     data: React.PropTypes.object,
-    dataRowFieldId: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     count: React.PropTypes.number,
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
@@ -9738,7 +9776,7 @@ var TableRowActionButton = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       data: {},
-      dataRowFieldId: 'id',
+      dataRowIdField: 'id',
       method: null,
       conditionParams: null,
       disabled: false,

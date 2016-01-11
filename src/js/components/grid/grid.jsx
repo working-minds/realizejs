@@ -188,6 +188,7 @@ var Grid = React.createClass({
         customTableHeader={this.props.customTableHeader}
         forceShowSelectAllButton={this.props.forceShowSelectAllButton}
         onClickRow={this.props.onClickRow}
+        rowHref={this.getRowHref()}
         tableRowCssClass={this.props.tableRowCssClass}
         clearThemeTable={this.props.clearThemeTable}
       />

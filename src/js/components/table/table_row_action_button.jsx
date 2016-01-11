@@ -3,7 +3,7 @@ var TableRowActionButton = React.createClass({
 
   propTypes: {
     data: React.PropTypes.object,
-    dataRowFieldId: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     count: React.PropTypes.number,
     actionUrl: React.PropTypes.string,
     method: React.PropTypes.string,
@@ -16,7 +16,7 @@ var TableRowActionButton = React.createClass({
   getDefaultProps: function() {
     return {
       data: {},
-      dataRowFieldId: 'id',
+      dataRowIdField: 'id',
       method: null,
       conditionParams: null,
       disabled: false,
