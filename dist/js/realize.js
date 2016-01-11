@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.12 (http://www.wkm.com.br)
+ * Realize v0.7.14 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -4221,16 +4221,14 @@ var Form = React.createClass({
       this.renderFlashErrors(),
       this.renderFlashSuccess(),
       this.renderInputs(),
-      this.renderPutSafeTag(),
+      this.renderMethodTag(),
       this.renderChildren(),
       React.createElement(FormButtonGroup, _extends({}, this.propsWithoutCSS(), { isLoading: this.isLoading() }))
     );
   },
 
-  renderPutSafeTag: function renderPutSafeTag() {
-    if (this.props.method == 'PUT') {
-      return React.createElement('input', { name: '_method', type: 'hidden', value: 'PUT' });
-    }
+  renderMethodTag: function renderMethodTag() {
+    return React.createElement('input', { name: '_method', type: 'hidden', value: this.props.method });
   },
 
   renderInputs: function renderInputs() {
@@ -4553,6 +4551,7 @@ var Grid = React.createClass({
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
     selectedRowIdsParam: React.PropTypes.string,
+    dataRowIdField: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
     tableClassName: React.PropTypes.string,
@@ -4583,6 +4582,7 @@ var Grid = React.createClass({
       dataRowsParam: 'data',
       countParam: 'count',
       selectedRowIdsParam: 'rowIds',
+      dataRowIdField: 'id',
       isLoading: false,
       selectable: true,
       rowSelectableFilter: null,
@@ -4701,6 +4701,7 @@ var Grid = React.createClass({
       selectable: this.props.selectable,
       selectedRowIds: this.state.selectedRowIds,
       selectedRowIdsParam: this.props.selectedRowIdsParam,
+      dataRowIdField: this.props.dataRowIdField,
       allSelected: this.state.allSelected,
       allSelectedData: this.state.filterData,
       count: this.state.count,
@@ -9058,6 +9059,7 @@ var Table = React.createClass({
         onSelectToggle: this.toggleDataRows,
         selected: this.dataRowIsSelected(dataRow),
         data: dataRow,
+        dataRowIdField: this.props.dataRowIdField,
         actionButtons: this.props.actionButtons.member || [],
         key: "table_row_" + i,
         rowSelectableFilter: this.props.rowSelectableFilter,
