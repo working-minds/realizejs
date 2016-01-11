@@ -199,6 +199,7 @@ var Table = React.createClass({
           onSelectToggle={this.toggleDataRows}
           selected={this.dataRowIsSelected(dataRow)}
           data={dataRow}
+          dataRowIdField={this.props.dataRowIdField}
           actionButtons={this.props.actionButtons.member || []}
           key={"table_row_" + i}
           rowSelectableFilter={this.props.rowSelectableFilter}
