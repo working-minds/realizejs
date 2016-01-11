@@ -109,6 +109,10 @@ var TableRow = React.createClass({
   /* event handlers */
 
   rowClick: function(event) {
+    if(event.isPropagationStopped()) {
+      return;
+    }
+
     var onClickRow = this.props.onClickRow;
     var rowHref = this.props.rowHref;
 
