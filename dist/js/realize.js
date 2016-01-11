@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.15 (http://www.wkm.com.br)
+ * Realize v0.7.16 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -1423,7 +1423,9 @@ var GridActionsMixin = {
       href: this.getRestActionUrl('edit')
     }, {
       icon: 'destroy',
-      onClick: this.destroyAction
+      method: this.getRestActionMethod('destroy'),
+      actionUrl: this.getRestActionUrl('destroy'),
+      confirmsWith: this.props.destroyConfirm
     }];
   },
 
@@ -9726,6 +9728,10 @@ var TableRow = React.createClass({
   /* event handlers */
 
   rowClick: function rowClick(event) {
+    if (event.isPropagationStopped()) {
+      return;
+    }
+
     var onClickRow = this.props.onClickRow;
     var rowHref = this.props.rowHref;
 
@@ -9853,6 +9859,8 @@ var TableRowActionButton = React.createClass({
       var actionData = this.getActionData(this.props);
       this.performRequest(buttonAction, actionData, this.props.method || 'POST');
     }
+
+    event.stopPropagation();
   },
 
   getActionData: function getActionData() {
