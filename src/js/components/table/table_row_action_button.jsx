@@ -94,6 +94,8 @@ var TableRowActionButton = React.createClass({
       var actionData = this.getActionData(this.props);
       this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
     }
+
+    event.stopPropagation();
   },
 
   getActionData: function() {

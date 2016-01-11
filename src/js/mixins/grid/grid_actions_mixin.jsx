@@ -53,7 +53,9 @@ var GridActionsMixin = {
       },
       {
         icon: 'destroy',
-        onClick: this.destroyAction
+        method: this.getRestActionMethod('destroy'),
+        actionUrl: this.getRestActionUrl('destroy'),
+        confirmsWith: this.props.destroyConfirm
       }
     ];
   },
