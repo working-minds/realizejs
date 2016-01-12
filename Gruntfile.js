@@ -27,7 +27,7 @@ module.exports = function(grunt) {
 
     babel: {
       options: {
-        sourceMaps: true,
+        sourceMaps: false,
         presets: ['es2015', 'stage-2', 'react']
       },
       build: {
@@ -57,9 +57,11 @@ module.exports = function(grunt) {
       }
     },
 
-    concat_sourcemap: {
+    concat: {
       options: {
-        sourcesContent: true
+        banner: '<%= banner %>',
+        sourceMap: true,
+        stripBanners: false
       },
       js: {
         src: [
@@ -137,7 +139,7 @@ module.exports = function(grunt) {
   // Load dos plugins Grunt do NPM
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-concat-sourcemap');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -149,8 +151,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'babel:build',
     'sass:build',
-    'concat_sourcemap:js',
-    'concat_sourcemap:css',
+    'concat:js',
+    'concat:css',
     'uglify',
     'cssmin',
     'usebanner:build',
