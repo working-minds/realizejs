@@ -254,6 +254,10 @@ hr {
   color: black;
   padding-left: 30px;
 }
+
+.input-autocomplete .caret {
+  cursor: pointer;
+}
 .input-datefilter {}
 
 .input-datefilter__body {

@@ -6100,7 +6100,7 @@ var InputAutocompleteSelect = React.createClass({
         { className: this.className() },
         React.createElement(
           'span',
-          { className: 'caret' },
+          { className: 'caret', onClick: this.focusSelect },
           '▼'
         ),
         React.createElement(InputText, {
@@ -6110,15 +6110,12 @@ var InputAutocompleteSelect = React.createClass({
           placeholder: this.props.placeholder,
           onFocus: this.props.onFocus,
           errors: this.props.errors,
+          ref: 'select',
           key: "autocomplete_select_" + this.generateUUID()
         })
       ),
       React.createElement(Label, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
     );
-  },
-
-  selectId: function selectId() {
-    return 'autocomplete_select_' + this.props.id;
   },
 
   renderSelectedOptions: function renderSelectedOptions() {
@@ -6127,6 +6124,15 @@ var InputAutocompleteSelect = React.createClass({
     return $.map(options, function (option) {
       return option.name;
     }).join(', ');
+  },
+
+  selectId: function selectId() {
+    return 'autocomplete_select_' + this.props.id;
+  },
+
+  focusSelect: function focusSelect() {
+    var selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
   }
 });
 

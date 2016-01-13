@@ -75,3 +75,7 @@
   color: black;
   padding-left: 30px;
 }
+
+.input-autocomplete .caret {
+  cursor: pointer;
+}
