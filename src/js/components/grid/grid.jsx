@@ -212,7 +212,7 @@ var Grid = React.createClass({
           />
       );
     }
-  } ,
+  },
 
   /* Event handlers */
 

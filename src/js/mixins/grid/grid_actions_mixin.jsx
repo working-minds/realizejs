@@ -2,21 +2,21 @@ var GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
     rowHref: React.PropTypes.string,
-    useShowRowHref: React.PropTypes.bool
+    haveShowAction: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       actionButtons: null,
       rowHref: null,
-      useShowRowHref: false
+      haveShowAction: false
     };
   },
 
   getRowHref: function() {
     var rowHref = this.props.rowHref;
-    var useShowRowHref = this.props.useShowRowHref;
-    if(!useShowRowHref || (!!rowHref && typeof rowHref == "string")) {
+    var haveShowAction = this.props.haveShowAction;
+    if(!haveShowAction || (!!rowHref && typeof rowHref == "string")) {
       return rowHref;
     }
 
@@ -46,7 +46,7 @@ var GridActionsMixin = {
   },
 
   getDefaultMemberActionButtons: function() {
-    return [
+    var actions = [
       {
         icon: 'edit',
         href: this.getRestActionUrl('edit')
@@ -58,6 +58,15 @@ var GridActionsMixin = {
         confirmsWith: this.props.destroyConfirm
       }
     ];
+
+    if(this.props.haveShowAction) {
+      actions.unshift({
+        icon: 'search',
+        href: this.getRestActionUrl('show')
+      });
+    }
+
+    return actions;
   },
 
   getCollectionActionButtons: function() {
