@@ -3,6 +3,10 @@
  * Copyright 2015-2016 
  */
 
+/*!
+ * Realize v0.7.16 (http://www.wkm.com.br)
+ * Copyright 2015-2016 
+ */
 'use strict';
 
 var Realize = {};
@@ -1429,40 +1433,6 @@ var GridActionsMixin = {
       context: 'none',
       href: this.getRestActionUrl('add')
     }];
-  },
-
-  addAction: function addAction(event) {
-    window.location = this.getRestActionUrl('add');
-  },
-
-  editAction: function editAction(event, id) {
-    window.location = this.getRestActionUrl('edit', id);
-  },
-
-  destroyAction: function destroyAction(event, id) {
-    var destroyUrl = this.getRestActionUrl('destroy', id);
-    var destroyMethod = this.getRestActionMethod('destroy');
-
-    if (!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({ isLoading: true });
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
-  handleDestroy: function handleDestroy(data, status, xhr) {
-    this.loadData(data);
-    this.handleSuccess(data, status, xhr);
-  },
-
-  handleDestroyError: function handleDestroyError(xhr, status, error) {
-    this.setState({ isLoading: false });
-    console.log(error);
   }
 };
 
@@ -7067,18 +7037,19 @@ var InputHidden = React.createClass({
   }
 });
 
-"use strict";
+'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 var InputMasked = React.createClass({
-  displayName: "InputMasked",
+  displayName: 'InputMasked',
 
   mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
+    type: React.PropTypes.string,
     mask: React.PropTypes.string,
     maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
@@ -7090,10 +7061,10 @@ var InputMasked = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.text',
+      type: 'text',
       mask: null,
       maskType: null,
       regex: null,
-
       onComplete: function onComplete() {},
       onIncomplete: function onIncomplete() {},
       onCleared: function onCleared() {}
@@ -7117,7 +7088,7 @@ var InputMasked = React.createClass({
           predefinedMasks[maskName] = {
             mask: mask
           };
-        } else if ((typeof mask === "undefined" ? "undefined" : _typeof(mask)) == "object") {
+        } else if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) == "object") {
           predefinedMasks[maskName] = mask;
         }
       }
@@ -7128,15 +7099,14 @@ var InputMasked = React.createClass({
 
   render: function render() {
     return React.createElement(
-      "input",
+      'input',
       _extends({}, this.props, {
         value: this.state.value,
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
         onChange: this.handleChange,
         onFocus: this._handleFocus,
-        type: "text",
-        ref: "input" }),
+        ref: 'input' }),
       this.props.children
     );
   },
@@ -7251,31 +7221,32 @@ var InputMasked = React.createClass({
   }
 });
 
-"use strict";
+'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputNumber = React.createClass({
-  displayName: "InputNumber",
+  displayName: 'InputNumber',
 
   mixins: [CssClassMixin, InputComponentMixin],
 
   getDefaultProps: function getDefaultProps() {
     return {
-      themeClassKey: 'input.number'
+      themeClassKey: 'input.number',
+      maskType: 'integer'
     };
   },
 
   render: function render() {
     return React.createElement(
-      "span",
+      'span',
       null,
       React.createElement(InputMasked, _extends({}, this.props, {
         className: this.className(),
         onChange: this._handleChange,
         onFocus: this._handleFocus,
-        type: "number",
-        ref: "input"
+        type: 'text',
+        ref: 'input'
       })),
       React.createElement(Label, this.propsWithoutCSS())
     );

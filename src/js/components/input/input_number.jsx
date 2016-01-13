@@ -3,7 +3,8 @@ var InputNumber = React.createClass({
 
   getDefaultProps: function() {
     return {
-      themeClassKey: 'input.number'
+      themeClassKey: 'input.number',
+      maskType: 'integer'
     };
   },
 
@@ -15,7 +16,7 @@ var InputNumber = React.createClass({
           className={this.className()}
           onChange={this._handleChange}
           onFocus={this._handleFocus}
-          type="number"
+          type="text"
           ref="input"
         />
         <Label {...this.propsWithoutCSS()} />

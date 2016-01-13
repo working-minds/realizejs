@@ -76,39 +76,5 @@ var GridActionsMixin = {
         href: this.getRestActionUrl('add')
       }
     ];
-  },
-
-  addAction: function(event) {
-    window.location = this.getRestActionUrl('add');
-  },
-
-  editAction: function(event, id) {
-    window.location = this.getRestActionUrl('edit', id);
-  },
-
-  destroyAction: function(event, id) {
-    var destroyUrl = this.getRestActionUrl('destroy', id);
-    var destroyMethod = this.getRestActionMethod('destroy');
-
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
-  handleDestroy: function(data, status, xhr) {
-    this.loadData(data);
-    this.handleSuccess(data, status, xhr);
-  },
-
-  handleDestroyError: function(xhr, status, error) {
-    this.setState({isLoading: false});
-    console.log(error);
   }
 };

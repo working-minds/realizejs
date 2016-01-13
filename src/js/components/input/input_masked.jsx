@@ -5,6 +5,7 @@ var InputMasked = React.createClass({
   ],
 
   propTypes: {
+    type: React.PropTypes.string,
     mask: React.PropTypes.string,
     maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
@@ -16,10 +17,10 @@ var InputMasked = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.text',
+      type: 'text',
       mask: null,
       maskType: null,
       regex: null,
-
       onComplete: function() {},
       onIncomplete: function() {},
       onCleared: function() {}
@@ -61,7 +62,6 @@ var InputMasked = React.createClass({
         className={this.inputClassName()}
         onChange={this.handleChange}
         onFocus={this._handleFocus}
-        type="text"
         ref="input">
 
         {this.props.children}
