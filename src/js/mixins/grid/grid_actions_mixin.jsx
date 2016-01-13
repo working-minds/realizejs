@@ -2,21 +2,21 @@ var GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
     rowHref: React.PropTypes.string,
-    useShowRowHref: React.PropTypes.bool
+    haveShowAction: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       actionButtons: null,
       rowHref: null,
-      useShowRowHref: false
+      haveShowAction: false
     };
   },
 
   getRowHref: function() {
     var rowHref = this.props.rowHref;
-    var useShowRowHref = this.props.useShowRowHref;
-    if(!useShowRowHref || (!!rowHref && typeof rowHref == "string")) {
+    var haveShowAction = this.props.haveShowAction;
+    if(!haveShowAction || (!!rowHref && typeof rowHref == "string")) {
       return rowHref;
     }
 
@@ -46,7 +46,7 @@ var GridActionsMixin = {
   },
 
   getDefaultMemberActionButtons: function() {
-    return [
+    var actions = [
       {
         icon: 'edit',
         href: this.getRestActionUrl('edit')
@@ -58,6 +58,15 @@ var GridActionsMixin = {
         confirmsWith: this.props.destroyConfirm
       }
     ];
+
+    if(this.props.haveShowAction) {
+      actions.unshift({
+        icon: 'search',
+        href: this.getRestActionUrl('show')
+      });
+    }
+
+    return actions;
   },
 
   getCollectionActionButtons: function() {
@@ -76,39 +85,5 @@ var GridActionsMixin = {
         href: this.getRestActionUrl('add')
       }
     ];
-  },
-
-  addAction: function(event) {
-    window.location = this.getRestActionUrl('add');
-  },
-
-  editAction: function(event, id) {
-    window.location = this.getRestActionUrl('edit', id);
-  },
-
-  destroyAction: function(event, id) {
-    var destroyUrl = this.getRestActionUrl('destroy', id);
-    var destroyMethod = this.getRestActionMethod('destroy');
-
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
-  handleDestroy: function(data, status, xhr) {
-    this.loadData(data);
-    this.handleSuccess(data, status, xhr);
-  },
-
-  handleDestroyError: function(xhr, status, error) {
-    this.setState({isLoading: false});
-    console.log(error);
   }
 };

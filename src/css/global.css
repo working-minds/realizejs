@@ -8,3 +8,14 @@ hr {
   /* TODO: transformar em uma variavel SASS de cor do Materialize */
   background-color: #9e9e9e !important;
 }
+
+body .select-wrapper span.caret {
+  color: initial;
+  position: absolute;
+  right: -5px;
+  top: 11px;
+  font-size: 10px;
+  background-color: white;
+  padding: 5px;
+  cursor: pointer;
+}

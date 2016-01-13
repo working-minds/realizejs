@@ -34,11 +34,19 @@ var ContainerMixin = {
     if (!!options && !!options.childrenType) {
       return React.Children.map(this.filterChildren(options.childrenType), function(child) {
         var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        if(!child || !child.type) {
+          return null;
+        }
+
         return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
       }.bind(this));
     } else {
       return React.Children.map(this.props.children, function(child) {
         var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        if(!child || !child.type) {
+          return null;
+        }
+
         return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
       }.bind(this));
     }

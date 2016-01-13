@@ -3,6 +3,15 @@
  * Copyright 2015-2016 
  */
 
+/*!
+ * Realize v0.7.16 (http://www.wkm.com.br)
+ * Copyright 2015-2016 
+ */
+
+/*!
+ * Realize v0.7.16 (http://www.wkm.com.br)
+ * Copyright 2015-2016 
+ */
 'use strict';
 
 var Realize = {};
@@ -48,7 +57,6 @@ Realize.config = {
 Realize.setConfig = function (newConfig) {
   $.extend(true, Realize.config, newConfig);
 };
-//
 
 "use strict";
 
@@ -57,7 +65,6 @@ $.extend(FormSerializer.patterns, {
   key: /[a-z0-9#_\.-]+|(?=\[\])/gi,
   named: /^[a-z0-9#_\.-]+$/i
 });
-//
 
 'use strict';
 
@@ -76,7 +83,6 @@ Realize.utils.getProp = function (key, obj) {
   }
   return prop;
 };
-//
 
 "use strict";
 
@@ -93,7 +99,6 @@ Realize.PropTypes.localizedString = function (props, propName, componentName) {
     return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
   }
 };
-//
 
 'use strict';
 
@@ -146,7 +151,6 @@ Realize.i18n.translate = function (key, throwsException) {
 };
 
 Realize.t = Realize.i18n.translate;
-//
 
 'use strict';
 
@@ -235,7 +239,6 @@ Realize.i18n.registerLocale({
   }
 
 }, 'en');
-//
 
 'use strict';
 
@@ -324,7 +327,6 @@ Realize.i18n.registerLocale({
   }
 
 }, 'pt-BR');
-//
 
 'use strict';
 
@@ -359,7 +361,6 @@ Realize.themes.getCssClass = function (keys) {
 
   return themeClass.trim();
 };
-//
 
 'use strict';
 
@@ -444,7 +445,6 @@ Realize.themes.default = {
     }
   }
 };
-//
 
 'use strict';
 
@@ -786,22 +786,18 @@ Realize.themes.materialize = {
     destroy: 'delete'
   }
 };
-//
 
 "use strict";
 
 var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
-//
 
 'use strict';
 
 var InputSelectActions = Reflux.createActions(['select', 'selectSearchValue']);
-//
 
 'use strict';
 
 var ModalActions = Reflux.createActions(['open', 'openFinished', 'close']);
-//
 
 'use strict';
 
@@ -857,7 +853,6 @@ var FormStore = Reflux.createStore({
   }
 
 });
-//
 
 'use strict';
 
@@ -884,7 +879,6 @@ var InputSelectStore = Reflux.createStore({
     this.trigger(this);
   }
 });
-//
 
 'use strict';
 
@@ -923,7 +917,6 @@ var ModalStore = Reflux.createStore({
     this.trigger(this);
   }
 });
-//
 
 'use strict';
 
@@ -963,11 +956,19 @@ var ContainerMixin = {
     if (!!options && !!options.childrenType) {
       return React.Children.map(this.filterChildren(options.childrenType), (function (child) {
         var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        if (!child || !child.type) {
+          return null;
+        }
+
         return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
       }).bind(this));
     } else {
       return React.Children.map(this.props.children, (function (child) {
         var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        if (!child || !child.type) {
+          return null;
+        }
+
         return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
       }).bind(this));
     }
@@ -1012,7 +1013,6 @@ var ContainerMixin = {
   }
 
 };
-//
 
 'use strict';
 
@@ -1069,7 +1069,6 @@ var CssClassMixin = {
     return props;
   }
 };
-//
 
 "use strict";
 
@@ -1143,7 +1142,6 @@ var FormActionsListenerMixin = {
   }
 
 };
-//
 
 'use strict';
 
@@ -1213,7 +1211,6 @@ var FormContainerMixin = {
   }
 
 };
-//
 
 'use strict';
 
@@ -1317,7 +1314,6 @@ var FormErrorHandlerMixin = {
     );
   }
 };
-//
 
 'use strict';
 
@@ -1366,7 +1362,6 @@ var FormSuccessHandlerMixin = {
     }
   }
 };
-//
 
 'use strict';
 
@@ -1374,21 +1369,21 @@ var GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
     rowHref: React.PropTypes.string,
-    useShowRowHref: React.PropTypes.bool
+    haveShowAction: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       actionButtons: null,
       rowHref: null,
-      useShowRowHref: false
+      haveShowAction: false
     };
   },
 
   getRowHref: function getRowHref() {
     var rowHref = this.props.rowHref;
-    var useShowRowHref = this.props.useShowRowHref;
-    if (!useShowRowHref || !!rowHref && typeof rowHref == "string") {
+    var haveShowAction = this.props.haveShowAction;
+    if (!haveShowAction || !!rowHref && typeof rowHref == "string") {
       return rowHref;
     }
 
@@ -1418,7 +1413,7 @@ var GridActionsMixin = {
   },
 
   getDefaultMemberActionButtons: function getDefaultMemberActionButtons() {
-    return [{
+    var actions = [{
       icon: 'edit',
       href: this.getRestActionUrl('edit')
     }, {
@@ -1427,6 +1422,15 @@ var GridActionsMixin = {
       actionUrl: this.getRestActionUrl('destroy'),
       confirmsWith: this.props.destroyConfirm
     }];
+
+    if (this.props.haveShowAction) {
+      actions.unshift({
+        icon: 'search',
+        href: this.getRestActionUrl('show')
+      });
+    }
+
+    return actions;
   },
 
   getCollectionActionButtons: function getCollectionActionButtons() {
@@ -1443,43 +1447,8 @@ var GridActionsMixin = {
       context: 'none',
       href: this.getRestActionUrl('add')
     }];
-  },
-
-  addAction: function addAction(event) {
-    window.location = this.getRestActionUrl('add');
-  },
-
-  editAction: function editAction(event, id) {
-    window.location = this.getRestActionUrl('edit', id);
-  },
-
-  destroyAction: function destroyAction(event, id) {
-    var destroyUrl = this.getRestActionUrl('destroy', id);
-    var destroyMethod = this.getRestActionMethod('destroy');
-
-    if (!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({ isLoading: true });
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
-  handleDestroy: function handleDestroy(data, status, xhr) {
-    this.loadData(data);
-    this.handleSuccess(data, status, xhr);
-  },
-
-  handleDestroyError: function handleDestroyError(xhr, status, error) {
-    this.setState({ isLoading: false });
-    console.log(error);
   }
 };
-//
 
 'use strict';
 
@@ -1556,7 +1525,6 @@ var CheckboxComponentMixin = {
     }
   }
 };
-//
 
 'use strict';
 
@@ -1665,7 +1633,6 @@ var InputComponentMixin = {
   }
 
 };
-//
 
 "use strict";
 
@@ -1733,7 +1700,6 @@ var InputSelectActionsListenerMixin = {
     return this.state.optionsCache;
   }
 };
-//
 
 'use strict';
 
@@ -1770,7 +1736,6 @@ var MaterializeSelectMixin = {
     }, this.triggerDependableChanged);
   }
 };
-//
 
 'use strict';
 
@@ -1981,7 +1946,6 @@ var SelectComponentMixin = {
     return this.state.disabled || this.state.mustDisable;
   }
 };
-//
 
 'use strict';
 
@@ -2017,7 +1981,6 @@ var LocalizedResourceFieldMixin = {
   }
 
 };
-//
 
 "use strict";
 
@@ -2044,7 +2007,6 @@ var ModalRendererMixin = {
     $modalContainer.html(modalHtml);
   }
 };
-//
 
 'use strict';
 
@@ -2154,7 +2116,6 @@ var RequestHandlerMixin = {
 
   handleHtmlResponse: function handleHtmlResponse(responseHtml) {}
 };
-//
 
 'use strict';
 
@@ -2189,7 +2150,6 @@ var RestActionsMixin = {
     return actionMethods[action];
   }
 };
-//
 
 'use strict';
 
@@ -2206,7 +2166,6 @@ var UtilsMixin = {
     });
   }
 };
-//
 
 'use strict';
 
@@ -2462,7 +2421,6 @@ var EditPermissions = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -2604,7 +2562,6 @@ var IndexPermissions = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -2653,7 +2610,6 @@ var LabelPermission = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -2761,7 +2717,6 @@ var AclModalsWrapper = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -2957,7 +2912,6 @@ var AddPrincipalsModal = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -2994,7 +2948,6 @@ var CloseModalButton = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -3141,7 +3094,6 @@ var PermissionManagerModal = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -3500,7 +3452,6 @@ var PermissionManager = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -3554,7 +3505,6 @@ var PrincipalActionButtons = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -3590,7 +3540,6 @@ var UpdatePermissionsButton = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -3751,7 +3700,6 @@ var Button = React.createClass({
   }
 
 });
-//
 
 "use strict";
 
@@ -3794,7 +3742,6 @@ var ButtonGroup = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -3820,7 +3767,6 @@ var Container = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -3898,7 +3844,6 @@ var Flash = React.createClass({
     }).bind(this), this.props.dismissTimeout);
   }
 });
-//
 
 'use strict';
 
@@ -3929,7 +3874,6 @@ var FlashContent = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -3957,7 +3901,6 @@ var FlashDismiss = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -4151,7 +4094,6 @@ var BulkEditForm = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -4342,7 +4284,6 @@ var Form = React.createClass({
     return isLoading;
   }
 });
-//
 
 'use strict';
 
@@ -4431,7 +4372,6 @@ var FormButtonGroup = React.createClass({
     });
   }
 });
-//
 
 'use strict';
 
@@ -4543,7 +4483,6 @@ var InputGroup = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -4878,7 +4817,6 @@ var Grid = React.createClass({
     });
   }
 });
-//
 
 'use strict';
 
@@ -4999,7 +4937,6 @@ var GridFilter = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -5041,7 +4978,6 @@ var GridPagination = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -5066,7 +5002,6 @@ var GridTable = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -5323,7 +5258,6 @@ var GridForm = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -5360,7 +5294,6 @@ var Header = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -5416,7 +5349,6 @@ var HeaderButton = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -5482,7 +5414,6 @@ var HeaderMenu = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -5523,7 +5454,6 @@ var HeaderSection = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -5566,7 +5496,6 @@ var Icon = React.createClass({
     return iconType;
   }
 });
-//
 
 'use strict';
 
@@ -5631,7 +5560,6 @@ var Spinner = React.createClass({
     return className;
   }
 });
-//
 
 'use strict';
 
@@ -5841,7 +5769,6 @@ var InputAutocomplete = React.createClass({
   }
 
 });
-//
 
 "use strict";
 
@@ -5935,7 +5862,6 @@ var InputAutocompleteList = React.createClass({
     });
   }
 });
-//
 
 'use strict';
 
@@ -6020,7 +5946,6 @@ var InputAutocompleteOption = React.createClass({
     return 'autocomplete_option_' + this.props.id + '_' + this.props.value;
   }
 });
-//
 
 "use strict";
 
@@ -6141,7 +6066,6 @@ var InputAutocompleteResult = React.createClass({
     return React.createElement(eval(buttonComponent), buttonProps);
   }
 });
-//
 
 'use strict';
 
@@ -6181,7 +6105,7 @@ var InputAutocompleteSelect = React.createClass({
         { className: this.className() },
         React.createElement(
           'span',
-          { className: 'caret' },
+          { className: 'caret', onClick: this.focusSelect },
           '▼'
         ),
         React.createElement(InputText, {
@@ -6191,15 +6115,12 @@ var InputAutocompleteSelect = React.createClass({
           placeholder: this.props.placeholder,
           onFocus: this.props.onFocus,
           errors: this.props.errors,
+          ref: 'select',
           key: "autocomplete_select_" + this.generateUUID()
         })
       ),
       React.createElement(Label, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
     );
-  },
-
-  selectId: function selectId() {
-    return 'autocomplete_select_' + this.props.id;
   },
 
   renderSelectedOptions: function renderSelectedOptions() {
@@ -6208,9 +6129,17 @@ var InputAutocompleteSelect = React.createClass({
     return $.map(options, function (option) {
       return option.name;
     }).join(', ');
+  },
+
+  selectId: function selectId() {
+    return 'autocomplete_select_' + this.props.id;
+  },
+
+  focusSelect: function focusSelect() {
+    var selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
   }
 });
-//
 
 "use strict";
 
@@ -6272,7 +6201,6 @@ var InputAutocompleteValues = React.createClass({
     return inputName;
   }
 });
-//
 
 "use strict";
 
@@ -6304,7 +6232,6 @@ var InputCheckbox = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -6378,7 +6305,6 @@ var InputCheckboxGroup = React.createClass({
   }
 
 });
-//
 
 "use strict";
 
@@ -6469,7 +6395,6 @@ var InputDatefilter = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -6639,7 +6564,6 @@ var InputDatefilterBody = React.createClass({
     return Realize.t("inputs.datefilter." + filterType);
   }
 });
-//
 
 'use strict';
 
@@ -6674,7 +6598,7 @@ var InputDatefilterSelect = React.createClass({
         { className: this.className() },
         React.createElement(
           'span',
-          { className: 'caret' },
+          { className: 'caret', onClick: this.focusSelect },
           '▼'
         ),
         React.createElement(InputText, {
@@ -6684,6 +6608,7 @@ var InputDatefilterSelect = React.createClass({
           placeholder: this.props.placeholder,
           onFocus: this.props.onFocus,
           errors: this.props.errors,
+          ref: 'select',
           key: "datefilter_select_" + this.generateUUID()
         })
       ),
@@ -6691,16 +6616,20 @@ var InputDatefilterSelect = React.createClass({
     );
   },
 
+  renderSelectedDates: function renderSelectedDates() {
+    var dates = this.props.selectedDates;
+    return dates.join(' - ');
+  },
+
   selectId: function selectId() {
     return 'datefilter_select_' + this.props.id;
   },
 
-  renderSelectedDates: function renderSelectedDates() {
-    var dates = this.props.selectedDates;
-    return dates.join(' - ');
+  focusSelect: function focusSelect() {
+    var selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
   }
 });
-//
 
 'use strict';
 
@@ -6901,7 +6830,6 @@ var Input = React.createClass({
     return this.props.errors[this.props.id];
   }
 });
-//
 
 'use strict';
 
@@ -6991,7 +6919,6 @@ var InputDatepicker = React.createClass({
     return formattedValue;
   }
 });
-//
 
 'use strict';
 
@@ -7035,7 +6962,6 @@ var InputError = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -7122,7 +7048,6 @@ var InputFile = React.createClass({
     return this.props.label || this.props.name;
   }
 });
-//
 
 "use strict";
 
@@ -7137,20 +7062,20 @@ var InputHidden = React.createClass({
     return React.createElement("input", _extends({}, this.props, { type: "hidden", ref: "input" }));
   }
 });
-//
 
-"use strict";
+'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 var InputMasked = React.createClass({
-  displayName: "InputMasked",
+  displayName: 'InputMasked',
 
   mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
+    type: React.PropTypes.string,
     mask: React.PropTypes.string,
     maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
@@ -7162,10 +7087,10 @@ var InputMasked = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.text',
+      type: 'text',
       mask: null,
       maskType: null,
       regex: null,
-
       onComplete: function onComplete() {},
       onIncomplete: function onIncomplete() {},
       onCleared: function onCleared() {}
@@ -7189,7 +7114,7 @@ var InputMasked = React.createClass({
           predefinedMasks[maskName] = {
             mask: mask
           };
-        } else if ((typeof mask === "undefined" ? "undefined" : _typeof(mask)) == "object") {
+        } else if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) == "object") {
           predefinedMasks[maskName] = mask;
         }
       }
@@ -7200,15 +7125,14 @@ var InputMasked = React.createClass({
 
   render: function render() {
     return React.createElement(
-      "input",
+      'input',
       _extends({}, this.props, {
         value: this.state.value,
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
         onChange: this.handleChange,
         onFocus: this._handleFocus,
-        type: "text",
-        ref: "input" }),
+        ref: 'input' }),
       this.props.children
     );
   },
@@ -7322,39 +7246,38 @@ var InputMasked = React.createClass({
     }
   }
 });
-//
 
-"use strict";
+'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var InputNumber = React.createClass({
-  displayName: "InputNumber",
+  displayName: 'InputNumber',
 
   mixins: [CssClassMixin, InputComponentMixin],
 
   getDefaultProps: function getDefaultProps() {
     return {
-      themeClassKey: 'input.number'
+      themeClassKey: 'input.number',
+      maskType: 'integer'
     };
   },
 
   render: function render() {
     return React.createElement(
-      "span",
+      'span',
       null,
       React.createElement(InputMasked, _extends({}, this.props, {
         className: this.className(),
         onChange: this._handleChange,
         onFocus: this._handleFocus,
-        type: "number",
-        ref: "input"
+        type: 'text',
+        ref: 'input'
       })),
       React.createElement(Label, this.propsWithoutCSS())
     );
   }
 });
-//
 
 "use strict";
 
@@ -7384,7 +7307,6 @@ var InputPassword = React.createClass({
       type: "password", ref: "input" }));
   }
 });
-//
 
 'use strict';
 
@@ -7462,7 +7384,6 @@ var InputSwitch = React.createClass({
     return this.props;
   }
 });
-//
 
 'use strict';
 
@@ -7494,7 +7415,6 @@ var InputText = React.createClass({
     }));
   }
 });
-//
 
 "use strict";
 
@@ -7526,7 +7446,6 @@ var InputTextarea = React.createClass({
     }));
   }
 });
-//
 
 'use strict';
 
@@ -7590,7 +7509,6 @@ var InputRadioGroup = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -7685,7 +7603,6 @@ var InputSelect = React.createClass({
   }
 
 });
-//
 
 "use strict";
 
@@ -7705,7 +7622,6 @@ var InputSelectOption = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -7759,7 +7675,6 @@ var Label = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -7833,7 +7748,6 @@ var MenuItem = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -8049,7 +7963,6 @@ var Modal = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -8096,7 +8009,6 @@ var ModalButton = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -8119,7 +8031,6 @@ var ModalContent = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -8158,7 +8069,6 @@ var ModalFooter = React.createClass({
     return className;
   }
 });
-//
 
 "use strict";
 
@@ -8288,7 +8198,6 @@ var ModalForm = React.createClass({
     return true;
   }
 });
-//
 
 'use strict';
 
@@ -8325,7 +8234,6 @@ var ModalHeader = React.createClass({
     return className;
   }
 });
-//
 
 'use strict';
 
@@ -8499,7 +8407,6 @@ var NotificationNumber = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -8621,7 +8528,6 @@ var NotificationsList = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -8731,7 +8637,6 @@ var Pagination = React.createClass({
     this.props.onPagination(page);
   }
 });
-//
 
 'use strict';
 
@@ -8808,7 +8713,6 @@ var PaginationItem = React.createClass({
     }
   }
 });
-//
 
 'use strict';
 
@@ -8867,7 +8771,6 @@ var SideNav = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -9192,7 +9095,6 @@ var Table = React.createClass({
     }
   }
 });
-//
 
 'use strict';
 
@@ -9330,7 +9232,6 @@ var TableActionButton = React.createClass({
     return selectedData;
   }
 });
-//
 
 "use strict";
 
@@ -9396,7 +9297,6 @@ var TableActions = React.createClass({
     return actionButtons;
   }
 });
-//
 
 'use strict';
 
@@ -9506,7 +9406,6 @@ var TableCell = React.createClass({
     return value.format("DD/MM/YYYY HH:mm");
   }
 });
-//
 
 'use strict';
 
@@ -9614,7 +9513,6 @@ var TableHeader = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -9756,7 +9654,6 @@ var TableRow = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -9873,7 +9770,6 @@ var TableRowActionButton = React.createClass({
   }
 
 });
-//
 
 'use strict';
 
@@ -9933,7 +9829,6 @@ var TableRowActions = React.createClass({
     return actionButtons;
   }
 });
-//
 
 'use strict';
 
@@ -9977,7 +9872,6 @@ var TableSelectCell = React.createClass({
     event.stopPropagation();
   }
 });
-//
 
 'use strict';
 
@@ -10105,7 +9999,6 @@ var TableSelectionIndicator = React.createClass({
     return buttonName.replace(/:count/, count);
   }
 });
-//
 
 "use strict";
 
@@ -10126,7 +10019,6 @@ var Tab = React.createClass({
     );
   }
 });
-//
 
 'use strict';
 
@@ -10163,7 +10055,6 @@ var TabButton = React.createClass({
   }
 
 });
-//
 
 "use strict";
 
@@ -10220,6 +10111,5 @@ var Tabs = React.createClass({
     return tabs;
   }
 });
-//
 
 //# sourceMappingURL=realize.js.map

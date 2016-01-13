@@ -29,7 +29,7 @@ var InputAutocompleteSelect = React.createClass({
     return (
       <div>
         <div className={this.className()}>
-          <span className="caret">▼</span>
+          <span className="caret" onClick={this.focusSelect}>▼</span>
           <InputText
             id={this.selectId()}
             value={this.renderSelectedOptions()}
@@ -37,6 +37,7 @@ var InputAutocompleteSelect = React.createClass({
             placeholder={this.props.placeholder}
             onFocus={this.props.onFocus}
             errors={this.props.errors}
+            ref="select"
             key={"autocomplete_select_" + this.generateUUID()}
           />
         </div>
@@ -45,15 +46,20 @@ var InputAutocompleteSelect = React.createClass({
     );
   },
 
-  selectId: function() {
-    return 'autocomplete_select_' + this.props.id;
-  },
-
   renderSelectedOptions: function() {
     var options = this.props.selectedOptions;
 
     return $.map(options, function(option) {
       return option.name;
     }).join(', ');
+  },
+
+  selectId: function() {
+    return 'autocomplete_select_' + this.props.id;
+  },
+
+  focusSelect: function() {
+    var selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
   }
 });
