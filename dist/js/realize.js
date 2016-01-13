@@ -7,6 +7,11 @@
  * Realize v0.7.16 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
+
+/*!
+ * Realize v0.7.16 (http://www.wkm.com.br)
+ * Copyright 2015-2016 
+ */
 'use strict';
 
 var Realize = {};
@@ -6593,7 +6598,7 @@ var InputDatefilterSelect = React.createClass({
         { className: this.className() },
         React.createElement(
           'span',
-          { className: 'caret' },
+          { className: 'caret', onClick: this.focusSelect },
           '▼'
         ),
         React.createElement(InputText, {
@@ -6603,6 +6608,7 @@ var InputDatefilterSelect = React.createClass({
           placeholder: this.props.placeholder,
           onFocus: this.props.onFocus,
           errors: this.props.errors,
+          ref: 'select',
           key: "datefilter_select_" + this.generateUUID()
         })
       ),
@@ -6610,13 +6616,18 @@ var InputDatefilterSelect = React.createClass({
     );
   },
 
+  renderSelectedDates: function renderSelectedDates() {
+    var dates = this.props.selectedDates;
+    return dates.join(' - ');
+  },
+
   selectId: function selectId() {
     return 'datefilter_select_' + this.props.id;
   },
 
-  renderSelectedDates: function renderSelectedDates() {
-    var dates = this.props.selectedDates;
-    return dates.join(' - ');
+  focusSelect: function focusSelect() {
+    var selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
   }
 });
 

@@ -24,7 +24,7 @@ var InputDatefilterSelect = React.createClass({
     return (
       <div>
         <div className={this.className()}>
-          <span className="caret">▼</span>
+          <span className="caret" onClick={this.focusSelect}>▼</span>
           <InputText
             id={this.selectId()}
             value={this.renderSelectedDates()}
@@ -32,6 +32,7 @@ var InputDatefilterSelect = React.createClass({
             placeholder={this.props.placeholder}
             onFocus={this.props.onFocus}
             errors={this.props.errors}
+            ref="select"
             key={"datefilter_select_" + this.generateUUID()}
           />
         </div>
@@ -40,12 +41,17 @@ var InputDatefilterSelect = React.createClass({
     );
   },
 
+  renderSelectedDates: function() {
+    var dates = this.props.selectedDates;
+    return dates.join(' - ');
+  },
+
   selectId: function() {
     return 'datefilter_select_' + this.props.id;
   },
 
-  renderSelectedDates: function() {
-    var dates = this.props.selectedDates;
-    return dates.join(' - ');
+  focusSelect: function() {
+    var selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
   }
 });

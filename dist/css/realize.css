@@ -7,6 +7,11 @@
  * Realize v0.7.16 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
+
+/*!
+ * Realize v0.7.16 (http://www.wkm.com.br)
+ * Copyright 2015-2016 
+ */
 button .preloader-wrapper.small {
   width: 24px;
   height: 24px;
@@ -125,6 +130,17 @@ hr {
   border: 0;
   /* TODO: transformar em uma variavel SASS de cor do Materialize */
   background-color: #9e9e9e !important;
+}
+
+body .select-wrapper span.caret {
+  color: initial;
+  position: absolute;
+  right: -5px;
+  top: 11px;
+  font-size: 10px;
+  background-color: white;
+  padding: 5px;
+  cursor: pointer;
 }
 .grid {
   opacity: 1.0;
@@ -253,10 +269,6 @@ hr {
   left: 0;
   color: black;
   padding-left: 30px;
-}
-
-.input-autocomplete .caret {
-  cursor: pointer;
 }
 .input-datefilter {}
 
