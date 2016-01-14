@@ -10,7 +10,8 @@ var Input = React.createClass({
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
-    scope: React.PropTypes.oneOf(['resource', 'global'])
+    scope: React.PropTypes.oneOf(['resource', 'global']),
+    maxLength: React.PropTypes.number
   },
 
   getDefaultProps: function() {
@@ -22,7 +23,8 @@ var Input = React.createClass({
       data: {},
       errors: {},
       resource: null,
-      scope: 'resource'
+      scope: 'resource',
+      maxLength: null
     };
   },
 
@@ -110,6 +112,7 @@ var Input = React.createClass({
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),
       value: this.getInputComponentValue(),
+      maxLength: this.getMaxLength(),
       ref: "inputComponent"
     });
 
@@ -186,6 +189,14 @@ var Input = React.createClass({
     }
 
     return dataValue;
+  },
+
+  getMaxLength: function() {
+    var acceptComponents = ['text', 'masked', 'number', 'textarea'];
+
+    if (!!this.props.maxLength && (acceptComponents.indexOf(this.props.component) != -1)) {
+      return this.props.maxLength
+    }
   },
 
   getInputErrors: function() {
