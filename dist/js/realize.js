@@ -2,16 +2,6 @@
  * Realize v0.7.16 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
-
-/*!
- * Realize v0.7.16 (http://www.wkm.com.br)
- * Copyright 2015-2016 
- */
-
-/*!
- * Realize v0.7.16 (http://www.wkm.com.br)
- * Copyright 2015-2016 
- */
 'use strict';
 
 var Realize = {};
@@ -896,9 +886,9 @@ var ModalStore = Reflux.createStore({
     this.openerId = props.openerId;
     this.shouldOpen = true;
     this.shouldClose = false;
-    this.options = $.grep(props, (function (prop) {
+    this.options = $.grep(props, function (prop) {
       return this.optionProps.indexOf(prop) > 0;
-    }).bind(this));
+    }.bind(this));
 
     this.trigger(this);
   },
@@ -954,23 +944,23 @@ var ContainerMixin = {
     var props = this.buildPropsToForward();
 
     if (!!options && !!options.childrenType) {
-      return React.Children.map(this.filterChildren(options.childrenType), (function (child) {
+      return React.Children.map(this.filterChildren(options.childrenType), function (child) {
         var forwardedProps = $.extend({}, this.props.forwardedProps, props);
         if (!child || !child.type) {
           return null;
         }
 
         return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
-      }).bind(this));
+      }.bind(this));
     } else {
-      return React.Children.map(this.props.children, (function (child) {
+      return React.Children.map(this.props.children, function (child) {
         var forwardedProps = $.extend({}, this.props.forwardedProps, props);
         if (!child || !child.type) {
           return null;
         }
 
         return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
-      }).bind(this));
+      }.bind(this));
     }
   },
 
@@ -1062,9 +1052,9 @@ var CssClassMixin = {
   propsWithoutCSS: function propsWithoutCSS() {
     var cssProps = ['className', 'themeClassKey'];
     var props = $.extend({}, this.props);
-    $.each(cssProps, (function (i, cssProp) {
+    $.each(cssProps, function (i, cssProp) {
       delete props[cssProp];
-    }).bind(this));
+    }.bind(this));
 
     return props;
   }
@@ -1177,7 +1167,7 @@ var FormContainerMixin = {
   checkInputChildrenForErrors: function checkInputChildrenForErrors(errorIds, children) {
     var inputChildrenHaveErrors = false;
 
-    React.Children.forEach(children, (function (child) {
+    React.Children.forEach(children, function (child) {
       if (child.type == Input && $.inArray(child.props.id, errorIds) >= 0) {
         inputChildrenHaveErrors = true;
       } else if (child.type == InputGroup) {
@@ -1189,7 +1179,7 @@ var FormContainerMixin = {
       if (inputChildrenHaveErrors) {
         return false;
       }
-    }).bind(this));
+    }.bind(this));
 
     return inputChildrenHaveErrors;
   },
@@ -1636,7 +1626,7 @@ var InputComponentMixin = {
 
 "use strict";
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var InputSelectActionsListenerMixin = {
   componentDidMount: function componentDidMount() {
@@ -1823,11 +1813,11 @@ var SelectComponentMixin = {
 
   selectedOptions: function selectedOptions() {
     var selectedOptions = [];
-    $.each(this.state.optionsCache, (function (i, option) {
+    $.each(this.state.optionsCache, function (i, option) {
       if (this.state.value.indexOf(option.value) >= 0) {
         selectedOptions.push(option);
       }
-    }).bind(this));
+    }.bind(this));
 
     return selectedOptions;
   },
@@ -2332,11 +2322,11 @@ var EditPermissions = React.createClass({
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
       },
-      success: (function (data) {
+      success: function (data) {
         this.setState({
           permissions: data.permissions
         });
-      }).bind(this)
+      }.bind(this)
     });
   },
 
@@ -2379,7 +2369,7 @@ var EditPermissions = React.createClass({
     var resourceId = this.props.resource.id;
 
     if (!!permissions) {
-      permissions.forEach((function (permission) {
+      permissions.forEach(function (permission) {
         component.push(React.createElement(Input, { key: resourceId + '_' + permission + '_' + Math.random(),
           component: 'checkbox',
           ref: 'checkbox_' + permission,
@@ -2392,7 +2382,7 @@ var EditPermissions = React.createClass({
           name: this.checkboxName(),
           className: 'col s12'
         }));
-      }).bind(this));
+      }.bind(this));
     }
 
     return component;
@@ -2780,11 +2770,11 @@ var AddPrincipalsModal = React.createClass({
       url: this.props.principalsTypeBaseUrl,
       method: 'GET',
       dataType: 'json',
-      success: (function (data) {
+      success: function (data) {
         this.setState({
           principalType: data[0].name
         });
-      }).bind(this)
+      }.bind(this)
     });
   },
 
@@ -3297,9 +3287,9 @@ var PermissionManager = React.createClass({
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
       },
-      success: (function (data) {
+      success: function (data) {
         this.addPermissionChecked(data.permissions);
-      }).bind(this)
+      }.bind(this)
     });
   },
 
@@ -3426,12 +3416,12 @@ var PermissionManager = React.createClass({
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
       },
-      success: (function (data) {
+      success: function (data) {
         this.setState({
           principals: data.principals,
           selectedPrincipal: data.principals[0]
         });
-      }).bind(this)
+      }.bind(this)
     });
   },
 
@@ -3443,11 +3433,11 @@ var PermissionManager = React.createClass({
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
       },
-      success: (function (data) {
+      success: function (data) {
         this.setState({
           principalsPermissions: data.principals
         });
-      }).bind(this)
+      }.bind(this)
     });
   }
 
@@ -3839,9 +3829,9 @@ var Flash = React.createClass({
   },
 
   setDismissTimeout: function setDismissTimeout() {
-    setTimeout((function () {
+    setTimeout(function () {
       this.dismiss();
-    }).bind(this), this.props.dismissTimeout);
+    }.bind(this), this.props.dismissTimeout);
   }
 });
 
@@ -4576,11 +4566,11 @@ var Grid = React.createClass({
 
     this.setState({
       filterData: this.getInitialFilterData()
-    }, (function () {
+    }, function () {
       if (!!this.props.eagerLoad) {
         this.loadData();
       }
-    }).bind(this));
+    }.bind(this));
   },
 
   backToInitialState: function backToInitialState() {
@@ -4592,9 +4582,9 @@ var Grid = React.createClass({
 
     this.setState({
       filterData: this.getInitialFilterData()
-    }, (function () {
+    }, function () {
       this.loadData();
-    }).bind(this));
+    }.bind(this));
   },
 
   render: function render() {
@@ -4744,9 +4734,9 @@ var Grid = React.createClass({
       gridIsLoading: false,
       dataRows: data[this.props.dataRowsParam],
       count: data[this.props.countParam]
-    }, (function () {
+    }, function () {
       this.props.onLoadSuccess(data);
-    }).bind(this));
+    }.bind(this));
   },
 
   handleLoadError: function handleLoadError(xhr, status, error) {
@@ -5843,7 +5833,7 @@ var InputAutocompleteList = React.createClass({
   },
 
   otherOptions: function otherOptions() {
-    var otherOptions = $.map(this.props.options, (function (option) {
+    var otherOptions = $.map(this.props.options, function (option) {
       var otherOption = $.extend({}, option);
       var relatedSelectedOption = $.grep(this.props.selectedOptions, function (selectedOption) {
         return selectedOption.value == otherOption.value;
@@ -5855,7 +5845,7 @@ var InputAutocompleteList = React.createClass({
       }
 
       return otherOption;
-    }).bind(this));
+    }.bind(this));
 
     return $.grep(otherOptions, function (option) {
       return !option.showOnTop;
@@ -6649,7 +6639,8 @@ var Input = React.createClass({
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
-    scope: React.PropTypes.oneOf(['resource', 'global'])
+    scope: React.PropTypes.oneOf(['resource', 'global']),
+    maxLength: React.PropTypes.number
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -6661,7 +6652,8 @@ var Input = React.createClass({
       data: {},
       errors: {},
       resource: null,
-      scope: 'resource'
+      scope: 'resource',
+      maxLength: null
     };
   },
 
@@ -6749,6 +6741,7 @@ var Input = React.createClass({
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),
       value: this.getInputComponentValue(),
+      maxLength: this.getMaxLength(),
       ref: "inputComponent"
     });
 
@@ -6823,6 +6816,14 @@ var Input = React.createClass({
     }
 
     return dataValue;
+  },
+
+  getMaxLength: function getMaxLength() {
+    var acceptComponents = ['text', 'masked', 'number', 'textarea'];
+
+    if (!!this.props.maxLength && acceptComponents.indexOf(this.props.component) != -1) {
+      return this.props.maxLength;
+    }
   },
 
   getInputErrors: function getInputErrors() {
@@ -7067,7 +7068,7 @@ var InputHidden = React.createClass({
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var InputMasked = React.createClass({
   displayName: 'InputMasked',
@@ -8304,12 +8305,12 @@ var HeaderNotifications = React.createClass({
           s: 'created_at desc'
         }
       },
-      success: (function (data) {
+      success: function (data) {
         this.setState({
           notifications: data.notifications,
           count: data.unread_count
         });
-      }).bind(this)
+      }.bind(this)
     });
   },
 
@@ -8343,12 +8344,12 @@ var HeaderNotifications = React.createClass({
           s: 'created_at desc'
         }
       },
-      success: (function (data) {
+      success: function (data) {
         this.setState({
           notifications: data.notifications,
           count: data.not_read_count
         });
-      }).bind(this)
+      }.bind(this)
     });
   },
 
@@ -9021,9 +9022,9 @@ var Table = React.createClass({
       return !rowSelectableFilter || !!rowSelectableFilter(dataRow);
     });
 
-    return $.map(selectableDataRows, (function (dataRow) {
+    return $.map(selectableDataRows, function (dataRow) {
       return dataRow[this.props.dataRowIdField];
-    }).bind(this));
+    }.bind(this));
   },
 
   toggleDataRows: function toggleDataRows(event, dataRowIds, selected) {
@@ -9055,9 +9056,9 @@ var Table = React.createClass({
   },
 
   removeSelectedDataRows: function removeSelectedDataRows(dataRowIds) {
-    return $.grep(this.state.selectedRowIds, (function (dataRowId) {
+    return $.grep(this.state.selectedRowIds, function (dataRowId) {
       return $.inArray(dataRowId, dataRowIds) < 0;
-    }).bind(this));
+    }.bind(this));
   },
 
   dataRowIsSelected: function dataRowIsSelected(dataRow) {
@@ -9605,12 +9606,12 @@ var TableRow = React.createClass({
     var columns = this.props.columns;
     var cellComponents = [];
 
-    $.each(columns, (function (columnName, columnProps) {
+    $.each(columns, function (columnName, columnProps) {
       cellComponents.push(React.createElement(TableCell, _extends({}, columnProps, this.propsWithoutCSS(), {
         name: columnName,
         key: columnName
       })));
-    }).bind(this));
+    }.bind(this));
 
     return cellComponents;
   },
@@ -10103,10 +10104,10 @@ var Tabs = React.createClass({
     var tabs = [];
     var children = this.getChildren();
 
-    React.Children.forEach(children, (function (child, i) {
+    React.Children.forEach(children, function (child, i) {
       var isActive = i === this.props.activeTab - 1;
       tabs.push(React.createElement(TabButton, _extends({}, child.props, { active: isActive, key: "tab_" + i })));
-    }).bind(this));
+    }.bind(this));
 
     return tabs;
   }
