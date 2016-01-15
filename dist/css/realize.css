@@ -91,6 +91,10 @@ button .preloader-wrapper.small {
 .flash__content ul li {
   list-style: initial;
 }
+.form .flash {
+  margin: 1rem .75rem;
+}
+
 .form__button-group button {
   margin-left: 1.5em;
 }
