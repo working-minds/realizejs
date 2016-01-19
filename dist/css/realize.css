@@ -159,6 +159,9 @@ body .select-wrapper span.caret {
   }
 }
 
+.sidenav__button {
+  cursor: pointer;
+}
 .input-field {
   position: relative;
   min-height: 4rem;

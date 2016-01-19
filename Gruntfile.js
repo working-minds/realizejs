@@ -146,7 +146,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-babel');
-  grunt.loadNpmTasks('grunt-banner');
 
   grunt.registerTask('build', [
     'babel:build',
@@ -155,7 +154,6 @@ module.exports = function(grunt) {
     'concat:css',
     'uglify',
     'cssmin',
-    'usebanner:build',
     'clean'
   ]);
 
