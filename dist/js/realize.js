@@ -2,16 +2,6 @@
  * Realize v0.7.16 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
-
-/*!
- * Realize v0.7.16 (http://www.wkm.com.br)
- * Copyright 2015-2016 
- */
-
-/*!
- * Realize v0.7.16 (http://www.wkm.com.br)
- * Copyright 2015-2016 
- */
 'use strict';
 
 var Realize = {};
@@ -487,6 +477,13 @@ Realize.themes.materialize = {
 
       label: {
         cssClass: 'table-header__name'
+      }
+    },
+
+    sidenav: {
+
+      buttons: {
+        cssClass: 'sidenav__button'
       }
     },
 
@@ -6649,7 +6646,8 @@ var Input = React.createClass({
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
-    scope: React.PropTypes.oneOf(['resource', 'global'])
+    scope: React.PropTypes.oneOf(['resource', 'global']),
+    maxLength: React.PropTypes.number
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -6661,7 +6659,8 @@ var Input = React.createClass({
       data: {},
       errors: {},
       resource: null,
-      scope: 'resource'
+      scope: 'resource',
+      maxLength: null
     };
   },
 
@@ -6749,6 +6748,7 @@ var Input = React.createClass({
       name: this.getInputComponentName(),
       errors: this.getInputErrors(),
       value: this.getInputComponentValue(),
+      maxLength: this.getMaxLength(),
       ref: "inputComponent"
     });
 
@@ -6823,6 +6823,14 @@ var Input = React.createClass({
     }
 
     return dataValue;
+  },
+
+  getMaxLength: function getMaxLength() {
+    var acceptComponents = ['text', 'masked', 'number', 'textarea'];
+
+    if (!!this.props.maxLength && acceptComponents.indexOf(this.props.component) != -1) {
+      return this.props.maxLength;
+    }
   },
 
   getInputErrors: function getInputErrors() {
@@ -8719,7 +8727,7 @@ var PaginationItem = React.createClass({
 var SideNav = React.createClass({
   displayName: 'SideNav',
 
-  //mixins: [CssClassMixin],
+  mixins: [CssClassMixin],
 
   propTypes: {
     items: React.PropTypes.array,
@@ -8731,6 +8739,7 @@ var SideNav = React.createClass({
 
   getDefaultProps: function getDefaultProps() {
     return {
+      themeClassKey: 'sidenav.button',
       items: [],
       icon: 'view_headline',
       iconAlign: '',
@@ -8741,12 +8750,13 @@ var SideNav = React.createClass({
 
   render: function render() {
     var iconAlign = this.props.text ? 'left' : '';
+
     return React.createElement(
       'div',
       null,
       React.createElement(
         'a',
-        { href: this.props.href, ref: 'sideNav', onClick: this.props.onClick, target: this.props.target, 'data-activates': this.props.ref_id },
+        { href: this.props.href, className: this.className(), ref: 'sideNav', onClick: this.props.onClick, target: this.props.target, 'data-activates': this.props.ref_id },
         React.createElement(
           'i',
           { className: 'material-icons ' + iconAlign },

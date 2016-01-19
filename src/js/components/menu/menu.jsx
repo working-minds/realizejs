@@ -1,12 +1,15 @@
+// TODO: [DEPRECATION] Prop ref_id is deprecated, remember to remove it.
 var Menu = React.createClass({
   propTypes: {
     ref_id: React.PropTypes.string,
+    id: React.PropTypes.string,
     items: React.PropTypes.array
   },
 
   getDefaultProps: function() {
     return {
       ref_id:'',
+      id: '',
       items: []
     };
   },
@@ -17,51 +20,24 @@ var Menu = React.createClass({
     },this);
     return menuItems;
   },
+
   renderChildItems: function(){
     var menuItems = React.Children.map(this.props.children, function(item) {
-      if((item !== null) && (item.type.displayName = "MenuItem"))
+      if(item && item.type && (item.type.displayName || item.type.name) === 'MenuItem')
         return item;
     });
     return menuItems;
   },
 
   render: function() {
+    console && console.warn && console.warn('[Realize] Menu prop ref_id will be removed, use id instead!');
+    var id = this.props.ref_id || (typeof this.props.id !== 'string' ? '' : this.props.id);
+
     return (
-      <ul id={this.props.ref_id} className={this.props.className}>
+      <ul id={id} className={this.props.className}>
         {this.renderPropItems()}
         {this.renderChildItems()}
       </ul>
     );
   }
 });
-
-
-var MenuItem = React.createClass({
-  propTypes: {
-    icon: React.PropTypes.string,
-    iconAlign: React.PropTypes.string,
-    href: React.PropTypes.string,
-    target: React.PropTypes.string,
-    onClick: React.PropTypes.object,
-    className: React.PropTypes.string,
-    method: React.PropTypes.string,
-    element: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      iconAlign: 'left',
-      method: 'get',
-      element: 'a'
-    };
-  },
-
-  render: function() {
-    return (
-      <li>
-        <Button {...this.props} clearTheme={true} name={this.props.text} />
-      </li>
-    );
-  }
-});
-

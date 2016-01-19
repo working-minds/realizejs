@@ -1,5 +1,5 @@
 var SideNav = React.createClass({
-  //mixins: [CssClassMixin],
+  mixins: [CssClassMixin],
 
   propTypes: {
     items: React.PropTypes.array,
@@ -11,6 +11,7 @@ var SideNav = React.createClass({
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'sidenav.button',
       items: [],
       icon: 'view_headline',
       iconAlign: '',
@@ -20,14 +21,17 @@ var SideNav = React.createClass({
   },
 
   render: function () {
-    var iconAlign = this.props.text? 'left':'';
-    return (<div>
-      <a href={this.props.href} ref="sideNav" onClick={this.props.onClick} target={this.props.target} data-activates={this.props.ref_id}>
-        <i className={'material-icons ' + iconAlign}>{this.props.icon}</i>
-        {this.props.text}
-      </a>
-      {this.renderMenu()}
-    </div>);
+    var iconAlign = this.props.text? 'left' : '';
+
+    return (
+      <div>
+        <a href={this.props.href} className={this.className()} ref="sideNav" onClick={this.props.onClick} target={this.props.target} data-activates={this.props.ref_id}>
+          <i className={'material-icons ' + iconAlign}>{this.props.icon}</i>
+          {this.props.text}
+        </a>
+        {this.renderMenu()}
+      </div>
+    );
   },
 
   renderMenu: function(){

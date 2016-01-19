@@ -40,6 +40,13 @@ Realize.themes.materialize = {
       }
     },
 
+    sidenav: {
+
+      buttons: {
+        cssClass: 'sidenav__button'
+      }
+    },
+
     select: {
       cssClass: 'table-select'
     },
