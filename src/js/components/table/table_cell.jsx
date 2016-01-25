@@ -39,7 +39,6 @@ var TableCell = React.createClass({
   },
 
   renderValue: function() {
-
     var format = this.props.format;
     var customValue = this.props.value;
     var dataValue = this.props.data[this.props.name];

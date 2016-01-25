@@ -65,6 +65,10 @@ Realize.i18n.registerLocale({
     datefilter: {
       from: 'From',
       to: 'To'
+    },
+
+    file: {
+      buttonName: 'File'
     }
   },
 
