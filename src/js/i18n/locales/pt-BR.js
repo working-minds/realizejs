@@ -65,6 +65,10 @@ Realize.i18n.registerLocale({
     datefilter: {
       from: 'De',
       to: 'Até'
+    },
+
+    file: {
+      buttonName: 'Arquivo'
     }
   },
 

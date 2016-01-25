@@ -14,7 +14,6 @@ var HeaderSection = React.createClass({
   },
 
   render: function () {
-
     return (
       <ul className={this.props.className + ' ' + this.props.align} id={this.props.id}>
         {this.renderChildren()}

@@ -40,13 +40,6 @@ Realize.themes.materialize = {
       }
     },
 
-    sidenav: {
-
-      buttons: {
-        cssClass: 'sidenav__button'
-      }
-    },
-
     select: {
       cssClass: 'table-select'
     },
@@ -305,6 +298,13 @@ Realize.themes.materialize = {
 
   header: {
     cssClass: 'blue-grey darken-2'
+  },
+
+  sidenav: {
+
+    button: {
+      cssClass: 'sidenav__button'
+    }
   },
 
   modal: {

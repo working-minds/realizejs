@@ -1,17 +1,21 @@
 var InputFile = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    buttonName: React.PropTypes.string,
     wrapperClassName: React.PropTypes.string,
     buttonClassName: React.PropTypes.string,
+    buttonName: Realize.PropTypes.localizedString,
+    buttonIcon: React.PropTypes.string,
     filePathWrapperClassName: React.PropTypes.string,
-    buttonIcon: React.PropTypes.string
+    filePathField: React.PropTypes.string,
+    data: React.PropTypes.object
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.file',
-      buttonName: 'Arquivo'
+      buttonName: 'inputs.file.buttonName',
+      filePathField: null,
+      data: {}
     };
   },
 
@@ -27,6 +31,10 @@ var InputFile = React.createClass({
         </div>
       </div>
     );
+  },
+
+  componentDidMount: function() {
+    this.setFilePathValue();
   },
 
   handleChange: function(event) {
@@ -58,10 +66,32 @@ var InputFile = React.createClass({
       return component;
     }
 
-    return this.props.buttonName;
+    return Realize.t(this.props.buttonName);
   },
 
   getLabelName: function() {
     return (this.props.label || this.props.name);
+  },
+
+  getFilePathField: function() {
+    var filePathField = this.props.filePathField;
+    if(!filePathField) {
+      filePathField = this.props.id + "_file_name";
+    }
+
+    return filePathField;
+  },
+
+  setFilePathValue: function() {
+    var filePathNode = ReactDOM.findDOMNode(this.refs.filePath);
+    var filePathField = this.getFilePathField();
+
+    if(!!filePathField) {
+      var filePath = this.props.data[filePathField];
+      if(!!filePath) {
+        filePathNode.value = filePath;
+      }
+    }
   }
+
 });

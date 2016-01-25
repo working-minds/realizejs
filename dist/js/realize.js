@@ -211,6 +211,10 @@ Realize.i18n.registerLocale({
     datefilter: {
       from: 'From',
       to: 'To'
+    },
+
+    file: {
+      buttonName: 'File'
     }
   },
 
@@ -299,6 +303,10 @@ Realize.i18n.registerLocale({
     datefilter: {
       from: 'De',
       to: 'Até'
+    },
+
+    file: {
+      buttonName: 'Arquivo'
     }
   },
 
@@ -477,13 +485,6 @@ Realize.themes.materialize = {
 
       label: {
         cssClass: 'table-header__name'
-      }
-    },
-
-    sidenav: {
-
-      buttons: {
-        cssClass: 'sidenav__button'
       }
     },
 
@@ -745,6 +746,13 @@ Realize.themes.materialize = {
 
   header: {
     cssClass: 'blue-grey darken-2'
+  },
+
+  sidenav: {
+
+    button: {
+      cssClass: 'sidenav__button'
+    }
   },
 
   modal: {
@@ -5432,7 +5440,6 @@ var HeaderSection = React.createClass({
   },
 
   render: function render() {
-
     return React.createElement(
       'ul',
       { className: this.props.className + ' ' + this.props.align, id: this.props.id },
@@ -6980,17 +6987,21 @@ var InputFile = React.createClass({
 
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
-    buttonName: React.PropTypes.string,
     wrapperClassName: React.PropTypes.string,
     buttonClassName: React.PropTypes.string,
+    buttonName: Realize.PropTypes.localizedString,
+    buttonIcon: React.PropTypes.string,
     filePathWrapperClassName: React.PropTypes.string,
-    buttonIcon: React.PropTypes.string
+    filePathField: React.PropTypes.string,
+    data: React.PropTypes.object
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.file',
-      buttonName: 'Arquivo'
+      buttonName: 'inputs.file.buttonName',
+      filePathField: null,
+      data: {}
     };
   },
 
@@ -7014,6 +7025,10 @@ var InputFile = React.createClass({
         React.createElement('input', { className: this.inputClassName(), placeholder: this.getLabelName(), type: 'text', ref: 'filePath' })
       )
     );
+  },
+
+  componentDidMount: function componentDidMount() {
+    this.setFilePathValue();
   },
 
   handleChange: function handleChange(event) {
@@ -7049,12 +7064,34 @@ var InputFile = React.createClass({
       return component;
     }
 
-    return this.props.buttonName;
+    return Realize.t(this.props.buttonName);
   },
 
   getLabelName: function getLabelName() {
     return this.props.label || this.props.name;
+  },
+
+  getFilePathField: function getFilePathField() {
+    var filePathField = this.props.filePathField;
+    if (!filePathField) {
+      filePathField = this.props.id + "_file_name";
+    }
+
+    return filePathField;
+  },
+
+  setFilePathValue: function setFilePathValue() {
+    var filePathNode = ReactDOM.findDOMNode(this.refs.filePath);
+    var filePathField = this.getFilePathField();
+
+    if (!!filePathField) {
+      var filePath = this.props.data[filePathField];
+      if (!!filePath) {
+        filePathNode.value = filePath;
+      }
+    }
   }
+
 });
 
 "use strict";
@@ -7688,17 +7725,20 @@ var Label = React.createClass({
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+// TODO: [DEPRECATION] Prop ref_id is deprecated, remember to remove it.
 var Menu = React.createClass({
   displayName: 'Menu',
 
   propTypes: {
     ref_id: React.PropTypes.string,
+    id: React.PropTypes.string,
     items: React.PropTypes.array
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       ref_id: '',
+      id: '',
       items: []
     };
   },
@@ -7709,22 +7749,30 @@ var Menu = React.createClass({
     }, this);
     return menuItems;
   },
+
   renderChildItems: function renderChildItems() {
     var menuItems = React.Children.map(this.props.children, function (item) {
-      if (item !== null && (item.type.displayName = "MenuItem")) return item;
+      if (item && item.type && (item.type.displayName || item.type.name) === 'MenuItem') return item;
     });
     return menuItems;
   },
 
   render: function render() {
+    console && console.warn && console.warn('[Realize] Menu prop ref_id will be removed, use id instead!');
+    var id = this.props.ref_id || (typeof this.props.id !== 'string' ? '' : this.props.id);
+
     return React.createElement(
       'ul',
-      { id: this.props.ref_id, className: this.props.className },
+      { id: id, className: this.props.className },
       this.renderPropItems(),
       this.renderChildItems()
     );
   }
 });
+
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var MenuItem = React.createClass({
   displayName: 'MenuItem',
@@ -9353,7 +9401,6 @@ var TableCell = React.createClass({
   },
 
   renderValue: function renderValue() {
-
     var format = this.props.format;
     var customValue = this.props.value;
     var dataValue = this.props.data[this.props.name];
