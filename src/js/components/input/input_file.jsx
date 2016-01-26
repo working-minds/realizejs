@@ -24,10 +24,22 @@ var InputFile = React.createClass({
       <div className={this.wrapperClassName()}>
         <div className={this.buttonClassName()}>
           <span>{this.getButtonName()}</span>
-          <input {...this.props} value={this.state.value} onChange={this.handleChange} type="file" ref="input" />
+          <input {...this.props}
+            value={this.state.value}
+            onChange={this.handleChange}
+            disabled={this.props.disabled || this.props.readOnly}
+            type="file"
+            ref="input"
+          />
         </div>
         <div className={this.filePathWrapperClassName()}>
-          <input className={this.inputClassName()} placeholder={this.getLabelName()} type="text" ref="filePath" />
+          <input
+            className={this.inputClassName()}
+            placeholder={this.getLabelName()}
+            onFocus={this._handleFocus}
+            type="text"
+            ref="filePath"
+          />
         </div>
       </div>
     );

@@ -7029,12 +7029,24 @@ var InputFile = React.createClass({
           null,
           this.getButtonName()
         ),
-        React.createElement('input', _extends({}, this.props, { value: this.state.value, onChange: this.handleChange, type: 'file', ref: 'input' }))
+        React.createElement('input', _extends({}, this.props, {
+          value: this.state.value,
+          onChange: this.handleChange,
+          disabled: this.props.disabled || this.props.readOnly,
+          type: 'file',
+          ref: 'input'
+        }))
       ),
       React.createElement(
         'div',
         { className: this.filePathWrapperClassName() },
-        React.createElement('input', { className: this.inputClassName(), placeholder: this.getLabelName(), type: 'text', ref: 'filePath' })
+        React.createElement('input', {
+          className: this.inputClassName(),
+          placeholder: this.getLabelName(),
+          onFocus: this._handleFocus,
+          type: 'text',
+          ref: 'filePath'
+        })
       )
     );
   },
@@ -7403,6 +7415,7 @@ var InputSwitch = React.createClass({
           React.createElement('input', _extends({}, this.checkboxProps(), {
             checked: this.state.checked,
             value: this.state.value,
+            disabled: this.props.disabled || this.props.readOnly,
             className: this.inputClassName(),
             onChange: this._handleCheckboxChange,
             type: 'checkbox',
