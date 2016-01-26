@@ -24,6 +24,7 @@ var GridForm = React.createClass({
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
     eagerLoad: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     formComponent: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
@@ -53,6 +54,7 @@ var GridForm = React.createClass({
       },
       selectable: true,
       eagerLoad: true,
+      readOnly: false,
       formComponent: Form,
       onSubmit: function(event, postData) {},
       onReset: function(event) {},
@@ -73,7 +75,6 @@ var GridForm = React.createClass({
   },
 
   render: function() {
-    //TODO: adicionar os divs de card em um componente separado.
     return (
       <div className={this.className()}>
         <div className={this.className() + "__form"}>
@@ -92,6 +93,10 @@ var GridForm = React.createClass({
   },
 
   renderForm: function() {
+    if(this.props.readOnly) {
+      return;
+    }
+
     var formProps = React.__spread({style: 'filter'}, this.props.form, {
       action: this.getFormAction(),
       data: this.state.selectedDataRow,
@@ -154,6 +159,10 @@ var GridForm = React.createClass({
   },
 
   getDefaultMemberActionButtons: function() {
+    if(this.props.readOnly) {
+      return [];
+    }
+
     return [
       {
         icon: 'edit',
