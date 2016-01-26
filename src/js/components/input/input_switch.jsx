@@ -29,6 +29,7 @@ var InputSwitch = React.createClass({
             <input {...this.checkboxProps()}
               checked={this.state.checked}
               value={this.state.value}
+              disabled={this.props.disabled || this.props.readOnly}
               className={this.inputClassName()}
               onChange={this._handleCheckboxChange}
               type="checkbox"

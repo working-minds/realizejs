@@ -60,7 +60,6 @@ var SelectComponentMixin = {
       }
     }
 
-
     if(this.state.value.length > 0) {
       this.triggerDependableChanged();
     }

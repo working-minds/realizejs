@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.16 (http://www.wkm.com.br)
+ * Realize v0.7.20 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 'use strict';
@@ -4122,6 +4122,8 @@ var Form = React.createClass({
     resource: React.PropTypes.string,
     ajaxSubmit: React.PropTypes.bool,
     isLoading: React.PropTypes.bool,
+    disabled: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     onSubmit: React.PropTypes.func,
@@ -4143,6 +4145,8 @@ var Form = React.createClass({
       resource: null,
       ajaxSubmit: true,
       isLoading: false,
+      disabled: false,
+      readOnly: false,
       submitButton: {
         name: 'actions.send',
         icon: 'send'
@@ -4160,7 +4164,7 @@ var Form = React.createClass({
   },
 
   propsToForward: function propsToForward() {
-    return ['resource', 'data'];
+    return ['resource', 'data', 'readOnly', 'disabled'];
   },
 
   propsToForwardMapping: function propsToForwardMapping() {
@@ -4392,7 +4396,8 @@ var InputGroup = React.createClass({
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
-    themeClassKey: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     label: React.PropTypes.string,
     separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string
@@ -4406,6 +4411,8 @@ var InputGroup = React.createClass({
       formStyle: 'default',
       label: null,
       separator: false,
+      disabled: false,
+      readOnly: false,
       themeClassKey: 'form.inputGroup'
     };
   },
@@ -4451,6 +4458,8 @@ var InputGroup = React.createClass({
           errors: this.props.errors,
           resource: this.props.resource,
           formStyle: this.props.formStyle,
+          disabled: this.props.disabled,
+          readOnly: this.props.readOnly,
           key: "input_" + inputIndex,
           ref: "input_" + inputIndex
         })));
@@ -5673,7 +5682,10 @@ var InputAutocomplete = React.createClass({
   },
 
   showResult: function showResult(event) {
-    if (this.state.disabled) {
+    if (this.state.disabled || this.props.readOnly) {
+      var selectInput = event.currentTarget;
+      selectInput.blur();
+
       return;
     }
 
@@ -7017,12 +7029,24 @@ var InputFile = React.createClass({
           null,
           this.getButtonName()
         ),
-        React.createElement('input', _extends({}, this.props, { value: this.state.value, onChange: this.handleChange, type: 'file', ref: 'input' }))
+        React.createElement('input', _extends({}, this.props, {
+          value: this.state.value,
+          onChange: this.handleChange,
+          disabled: this.props.disabled || this.props.readOnly,
+          type: 'file',
+          ref: 'input'
+        }))
       ),
       React.createElement(
         'div',
         { className: this.filePathWrapperClassName() },
-        React.createElement('input', { className: this.inputClassName(), placeholder: this.getLabelName(), type: 'text', ref: 'filePath' })
+        React.createElement('input', {
+          className: this.inputClassName(),
+          placeholder: this.getLabelName(),
+          onFocus: this._handleFocus,
+          type: 'text',
+          ref: 'filePath'
+        })
       )
     );
   },
@@ -7391,6 +7415,7 @@ var InputSwitch = React.createClass({
           React.createElement('input', _extends({}, this.checkboxProps(), {
             checked: this.state.checked,
             value: this.state.value,
+            disabled: this.props.disabled || this.props.readOnly,
             className: this.inputClassName(),
             onChange: this._handleCheckboxChange,
             type: 'checkbox',
@@ -7603,7 +7628,7 @@ var InputSelect = React.createClass({
         name: this.props.name,
         value: this.selectedValue(),
         onChange: this.handleChange,
-        disabled: this.isDisabled(),
+        disabled: this.isDisabled() || this.props.readOnly,
         className: this.className(),
         ref: 'select' },
       this.renderOptions()
