@@ -108,7 +108,10 @@ var InputAutocomplete = React.createClass({
   },
 
   showResult: function(event) {
-    if(this.state.disabled) {
+    if(this.state.disabled || this.props.readOnly) {
+      var selectInput = event.currentTarget;
+      selectInput.blur();
+
       return;
     }
 

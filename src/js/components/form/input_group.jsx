@@ -6,7 +6,8 @@ var InputGroup = React.createClass({
     data: React.PropTypes.object,
     errors: React.PropTypes.object,
     resource: React.PropTypes.string,
-    themeClassKey: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     label: React.PropTypes.string,
     separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string
@@ -20,6 +21,8 @@ var InputGroup = React.createClass({
       formStyle: 'default',
       label: null,
       separator: false,
+      disabled: false,
+      readOnly: false,
       themeClassKey: 'form.inputGroup'
     };
   },
@@ -64,6 +67,8 @@ var InputGroup = React.createClass({
             errors={this.props.errors}
             resource={this.props.resource}
             formStyle={this.props.formStyle}
+            disabled={this.props.disabled}
+            readOnly={this.props.readOnly}
             key={"input_" + inputIndex}
             ref={"input_" + inputIndex}
           />

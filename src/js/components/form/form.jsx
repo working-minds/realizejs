@@ -19,6 +19,8 @@ var Form = React.createClass({
     resource: React.PropTypes.string,
     ajaxSubmit: React.PropTypes.bool,
     isLoading: React.PropTypes.bool,
+    disabled: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     onSubmit: React.PropTypes.func,
@@ -40,6 +42,8 @@ var Form = React.createClass({
       resource: null,
       ajaxSubmit: true,
       isLoading: false,
+      disabled: false,
+      readOnly: false,
       submitButton: {
         name: 'actions.send',
         icon: 'send'
@@ -57,7 +61,7 @@ var Form = React.createClass({
   },
 
   propsToForward: function() {
-    return ['resource', 'data'];
+    return ['resource', 'data', 'readOnly', 'disabled'];
   },
 
   propsToForwardMapping: function() {
