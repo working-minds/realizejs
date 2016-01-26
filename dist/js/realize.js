@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.20 (http://www.wkm.com.br)
+ * Realize v0.7.21 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 'use strict';
@@ -5045,6 +5045,7 @@ var GridForm = React.createClass({
     isLoading: React.PropTypes.bool,
     selectable: React.PropTypes.bool,
     eagerLoad: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
     formComponent: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onReset: React.PropTypes.func,
@@ -5074,6 +5075,7 @@ var GridForm = React.createClass({
       },
       selectable: true,
       eagerLoad: true,
+      readOnly: false,
       formComponent: Form,
       onSubmit: function onSubmit(event, postData) {},
       onReset: function onReset(event) {},
@@ -5098,7 +5100,6 @@ var GridForm = React.createClass({
   },
 
   render: function render() {
-    //TODO: adicionar os divs de card em um componente separado.
     return React.createElement(
       'div',
       { className: this.className() },
@@ -5119,6 +5120,10 @@ var GridForm = React.createClass({
   },
 
   renderForm: function renderForm() {
+    if (this.props.readOnly) {
+      return;
+    }
+
     var formProps = React.__spread({ style: 'filter' }, this.props.form, {
       action: this.getFormAction(),
       data: this.state.selectedDataRow,
@@ -5181,6 +5186,10 @@ var GridForm = React.createClass({
   },
 
   getDefaultMemberActionButtons: function getDefaultMemberActionButtons() {
+    if (this.props.readOnly) {
+      return [];
+    }
+
     return [{
       icon: 'edit',
       onClick: this.editAction
