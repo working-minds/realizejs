@@ -11,6 +11,7 @@ var Grid = React.createClass({
     eagerLoad: React.PropTypes.bool,
     resource: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
+    paginationType: React.PropTypes.string,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     filter: React.PropTypes.object,
@@ -43,6 +44,7 @@ var Grid = React.createClass({
       themeClassKey: 'grid',
       eagerLoad: false,
       paginationConfigs: {},
+      paginationType: 'default',
       sortConfigs: {},
       sortData: {},
       filter: {},
@@ -207,9 +209,11 @@ var Grid = React.createClass({
         <GridPagination
           {...this.paginationConfigs}
           page={this.state.page}
-          count={this.state.count}
+          count={totalRowsCount}
           onPagination={this.onPagination}
-          />
+          pageRowsCount={pageRowsCount}
+          type={this.props.paginationType}
+        />
       );
     }
   },
