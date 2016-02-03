@@ -10,7 +10,8 @@ var InputGroup = React.createClass({
     readOnly: React.PropTypes.bool,
     label: React.PropTypes.string,
     separator: React.PropTypes.bool,
-    formStyle: React.PropTypes.string
+    formStyle: React.PropTypes.string,
+    wrapperClassName: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -23,13 +24,14 @@ var InputGroup = React.createClass({
       separator: false,
       disabled: false,
       readOnly: false,
-      themeClassKey: 'form.inputGroup'
+      themeClassKey: 'form.inputGroup',
+      wrapperClassName: 'wrapper_input_group'
     };
   },
 
   render: function() {
     return (
-      <div>
+      <div className={this.props.wrapperClassName}>
         <div className={this.inputGroupClassName()}>
           {this.renderLabel()}
           {this.renderInputs()}

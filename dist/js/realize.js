@@ -1164,7 +1164,7 @@ var FormContainerMixin = {
 
   formContainerClassName: function formContainerClassName() {
     var className = this.className();
-    if (this.inputChildrenHaveErrors()) {
+    if (this.inputChildrenHaveErrors() || !!this.props.errors && !$.isEmptyObject(this.props.errors)) {
       className += ' ' + Realize.themes.getCssClass(this.props.errorThemeClassKey);
     }
 
@@ -4400,7 +4400,8 @@ var InputGroup = React.createClass({
     readOnly: React.PropTypes.bool,
     label: React.PropTypes.string,
     separator: React.PropTypes.bool,
-    formStyle: React.PropTypes.string
+    formStyle: React.PropTypes.string,
+    wrapperClassName: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -4413,14 +4414,15 @@ var InputGroup = React.createClass({
       separator: false,
       disabled: false,
       readOnly: false,
-      themeClassKey: 'form.inputGroup'
+      themeClassKey: 'form.inputGroup',
+      wrapperClassName: 'wrapper_input_group'
     };
   },
 
   render: function render() {
     return React.createElement(
       'div',
-      null,
+      { className: this.props.wrapperClassName },
       React.createElement(
         'div',
         { className: this.inputGroupClassName() },
@@ -4512,6 +4514,7 @@ var Grid = React.createClass({
     eagerLoad: React.PropTypes.bool,
     resource: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
+    paginationType: React.PropTypes.string,
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     filter: React.PropTypes.object,
@@ -4544,6 +4547,7 @@ var Grid = React.createClass({
       themeClassKey: 'grid',
       eagerLoad: false,
       paginationConfigs: {},
+      paginationType: 'default',
       sortConfigs: {},
       sortData: {},
       filter: {},
@@ -4700,8 +4704,10 @@ var Grid = React.createClass({
 
       return React.createElement(GridPagination, _extends({}, this.paginationConfigs, {
         page: this.state.page,
-        count: this.state.count,
-        onPagination: this.onPagination
+        count: totalRowsCount,
+        onPagination: this.onPagination,
+        pageRowsCount: pageRowsCount,
+        type: this.props.paginationType
       }));
     }
   },
@@ -4963,7 +4969,10 @@ var GridPagination = React.createClass({
     page: React.PropTypes.number,
     perPage: React.PropTypes.number,
     window: React.PropTypes.number,
-    onPagination: React.PropTypes.func
+    onPagination: React.PropTypes.func,
+    pageRowsCount: React.PropTypes.number,
+    type: React.PropTypes.string,
+    perPageOptions: React.PropTypes.object
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -4972,6 +4981,7 @@ var GridPagination = React.createClass({
       page: 1,
       perPage: 20,
       window: 4,
+      perPageOptions: [{ name: 10, value: 10 }, { name: 20, value: 20 }, { name: 50, value: 50 }, { name: 100, value: 100 }],
       onPagination: function onPagination(page) {
         return true;
       }
@@ -4982,15 +4992,62 @@ var GridPagination = React.createClass({
     return React.createElement(
       'div',
       { className: this.className() },
+      this.renderPagination(),
+      this.renderRangePagination(),
+      this.renderPerPage()
+    );
+  },
+
+  renderRangePagination: function renderRangePagination() {
+    return React.createElement(
+      'div',
+      { className: 'range_pagination' },
+      React.createElement(
+        'span',
+        null,
+        this.rangePaginationText()
+      )
+    );
+  },
+
+  renderPerPage: function renderPerPage() {
+    return React.createElement(
+      'div',
+      { className: 'per_page' },
+      React.createElement(Input, { value: this.props.perPage, component: 'select',
+        includeBlank: false, clearTheme: true,
+        className: 'form__input input-field',
+        options: this.props.perPageOptions })
+    );
+  },
+
+  renderPagination: function renderPagination() {
+    return React.createElement(
+      'div',
+      { className: '' },
       React.createElement(Pagination, {
         page: this.props.page,
         count: this.props.count,
         perPage: this.props.perPage,
         window: this.props.window,
-        onPagination: this.props.onPagination
+        onPagination: this.props.onPagination,
+        type: this.props.type
       })
     );
+  },
+
+  rangePaginationText: function rangePaginationText() {
+    var perPage = this.props.perPage;
+    var page = this.props.page;
+    var pageRowsCount = this.props.pageRowsCount;
+
+    var firstElement = perPage * page - (perPage - 1);
+    var lastElement = pageRowsCount < perPage ? this.props.count : perPage * page;
+    var totalElement = this.props.count;
+
+    return firstElement + ' - ' + lastElement + ' de ' + totalElement;
   }
+
 });
 
 'use strict';
@@ -8630,7 +8687,8 @@ var Pagination = React.createClass({
     page: React.PropTypes.number,
     perPage: React.PropTypes.number,
     window: React.PropTypes.number,
-    onPagination: React.PropTypes.func
+    onPagination: React.PropTypes.func,
+    type: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -8650,10 +8708,22 @@ var Pagination = React.createClass({
       'ul',
       { className: this.className() },
       this.renderPreviousButton(),
+      this.renderPaginationByType(),
+      this.renderNextButton()
+    );
+  },
+
+  renderPaginationByType: function renderPaginationByType() {
+    if (this.props.type == 'default') return React.createElement(
+      'span',
+      null,
       this.renderFirstButton(),
       this.renderPageButtons(),
-      this.renderLastButton(),
-      this.renderNextButton()
+      this.renderLastButton()
+    );else if (this.props.type == 'input') return React.createElement(
+      'span',
+      null,
+      this.renderPageInput()
     );
   },
 
@@ -8699,6 +8769,11 @@ var Pagination = React.createClass({
     var active = this.props.page === page;
 
     return React.createElement(PaginationItem, { active: active, text: String(page), onClick: this.navigateTo.bind(this, page), key: "page_" + page });
+  },
+
+  renderPageInput: function renderPageInput() {
+    var page = this.props.page;
+    return React.createElement(Input, { value: page, clearTheme: true, className: 'form__input input-field col s3' });
   },
 
   lastPage: function lastPage() {

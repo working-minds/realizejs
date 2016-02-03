@@ -1,11 +1,12 @@
 var Pagination = React.createClass({
-  mixins: [CssClassMixin],
+    mixins: [CssClassMixin],
   propTypes: {
     count: React.PropTypes.number,
     page: React.PropTypes.number,
     perPage: React.PropTypes.number,
     window: React.PropTypes.number,
-    onPagination: React.PropTypes.func
+    onPagination: React.PropTypes.func,
+    type: React.PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -24,12 +25,25 @@ var Pagination = React.createClass({
     return (
       <ul className={this.className()}>
         {this.renderPreviousButton()}
-        {this.renderFirstButton()}
-        {this.renderPageButtons()}
-        {this.renderLastButton()}
+        {this.renderPaginationByType()}
         {this.renderNextButton()}
       </ul>
     );
+  },
+
+  renderPaginationByType: function() {
+    if (this.props.type == 'default')
+      return (
+        <span>
+          {this.renderFirstButton()}
+          {this.renderPageButtons()}
+          {this.renderLastButton()}
+        </span>
+      );
+    else if (this.props.type == 'input')
+      return (
+        <span>{this.renderPageInput()}</span>
+      );
   },
 
   renderPreviousButton: function() {
@@ -84,6 +98,13 @@ var Pagination = React.createClass({
     return (
       <PaginationItem active={active} text={String(page)} onClick={this.navigateTo.bind(this, page)} key={"page_" + page} />
     );
+  },
+
+  renderPageInput: function() {
+    var page = this.props.page;
+    return (
+      <Input value={page} clearTheme={true} className='form__input input-field col s3' />
+    )
   },
 
   lastPage: function() {
