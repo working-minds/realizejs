@@ -6,6 +6,7 @@ var GridPagination = React.createClass({
     perPage: React.PropTypes.number,
     window: React.PropTypes.number,
     onPagination: React.PropTypes.func,
+    onChangePerPage: React.PropTypes.func,
     pageRowsCount: React.PropTypes.number,
     type: React.PropTypes.string,
     perPageOptions: React.PropTypes.object
@@ -20,12 +21,12 @@ var GridPagination = React.createClass({
       perPageOptions: [
         {name: 10, value: 10},
         {name: 20, value: 20},
-        {name: 50, value: 50},
-        {name: 100, value: 100}
+        {name: 50, value: 50}
       ],
       onPagination: function(page) {
         return true;
-      }
+      },
+      onChangePerPage: function(perPage) { return true }
     };
   },
 
@@ -53,14 +54,22 @@ var GridPagination = React.createClass({
         <Input value={this.props.perPage} component='select'
                includeBlank={false} clearTheme={true}
                className='form__input input-field'
-               options={this.props.perPageOptions} />
+               options={this.props.perPageOptions}
+               onChange={this.changePerPage}
+          />
       </div>
     );
   },
 
   renderPagination: function() {
+    var totalRowsCount = this.props.count;
+    var pageRowsCount = this.props.pageRowsCount;
+    if (totalRowsCount <= pageRowsCount) {
+      return null;
+    }
+
     return (
-      <div className=''>
+      <div>
         <Pagination
           page={this.props.page}
           count={this.props.count}
@@ -68,9 +77,14 @@ var GridPagination = React.createClass({
           window={this.props.window}
           onPagination={this.props.onPagination}
           type={this.props.type}
-          />
+        />
       </div>
     )
+  },
+
+  changePerPage: function(event) {
+    var value = event.currentTarget.value;
+    this.props.onChangePerPage(value);
   },
 
   rangePaginationText: function() {

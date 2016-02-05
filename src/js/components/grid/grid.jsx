@@ -79,6 +79,7 @@ var Grid = React.createClass({
       allSelected: false,
       count: this.props.data.count,
       page: 1,
+      perPage: 20,
       filterData: {},
       sortData: this.props.sortData,
       gridIsLoading: this.props.isLoading
@@ -199,19 +200,14 @@ var Grid = React.createClass({
 
   renderPagination: function() {
     if (this.props.pagination) {
-      var totalRowsCount = this.state.count;
-      var pageRowsCount = this.state.dataRows.length;
-      if (totalRowsCount <= pageRowsCount) {
-        return null;
-      }
-
       return (
         <GridPagination
           {...this.paginationConfigs}
           page={this.state.page}
-          count={totalRowsCount}
+          count={this.state.count}
           onPagination={this.onPagination}
-          pageRowsCount={pageRowsCount}
+          onChangePerPage={this.onChangePerPage}
+          pageRowsCount={this.state.dataRows.length}
           type={this.props.paginationType}
         />
       );
@@ -225,6 +221,17 @@ var Grid = React.createClass({
     if(this.state.allSelected) {
       this.state.selectedRowIds = [];
     }
+
+    this.state.allSelected = false;
+    this.loadData();
+  },
+
+  onChangePerPage: function(perPage) {
+    this.state.perPage = perPage;
+    this.paginationConfigs.perPage = perPage;
+
+    if(this.state.allSelected)
+      this.state.selectedRowIds = [];
 
     this.state.allSelected = false;
     this.loadData();
@@ -283,14 +290,25 @@ var Grid = React.createClass({
 
   buildPostData: function() {
     var postData = $.extend({}, this.state.filterData);
-    var paginationParam = this.paginationConfigs.param;
-    postData[paginationParam] = this.state.page;
 
+    $.extend(postData, this.buildPaginationPostData());
     if(!$.isEmptyObject(this.state.sortData)) {
       $.extend(postData, this.buildSortPostData());
     }
 
     return postData;
+  },
+
+  buildPaginationPostData: function() {
+    var paginationPostData = {};
+
+    var paginationParam = this.paginationConfigs.param;
+    var paginationParamPerPage = 'per_page';
+
+    paginationPostData[paginationParam] = this.state.page;
+    paginationPostData[paginationParamPerPage] = this.state.perPage;
+
+    return paginationPostData;
   },
 
   buildSortPostData: function() {
