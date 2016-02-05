@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.21 (http://www.wkm.com.br)
+ * Realize v0.7.22 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 'use strict';
@@ -32,6 +32,7 @@ Realize.config = {
   grid: {
     pagination: {
       param: 'p',
+      perPageParam: 'per_page',
       perPage: 20,
       window: 4
     },
@@ -4582,6 +4583,7 @@ var Grid = React.createClass({
       allSelected: false,
       count: this.props.data.count,
       page: 1,
+      perPage: 20,
       filterData: {},
       sortData: this.props.sortData,
       gridIsLoading: this.props.isLoading
@@ -4696,17 +4698,12 @@ var Grid = React.createClass({
 
   renderPagination: function renderPagination() {
     if (this.props.pagination) {
-      var totalRowsCount = this.state.count;
-      var pageRowsCount = this.state.dataRows.length;
-      if (totalRowsCount <= pageRowsCount) {
-        return null;
-      }
-
       return React.createElement(GridPagination, _extends({}, this.paginationConfigs, {
         page: this.state.page,
-        count: totalRowsCount,
+        count: this.state.count,
         onPagination: this.onPagination,
-        pageRowsCount: pageRowsCount,
+        onChangePerPage: this.onChangePerPage,
+        pageRowsCount: this.state.dataRows.length,
         type: this.props.paginationType
       }));
     }
@@ -4719,6 +4716,16 @@ var Grid = React.createClass({
     if (this.state.allSelected) {
       this.state.selectedRowIds = [];
     }
+
+    this.state.allSelected = false;
+    this.loadData();
+  },
+
+  onChangePerPage: function onChangePerPage(perPage) {
+    this.state.perPage = perPage;
+    this.paginationConfigs.perPage = perPage;
+
+    if (this.state.allSelected) this.state.selectedRowIds = [];
 
     this.state.allSelected = false;
     this.loadData();
@@ -4777,14 +4784,25 @@ var Grid = React.createClass({
 
   buildPostData: function buildPostData() {
     var postData = $.extend({}, this.state.filterData);
-    var paginationParam = this.paginationConfigs.param;
-    postData[paginationParam] = this.state.page;
 
+    $.extend(postData, this.buildPaginationPostData());
     if (!$.isEmptyObject(this.state.sortData)) {
       $.extend(postData, this.buildSortPostData());
     }
 
     return postData;
+  },
+
+  buildPaginationPostData: function buildPaginationPostData() {
+    var paginationPostData = {};
+
+    var paginationParam = this.paginationConfigs.param;
+    var paginationParamPerPage = 'per_page';
+
+    paginationPostData[paginationParam] = this.state.page;
+    paginationPostData[paginationParamPerPage] = this.state.perPage;
+
+    return paginationPostData;
   },
 
   buildSortPostData: function buildSortPostData() {
@@ -4970,6 +4988,7 @@ var GridPagination = React.createClass({
     perPage: React.PropTypes.number,
     window: React.PropTypes.number,
     onPagination: React.PropTypes.func,
+    onChangePerPage: React.PropTypes.func,
     pageRowsCount: React.PropTypes.number,
     type: React.PropTypes.string,
     perPageOptions: React.PropTypes.object
@@ -4981,8 +5000,11 @@ var GridPagination = React.createClass({
       page: 1,
       perPage: 20,
       window: 4,
-      perPageOptions: [{ name: 10, value: 10 }, { name: 20, value: 20 }, { name: 50, value: 50 }, { name: 100, value: 100 }],
+      perPageOptions: [{ name: 10, value: 10 }, { name: 20, value: 20 }, { name: 50, value: 50 }],
       onPagination: function onPagination(page) {
+        return true;
+      },
+      onChangePerPage: function onChangePerPage(perPage) {
         return true;
       }
     };
@@ -5017,14 +5039,22 @@ var GridPagination = React.createClass({
       React.createElement(Input, { value: this.props.perPage, component: 'select',
         includeBlank: false, clearTheme: true,
         className: 'form__input input-field',
-        options: this.props.perPageOptions })
+        options: this.props.perPageOptions,
+        onChange: this.changePerPage
+      })
     );
   },
 
   renderPagination: function renderPagination() {
+    var totalRowsCount = this.props.count;
+    var pageRowsCount = this.props.pageRowsCount;
+    if (totalRowsCount <= pageRowsCount) {
+      return null;
+    }
+
     return React.createElement(
       'div',
-      { className: '' },
+      null,
       React.createElement(Pagination, {
         page: this.props.page,
         count: this.props.count,
@@ -5034,6 +5064,11 @@ var GridPagination = React.createClass({
         type: this.props.type
       })
     );
+  },
+
+  changePerPage: function changePerPage(event) {
+    var value = event.currentTarget.value;
+    this.props.onChangePerPage(value);
   },
 
   rangePaginationText: function rangePaginationText() {

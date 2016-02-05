@@ -26,6 +26,7 @@ Realize.config = {
   grid: {
     pagination: {
       param: 'p',
+      perPageParam: 'per_page',
       perPage: 20,
       window: 4
     },
