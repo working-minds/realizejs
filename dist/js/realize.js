@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.22 (http://www.wkm.com.br)
+ * Realize v0.7.23 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 'use strict';
@@ -4537,7 +4537,8 @@ var Grid = React.createClass({
     tableRowCssClass: React.PropTypes.func,
     paginationOnTop: React.PropTypes.bool,
     clearThemeTable: React.PropTypes.bool,
-    pagination: React.PropTypes.bool
+    pagination: React.PropTypes.bool,
+    perPageOptions: React.PropTypes.array
   },
 
   paginationConfigs: null,
@@ -4567,6 +4568,7 @@ var Grid = React.createClass({
       paginationOnTop: true,
       clearThemeTable: false,
       pagination: true,
+      perPageOptions: [{ name: 10, value: 10 }, { name: 20, value: 20 }, { name: 50, value: 50 }],
       onLoadSuccess: function onLoadSuccess(data) {},
       onLoadError: function onLoadError(xhr, status, error) {},
       data: {
@@ -4583,7 +4585,7 @@ var Grid = React.createClass({
       allSelected: false,
       count: this.props.data.count,
       page: 1,
-      perPage: 20,
+      perPage: this.initialPerPage(),
       filterData: {},
       sortData: this.props.sortData,
       gridIsLoading: this.props.isLoading
@@ -4615,6 +4617,11 @@ var Grid = React.createClass({
     }, (function () {
       this.loadData();
     }).bind(this));
+  },
+
+  initialPerPage: function initialPerPage() {
+    var paginationConfigs = $.extend({}, Realize.config.grid.pagination, this.props.paginationConfigs);
+    return paginationConfigs.perPage;
   },
 
   render: function render() {
@@ -4699,6 +4706,8 @@ var Grid = React.createClass({
   renderPagination: function renderPagination() {
     if (this.props.pagination) {
       return React.createElement(GridPagination, _extends({}, this.paginationConfigs, {
+        perPageOptions: this.props.perPageOptions,
+        perPage: this.state.perPage,
         page: this.state.page,
         count: this.state.count,
         onPagination: this.onPagination,

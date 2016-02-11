@@ -33,14 +33,15 @@ var Grid = React.createClass({
     tableRowCssClass: React.PropTypes.func,
     paginationOnTop: React.PropTypes.bool,
     clearThemeTable: React.PropTypes.bool,
-    pagination: React.PropTypes.bool
+    pagination: React.PropTypes.bool,
+    perPageOptions: React.PropTypes.array
   },
 
   paginationConfigs: null,
   sortConfigs: null,
 
   getDefaultProps: function() {
-    return {
+      return {
       themeClassKey: 'grid',
       eagerLoad: false,
       paginationConfigs: {},
@@ -63,6 +64,11 @@ var Grid = React.createClass({
       paginationOnTop: true,
       clearThemeTable: false,
       pagination: true,
+      perPageOptions: [
+        {name: 10, value: 10},
+        {name: 20, value: 20},
+        {name: 50, value: 50}
+      ],
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
       data: {
@@ -79,7 +85,7 @@ var Grid = React.createClass({
       allSelected: false,
       count: this.props.data.count,
       page: 1,
-      perPage: 20,
+      perPage: this.initialPerPage(),
       filterData: {},
       sortData: this.props.sortData,
       gridIsLoading: this.props.isLoading
@@ -111,6 +117,11 @@ var Grid = React.createClass({
     }, function() {
       this.loadData();
     }.bind(this));
+  },
+
+  initialPerPage: function() {
+    var paginationConfigs = $.extend({}, Realize.config.grid.pagination, this.props.paginationConfigs);
+    return paginationConfigs.perPage;
   },
 
   render: function() {
@@ -203,6 +214,8 @@ var Grid = React.createClass({
       return (
         <GridPagination
           {...this.paginationConfigs}
+          perPageOptions={this.props.perPageOptions}
+          perPage={this.state.perPage}
           page={this.state.page}
           count={this.state.count}
           onPagination={this.onPagination}
