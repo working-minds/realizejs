@@ -16,7 +16,7 @@ var TableHeader = React.createClass({
       themeClassKey: 'table.header',
       sortable: true,
       sortDirection: null,
-      sortFieldName: 'name',
+      sortFieldName: null,
       onSort: function(sortData) { return true; }
     };
   },
@@ -77,13 +77,17 @@ var TableHeader = React.createClass({
   },
 
   buildSortData: function() {
-    var sortField = this.props[this.props.sortFieldName];
+    var sortField = this.getSortFieldName();
     var sortDirection = this.getSortDirection();
 
     return {
       field: sortField,
       direction: sortDirection
     };
+  },
+
+  getSortFieldName: function() {
+    return this.props.sortFieldName || this.props.name;
   },
 
   getSortDirection: function() {
