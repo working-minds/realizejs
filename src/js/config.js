@@ -33,8 +33,7 @@ Realize.config = {
     sort: {
       param: 's',
       directionParam: 's_dir',
-      fieldValueFormat: '%{field}',
-      sortFieldName: 'name'
+      fieldValueFormat: '%{field}'
     }
   }
 };
