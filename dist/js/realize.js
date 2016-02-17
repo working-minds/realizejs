@@ -9160,7 +9160,7 @@ var Table = React.createClass({
         headerComponents.push(React.createElement(TableHeader, _extends({}, columnProps, this.sortConfigs, {
           name: columnName,
           key: columnName,
-          sortDirection: this.sortDirectionForColumn(columnName),
+          sortDirection: this.sortDirectionForColumn(columnName, columnProps),
           ref: "header_" + columnName,
           resource: this.props.resource,
           onSort: this.props.onSort,
@@ -9172,9 +9172,12 @@ var Table = React.createClass({
     return headerComponents;
   },
 
-  sortDirectionForColumn: function sortDirectionForColumn(columnName) {
+  sortDirectionForColumn: function sortDirectionForColumn(columnName, columnProps) {
+    var sortFieldName = columnProps.sortFieldName;
+    var sortField = sortFieldName || columnName;
+
     var sortData = this.props.sortData;
-    if (!!sortData.field && sortData.field == columnName) {
+    if (!!sortData.field && sortData.field == sortField) {
       return sortData.direction;
     }
 
