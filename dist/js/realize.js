@@ -1589,7 +1589,7 @@ var InputComponentMixin = {
   _handleReset: function _handleReset(event) {
     if (this.isMounted() && !this.inputNodeIsCheckbox()) {
       this.setState({
-        value: ''
+        value: null
       });
     }
   },
@@ -6481,6 +6481,26 @@ var InputDatefilter = React.createClass({
     );
   },
 
+  /* Form reset event handlers */
+
+  componentDidMount: function componentDidMount() {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    var $form = $($containerNode.find('input')[0].form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function componentWillUnmount() {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    var $form = $($containerNode.find('input')[0].form);
+    $form.off('reset', this.clearSelection);
+  },
+
+  clearSelection: function clearSelection() {
+    this.setState({
+      selectedDates: []
+    });
+  },
+
   /* Input focus handlers */
 
   showFilterBody: function showFilterBody(event) {
@@ -6999,7 +7019,6 @@ var InputDatepicker = React.createClass({
       React.createElement(InputMasked, _extends({}, this.props, {
         value: this.formatDateValue(),
         className: this.className(),
-        type: 'date',
         ref: 'input'
       })),
       React.createElement(Label, this.propsWithoutCSS()),
@@ -9160,7 +9179,7 @@ var Table = React.createClass({
         headerComponents.push(React.createElement(TableHeader, _extends({}, columnProps, this.sortConfigs, {
           name: columnName,
           key: columnName,
-          sortDirection: this.sortDirectionForColumn(columnName),
+          sortDirection: this.sortDirectionForColumn(columnName, columnProps),
           ref: "header_" + columnName,
           resource: this.props.resource,
           onSort: this.props.onSort,
@@ -9172,9 +9191,12 @@ var Table = React.createClass({
     return headerComponents;
   },
 
-  sortDirectionForColumn: function sortDirectionForColumn(columnName) {
+  sortDirectionForColumn: function sortDirectionForColumn(columnName, columnProps) {
+    var sortFieldName = columnProps.sortFieldName;
+    var sortField = sortFieldName || columnName;
+
     var sortData = this.props.sortData;
-    if (!!sortData.field && sortData.field == columnName) {
+    if (!!sortData.field && sortData.field == sortField) {
       return sortData.direction;
     }
 
@@ -9520,7 +9542,7 @@ var TableCell = React.createClass({
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime'])
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time'])
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -9613,6 +9635,11 @@ var TableCell = React.createClass({
   datetimeValue: function datetimeValue(value) {
     value = moment(value);
     return value.format("DD/MM/YYYY HH:mm");
+  },
+
+  timeValue: function timeValue(value) {
+    value = moment(value);
+    return value.format("HH:mm:ss");
   }
 });
 
@@ -9626,7 +9653,7 @@ var TableHeader = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     label: Realize.PropTypes.localizedString,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     sortFieldName: React.PropTypes.string,

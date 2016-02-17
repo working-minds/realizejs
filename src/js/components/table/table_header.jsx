@@ -4,7 +4,7 @@ var TableHeader = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     label: Realize.PropTypes.localizedString,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     sortFieldName: React.PropTypes.string,

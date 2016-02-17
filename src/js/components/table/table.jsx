@@ -167,12 +167,12 @@ var Table = React.createClass({
           <TableHeader {...columnProps} {...this.sortConfigs}
             name={columnName}
             key={columnName}
-            sortDirection={this.sortDirectionForColumn(columnName)}
+            sortDirection={this.sortDirectionForColumn(columnName, columnProps)}
             ref={"header_" + columnName}
             resource={this.props.resource}
             onSort={this.props.onSort}
             clearTheme={this.props.clearTheme}
-            />
+          />
         );
       }
     }
@@ -180,9 +180,12 @@ var Table = React.createClass({
     return headerComponents;
   },
 
-  sortDirectionForColumn: function(columnName) {
+  sortDirectionForColumn: function(columnName, columnProps) {
+    var sortFieldName = columnProps.sortFieldName;
+    var sortField = sortFieldName || columnName;
+
     var sortData = this.props.sortData;
-    if(!!sortData.field && sortData.field == columnName) {
+    if(!!sortData.field && sortData.field == sortField) {
       return sortData.direction;
     }
 
