@@ -45,6 +45,26 @@ var InputDatefilter = React.createClass({
     );
   },
 
+  /* Form reset event handlers */
+
+  componentDidMount: function() {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    var $form = $($containerNode.find('input')[0].form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function() {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    var $form = $($containerNode.find('input')[0].form);
+    $form.off('reset', this.clearSelection);
+  },
+
+  clearSelection: function() {
+    this.setState({
+      selectedDates: []
+    });
+  },
+
   /* Input focus handlers */
 
   showFilterBody: function(event) {

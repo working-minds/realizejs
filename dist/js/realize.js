@@ -1589,7 +1589,7 @@ var InputComponentMixin = {
   _handleReset: function _handleReset(event) {
     if (this.isMounted() && !this.inputNodeIsCheckbox()) {
       this.setState({
-        value: ''
+        value: null
       });
     }
   },
@@ -6479,6 +6479,26 @@ var InputDatefilter = React.createClass({
         ref: "body"
       }))
     );
+  },
+
+  /* Form reset event handlers */
+
+  componentDidMount: function componentDidMount() {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    var $form = $($containerNode.find('input')[0].form);
+    $form.on('reset', this.clearSelection);
+  },
+
+  componentWillUnmount: function componentWillUnmount() {
+    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    var $form = $($containerNode.find('input')[0].form);
+    $form.off('reset', this.clearSelection);
+  },
+
+  clearSelection: function clearSelection() {
+    this.setState({
+      selectedDates: []
+    });
   },
 
   /* Input focus handlers */
