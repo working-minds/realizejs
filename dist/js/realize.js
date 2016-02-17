@@ -9542,7 +9542,7 @@ var TableCell = React.createClass({
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime'])
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time'])
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -9635,6 +9635,11 @@ var TableCell = React.createClass({
   datetimeValue: function datetimeValue(value) {
     value = moment(value);
     return value.format("DD/MM/YYYY HH:mm");
+  },
+
+  timeValue: function timeValue(value) {
+    value = moment(value);
+    return value.format("HH:mm:ss");
   }
 });
 
@@ -9648,7 +9653,7 @@ var TableHeader = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     label: Realize.PropTypes.localizedString,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime']),
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
     sortable: React.PropTypes.bool,
     sortDirection: React.PropTypes.string,
     sortFieldName: React.PropTypes.string,
