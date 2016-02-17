@@ -24,7 +24,6 @@ var InputDatepicker = React.createClass({
           {...this.props}
           value={this.formatDateValue()}
           className={this.className()}
-          type="date"
           ref="input"
         />
 

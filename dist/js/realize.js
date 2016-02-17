@@ -7019,7 +7019,6 @@ var InputDatepicker = React.createClass({
       React.createElement(InputMasked, _extends({}, this.props, {
         value: this.formatDateValue(),
         className: this.className(),
-        type: 'date',
         ref: 'input'
       })),
       React.createElement(Label, this.propsWithoutCSS()),
