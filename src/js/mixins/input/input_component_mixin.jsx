@@ -50,7 +50,7 @@ var InputComponentMixin = {
   _handleReset: function(event) {
     if(this.isMounted() && !this.inputNodeIsCheckbox()) {
       this.setState({
-        value: ''
+        value: null
       });
     }
   },
