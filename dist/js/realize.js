@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.25 (http://www.wkm.com.br)
+ * Realize v0.7.27 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 'use strict';
