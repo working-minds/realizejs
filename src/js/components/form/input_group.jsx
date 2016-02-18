@@ -64,13 +64,14 @@ var InputGroup = React.createClass({
         }
 
         inputComponents.push(
-          <Input {...inputProps}
+          <Input
+            disabled={this.props.disabled}
+            readOnly={this.props.readOnly}
+            {...inputProps}
             data={this.props.data}
             errors={this.props.errors}
             resource={this.props.resource}
             formStyle={this.props.formStyle}
-            disabled={this.props.disabled}
-            readOnly={this.props.readOnly}
             key={"input_" + inputIndex}
             ref={"input_" + inputIndex}
           />
