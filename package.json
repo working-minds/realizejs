@@ -1,11 +1,12 @@
 {
   "name": "realize",
-  "version": "0.7.25",
+  "version": "0.7.27",
   "description": "Elementos de Frontend, utilizando ReactJS e MaterializeCSS",
   "authors": [
     "Pedro Jesus <pjesus@wkm.com.br>",
     "Lucas Toledo <ltoledo@wkm.com.br>",
-    "Hudson Gomes <hgomes@wkm.com.br>"
+    "Hudson Gomes <hgomes@wkm.com.br>",
+    "Rafael Ferrari <rferrari@wkm.com.br>"
   ],
   "license": "MIT",
   "homepage": "http://www.wkm.com.br",

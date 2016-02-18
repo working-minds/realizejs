@@ -1,5 +1,5 @@
 /*!
- * Realize v0.7.25 (http://www.wkm.com.br)
+ * Realize v0.7.27 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 'use strict';
@@ -4455,13 +4455,14 @@ var InputGroup = React.createClass({
           inputProps.id = inputId;
         }
 
-        inputComponents.push(React.createElement(Input, _extends({}, inputProps, {
+        inputComponents.push(React.createElement(Input, _extends({
+          disabled: this.props.disabled,
+          readOnly: this.props.readOnly
+        }, inputProps, {
           data: this.props.data,
           errors: this.props.errors,
           resource: this.props.resource,
           formStyle: this.props.formStyle,
-          disabled: this.props.disabled,
-          readOnly: this.props.readOnly,
           key: "input_" + inputIndex,
           ref: "input_" + inputIndex
         })));
