@@ -1374,14 +1374,23 @@ var GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
     rowHref: React.PropTypes.string,
-    haveShowAction: React.PropTypes.bool
+    haveShowAction: React.PropTypes.bool,
+
+    createAction: React.PropTypes.object,
+    showAction: React.PropTypes.object,
+    editAction: React.PropTypes.object,
+    destroyAction: React.PropTypes.object
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       actionButtons: null,
       rowHref: null,
-      haveShowAction: false
+      haveShowAction: false,
+      createActionButton: {},
+      showActionButton: {},
+      editActionButton: {},
+      destroyActionButton: {}
     };
   },
 
@@ -1418,21 +1427,10 @@ var GridActionsMixin = {
   },
 
   getDefaultMemberActionButtons: function getDefaultMemberActionButtons() {
-    var actions = [{
-      icon: 'edit',
-      href: this.getRestActionUrl('edit')
-    }, {
-      icon: 'destroy',
-      method: this.getRestActionMethod('destroy'),
-      actionUrl: this.getRestActionUrl('destroy'),
-      confirmsWith: this.props.destroyConfirm
-    }];
+    var actions = [this.getDefaultEditActionProps(), this.getDefaultDestroyActionProps()];
 
     if (this.props.haveShowAction) {
-      actions.unshift({
-        icon: 'search',
-        href: this.getRestActionUrl('show')
-      });
+      actions.unshift(this.getDefaultShowActionProps());
     }
 
     return actions;
@@ -1447,11 +1445,38 @@ var GridActionsMixin = {
   },
 
   getDefaultCollectionActionButtons: function getDefaultCollectionActionButtons() {
-    return [{
+    return [this.getDefaultCreateActionProps()];
+  },
+
+  getDefaultCreateActionProps: function getDefaultCreateActionProps() {
+    return $.extend({}, {
       name: 'actions.new',
       context: 'none',
       href: this.getRestActionUrl('add')
-    }];
+    }, this.props.createActionButton);
+  },
+
+  getDefaultShowActionProps: function getDefaultShowActionProps() {
+    return $.extend({}, {
+      icon: 'search',
+      href: this.getRestActionUrl('show')
+    }, this.props.showActionButton);
+  },
+
+  getDefaultEditActionProps: function getDefaultEditActionProps() {
+    return $.extend({}, {
+      icon: 'edit',
+      href: this.getRestActionUrl('edit')
+    }, this.props.editActionButton);
+  },
+
+  getDefaultDestroyActionProps: function getDefaultDestroyActionProps() {
+    return $.extend({}, {
+      icon: 'destroy',
+      method: this.getRestActionMethod('destroy'),
+      actionUrl: this.getRestActionUrl('destroy'),
+      confirmsWith: this.props.destroyConfirm
+    }, this.props.destroyActionButton);
   }
 };
 
@@ -2122,7 +2147,7 @@ var RequestHandlerMixin = {
   handleHtmlResponse: function handleHtmlResponse(responseHtml) {}
 };
 
-'use strict';
+"use strict";
 
 var RestActionsMixin = {
   propTypes: {
@@ -2142,17 +2167,38 @@ var RestActionsMixin = {
   getRestActionUrl: function getRestActionUrl(action, id) {
     var actionUrls = this.props.actionUrls || Realize.config.restUrls;
     var actionUrl = actionUrls[action];
-    actionUrl = actionUrl.replace(/:url/, this.props.url);
+    var actionBaseUrl = this.getActionBaseUrl();
+    var actionQueryString = this.getActionQueryString();
+
+    actionUrl = actionUrl.replace(/:url/, actionBaseUrl);
     if (!!id) {
       actionUrl = actionUrl.replace(/:id/, id);
     }
 
-    return actionUrl;
+    return actionUrl + actionQueryString;
   },
 
   getRestActionMethod: function getRestActionMethod(action) {
     var actionMethods = this.props.actionMethods || Realize.config.restMethods;
     return actionMethods[action];
+  },
+
+  getActionBaseUrl: function getActionBaseUrl() {
+    var baseUrlMatches = this.props.url.match(/^(.*)\?/);
+    if (!!baseUrlMatches) {
+      return baseUrlMatches[1];
+    } else {
+      return this.props.url;
+    }
+  },
+
+  getActionQueryString: function getActionQueryString() {
+    var queryStringMatches = this.props.url.match(/\?.*$/);
+    if (!!queryStringMatches) {
+      return queryStringMatches[0];
+    } else {
+      return "";
+    }
   }
 };
 
@@ -9922,7 +9968,6 @@ var TableRowActionButton = React.createClass({
       data: {},
       dataRowIdField: 'id',
       method: null,
-      conditionParams: null,
       disabled: false,
       component: null,
       element: 'a',
@@ -9943,7 +9988,11 @@ var TableRowActionButton = React.createClass({
 
   renderButton: function renderButton() {
     var component = [];
-    if (this.props.conditionToShowActionButton(this.props.conditionParams)) if (!!this.props.component) {
+    if (!this.props.conditionToShowActionButton(this.props.data)) {
+      return component;
+    }
+
+    if (!!this.props.component) {
       return React.createElement(eval(this.props.component), this.props);
     } else {
       component.push(React.createElement(Button, _extends({}, this.props, {
@@ -10056,14 +10105,11 @@ var TableRowActions = React.createClass({
 
     for (var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      var conditionToShowFunction = actionButtonProps.conditionToShowActionButton;
 
-      if (!conditionToShowFunction || actionButtonProps.conditionToShowActionButton(actionButtonProps.conditionParams)) {
-        if (!!actionButtonProps.component) {
-          return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent));
-        } else {
-          actionButtons.push(React.createElement(TableRowActionButton, _extends({ key: "action_" + i }, actionButtonProps, { dataRowIdField: this.props.dataRowIdField, data: this.props.data })));
-        }
+      if (!!actionButtonProps.component) {
+        return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent));
+      } else {
+        actionButtons.push(React.createElement(TableRowActionButton, _extends({ key: "action_" + i }, actionButtonProps, { dataRowIdField: this.props.dataRowIdField, data: this.props.data })));
       }
     }
 

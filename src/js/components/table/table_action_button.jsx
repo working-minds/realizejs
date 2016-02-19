@@ -38,7 +38,7 @@ var TableActionButton = React.createClass({
     );
   },
 
-  renderButton: function(){
+  renderButton: function() {
     var component = [];
     if(!this.props.conditionToShowActionButton(this.props.conditionParams)) {
       return component;
