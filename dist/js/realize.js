@@ -1374,14 +1374,23 @@ var GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
     rowHref: React.PropTypes.string,
-    haveShowAction: React.PropTypes.bool
+    haveShowAction: React.PropTypes.bool,
+
+    createAction: React.PropTypes.object,
+    showAction: React.PropTypes.object,
+    editAction: React.PropTypes.object,
+    destroyAction: React.PropTypes.object
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       actionButtons: null,
       rowHref: null,
-      haveShowAction: false
+      haveShowAction: false,
+      createActionButton: {},
+      showActionButton: {},
+      editActionButton: {},
+      destroyActionButton: {}
     };
   },
 
@@ -1418,21 +1427,10 @@ var GridActionsMixin = {
   },
 
   getDefaultMemberActionButtons: function getDefaultMemberActionButtons() {
-    var actions = [{
-      icon: 'edit',
-      href: this.getRestActionUrl('edit')
-    }, {
-      icon: 'destroy',
-      method: this.getRestActionMethod('destroy'),
-      actionUrl: this.getRestActionUrl('destroy'),
-      confirmsWith: this.props.destroyConfirm
-    }];
+    var actions = [this.getDefaultEditActionProps(), this.getDefaultDestroyActionProps()];
 
     if (this.props.haveShowAction) {
-      actions.unshift({
-        icon: 'search',
-        href: this.getRestActionUrl('show')
-      });
+      actions.unshift(this.getDefaultShowActionProps());
     }
 
     return actions;
@@ -1447,11 +1445,38 @@ var GridActionsMixin = {
   },
 
   getDefaultCollectionActionButtons: function getDefaultCollectionActionButtons() {
-    return [{
+    return [this.getDefaultCreateActionProps()];
+  },
+
+  getDefaultCreateActionProps: function getDefaultCreateActionProps() {
+    return $.extend({}, {
       name: 'actions.new',
       context: 'none',
       href: this.getRestActionUrl('add')
-    }];
+    }, this.props.createActionButton);
+  },
+
+  getDefaultShowActionProps: function getDefaultShowActionProps() {
+    return $.extend({}, {
+      icon: 'search',
+      href: this.getRestActionUrl('show')
+    }, this.props.showActionButton);
+  },
+
+  getDefaultEditActionProps: function getDefaultEditActionProps() {
+    return $.extend({}, {
+      icon: 'edit',
+      href: this.getRestActionUrl('edit')
+    }, this.props.editActionButton);
+  },
+
+  getDefaultDestroyActionProps: function getDefaultDestroyActionProps() {
+    return $.extend({}, {
+      icon: 'destroy',
+      method: this.getRestActionMethod('destroy'),
+      actionUrl: this.getRestActionUrl('destroy'),
+      confirmsWith: this.props.destroyConfirm
+    }, this.props.destroyActionButton);
   }
 };
 
