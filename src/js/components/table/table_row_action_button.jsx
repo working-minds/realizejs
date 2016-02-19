@@ -18,7 +18,6 @@ var TableRowActionButton = React.createClass({
       data: {},
       dataRowIdField: 'id',
       method: null,
-      conditionParams: null,
       disabled: false,
       component: null,
       element: 'a',
@@ -37,19 +36,23 @@ var TableRowActionButton = React.createClass({
 
   renderButton: function() {
     var component = [];
-    if (this.props.conditionToShowActionButton(this.props.conditionParams))
-      if(!!this.props.component){
-        return React.createElement(eval(this.props.component), this.props)
-      } else {
-        component.push(
-          <Button {...this.props}
-            method={this.actionButtonMethod()}
-            href={this.actionButtonHref()}
-            onClick={this.actionButtonClick}
-            key="button"
-          />
-        );
-      }
+    if(!this.props.conditionToShowActionButton(this.props.data)) {
+      return component;
+    }
+
+    if(!!this.props.component) {
+      return React.createElement(eval(this.props.component), this.props)
+    }
+    else {
+      component.push(
+        <Button {...this.props}
+          method={this.actionButtonMethod()}
+          href={this.actionButtonHref()}
+          onClick={this.actionButtonClick}
+          key="button"
+        />
+      );
+    }
 
     return component;
   },
