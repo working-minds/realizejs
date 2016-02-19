@@ -9968,7 +9968,6 @@ var TableRowActionButton = React.createClass({
       data: {},
       dataRowIdField: 'id',
       method: null,
-      conditionParams: null,
       disabled: false,
       component: null,
       element: 'a',
@@ -9989,7 +9988,11 @@ var TableRowActionButton = React.createClass({
 
   renderButton: function renderButton() {
     var component = [];
-    if (this.props.conditionToShowActionButton(this.props.conditionParams)) if (!!this.props.component) {
+    if (!this.props.conditionToShowActionButton(this.props.data)) {
+      return component;
+    }
+
+    if (!!this.props.component) {
       return React.createElement(eval(this.props.component), this.props);
     } else {
       component.push(React.createElement(Button, _extends({}, this.props, {
@@ -10102,14 +10105,11 @@ var TableRowActions = React.createClass({
 
     for (var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
-      var conditionToShowFunction = actionButtonProps.conditionToShowActionButton;
 
-      if (!conditionToShowFunction || actionButtonProps.conditionToShowActionButton(actionButtonProps.conditionParams)) {
-        if (!!actionButtonProps.component) {
-          return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent));
-        } else {
-          actionButtons.push(React.createElement(TableRowActionButton, _extends({ key: "action_" + i }, actionButtonProps, { dataRowIdField: this.props.dataRowIdField, data: this.props.data })));
-        }
+      if (!!actionButtonProps.component) {
+        return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent));
+      } else {
+        actionButtons.push(React.createElement(TableRowActionButton, _extends({ key: "action_" + i }, actionButtonProps, { dataRowIdField: this.props.dataRowIdField, data: this.props.data })));
       }
     }
 
