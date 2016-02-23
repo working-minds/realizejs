@@ -9,20 +9,12 @@ var GridPagination = React.createClass({
     onChangePerPage: React.PropTypes.func,
     pageRowsCount: React.PropTypes.number,
     type: React.PropTypes.string,
-    perPageOptions: React.PropTypes.object
+    perPageOptions: React.PropTypes.array
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'grid.pagination',
-      page: 1,
-      perPage: 20,
-      window: 4,
-      perPageOptions: [
-        {name: 10, value: 10},
-        {name: 20, value: 20},
-        {name: 50, value: 50}
-      ],
       onPagination: function(page) {
         return true;
       },
@@ -83,8 +75,8 @@ var GridPagination = React.createClass({
   },
 
   changePerPage: function(event) {
-    var value = event.currentTarget.value;
-    this.props.onChangePerPage(value);
+    var perPage = parseInt(event.currentTarget.value);
+    this.props.onChangePerPage(perPage);
   },
 
   rangePaginationText: function() {

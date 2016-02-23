@@ -28,7 +28,13 @@ Realize.config = {
       param: 'p',
       perPageParam: 'per_page',
       perPage: 20,
-      window: 4
+      window: 4,
+      type: 'default',
+      perPageOptions: [
+        { name: '10', value: 10 },
+        { name: '20', value: 20 },
+        { name: '50', value: 50 }
+      ]
     },
     sort: {
       param: 's',
