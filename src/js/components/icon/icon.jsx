@@ -1,12 +1,17 @@
 var Icon = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
-    type: React.PropTypes.string
+    type: React.PropTypes.string,
+    tooltipDelay: React.PropTypes.string,
+    tooltipText: React.PropTypes.string,
+    tooltipPosition: React.PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
   },
 
   getDefaultProps: function() {
     return {
-      type: ''
+      type: '',
+      tooltipDealy: 10,
+      tooltipPosition: 'top'
     };
   },
 
@@ -18,8 +23,23 @@ var Icon = React.createClass({
 
   render: function() {
     return (
-      <i className={this.className()} {...this.propsWithoutCSS()}>{this.iconType()}</i>
+        <i className={this.getClassName()}
+          data-position={this.tooltipPosition}
+          data-delay={this.tooltipDelay}
+          data-tooltip={this.tooltipText}
+          {...this.propsWithoutCSS()}>
+          {this.iconType()}
+        </i>
     );
+  },
+
+  getClassName: function() {
+    var className = this.className();
+
+    if (tooltipText != false)
+      className += ' tooltipped';
+
+    return className;
   },
 
   iconType: function() {
