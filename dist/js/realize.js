@@ -1758,7 +1758,6 @@ var MaterializeSelectMixin = {
   handleChangeMaterialize: function handleChangeMaterialize(selectElement) {
     var $selectElement = $(selectElement);
     var fakeEvent = { currentTarget: selectElement };
-    this.props.onChange(fakeEvent);
 
     //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();
@@ -1766,6 +1765,8 @@ var MaterializeSelectMixin = {
     this.setState({
       value: this.ensureIsArray(selectElement.value)
     }, this.triggerDependableChanged);
+
+    this.props.onChange(fakeEvent);
   }
 };
 
@@ -7254,7 +7255,7 @@ var InputFile = React.createClass({
       var component = [];
       component.push(React.createElement(
         'i',
-        { className: 'material-icons' },
+        { className: 'material-icons', key: 'inputFileIcon' },
         this.props.buttonIcon
       ));
 
@@ -7703,7 +7704,7 @@ var InputRadioGroup = React.createClass({
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
     currentValue: React.PropTypes.string,
-    withGap: React.PropTypes.string
+    withGap: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -9206,7 +9207,7 @@ var Table = React.createClass({
 
   renderHeaderSelectCell: function renderHeaderSelectCell() {
     if (!this.props.selectable) {
-      return '';
+      return React.createElement('th', null);
     }
 
     return React.createElement(TableSelectCell, {
@@ -9277,7 +9278,7 @@ var Table = React.createClass({
   },
 
   renderEmptyMessage: function renderEmptyMessage() {
-    var columnsCount = 0;
+    var columnsCount = 1;
     for (var key in this.props.columns) {
       columnsCount++;
     }
@@ -9874,7 +9875,7 @@ var TableRow = React.createClass({
 
   renderSelectCell: function renderSelectCell() {
     if (!this.props.selectable) {
-      return '';
+      return React.createElement('td', null);
     }
 
     var rowSelectableFilter = this.props.rowSelectableFilter;
@@ -9907,7 +9908,7 @@ var TableRow = React.createClass({
 
   renderActionsCell: function renderActionsCell() {
     if (!$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
-      return '';
+      return React.createElement('td', null);
     }
 
     return React.createElement(TableRowActions, _extends({}, this.propsWithoutCSS(), { ref: 'actions' }));

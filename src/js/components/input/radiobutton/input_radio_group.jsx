@@ -9,7 +9,7 @@ var InputRadioGroup = React.createClass({
     name: React.PropTypes.string,
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
     currentValue: React.PropTypes.string,
-    withGap: React.PropTypes.string
+    withGap: React.PropTypes.bool
   }, 
 
   getDefaultProps: function() {

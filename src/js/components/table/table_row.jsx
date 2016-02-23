@@ -62,7 +62,7 @@ var TableRow = React.createClass({
 
   renderSelectCell: function() {
     if(!this.props.selectable) {
-      return '';
+      return <td></td>;
     }
 
     var rowSelectableFilter = this.props.rowSelectableFilter;
@@ -100,7 +100,7 @@ var TableRow = React.createClass({
 
   renderActionsCell: function() {
     if(!$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
-      return '';
+      return <td></td>;
     }
 
     return <TableRowActions {...this.propsWithoutCSS()} ref="actions" />;

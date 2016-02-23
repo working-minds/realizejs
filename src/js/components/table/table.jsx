@@ -141,7 +141,7 @@ var Table = React.createClass({
 
   renderHeaderSelectCell: function() {
     if(!this.props.selectable) {
-      return '';
+      return <th></th>;
     }
 
     return (
@@ -219,7 +219,7 @@ var Table = React.createClass({
   },
 
   renderEmptyMessage: function() {
-    var columnsCount = 0;
+    var columnsCount = 1;
     for(var key in this.props.columns) {
       columnsCount++;
     }

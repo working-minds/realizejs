@@ -21,7 +21,6 @@ var MaterializeSelectMixin = {
   handleChangeMaterialize: function(selectElement) {
     var $selectElement = $(selectElement);
     var fakeEvent = { currentTarget: selectElement };
-    this.props.onChange(fakeEvent);
 
     //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();
@@ -29,5 +28,7 @@ var MaterializeSelectMixin = {
     this.setState({
       value: this.ensureIsArray(selectElement.value)
     }, this.triggerDependableChanged);
+
+    this.props.onChange(fakeEvent);
   }
 };
