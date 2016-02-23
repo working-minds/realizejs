@@ -3,7 +3,7 @@ var Input = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    label: React.PropTypes.string,
+    label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     value: React.PropTypes.node,
     component: React.PropTypes.string,
     formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),

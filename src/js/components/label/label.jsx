@@ -3,7 +3,7 @@ var Label = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    label: React.PropTypes.string,
+    label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     active: React.PropTypes.bool,
     onClick: React.PropTypes.func
   },
@@ -39,9 +39,14 @@ var Label = React.createClass({
   },
 
   render: function() {
+    var labelProp = this.props.label;
+    if(typeof(labelProp) == "boolean" && !labelProp) {
+      return <span />;
+    }
+
     return (
       <label htmlFor={this.props.id} onClick={this.props.onClick} className={this.className()}>
-        {(this.props.label || this.props.name)}
+        {(labelProp || this.props.name)}
       </label>
     );
   }
