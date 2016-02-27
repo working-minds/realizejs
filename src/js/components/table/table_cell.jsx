@@ -92,7 +92,7 @@ window.TableCell = React.createClass({
   },
 
   booleanValue: function(value) {
-    return Realize.t(String(value));
+    return Realize.i18n.t(String(value));
   },
 
   dateValue: function(value) {

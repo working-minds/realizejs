@@ -1,4 +1,4 @@
-var ModalRendererMixin = {
+window.ModalRendererMixin = {
   propTypes: {
     modalContainerId: React.PropTypes.string
   },

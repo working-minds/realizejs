@@ -64,7 +64,7 @@ window.InputSelect = React.createClass({
     var options = this.state.options;
 
     if(this.props.includeBlank) {
-      selectOptions.push(<InputSelectOption name={Realize.t(this.props.blankText)} value="" key="empty_option" />);
+      selectOptions.push(<InputSelectOption name={Realize.i18n.t(this.props.blankText)} value="" key="empty_option" />);
     }
 
     for(var i = 0; i < options.length; i++) {

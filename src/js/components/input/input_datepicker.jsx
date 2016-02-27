@@ -44,7 +44,7 @@ window.InputDatepicker = React.createClass({
   },
 
   getDateFormat: function() {
-    return (this.props.format || Realize.t('date.formats.date'));
+    return (this.props.format || Realize.i18n.t('date.formats.date'));
   },
 
   setPickadatePlugin: function() {

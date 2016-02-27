@@ -112,14 +112,14 @@ window.Button = React.createClass({
 
   getConfirmsWith: function() {
     if(!!this.props.confirmsWith) {
-      return Realize.t(this.props.confirmsWith);
+      return Realize.i18n.t(this.props.confirmsWith);
     }
 
     return null
   },
 
   renderContent: function() {
-    return [ Realize.t(this.props.name), this.renderIcon() ];
+    return [Realize.i18n.t(this.props.name), this.renderIcon()];
   },
 
   renderIcon: function() {
@@ -138,7 +138,7 @@ window.Button = React.createClass({
   },
 
   renderLoadingIndicator: function() {
-      return Realize.t(this.props.disableWith);
+      return Realize.i18n.t(this.props.disableWith);
   },
 
   handleClick: function(event) {

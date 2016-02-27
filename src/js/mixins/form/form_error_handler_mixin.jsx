@@ -1,4 +1,4 @@
-var FormErrorHandlerMixin = {
+window.FormErrorHandlerMixin = {
   propTypes: {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,

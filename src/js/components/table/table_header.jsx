@@ -45,7 +45,7 @@ window.TableHeader = React.createClass({
 
   getLabel: function() {
     if(!!this.props.label && this.props.label.length > 0) {
-      return Realize.t(this.props.label);
+      return Realize.i18n.t(this.props.label);
     }
 
     return this.localizeResourceField();

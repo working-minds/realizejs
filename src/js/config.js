@@ -1,8 +1,6 @@
 module.exports = exports = {};
 
 exports.config = {
-  theme: 'materialize',
-  locale: 'en',
   restUrls: {
     index: ':url',
     show: ':url/:id',

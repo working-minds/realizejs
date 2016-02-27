@@ -55,7 +55,7 @@ window.InputAutocompleteResult = React.createClass({
          className="input-autocomplete__clear-button"
          onClick={this.props.onClear}>
 
-        {Realize.t("inputs.autocomplete.clear")}
+        {Realize.i18n.t("inputs.autocomplete.clear")}
       </a>
     );
   },
@@ -86,7 +86,7 @@ window.InputAutocompleteResult = React.createClass({
   renderEmptyMessage: function() {
     return (
       <div className="input-autocomplete__empty-message">
-        {Realize.t("inputs.autocomplete.emptyResult")}
+        {Realize.i18n.t("inputs.autocomplete.emptyResult")}
       </div>
     );
   },

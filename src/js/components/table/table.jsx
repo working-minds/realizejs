@@ -233,7 +233,7 @@ window.Table = React.createClass({
     return (
       <tr>
         <td colSpan={columnsCount} className="empty-message">
-          {Realize.t(this.props.emptyMessage)}
+          {Realize.i18n.t(this.props.emptyMessage)}
         </td>
       </tr>
     );

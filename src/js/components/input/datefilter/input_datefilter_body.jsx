@@ -159,6 +159,6 @@ window.InputDatefilterBody = React.createClass({
   },
 
   getFilterInputLabel: function(filterType) {
-    return Realize.t("inputs.datefilter." + filterType);
+    return Realize.i18n.t("inputs.datefilter." + filterType);
   }
 });

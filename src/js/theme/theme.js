@@ -1,9 +1,28 @@
-var themes = {
-  getCurrent: function() {
-    var defaultTheme = Realize.themes.default;
-    var currentTheme = Realize.themes[Realize.config.theme];
+var utils = require('../utils.js');
 
-    return $.extend({}, defaultTheme, currentTheme);
+var themes = {
+  themes: {},
+  defaultTheme: 'default',
+  currentTheme: 'materialize',
+
+  registerTheme: function(newThemeObj, theme) {
+    if(!$.isPlainObject(newThemeObj)) {
+      throw 'Invalid Theme Object.'
+    }
+
+    if(!theme) {
+      throw 'Invalid Theme Name.';
+    }
+
+    var currentThemeObj = this.themes[theme] || {};
+    this.themes[theme] = $.extend({}, currentThemeObj, newThemeObj);
+  },
+
+  getCurrent: function() {
+    var defaultThemeObj = this.themes[this.defaultTheme];
+    var currentThemeObj = this.themes[this.currentTheme];
+
+    return $.extend({}, defaultThemeObj, currentThemeObj);
   },
 
   getProp: function(key) {
@@ -12,7 +31,7 @@ var themes = {
     }
 
     var currentTheme = this.getCurrent();
-    return Realize.utils.getProp(key, currentTheme);
+    return utils.getProp(key, currentTheme);
   },
 
   getCssClass: function(keys) {

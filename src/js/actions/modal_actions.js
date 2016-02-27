@@ -1,4 +1,4 @@
-var ModalActions = Reflux.createActions([
+window.ModalActions = Reflux.createActions([
   'open',
   'openFinished',
   'close'

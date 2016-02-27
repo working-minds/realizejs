@@ -44648,7 +44648,7 @@ module.exports = function(listenables){
 (function (Reflux){
 "use strict";
 
-var FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
+window.FormActions = Reflux.createActions(["submit", "success", "error", "reset"]);
 
 module.exports = FormActions;
 
@@ -44657,7 +44657,7 @@ module.exports = FormActions;
 (function (Reflux){
 'use strict';
 
-var InputSelectActions = Reflux.createActions(['select', 'selectSearchValue']);
+window.InputSelectActions = Reflux.createActions(['select', 'selectSearchValue']);
 
 module.exports = InputSelectActions;
 
@@ -44666,7 +44666,7 @@ module.exports = InputSelectActions;
 (function (Reflux){
 'use strict';
 
-var ModalActions = Reflux.createActions(['open', 'openFinished', 'close']);
+window.ModalActions = Reflux.createActions(['open', 'openFinished', 'close']);
 
 module.exports = ModalActions;
 
@@ -46208,14 +46208,14 @@ window.Button = React.createClass({
 
   getConfirmsWith: function getConfirmsWith() {
     if (!!this.props.confirmsWith) {
-      return Realize.t(this.props.confirmsWith);
+      return Realize.i18n.t(this.props.confirmsWith);
     }
 
     return null;
   },
 
   renderContent: function renderContent() {
-    return [Realize.t(this.props.name), this.renderIcon()];
+    return [Realize.i18n.t(this.props.name), this.renderIcon()];
   },
 
   renderIcon: function renderIcon() {
@@ -46234,7 +46234,7 @@ window.Button = React.createClass({
   },
 
   renderLoadingIndicator: function renderLoadingIndicator() {
-    return Realize.t(this.props.disableWith);
+    return Realize.i18n.t(this.props.disableWith);
   },
 
   handleClick: function handleClick(event) {
@@ -48234,7 +48234,7 @@ window.Icon = React.createClass({
 
   propTypes: {
     type: React.PropTypes.string,
-    tooltipDelay: React.PropTypes.string,
+    tooltipDelay: React.PropTypes.number,
     tooltipText: React.PropTypes.string,
     tooltipPosition: React.PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
   },
@@ -48242,7 +48242,7 @@ window.Icon = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       type: '',
-      tooltipDealy: 10,
+      tooltipDelay: 10,
       tooltipPosition: 'top'
     };
   },
@@ -48257,9 +48257,9 @@ window.Icon = React.createClass({
     return React.createElement(
       'i',
       _extends({ className: this.getClassName(),
-        'data-position': this.tooltipPosition,
-        'data-delay': this.tooltipDelay,
-        'data-tooltip': this.tooltipText
+        'data-position': this.props.tooltipPosition,
+        'data-delay': this.props.tooltipDelay,
+        'data-tooltip': this.props.tooltipText
       }, this.propsWithoutCSS()),
       this.iconType()
     );
@@ -48268,7 +48268,7 @@ window.Icon = React.createClass({
   getClassName: function getClassName() {
     var className = this.className();
 
-    if (tooltipText != false) className += ' tooltipped';
+    if (this.props.tooltipText != false) className += ' tooltipped';
 
     return className;
   },
@@ -48823,7 +48823,7 @@ window.InputAutocompleteResult = React.createClass({
       { href: '#!',
         className: 'input-autocomplete__clear-button',
         onClick: this.props.onClear },
-      Realize.t("inputs.autocomplete.clear")
+      Realize.i18n.t("inputs.autocomplete.clear")
     );
   },
 
@@ -48852,7 +48852,7 @@ window.InputAutocompleteResult = React.createClass({
     return React.createElement(
       'div',
       { className: 'input-autocomplete__empty-message' },
-      Realize.t("inputs.autocomplete.emptyResult")
+      Realize.i18n.t("inputs.autocomplete.emptyResult")
     );
   },
 
@@ -49432,7 +49432,7 @@ window.InputDatefilterBody = React.createClass({
   },
 
   getFilterInputLabel: function getFilterInputLabel(filterType) {
-    return Realize.t("inputs.datefilter." + filterType);
+    return Realize.i18n.t("inputs.datefilter." + filterType);
   }
 });
 
@@ -49817,7 +49817,7 @@ window.InputDatepicker = React.createClass({
   },
 
   getDateFormat: function getDateFormat() {
-    return this.props.format || Realize.t('date.formats.date');
+    return this.props.format || Realize.i18n.t('date.formats.date');
   },
 
   setPickadatePlugin: function setPickadatePlugin() {
@@ -50010,7 +50010,7 @@ window.InputFile = React.createClass({
       return component;
     }
 
-    return Realize.t(this.props.buttonName);
+    return Realize.i18n.t(this.props.buttonName);
   },
 
   getLabelName: function getLabelName() {
@@ -50106,7 +50106,7 @@ window.InputMasked = React.createClass({
   },
 
   predefinedMasks: function predefinedMasks() {
-    var localeMasks = Realize.t("masks");
+    var localeMasks = Realize.i18n.t("masks");
     var predefinedMasks = {};
 
     for (var maskName in localeMasks) {
@@ -50363,7 +50363,7 @@ window.InputSwitch = React.createClass({
         React.createElement(
           'label',
           null,
-          Realize.t(this.props.offLabel),
+          Realize.i18n.t(this.props.offLabel),
           React.createElement('input', _extends({}, this.checkboxProps(), {
             checked: this.state.checked,
             value: this.state.value,
@@ -50374,7 +50374,7 @@ window.InputSwitch = React.createClass({
             ref: 'input'
           })),
           React.createElement('span', { className: 'lever' }),
-          Realize.t(this.props.onLabel)
+          Realize.i18n.t(this.props.onLabel)
         ),
         this.renderInputHidden()
       ),
@@ -50620,7 +50620,7 @@ window.InputSelect = React.createClass({
     var options = this.state.options;
 
     if (this.props.includeBlank) {
-      selectOptions.push(React.createElement(InputSelectOption, { name: Realize.t(this.props.blankText), value: '', key: 'empty_option' }));
+      selectOptions.push(React.createElement(InputSelectOption, { name: Realize.i18n.t(this.props.blankText), value: '', key: 'empty_option' }));
     }
 
     for (var i = 0; i < options.length; i++) {
@@ -52177,7 +52177,7 @@ window.Table = React.createClass({
       React.createElement(
         'td',
         { colSpan: columnsCount, className: 'empty-message' },
-        Realize.t(this.props.emptyMessage)
+        Realize.i18n.t(this.props.emptyMessage)
       )
     );
   },
@@ -52575,7 +52575,7 @@ window.TableCell = React.createClass({
   },
 
   booleanValue: function booleanValue(value) {
-    return Realize.t(String(value));
+    return Realize.i18n.t(String(value));
   },
 
   dateValue: function dateValue(value) {
@@ -52652,7 +52652,7 @@ window.TableHeader = React.createClass({
 
   getLabel: function getLabel() {
     if (!!this.props.label && this.props.label.length > 0) {
-      return Realize.t(this.props.label);
+      return Realize.i18n.t(this.props.label);
     }
 
     return this.localizeResourceField();
@@ -53160,9 +53160,9 @@ window.TableSelectionIndicator = React.createClass({
     if (count === 0) {
       return '';
     } else if (count === 1) {
-      return Realize.t(this.props.message.singular);
+      return Realize.i18n.t(this.props.message.singular);
     } else {
-      var message = Realize.t(this.props.message.plural);
+      var message = Realize.i18n.t(this.props.message.plural);
       return message.replace(/:count/, count);
     }
   },
@@ -53187,7 +53187,7 @@ window.TableSelectionIndicator = React.createClass({
     return React.createElement(
       'a',
       { href: '#!', onClick: this.props.onRemoveSelection },
-      Realize.t(this.props.removeSelectionButtonName)
+      Realize.i18n.t(this.props.removeSelectionButtonName)
     );
   },
 
@@ -53219,7 +53219,7 @@ window.TableSelectionIndicator = React.createClass({
   },
 
   getSelectAllButtonName: function getSelectAllButtonName() {
-    var buttonName = Realize.t(this.props.selectAllButtonName);
+    var buttonName = Realize.i18n.t(this.props.selectAllButtonName);
     var count = this.props.count || this.props.dataRows.length;
 
     return buttonName.replace(/:count/, count);
@@ -53365,8 +53365,6 @@ window.Tabs = React.createClass({
 module.exports = exports = {};
 
 exports.config = {
-  theme: 'materialize',
-  locale: 'en',
   restUrls: {
     index: ':url',
     show: ':url/:id',
@@ -53420,11 +53418,13 @@ window.Realize = Realize;
 
 }).call(this,require("react"),require("react-dom"),require("reflux"),arguments[3],arguments[4],arguments[5],arguments[6],require("realize/realize.js"))
 },{"react":381,"react-dom":219,"realize/realize.js":512,"reflux":398}],490:[function(require,module,exports){
-(function (Realize){
 'use strict';
+
+var utils = require('../utils.js');
 
 var i18n = {
   locales: {},
+  currentLocale: 'en',
 
   registerLocale: function registerLocale(newLocaleObj, locale) {
     if (!$.isPlainObject(newLocaleObj)) {
@@ -53440,7 +53440,7 @@ var i18n = {
   },
 
   setLocale: function setLocale(locale) {
-    Realize.config.locale = locale;
+    this.currentLocale = locale;
   },
 
   translate: function translate(key, throwsException) {
@@ -53456,10 +53456,10 @@ var i18n = {
       return '';
     }
 
-    var currentLocale = Realize.config.locale;
+    var currentLocale = this.currentLocale;
     var localeObj = this.locales[currentLocale];
 
-    var translation = Realize.utils.getProp(key, localeObj);
+    var translation = utils.getProp(key, localeObj);
     if (!translation) {
       if (throwsException) {
         throw 'Key not found in locale object';
@@ -53472,14 +53472,13 @@ var i18n = {
   },
 
   t: function t(key, throwsException) {
-    return this.translate(keu, throwsException);
+    return this.translate(key, throwsException);
   }
 };
 
 module.exports = i18n;
 
-}).call(this,require("realize/realize.js"))
-},{"realize/realize.js":512}],491:[function(require,module,exports){
+},{"../utils.js":520}],491:[function(require,module,exports){
 (function (Realize){
 'use strict';
 
@@ -53673,7 +53672,7 @@ Realize.i18n.registerLocale({
 (function (React){
 'use strict';
 
-var ContainerMixin = {
+window.ContainerMixin = {
   propTypes: {
     forwardedProps: React.PropTypes.object
   },
@@ -53774,7 +53773,7 @@ module.exports = ContainerMixin;
 (function (React,Realize){
 'use strict';
 
-var CssClassMixin = {
+window.CssClassMixin = {
   propTypes: {
     clearTheme: React.PropTypes.bool,
     className: React.PropTypes.string,
@@ -53835,7 +53834,7 @@ module.exports = CssClassMixin;
 (function (React){
 "use strict";
 
-var FormActionsListenerMixin = {
+window.FormActionsListenerMixin = {
   propTypes: {
     onFormSubmit: React.PropTypes.func,
     onFormSuccess: React.PropTypes.func,
@@ -53913,7 +53912,7 @@ module.exports = FormActionsListenerMixin;
 (function (React,Realize){
 'use strict';
 
-var FormContainerMixin = {
+window.FormContainerMixin = {
   propTypes: {
     errors: React.PropTypes.object,
     errorThemeClassKey: React.PropTypes.string
@@ -53987,7 +53986,7 @@ module.exports = FormContainerMixin;
 (function (React){
 'use strict';
 
-var FormErrorHandlerMixin = {
+window.FormErrorHandlerMixin = {
   propTypes: {
     errorMessage: React.PropTypes.string,
     baseErrorParam: React.PropTypes.string,
@@ -54095,7 +54094,7 @@ module.exports = FormErrorHandlerMixin;
 (function (React){
 'use strict';
 
-var FormSuccessHandlerMixin = {
+window.FormSuccessHandlerMixin = {
   propTypes: {
     onSuccess: React.PropTypes.func,
     successMessage: React.PropTypes.string
@@ -54148,7 +54147,7 @@ module.exports = FormSuccessHandlerMixin;
 (function (React){
 'use strict';
 
-var GridActionsMixin = {
+window.GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
     rowHref: React.PropTypes.string,
@@ -54265,7 +54264,7 @@ module.exports = GridActionsMixin;
 (function (React,ReactDOM){
 'use strict';
 
-var CheckboxComponentMixin = {
+window.CheckboxComponentMixin = {
   propTypes: {
     checked: React.PropTypes.bool,
     renderAsIndeterminate: React.PropTypes.bool
@@ -54346,7 +54345,7 @@ module.exports = CheckboxComponentMixin;
 (function (React,ReactDOM,Realize){
 'use strict';
 
-var InputComponentMixin = {
+window.InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -54437,7 +54436,7 @@ var InputComponentMixin = {
   },
 
   getPlaceholder: function getPlaceholder() {
-    var placeholder = Realize.t(this.props.placeholder);
+    var placeholder = Realize.i18n.t(this.props.placeholder);
     if (typeof placeholder !== "string" || placeholder.length === 0) {
       return null;
     }
@@ -54463,7 +54462,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var InputSelectStore = require('realize/stores/input_select_store.js');
 
-var InputSelectActionsListenerMixin = {
+window.InputSelectActionsListenerMixin = {
   componentDidMount: function componentDidMount() {
     InputSelectStore.listen(this.inputSelectActionListener);
   },
@@ -54498,7 +54497,7 @@ var InputSelectActionsListenerMixin = {
   handleSelectSearchValueAction: function handleSelectSearchValueAction(storeState) {
     var searchValue = this.state.searchValue;
     if (typeof searchValue != "string") {
-      throw new Error(Realize.t("errors.invalidAction"));
+      throw new Error(Realize.i18n.t("errors.invalidAction"));
     }
 
     storeState.selectedOption = {
@@ -54514,7 +54513,7 @@ var InputSelectActionsListenerMixin = {
 
   validateSelectedOption: function validateSelectedOption(selectedOption) {
     if ((typeof selectedOption === "undefined" ? "undefined" : _typeof(selectedOption)) != "object" || !selectedOption.name || !selectedOption.value) {
-      throw new Error(Realize.t("errors.inputSelect.invalidOption"));
+      throw new Error(Realize.i18n.t("errors.inputSelect.invalidOption"));
     }
   },
 
@@ -54533,7 +54532,7 @@ module.exports = InputSelectActionsListenerMixin;
 (function (ReactDOM){
 'use strict';
 
-var MaterializeSelectMixin = {
+window.MaterializeSelectMixin = {
   componentDidMount: function componentDidMount() {
     this.applyMaterialize(true);
   },
@@ -54575,7 +54574,7 @@ module.exports = MaterializeSelectMixin;
 (function (React,ReactDOM){
 'use strict';
 
-var SelectComponentMixin = {
+window.SelectComponentMixin = {
   propTypes: {
     options: React.PropTypes.array,
     dependsOn: React.PropTypes.object,
@@ -54791,7 +54790,7 @@ module.exports = SelectComponentMixin;
 (function (React,Realize){
 'use strict';
 
-var LocalizedResourceFieldMixin = {
+window.LocalizedResourceFieldMixin = {
   propTypes: {
     resource: React.PropTypes.string,
     name: React.PropTypes.string
@@ -54811,11 +54810,11 @@ var LocalizedResourceFieldMixin = {
 
     try {
       var resourceKey = 'resources.' + resource + '.fields.' + name;
-      return Realize.t(resourceKey, true);
+      return Realize.i18n.t(resourceKey, true);
     } catch (err) {
       resourceKey = 'resources.defaults.fields.' + name;
       try {
-        return Realize.t(resourceKey, true);
+        return Realize.i18n.t(resourceKey, true);
       } catch (err) {
         return name;
       }
@@ -54831,7 +54830,7 @@ module.exports = LocalizedResourceFieldMixin;
 (function (React){
 "use strict";
 
-var ModalRendererMixin = {
+window.ModalRendererMixin = {
   propTypes: {
     modalContainerId: React.PropTypes.string
   },
@@ -54862,7 +54861,7 @@ module.exports = ModalRendererMixin;
 (function (React){
 'use strict';
 
-var RequestHandlerMixin = {
+window.RequestHandlerMixin = {
   propTypes: {
     onRequest: React.PropTypes.func,
     onSuccess: React.PropTypes.func,
@@ -54976,7 +54975,7 @@ module.exports = RequestHandlerMixin;
 (function (React,Realize){
 "use strict";
 
-var RestActionsMixin = {
+window.RestActionsMixin = {
   propTypes: {
     actionUrls: React.PropTypes.object,
     actionMethods: React.PropTypes.object,
@@ -55035,7 +55034,7 @@ module.exports = RestActionsMixin;
 },{"react":381,"realize/realize.js":512}],509:[function(require,module,exports){
 "use strict";
 
-var TooltipMixin = {
+window.TooltipMixin = {
   componentDidUpdate: function componentDidUpdate() {
     this.initializeTooltip();
   },
@@ -55054,7 +55053,7 @@ module.exports = TooltipMixin;
 },{}],510:[function(require,module,exports){
 'use strict';
 
-var UtilsMixin = {
+window.UtilsMixin = {
   // source: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
   generateUUID: function generateUUID() {
     var d = new Date().getTime();
@@ -55070,8 +55069,9 @@ var UtilsMixin = {
 module.exports = UtilsMixin;
 
 },{}],511:[function(require,module,exports){
-(function (Realize){
 "use strict";
+
+var i18n = require('./i18n/i18n.js');
 
 var propTypes = {
   localizedString: function localizedString(props, propName, componentName) {
@@ -55080,7 +55080,7 @@ var propTypes = {
       return null;
     }
 
-    var translatedValue = Realize.t(value);
+    var translatedValue = i18n.t(value);
     if (typeof value !== "string" || typeof translatedValue !== "string" || translatedValue.length === 0) {
       return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
     }
@@ -55089,8 +55089,7 @@ var propTypes = {
 
 module.exports = propTypes;
 
-}).call(this,require("realize/realize.js"))
-},{"realize/realize.js":512}],512:[function(require,module,exports){
+},{"./i18n/i18n.js":490}],512:[function(require,module,exports){
 'use strict';
 
 var Realize = {};
@@ -55261,7 +55260,7 @@ module.exports = ModalStore;
 (function (Realize){
 'use strict';
 
-Realize.themes.default = {
+Realize.themes.registerTheme({
   grid: {
     cssClass: 'grid',
 
@@ -55341,14 +55340,14 @@ Realize.themes.default = {
       cssClass: ''
     }
   }
-};
+}, 'default');
 
 }).call(this,require("realize/realize.js"))
 },{"realize/realize.js":512}],518:[function(require,module,exports){
 (function (Realize){
 'use strict';
 
-Realize.themes.materialize = {
+Realize.themes.registerTheme({
   grid: {
     cssClass: 'grid row',
 
@@ -55692,19 +55691,37 @@ Realize.themes.materialize = {
     edit: 'mode_edit',
     destroy: 'delete'
   }
-};
+}, 'materialize');
 
 }).call(this,require("realize/realize.js"))
 },{"realize/realize.js":512}],519:[function(require,module,exports){
-(function (Realize){
 'use strict';
 
-var themes = {
-  getCurrent: function getCurrent() {
-    var defaultTheme = Realize.themes.default;
-    var currentTheme = Realize.themes[Realize.config.theme];
+var utils = require('../utils.js');
 
-    return $.extend({}, defaultTheme, currentTheme);
+var themes = {
+  themes: {},
+  defaultTheme: 'default',
+  currentTheme: 'materialize',
+
+  registerTheme: function registerTheme(newThemeObj, theme) {
+    if (!$.isPlainObject(newThemeObj)) {
+      throw 'Invalid Theme Object.';
+    }
+
+    if (!theme) {
+      throw 'Invalid Theme Name.';
+    }
+
+    var currentThemeObj = this.themes[theme] || {};
+    this.themes[theme] = $.extend({}, currentThemeObj, newThemeObj);
+  },
+
+  getCurrent: function getCurrent() {
+    var defaultThemeObj = this.themes[this.defaultTheme];
+    var currentThemeObj = this.themes[this.currentTheme];
+
+    return $.extend({}, defaultThemeObj, currentThemeObj);
   },
 
   getProp: function getProp(key) {
@@ -55713,7 +55730,7 @@ var themes = {
     }
 
     var currentTheme = this.getCurrent();
-    return Realize.utils.getProp(key, currentTheme);
+    return utils.getProp(key, currentTheme);
   },
 
   getCssClass: function getCssClass(keys) {
@@ -55733,8 +55750,7 @@ var themes = {
 
 module.exports = themes;
 
-}).call(this,require("realize/realize.js"))
-},{"realize/realize.js":512}],520:[function(require,module,exports){
+},{"../utils.js":520}],520:[function(require,module,exports){
 'use strict';
 
 var utils = {

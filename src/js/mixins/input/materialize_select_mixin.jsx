@@ -1,4 +1,4 @@
-var MaterializeSelectMixin = {
+window.MaterializeSelectMixin = {
   componentDidMount: function() {
     this.applyMaterialize(true);
   },

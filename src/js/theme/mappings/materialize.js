@@ -1,4 +1,4 @@
-Realize.themes.materialize = {
+Realize.themes.registerTheme({
   grid: {
     cssClass: 'grid row',
 
@@ -343,4 +343,4 @@ Realize.themes.materialize = {
     edit: 'mode_edit',
     destroy: 'delete'
   }
-};
+}, 'materialize');

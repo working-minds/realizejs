@@ -1,4 +1,4 @@
-var FormActionsListenerMixin = {
+window.FormActionsListenerMixin = {
   propTypes: {
     onFormSubmit: React.PropTypes.func,
     onFormSuccess: React.PropTypes.func,

@@ -125,7 +125,6 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'browserify:js',
     'sass:build',
-    'concat:js',
     'concat:css',
     'uglify',
     'cssmin',

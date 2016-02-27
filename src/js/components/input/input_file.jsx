@@ -81,7 +81,7 @@ window.InputFile = React.createClass({
       return component;
     }
 
-    return Realize.t(this.props.buttonName);
+    return Realize.i18n.t(this.props.buttonName);
   },
 
   getLabelName: function() {

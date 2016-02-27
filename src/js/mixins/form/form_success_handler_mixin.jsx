@@ -1,4 +1,4 @@
-var FormSuccessHandlerMixin = {
+window.FormSuccessHandlerMixin = {
   propTypes: {
     onSuccess: React.PropTypes.func,
     successMessage: React.PropTypes.string

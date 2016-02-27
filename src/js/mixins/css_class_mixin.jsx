@@ -1,4 +1,4 @@
-var CssClassMixin = {
+window.CssClassMixin = {
   propTypes: {
     clearTheme: React.PropTypes.bool,
     className: React.PropTypes.string,

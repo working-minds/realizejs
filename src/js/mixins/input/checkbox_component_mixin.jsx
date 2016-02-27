@@ -1,4 +1,4 @@
-var CheckboxComponentMixin = {
+window.CheckboxComponentMixin = {
   propTypes: {
     checked: React.PropTypes.bool,
     renderAsIndeterminate: React.PropTypes.bool

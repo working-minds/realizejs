@@ -1,4 +1,4 @@
-var ContainerMixin = {
+window.ContainerMixin = {
   propTypes: {
     forwardedProps: React.PropTypes.object
   },

@@ -1,4 +1,4 @@
-var RestActionsMixin = {
+window.RestActionsMixin = {
   propTypes: {
     actionUrls: React.PropTypes.object,
     actionMethods: React.PropTypes.object,

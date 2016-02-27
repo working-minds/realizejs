@@ -5,7 +5,7 @@ window.Icon = React.createClass({
 
   propTypes: {
     type: React.PropTypes.string,
-    tooltipDelay: React.PropTypes.string,
+    tooltipDelay: React.PropTypes.number,
     tooltipText: React.PropTypes.string,
     tooltipPosition: React.PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
   },
@@ -13,7 +13,7 @@ window.Icon = React.createClass({
   getDefaultProps: function() {
     return {
       type: '',
-      tooltipDealy: 10,
+      tooltipDelay: 10,
       tooltipPosition: 'top'
     };
   },
@@ -27,9 +27,9 @@ window.Icon = React.createClass({
   render: function() {
     return (
         <i className={this.getClassName()}
-          data-position={this.tooltipPosition}
-          data-delay={this.tooltipDelay}
-          data-tooltip={this.tooltipText}
+          data-position={this.props.tooltipPosition}
+          data-delay={this.props.tooltipDelay}
+          data-tooltip={this.props.tooltipText}
           {...this.propsWithoutCSS()}>
           {this.iconType()}
         </i>
@@ -39,7 +39,7 @@ window.Icon = React.createClass({
   getClassName: function() {
     var className = this.className();
 
-    if (tooltipText != false)
+    if (this.props.tooltipText != false)
       className += ' tooltipped';
 
     return className;

@@ -37,7 +37,7 @@ window.InputMasked = React.createClass({
   },
 
   predefinedMasks: function() {
-    var localeMasks = Realize.t("masks");
+    var localeMasks = Realize.i18n.t("masks");
     var predefinedMasks = {};
 
     for(var maskName in localeMasks) {

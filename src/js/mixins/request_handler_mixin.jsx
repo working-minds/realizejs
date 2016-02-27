@@ -1,4 +1,4 @@
-var RequestHandlerMixin = {
+window.RequestHandlerMixin = {
   propTypes: {
     onRequest: React.PropTypes.func,
     onSuccess: React.PropTypes.func,

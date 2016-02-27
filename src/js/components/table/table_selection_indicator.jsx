@@ -51,9 +51,9 @@ window.TableSelectionIndicator = React.createClass({
     if(count === 0) {
       return '';
     } else if(count === 1) {
-      return Realize.t(this.props.message.singular);
+      return Realize.i18n.t(this.props.message.singular);
     } else {
-      var message = Realize.t(this.props.message.plural);
+      var message = Realize.i18n.t(this.props.message.plural);
       return message.replace(/:count/, count);
     }
   },
@@ -75,7 +75,7 @@ window.TableSelectionIndicator = React.createClass({
   renderRemoveSelectionButton: function() {
     return (
       <a href="#!" onClick={this.props.onRemoveSelection}>
-        {Realize.t(this.props.removeSelectionButtonName)}
+        {Realize.i18n.t(this.props.removeSelectionButtonName)}
       </a>
     );
   },
@@ -106,7 +106,7 @@ window.TableSelectionIndicator = React.createClass({
   },
 
   getSelectAllButtonName: function() {
-    var buttonName = Realize.t(this.props.selectAllButtonName);
+    var buttonName = Realize.i18n.t(this.props.selectAllButtonName);
     var count = this.props.count || this.props.dataRows.length;
 
     return buttonName.replace(/:count/, count);

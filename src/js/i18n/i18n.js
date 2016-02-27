@@ -1,5 +1,8 @@
+var utils = require('../utils.js');
+
 var i18n = {
   locales: {},
+  currentLocale: 'en',
 
   registerLocale: function(newLocaleObj, locale) {
     if(!$.isPlainObject(newLocaleObj)) {
@@ -15,7 +18,7 @@ var i18n = {
   },
 
   setLocale: function(locale) {
-    Realize.config.locale = locale;
+    this.currentLocale = locale;
   },
 
   translate: function(key, throwsException) {
@@ -31,10 +34,10 @@ var i18n = {
       return '';
     }
 
-    var currentLocale = Realize.config.locale;
+    var currentLocale = this.currentLocale;
     var localeObj = this.locales[currentLocale];
 
-    var translation = Realize.utils.getProp(key, localeObj);
+    var translation = utils.getProp(key, localeObj);
     if(!translation) {
       if(throwsException) {
         throw 'Key not found in locale object';
@@ -47,7 +50,7 @@ var i18n = {
   },
 
   t: function(key, throwsException) {
-    return this.translate(keu, throwsException);
+    return this.translate(key, throwsException);
   }
 };
 

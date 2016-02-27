@@ -1,4 +1,4 @@
-var SelectComponentMixin = {
+window.SelectComponentMixin = {
   propTypes: {
     options: React.PropTypes.array,
     dependsOn: React.PropTypes.object,

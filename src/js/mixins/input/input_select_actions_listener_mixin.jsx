@@ -1,6 +1,6 @@
 var InputSelectStore = require('realize/stores/input_select_store.js');
 
-var InputSelectActionsListenerMixin = {
+window.InputSelectActionsListenerMixin = {
   componentDidMount: function() {
     InputSelectStore.listen(this.inputSelectActionListener);
   },
@@ -36,7 +36,7 @@ var InputSelectActionsListenerMixin = {
   handleSelectSearchValueAction: function(storeState) {
     var searchValue = this.state.searchValue;
     if(typeof searchValue != "string") {
-      throw(new Error(Realize.t("errors.invalidAction")));
+      throw(new Error(Realize.i18n.t("errors.invalidAction")));
     }
 
     storeState.selectedOption = {
@@ -52,7 +52,7 @@ var InputSelectActionsListenerMixin = {
 
   validateSelectedOption: function(selectedOption) {
     if(typeof selectedOption != "object" || !selectedOption.name || !selectedOption.value) {
-      throw(new Error(Realize.t("errors.inputSelect.invalidOption")));
+      throw(new Error(Realize.i18n.t("errors.inputSelect.invalidOption")));
     }
   },
 

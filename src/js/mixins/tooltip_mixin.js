@@ -1,4 +1,4 @@
-var TooltipMixin = {
+window.TooltipMixin = {
   componentDidUpdate: function () {
     this.initializeTooltip();
   },

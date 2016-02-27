@@ -29,7 +29,7 @@ window.InputSwitch = React.createClass({
       <div>
         <div className={this.className()}>
           <label>
-            {Realize.t(this.props.offLabel)}
+            {Realize.i18n.t(this.props.offLabel)}
             <input {...this.checkboxProps()}
               checked={this.state.checked}
               value={this.state.value}
@@ -40,7 +40,7 @@ window.InputSwitch = React.createClass({
               ref="input"
             />
             <span className="lever"></span>
-            {Realize.t(this.props.onLabel)}
+            {Realize.i18n.t(this.props.onLabel)}
           </label>
 
           {this.renderInputHidden()}

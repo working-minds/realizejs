@@ -1,4 +1,4 @@
-var LocalizedResourceFieldMixin = {
+window.LocalizedResourceFieldMixin = {
   propTypes: {
     resource: React.PropTypes.string,
     name: React.PropTypes.string
@@ -14,12 +14,12 @@ var LocalizedResourceFieldMixin = {
 
     try {
       var resourceKey = 'resources.' + resource + '.fields.' + name;
-      return Realize.t(resourceKey, true);
+      return Realize.i18n.t(resourceKey, true);
 
     } catch(err) {
       resourceKey = 'resources.defaults.fields.' + name;
       try {
-        return Realize.t(resourceKey, true);
+        return Realize.i18n.t(resourceKey, true);
       } catch(err) {
         return name;
       }
