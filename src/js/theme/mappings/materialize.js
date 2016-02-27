@@ -184,6 +184,18 @@ Realize.themes.registerTheme({
         cssClass: 'button btn'
       }
 
+    },
+
+    colorpicker: {
+      cssClass: 'colorpicker__input',
+
+      wrapper: {
+        cssClass: 'colorpicker__wrapper'
+      },
+
+      display: {
+        cssClass: 'colorpicker__display'
+      }
     }
   },
 

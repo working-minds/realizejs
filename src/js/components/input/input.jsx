@@ -102,6 +102,10 @@ window.Input = React.createClass({
     return this.renderInputWithoutLabel();
   },
 
+  renderColorpickerInput: function() {
+    return this.renderInputWithoutLabel();
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
@@ -144,6 +148,7 @@ window.Input = React.createClass({
       text: InputText,
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
+      colorpicker: InputColorpicker,
       datefilter: InputDatefilter,
       datepicker: InputDatepicker,
       number: InputNumber,

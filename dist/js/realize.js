@@ -49622,6 +49622,10 @@ window.Input = React.createClass({
     return this.renderInputWithoutLabel();
   },
 
+  renderColorpickerInput: function renderColorpickerInput() {
+    return this.renderInputWithoutLabel();
+  },
+
   renderHiddenInput: function renderHiddenInput() {
     return this.renderComponentInput();
   },
@@ -49662,6 +49666,7 @@ window.Input = React.createClass({
       text: InputText,
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
+      colorpicker: InputColorpicker,
       datefilter: InputDatefilter,
       datepicker: InputDatepicker,
       number: InputNumber,
@@ -49733,7 +49738,7 @@ window.Input = React.createClass({
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var ColorPicker = require('react-color');
+var ColorPicker = require('react-color').default;
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
 
@@ -49747,20 +49752,79 @@ window.InputColorpicker = React.createClass({
 
   getDefaultProps: function getDefaultProps() {
     return {
-      type: 'text',
-      themeClassKey: 'input.text'
+      wrapperThemeClassKey: 'input.colorpicker.wrapper',
+      displayThemeClassKey: 'input.colorpicker.display',
+      themeClassKey: 'input.colorpicker',
+      defaultColor: 'EEE',
+      type: 'sketch',
+      position: 'below',
+      display: false,
+      positionCSS: {
+        marginTop: '0'
+      }
     };
   },
 
+  getInitialState: function getInitialState() {
+    return {
+      displayColorPicker: this.props.display,
+      color: {}
+    };
+  },
+
+  componentWillMount: function componentWillMount() {
+    var value = this.props.value;
+    if (!value) {
+      this.setState({
+        value: this.props.defaultColor
+      });
+    }
+  },
+
   render: function render() {
-    return React.createElement('input', _extends({}, this.props, {
-      value: this.state.value,
-      placeholder: this.getPlaceholder(),
-      className: this.inputClassName(),
-      onChange: this._handleChange,
-      onFocus: this._handleFocus,
-      ref: 'input'
-    }));
+    return React.createElement(
+      'div',
+      { className: this.themedClassName(this.props.wrapperThemeClassKey) },
+      React.createElement('input', _extends({}, this.props, {
+        placeholder: '',
+        className: this.inputClassName(),
+        readOnly: true,
+        type: 'text',
+        ref: 'input'
+      })),
+      React.createElement(Label, this.propsWithoutCSS()),
+      React.createElement('div', {
+        className: this.themedClassName(this.props.displayThemeClassKey),
+        style: this.displayBackgroundStyle(),
+        onClick: this.showColorPicker
+      }),
+      React.createElement(ColorPicker, _extends({}, this.props, {
+        color: this.state.value,
+        display: this.state.displayColorPicker,
+        onChangeComplete: this.onColorSelect
+      }))
+    );
+  },
+
+  displayBackgroundStyle: function displayBackgroundStyle() {
+    var colorHex = this.state.value || this.props.defaultColor;
+
+    return {
+      backgroundColor: '#' + colorHex
+    };
+  },
+
+  showColorPicker: function showColorPicker() {
+    this.setState({
+      displayColorPicker: true
+    });
+  },
+
+  onColorSelect: function onColorSelect(color) {
+    this.setState({
+      color: color,
+      value: color.hex
+    });
   }
 });
 
@@ -55533,6 +55597,18 @@ Realize.themes.registerTheme({
         cssClass: 'button btn'
       }
 
+    },
+
+    colorpicker: {
+      cssClass: 'colorpicker__input',
+
+      wrapper: {
+        cssClass: 'colorpicker__wrapper'
+      },
+
+      display: {
+        cssClass: 'colorpicker__display'
+      }
     }
   },
 
