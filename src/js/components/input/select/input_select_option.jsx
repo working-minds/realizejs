@@ -1,4 +1,4 @@
-var InputSelectOption = React.createClass({
+window.InputSelectOption = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
     value: React.PropTypes.node

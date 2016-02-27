@@ -1,4 +1,8 @@
-var GridForm = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
+var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
+
+window.GridForm = React.createClass({
   mixins: [
     CssClassMixin,
     UtilsMixin,

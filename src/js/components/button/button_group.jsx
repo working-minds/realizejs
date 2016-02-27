@@ -1,4 +1,6 @@
-var ButtonGroup = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.ButtonGroup = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     buttons: React.PropTypes.array

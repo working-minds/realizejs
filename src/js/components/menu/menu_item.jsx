@@ -1,4 +1,4 @@
-var MenuItem = React.createClass({
+window.MenuItem = React.createClass({
   propTypes: {
     icon: React.PropTypes.string,
     iconAlign: React.PropTypes.string,

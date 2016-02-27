@@ -1,5 +1,8 @@
-var Pagination = React.createClass({
-    mixins: [CssClassMixin],
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Pagination = React.createClass({
+  mixins: [CssClassMixin],
+
   propTypes: {
     count: React.PropTypes.number,
     page: React.PropTypes.number,

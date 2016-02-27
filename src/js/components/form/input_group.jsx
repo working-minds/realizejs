@@ -1,4 +1,6 @@
-var InputGroup = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.InputGroup = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {

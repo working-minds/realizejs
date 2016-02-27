@@ -1,4 +1,4 @@
-Realize.themes.default = {
+Realize.themes.registerTheme({
   grid: {
     cssClass: 'grid',
 
@@ -78,4 +78,4 @@ Realize.themes.default = {
       cssClass: ''
     }
   }
-};
+}, 'default');

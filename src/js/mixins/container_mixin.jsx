@@ -1,4 +1,4 @@
-var ContainerMixin = {
+window.ContainerMixin = {
   propTypes: {
     forwardedProps: React.PropTypes.object
   },
@@ -96,3 +96,5 @@ var ContainerMixin = {
   }
 
 };
+
+module.exports = ContainerMixin;

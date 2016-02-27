@@ -1,4 +1,4 @@
-var TooltipMixin = {
+window.TooltipMixin = {
   componentDidUpdate: function () {
     this.initializeTooltip();
   },
@@ -11,3 +11,5 @@ var TooltipMixin = {
     $(".tooltipped").tooltip({delay: 100});
   }
 };
+
+module.exports = TooltipMixin;

@@ -1,4 +1,4 @@
-var SelectComponentMixin = {
+window.SelectComponentMixin = {
   propTypes: {
     options: React.PropTypes.array,
     dependsOn: React.PropTypes.object,
@@ -205,4 +205,7 @@ var SelectComponentMixin = {
   isDisabled: function () {
     return this.state.disabled || this.state.mustDisable;
   }
+
 };
+
+module.exports = SelectComponentMixin;

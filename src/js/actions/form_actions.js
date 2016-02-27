@@ -1,6 +1,8 @@
-var FormActions = Reflux.createActions([
+window.FormActions = Reflux.createActions([
   "submit",
   "success",
   "error",
   "reset"
 ]);
+
+module.exports = FormActions;

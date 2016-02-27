@@ -1,8 +1,6 @@
-var Realize = {};
+module.exports = exports = {};
 
-Realize.config = {
-  theme: 'materialize',
-  locale: 'en',
+exports.config = {
   restUrls: {
     index: ':url',
     show: ':url/:id',
@@ -44,6 +42,6 @@ Realize.config = {
   }
 };
 
-Realize.setConfig = function(newConfig) {
+exports.setConfig = function(newConfig) {
   $.extend(true, Realize.config, newConfig);
 };

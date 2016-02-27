@@ -1,0 +1,18 @@
+.colorpicker__input {}
+
+.colorpicker__wrapper {
+  position: relative;
+}
+
+.colorpicker__wrapper label {
+  left: 0;
+}
+
+.colorpicker__display {
+  cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  height: 1.5rem;
+  width: 90%;
+  left: 5%;
+}

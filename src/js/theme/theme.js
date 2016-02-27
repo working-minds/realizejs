@@ -1,31 +1,52 @@
-Realize.themes = {};
+var utils = require('../utils.js');
 
-Realize.themes.getCurrent = function() {
-  var defaultTheme = Realize.themes.default;
-  var currentTheme = Realize.themes[Realize.config.theme];
+var themes = {
+  themes: {},
+  defaultTheme: 'default',
+  currentTheme: 'materialize',
 
-  return $.extend({}, defaultTheme, currentTheme);
-};
+  registerTheme: function(newThemeObj, theme) {
+    if(!$.isPlainObject(newThemeObj)) {
+      throw 'Invalid Theme Object.'
+    }
 
-Realize.themes.getProp = function(key) {
-  if(!key) {
-    return '';
+    if(!theme) {
+      throw 'Invalid Theme Name.';
+    }
+
+    var currentThemeObj = this.themes[theme] || {};
+    this.themes[theme] = $.extend({}, currentThemeObj, newThemeObj);
+  },
+
+  getCurrent: function() {
+    var defaultThemeObj = this.themes[this.defaultTheme];
+    var currentThemeObj = this.themes[this.currentTheme];
+
+    return $.extend({}, defaultThemeObj, currentThemeObj);
+  },
+
+  getProp: function(key) {
+    if(!key) {
+      return '';
+    }
+
+    var currentTheme = this.getCurrent();
+    return utils.getProp(key, currentTheme);
+  },
+
+  getCssClass: function(keys) {
+    var keysArr = keys.split(' ');
+    var themeClass = "";
+
+    while(keysArr.length > 0) {
+      var key = keysArr.shift();
+      var classKey = key + '.cssClass';
+
+      themeClass += this.getProp(classKey) + ' ';
+    }
+
+    return themeClass.trim();
   }
-
-  var currentTheme = this.getCurrent();
-  return Realize.utils.getProp(key, currentTheme);
 };
 
-Realize.themes.getCssClass = function(keys) {
-  var keysArr = keys.split(' ');
-  var themeClass = "";
-
-  while(keysArr.length > 0) {
-    var key = keysArr.shift();
-    var classKey = key + '.cssClass';
-
-    themeClass += this.getProp(classKey) + ' ';
-  }
-
-  return themeClass.trim();
-};
+module.exports = themes;

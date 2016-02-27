@@ -1,4 +1,6 @@
-var AclModalsWrapper = React.createClass({
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+
+window.AclModalsWrapper = React.createClass({
   mixins: [RequestHandlerMixin],
 
   PropTypes: {

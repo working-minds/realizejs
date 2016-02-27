@@ -1,3 +1,5 @@
+var ModalActions = require('realize/actions/modal_actions.js');
+
 var ModalStore = Reflux.createStore({
   listenables: [ModalActions],
   optionProps: [
@@ -34,4 +36,7 @@ var ModalStore = Reflux.createStore({
 
     this.trigger(this);
   }
+
 });
+
+module.exports = ModalStore;

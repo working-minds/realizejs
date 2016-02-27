@@ -1,5 +1,4 @@
-var UtilsMixin = {
-
+window.UtilsMixin = {
   // source: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
   generateUUID: function() {
     var d = new Date().getTime();
@@ -11,3 +10,5 @@ var UtilsMixin = {
     });
   }
 };
+
+module.exports = UtilsMixin;

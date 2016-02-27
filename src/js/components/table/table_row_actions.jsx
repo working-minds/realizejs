@@ -1,4 +1,7 @@
-var TableRowActions = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+
+window.TableRowActions = React.createClass({
   mixins: [CssClassMixin, RequestHandlerMixin],
 
   propTypes: {

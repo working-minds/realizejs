@@ -1,4 +1,7 @@
-var Tabs = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+
+window.Tabs = React.createClass({
   mixins: [
     CssClassMixin,
     ContainerMixin

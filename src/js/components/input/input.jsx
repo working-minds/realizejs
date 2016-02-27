@@ -1,5 +1,8 @@
-var Input = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Input = React.createClass({
   mixins: [CssClassMixin],
+
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -99,6 +102,10 @@ var Input = React.createClass({
     return this.renderInputWithoutLabel();
   },
 
+  renderColorpickerInput: function() {
+    return this.renderInputWithoutLabel();
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
@@ -141,6 +148,7 @@ var Input = React.createClass({
       text: InputText,
       autocomplete: InputAutocomplete,
       checkbox: InputCheckbox,
+      colorpicker: InputColorpicker,
       datefilter: InputDatefilter,
       datepicker: InputDatepicker,
       number: InputNumber,

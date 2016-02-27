@@ -1,4 +1,6 @@
-var AddPrincipalsModal = React.createClass({
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+
+window.AddPrincipalsModal = React.createClass({
   mixins: [RequestHandlerMixin],
 
   PropTypes: {

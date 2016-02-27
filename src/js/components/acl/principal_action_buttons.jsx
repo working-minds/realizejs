@@ -1,4 +1,7 @@
-var PrincipalActionButtons = React.createClass({
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+var ModalRendererMixin = require('realize/mixins/modal_renderer_mixin.jsx');
+
+window.PrincipalActionButtons = React.createClass({
   mixins: [RequestHandlerMixin, ModalRendererMixin],
 
   PropTypes: {

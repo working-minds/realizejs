@@ -1,4 +1,6 @@
-var Table = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Table = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     resource: React.PropTypes.string,
@@ -231,7 +233,7 @@ var Table = React.createClass({
     return (
       <tr>
         <td colSpan={columnsCount} className="empty-message">
-          {Realize.t(this.props.emptyMessage)}
+          {Realize.i18n.t(this.props.emptyMessage)}
         </td>
       </tr>
     );

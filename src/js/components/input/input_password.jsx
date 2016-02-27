@@ -1,4 +1,7 @@
-var InputPassword = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+
+window.InputPassword = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
     confirms: React.PropTypes.string

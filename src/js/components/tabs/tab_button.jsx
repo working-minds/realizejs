@@ -1,3 +1,7 @@
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+var FormContainerMixin = require('realize/mixins/form/form_container_mixin.jsx');
+
 var TabButton = React.createClass({
   mixins: [
     CssClassMixin,

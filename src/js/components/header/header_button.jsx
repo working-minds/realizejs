@@ -1,5 +1,4 @@
-var HeaderButton = React.createClass({
-  //mixins: [CssClassMixin],
+window.HeaderButton = React.createClass({
 
   propTypes: {
     imgSrc: React.PropTypes.string,

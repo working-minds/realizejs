@@ -1,5 +1,5 @@
 // TODO: [DEPRECATION] Prop ref_id is deprecated, remember to remove it.
-var Menu = React.createClass({
+window.Menu = React.createClass({
   propTypes: {
     ref_id: React.PropTypes.string,
     id: React.PropTypes.string,

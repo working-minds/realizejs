@@ -1,4 +1,6 @@
-var InputAutocompleteResult = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.InputAutocompleteResult = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     id: React.PropTypes.string,
@@ -53,7 +55,7 @@ var InputAutocompleteResult = React.createClass({
          className="input-autocomplete__clear-button"
          onClick={this.props.onClear}>
 
-        {Realize.t("inputs.autocomplete.clear")}
+        {Realize.i18n.t("inputs.autocomplete.clear")}
       </a>
     );
   },
@@ -84,7 +86,7 @@ var InputAutocompleteResult = React.createClass({
   renderEmptyMessage: function() {
     return (
       <div className="input-autocomplete__empty-message">
-        {Realize.t("inputs.autocomplete.emptyResult")}
+        {Realize.i18n.t("inputs.autocomplete.emptyResult")}
       </div>
     );
   },

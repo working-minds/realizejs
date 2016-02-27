@@ -1,4 +1,4 @@
-var MaterializeSelectMixin = {
+window.MaterializeSelectMixin = {
   componentDidMount: function() {
     this.applyMaterialize(true);
   },
@@ -32,3 +32,5 @@ var MaterializeSelectMixin = {
     this.props.onChange(fakeEvent);
   }
 };
+
+module.exports = MaterializeSelectMixin;

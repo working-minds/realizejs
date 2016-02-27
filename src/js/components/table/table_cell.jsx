@@ -1,4 +1,6 @@
-var TableCell = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.TableCell = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
@@ -90,7 +92,7 @@ var TableCell = React.createClass({
   },
 
   booleanValue: function(value) {
-    return Realize.t(String(value));
+    return Realize.i18n.t(String(value));
   },
 
   dateValue: function(value) {

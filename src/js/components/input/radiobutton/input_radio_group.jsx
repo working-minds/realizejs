@@ -1,4 +1,8 @@
-var InputRadioGroup = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var SelectComponentMixin = require('realize/mixins/input/select_component_mixin.jsx');
+
+window.InputRadioGroup = React.createClass({
   mixins: [
     CssClassMixin,
     InputComponentMixin,

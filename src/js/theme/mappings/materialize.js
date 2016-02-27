@@ -1,4 +1,4 @@
-Realize.themes.materialize = {
+Realize.themes.registerTheme({
   grid: {
     cssClass: 'grid row',
 
@@ -184,6 +184,18 @@ Realize.themes.materialize = {
         cssClass: 'button btn'
       }
 
+    },
+
+    colorpicker: {
+      cssClass: 'colorpicker__input',
+
+      wrapper: {
+        cssClass: 'colorpicker__wrapper'
+      },
+
+      display: {
+        cssClass: 'colorpicker__display'
+      }
     }
   },
 
@@ -343,4 +355,4 @@ Realize.themes.materialize = {
     edit: 'mode_edit',
     destroy: 'delete'
   }
-};
+}, 'materialize');

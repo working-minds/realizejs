@@ -1,5 +1,4 @@
-var HeaderMenu = React.createClass({
-  //mixins: [CssClassMixin],
+window.HeaderMenu = React.createClass({
 
   propTypes: {
     items: React.PropTypes.array,

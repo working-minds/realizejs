@@ -1,4 +1,4 @@
-var CloseModalButton = React.createClass({
+window.CloseModalButton = React.createClass({
   PropTypes: {
     name: React.PropTypes.string,
     className: React.PropTypes.string,

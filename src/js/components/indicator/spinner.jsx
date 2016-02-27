@@ -1,4 +1,5 @@
-var Spinner = React.createClass({
+window.Spinner = React.createClass({
+
   propTypes: {
     size: React.PropTypes.string,
     color: React.PropTypes.string,

@@ -1,4 +1,10 @@
-var InputSelect = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var SelectComponentMixin = require('realize/mixins/input/select_component_mixin.jsx');
+var InputSelectActionsListenerMixin = require('realize/mixins/input/input_select_actions_listener_mixin.jsx');
+var MaterializeSelectMixin = require('realize/mixins/input/materialize_select_mixin.jsx');
+
+window.InputSelect = React.createClass({
   mixins: [
     CssClassMixin,
     InputComponentMixin,
@@ -58,7 +64,7 @@ var InputSelect = React.createClass({
     var options = this.state.options;
 
     if(this.props.includeBlank) {
-      selectOptions.push(<InputSelectOption name={Realize.t(this.props.blankText)} value="" key="empty_option" />);
+      selectOptions.push(<InputSelectOption name={Realize.i18n.t(this.props.blankText)} value="" key="empty_option" />);
     }
 
     for(var i = 0; i < options.length; i++) {
