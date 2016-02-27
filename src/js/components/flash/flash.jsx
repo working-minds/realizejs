@@ -1,5 +1,7 @@
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-var Flash = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+
+window.Flash = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.oneOf(['info', 'warning', 'error', 'success']),

@@ -51,3 +51,5 @@ var CssClassMixin = {
     return props;
   }
 };
+
+module.exports = CssClassMixin;

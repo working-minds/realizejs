@@ -1,6 +1,6 @@
-var Realize = {};
+module.exports = exports = {};
 
-Realize.config = {
+exports.config = {
   theme: 'materialize',
   locale: 'en',
   restUrls: {
@@ -44,6 +44,6 @@ Realize.config = {
   }
 };
 
-Realize.setConfig = function(newConfig) {
+exports.setConfig = function(newConfig) {
   $.extend(true, Realize.config, newConfig);
 };

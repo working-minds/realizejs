@@ -1,5 +1,8 @@
-var Icon = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Icon = React.createClass({
   mixins: [CssClassMixin],
+
   propTypes: {
     type: React.PropTypes.string,
     tooltipDelay: React.PropTypes.string,

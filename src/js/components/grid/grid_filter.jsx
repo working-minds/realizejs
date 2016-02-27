@@ -1,4 +1,6 @@
-var GridFilter = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.GridFilter = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     inputs: React.PropTypes.object,

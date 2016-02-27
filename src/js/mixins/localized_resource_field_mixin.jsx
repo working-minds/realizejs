@@ -27,3 +27,5 @@ var LocalizedResourceFieldMixin = {
   }
 
 };
+
+module.exports = LocalizedResourceFieldMixin;

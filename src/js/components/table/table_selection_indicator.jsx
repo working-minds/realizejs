@@ -1,4 +1,6 @@
-var TableSelectionIndicator = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.TableSelectionIndicator = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {

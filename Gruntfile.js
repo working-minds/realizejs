@@ -25,19 +25,28 @@ module.exports = function(grunt) {
       files: ['Gruntfile.js', 'src/js/**/*.jsx', 'src/js/**/*.js']
     },
 
-    babel: {
+    browserify: {
       options: {
-        sourceMaps: false,
-        presets: ['es2015', 'stage-2', 'react']
+        banner: '<%= banner %>',
+        transform: [
+          ['babelify', {
+            presets: ['es2015', 'stage-2', 'react']
+          }]
+        ],
+        browserifyOptions: {
+          insertGlobalVars: {
+            React: function() { return 'require("react")'; },
+            ReactDOM: function() { return 'require("react-dom")'; },
+            Reflux: function() { return 'require("reflux")'; },
+            Realize: function() { return 'require("realize/realize.js")'; }
+          }
+        }
       },
-      build: {
+      js: {
         files: [
           {
-            expand: true,
-            cwd: 'src/js',
-            src: ['**/*.jsx', '**/*.js'],
-            dest: 'tmp/js',
-            ext: '.js'
+            src: ['src/js/**/*.jsx', 'src/js/**/*.js'],
+            dest: 'dist/js/<%= pkg.name %>.js'
           }
         ]
       }
@@ -60,25 +69,7 @@ module.exports = function(grunt) {
     concat: {
       options: {
         banner: '<%= banner %>',
-        sourceMap: true,
         stripBanners: false
-      },
-      js: {
-        src: [
-          'tmp/js/config.js',
-          'tmp/js/serializer.js',
-          'tmp/js/utils.js',
-          'tmp/js/propTypes.js',
-          'tmp/js/i18n/i18n.js',
-          'tmp/js/i18n/locales/**/*.js',
-          'tmp/js/theme/theme.js',
-          'tmp/js/theme/mappings/**/*.js',
-          'tmp/js/actions/**/*.js',
-          'tmp/js/stores/**/*.js',
-          'tmp/js/mixins/**/*.js',
-          'tmp/js/components/**/*.js'
-        ],
-        dest: 'dist/js/<%= pkg.name %>.js'
       },
       css: {
         src: [
@@ -113,22 +104,6 @@ module.exports = function(grunt) {
       }
     },
 
-    usebanner: {
-      build: {
-        options: {
-          position: 'top',
-          banner: '<%= banner %>',
-          linebreak: true
-        },
-        files: {
-          src: [
-            'dist/**/*.css',
-            'dist/**/*.js'
-          ]
-        }
-      }
-    },
-
     clean: {
       build: {
         src: ["tmp"]
@@ -145,10 +120,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-jsxhint');
-  grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('build', [
-    'babel:build',
+    'browserify:js',
     'sass:build',
     'concat:js',
     'concat:css',

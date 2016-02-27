@@ -1,4 +1,6 @@
-var SideNav = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.SideNav = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {

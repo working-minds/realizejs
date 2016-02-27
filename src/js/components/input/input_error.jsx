@@ -1,4 +1,6 @@
-var InputError = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.InputError = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {

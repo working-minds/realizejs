@@ -1,5 +1,9 @@
-var Button = React.createClass({
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Button = React.createClass({
   mixins: [CssClassMixin, RequestHandlerMixin],
+
   propTypes: {
     name: Realize.PropTypes.localizedString,
     type: React.PropTypes.string,

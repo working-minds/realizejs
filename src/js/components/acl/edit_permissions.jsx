@@ -1,4 +1,6 @@
-var EditPermissions = React.createClass({
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+
+window.EditPermissions = React.createClass({
   mixins: [RequestHandlerMixin],
 
   PropTypes: {

@@ -3,3 +3,5 @@ var ModalActions = Reflux.createActions([
   'openFinished',
   'close'
 ]);
+
+module.exports = ModalActions;

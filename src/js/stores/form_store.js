@@ -1,3 +1,5 @@
+var FormActions = require('realize/actions/form_actions.js');
+
 var FormStore = Reflux.createStore({
   listenables: [FormActions],
   formId: '',
@@ -50,3 +52,5 @@ var FormStore = Reflux.createStore({
   }
 
 });
+
+module.exports = FormStore;

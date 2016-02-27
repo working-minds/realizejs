@@ -1,4 +1,6 @@
-var TableCell = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.TableCell = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {

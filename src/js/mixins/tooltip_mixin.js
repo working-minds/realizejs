@@ -11,3 +11,5 @@ var TooltipMixin = {
     $(".tooltipped").tooltip({delay: 100});
   }
 };
+
+module.exports = TooltipMixin;

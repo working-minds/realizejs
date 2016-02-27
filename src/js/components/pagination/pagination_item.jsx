@@ -1,5 +1,8 @@
-var PaginationItem = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.PaginationItem = React.createClass({
   mixins: [CssClassMixin],
+
   propTypes: {
     disabled: React.PropTypes.bool,
     active: React.PropTypes.bool,

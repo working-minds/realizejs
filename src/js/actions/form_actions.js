@@ -4,3 +4,5 @@ var FormActions = Reflux.createActions([
   "error",
   "reset"
 ]);
+
+module.exports = FormActions;

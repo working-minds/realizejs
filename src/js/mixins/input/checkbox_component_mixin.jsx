@@ -71,3 +71,5 @@ var CheckboxComponentMixin = {
     }
   }
 };
+
+module.exports = CheckboxComponentMixin;

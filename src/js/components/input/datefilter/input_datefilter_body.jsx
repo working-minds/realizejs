@@ -1,4 +1,6 @@
-var InputDatefilterBody = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.InputDatefilterBody = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     id: React.PropTypes.string,

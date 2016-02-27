@@ -1,3 +1,5 @@
+var InputSelectStore = require('realize/stores/input_select_store.js');
+
 var InputSelectActionsListenerMixin = {
   componentDidMount: function() {
     InputSelectStore.listen(this.inputSelectActionListener);
@@ -61,3 +63,5 @@ var InputSelectActionsListenerMixin = {
     return this.state.optionsCache;
   }
 };
+
+module.exports = InputSelectActionsListenerMixin;

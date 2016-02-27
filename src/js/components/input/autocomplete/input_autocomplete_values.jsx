@@ -1,4 +1,4 @@
-var InputAutocompleteValues = React.createClass({
+window.InputAutocompleteValues = React.createClass({
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,

@@ -21,3 +21,5 @@ var ModalRendererMixin = {
     $modalContainer.html(modalHtml);
   }
 };
+
+module.exports = ModalRendererMixin;

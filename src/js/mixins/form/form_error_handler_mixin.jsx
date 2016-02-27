@@ -94,3 +94,5 @@ var FormErrorHandlerMixin = {
     );
   }
 };
+
+module.exports = FormErrorHandlerMixin;

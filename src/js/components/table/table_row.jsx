@@ -1,5 +1,8 @@
-var TableRow = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.TableRow = React.createClass({
   mixins: [CssClassMixin],
+
   propTypes: {
     columns: React.PropTypes.object,
     data: React.PropTypes.object,

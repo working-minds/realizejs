@@ -205,4 +205,7 @@ var SelectComponentMixin = {
   isDisabled: function () {
     return this.state.disabled || this.state.mustDisable;
   }
+
 };
+
+module.exports = SelectComponentMixin;

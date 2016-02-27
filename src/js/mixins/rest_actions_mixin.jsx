@@ -50,3 +50,5 @@ var RestActionsMixin = {
     }
   }
 };
+
+module.exports = RestActionsMixin;

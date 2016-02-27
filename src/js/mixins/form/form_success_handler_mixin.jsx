@@ -42,3 +42,5 @@ var FormSuccessHandlerMixin = {
     }
   }
 };
+
+module.exports = FormSuccessHandlerMixin;

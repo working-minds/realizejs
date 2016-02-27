@@ -1,4 +1,8 @@
-var InputCheckbox = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var CheckboxComponentMixin = require('realize/mixins/input/checkbox_component_mixin.jsx');
+
+window.InputCheckbox = React.createClass({
   mixins: [
     CssClassMixin,
     InputComponentMixin,

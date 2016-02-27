@@ -1,4 +1,6 @@
-var Label = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Label = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     id: React.PropTypes.string,

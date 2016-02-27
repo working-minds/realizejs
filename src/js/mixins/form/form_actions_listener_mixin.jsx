@@ -68,3 +68,5 @@ var FormActionsListenerMixin = {
   }
 
 };
+
+module.exports = FormActionsListenerMixin;

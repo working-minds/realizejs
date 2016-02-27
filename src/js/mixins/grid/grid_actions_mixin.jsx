@@ -110,3 +110,5 @@ var GridActionsMixin = {
     }, this.props.destroyActionButton);
   }
 };
+
+module.exports = GridActionsMixin;

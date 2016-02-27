@@ -1,4 +1,10 @@
-var InputSelect = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var SelectComponentMixin = require('realize/mixins/input/select_component_mixin.jsx');
+var InputSelectActionsListenerMixin = require('realize/mixins/input/input_select_actions_listener_mixin.jsx');
+var MaterializeSelectMixin = require('realize/mixins/input/materialize_select_mixin.jsx');
+
+window.InputSelect = React.createClass({
   mixins: [
     CssClassMixin,
     InputComponentMixin,

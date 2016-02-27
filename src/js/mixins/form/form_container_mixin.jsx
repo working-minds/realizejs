@@ -64,3 +64,5 @@ var FormContainerMixin = {
   }
 
 };
+
+module.exports = FormContainerMixin;

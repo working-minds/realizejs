@@ -1,4 +1,9 @@
-var Form = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+var FormErrorHandlerMixin = require('realize/mixins/form/form_error_handler_mixin.jsx');
+var FormSuccessHandlerMixin = require('realize/mixins/form/form_success_handler_mixin.jsx');
+
+window.Form = React.createClass({
   mixins: [
     CssClassMixin,
     ContainerMixin,

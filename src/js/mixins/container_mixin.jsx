@@ -96,3 +96,5 @@ var ContainerMixin = {
   }
 
 };
+
+module.exports = ContainerMixin;

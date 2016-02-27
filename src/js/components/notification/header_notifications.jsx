@@ -1,4 +1,4 @@
-var HeaderNotifications = React.createClass({
+window.HeaderNotifications = React.createClass({
   propTypes: {
     ouSlug: React.PropTypes.string,
     className: React.PropTypes.string,

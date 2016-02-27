@@ -98,5 +98,6 @@ var InputComponentMixin = {
     return (!!inputNode && inputNode.type === "checkbox");
   }
 
-
 };
+
+module.exports = InputComponentMixin;

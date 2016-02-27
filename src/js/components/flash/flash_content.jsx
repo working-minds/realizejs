@@ -1,4 +1,6 @@
-var FlashContent = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.FlashContent = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.string,

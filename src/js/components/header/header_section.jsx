@@ -1,6 +1,4 @@
-var HeaderSection = React.createClass({
-  //mixins: [CssClassMixin],
-
+window.HeaderSection = React.createClass({
   propTypes: {
     align: React.PropTypes.string,
     id: React.PropTypes.string

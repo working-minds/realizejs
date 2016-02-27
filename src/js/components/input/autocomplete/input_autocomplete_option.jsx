@@ -1,4 +1,7 @@
-var InputAutocompleteOption = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
+
+window.InputAutocompleteOption = React.createClass({
   mixins: [CssClassMixin, UtilsMixin],
   propTypes: {
     id: React.PropTypes.string,

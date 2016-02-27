@@ -1,4 +1,6 @@
-var Header = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Header = React.createClass({
   mixins: [CssClassMixin],
 
   getDefaultProps: function() {

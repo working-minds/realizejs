@@ -32,3 +32,5 @@ var MaterializeSelectMixin = {
     this.props.onChange(fakeEvent);
   }
 };
+
+module.exports = MaterializeSelectMixin;

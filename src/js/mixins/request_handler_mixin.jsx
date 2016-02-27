@@ -100,3 +100,5 @@ var RequestHandlerMixin = {
 
   }
 };
+
+module.exports = RequestHandlerMixin;

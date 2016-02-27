@@ -1,4 +1,4 @@
-var UpdatePermissionsButton = React.createClass({
+window.UpdatePermissionsButton = React.createClass({
 
   PropTypes: {
     name: React.PropTypes.string,

@@ -1,4 +1,6 @@
-var ModalHeader = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.ModalHeader = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {

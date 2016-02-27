@@ -1,5 +1,8 @@
-var Input = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.Input = React.createClass({
   mixins: [CssClassMixin],
+
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
