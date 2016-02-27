@@ -49785,14 +49785,15 @@ window.InputColorpicker = React.createClass({
     return React.createElement(
       'div',
       { className: this.themedClassName(this.props.wrapperThemeClassKey) },
-      React.createElement('input', _extends({}, this.props, {
+      React.createElement('input', {
+        id: 'colorpicker_input',
         placeholder: '',
         className: this.inputClassName(),
         readOnly: true,
         type: 'text',
         ref: 'input'
-      })),
-      React.createElement(Label, this.propsWithoutCSS()),
+      }),
+      React.createElement(Label, _extends({}, this.propsWithoutCSS(), { id: 'colorpicker_input', active: true })),
       React.createElement('div', {
         className: this.themedClassName(this.props.displayThemeClassKey),
         style: this.displayBackgroundStyle(),
@@ -49802,6 +49803,9 @@ window.InputColorpicker = React.createClass({
         color: this.state.value,
         display: this.state.displayColorPicker,
         onChangeComplete: this.onColorSelect
+      })),
+      React.createElement(InputHidden, _extends({}, this.propsWithoutCSS(), {
+        value: this.state.value
       }))
     );
   },

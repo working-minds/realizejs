@@ -43,14 +43,15 @@ window.InputColorpicker = React.createClass({
   render: function() {
     return (
       <div className={this.themedClassName(this.props.wrapperThemeClassKey)}>
-        <input {...this.props}
+        <input
+          id="colorpicker_input"
           placeholder=""
           className={this.inputClassName()}
           readOnly={true}
           type="text"
           ref="input"
         />
-        <Label {...this.propsWithoutCSS()} />
+        <Label {...this.propsWithoutCSS()} id="colorpicker_input" active={true} />
 
         <div
           className={this.themedClassName(this.props.displayThemeClassKey)}
@@ -62,6 +63,11 @@ window.InputColorpicker = React.createClass({
           color={this.state.value}
           display={this.state.displayColorPicker}
           onChangeComplete={this.onColorSelect}
+        />
+
+        <InputHidden
+          {...this.propsWithoutCSS()}
+          value={this.state.value}
         />
       </div>
     );
