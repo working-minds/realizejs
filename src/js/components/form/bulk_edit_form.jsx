@@ -1,8 +1,8 @@
-var BulkEditForm = React.createClass({
-  mixins: [
-    CssClassMixin,
-    UtilsMixin
-  ],
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
+
+window.BulkEditForm = React.createClass({
+  mixins: [CssClassMixin, UtilsMixin],
 
   propTypes: {
     inputs: React.PropTypes.object,

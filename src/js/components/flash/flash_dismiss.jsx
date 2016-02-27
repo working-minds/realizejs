@@ -1,4 +1,6 @@
-var FlashDismiss = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.FlashDismiss = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.string,

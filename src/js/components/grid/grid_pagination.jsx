@@ -1,4 +1,6 @@
-var GridPagination = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.GridPagination = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     count: React.PropTypes.number,

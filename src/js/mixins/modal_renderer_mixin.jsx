@@ -1,4 +1,4 @@
-var ModalRendererMixin = {
+window.ModalRendererMixin = {
   propTypes: {
     modalContainerId: React.PropTypes.string
   },
@@ -21,3 +21,5 @@ var ModalRendererMixin = {
     $modalContainer.html(modalHtml);
   }
 };
+
+module.exports = ModalRendererMixin;

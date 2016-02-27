@@ -1,4 +1,7 @@
-var InputFile = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+
+window.InputFile = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
     wrapperClassName: React.PropTypes.string,
@@ -73,12 +76,12 @@ var InputFile = React.createClass({
   getButtonName: function() {
     if (!!this.props.buttonIcon) {
       var component = [];
-      component.push(<i className="material-icons">{this.props.buttonIcon}</i>);
+      component.push(<i className="material-icons" key="inputFileIcon">{this.props.buttonIcon}</i>);
 
       return component;
     }
 
-    return Realize.t(this.props.buttonName);
+    return Realize.i18n.t(this.props.buttonName);
   },
 
   getLabelName: function() {

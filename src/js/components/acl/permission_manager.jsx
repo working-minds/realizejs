@@ -1,4 +1,6 @@
-var PermissionManager = React.createClass({
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+
+window.PermissionManager = React.createClass({
   mixins: [RequestHandlerMixin],
 
   ////// SPECIFICATIONS //////

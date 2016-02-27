@@ -1,4 +1,7 @@
-var TableHeader = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var LocalizedResourceFieldMixin = require('realize/mixins/localized_resource_field_mixin.jsx');
+
+window.TableHeader = React.createClass({
   mixins: [CssClassMixin, LocalizedResourceFieldMixin],
 
   propTypes: {
@@ -42,7 +45,7 @@ var TableHeader = React.createClass({
 
   getLabel: function() {
     if(!!this.props.label && this.props.label.length > 0) {
-      return Realize.t(this.props.label);
+      return Realize.i18n.t(this.props.label);
     }
 
     return this.localizeResourceField();

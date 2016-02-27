@@ -1,5 +1,7 @@
-var ModalActions = Reflux.createActions([
+window.ModalActions = Reflux.createActions([
   'open',
   'openFinished',
   'close'
 ]);
+
+module.exports = ModalActions;

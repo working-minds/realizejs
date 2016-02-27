@@ -1,4 +1,7 @@
-var InputNumber = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+
+window.InputNumber = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
 
   getDefaultProps: function() {

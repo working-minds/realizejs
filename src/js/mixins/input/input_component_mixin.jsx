@@ -1,4 +1,4 @@
-var InputComponentMixin = {
+window.InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
@@ -85,7 +85,7 @@ var InputComponentMixin = {
   },
 
   getPlaceholder: function() {
-    var placeholder = Realize.t(this.props.placeholder);
+    var placeholder = Realize.i18n.t(this.props.placeholder);
     if(typeof placeholder !== "string" || placeholder.length === 0) {
       return null;
     }
@@ -98,5 +98,6 @@ var InputComponentMixin = {
     return (!!inputNode && inputNode.type === "checkbox");
   }
 
-
 };
+
+module.exports = InputComponentMixin;

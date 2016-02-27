@@ -1,4 +1,8 @@
-var Modal = React.createClass({
+var ModalStore = require('realize/stores/modal_store.js');
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+
+window.Modal = React.createClass({
   mixins: [
     Reflux.connect(ModalStore, 'modalStore'),
     CssClassMixin,

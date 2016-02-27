@@ -1,4 +1,4 @@
-var FormActionsListenerMixin = {
+window.FormActionsListenerMixin = {
   propTypes: {
     onFormSubmit: React.PropTypes.func,
     onFormSuccess: React.PropTypes.func,
@@ -68,3 +68,5 @@ var FormActionsListenerMixin = {
   }
 
 };
+
+module.exports = FormActionsListenerMixin;

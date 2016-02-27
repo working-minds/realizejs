@@ -1,4 +1,6 @@
-var ModalButton = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.ModalButton = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {

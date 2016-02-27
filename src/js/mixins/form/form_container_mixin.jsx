@@ -1,4 +1,4 @@
-var FormContainerMixin = {
+window.FormContainerMixin = {
   propTypes: {
     errors: React.PropTypes.object,
     errorThemeClassKey: React.PropTypes.string
@@ -64,3 +64,5 @@ var FormContainerMixin = {
   }
 
 };
+
+module.exports = FormContainerMixin;

@@ -1,4 +1,8 @@
-var InputSwitch = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var CheckboxComponentMixin = require('realize/mixins/input/checkbox_component_mixin.jsx');
+
+window.InputSwitch = React.createClass({
   mixins: [
     CssClassMixin,
     InputComponentMixin,
@@ -25,7 +29,7 @@ var InputSwitch = React.createClass({
       <div>
         <div className={this.className()}>
           <label>
-            {Realize.t(this.props.offLabel)}
+            {Realize.i18n.t(this.props.offLabel)}
             <input {...this.checkboxProps()}
               checked={this.state.checked}
               value={this.state.value}
@@ -36,7 +40,7 @@ var InputSwitch = React.createClass({
               ref="input"
             />
             <span className="lever"></span>
-            {Realize.t(this.props.onLabel)}
+            {Realize.i18n.t(this.props.onLabel)}
           </label>
 
           {this.renderInputHidden()}

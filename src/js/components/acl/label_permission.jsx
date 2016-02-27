@@ -1,4 +1,4 @@
-var LabelPermission = React.createClass({
+window.LabelPermission = React.createClass({
 
   PropTypes: {
     className: React.PropTypes.string

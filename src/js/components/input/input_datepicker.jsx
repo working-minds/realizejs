@@ -1,4 +1,7 @@
-var InputDatepicker = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+
+window.InputDatepicker = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],
   propTypes: {
     mask: React.PropTypes.string
@@ -41,7 +44,7 @@ var InputDatepicker = React.createClass({
   },
 
   getDateFormat: function() {
-    return (this.props.format || Realize.t('date.formats.date'));
+    return (this.props.format || Realize.i18n.t('date.formats.date'));
   },
 
   setPickadatePlugin: function() {

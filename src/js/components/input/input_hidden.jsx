@@ -1,4 +1,6 @@
-var InputHidden = React.createClass({
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+
+window.InputHidden = React.createClass({
   mixins: [InputComponentMixin],
 
   render: function() {

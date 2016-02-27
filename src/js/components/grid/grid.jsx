@@ -1,4 +1,9 @@
-var Grid = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
+var GridActionsMixin = require('realize/mixins/grid/grid_actions_mixin.jsx');
+
+window.Grid = React.createClass({
   mixins: [
     CssClassMixin,
     RequestHandlerMixin,

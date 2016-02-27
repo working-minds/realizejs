@@ -1,4 +1,4 @@
-var GridActionsMixin = {
+window.GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
     rowHref: React.PropTypes.string,
@@ -110,3 +110,5 @@ var GridActionsMixin = {
     }, this.props.destroyActionButton);
   }
 };
+
+module.exports = GridActionsMixin;

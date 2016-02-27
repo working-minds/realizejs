@@ -1,4 +1,6 @@
-var GridTable = React.createClass({
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+
+window.GridTable = React.createClass({
   mixins: [CssClassMixin],
 
   getDefaultProps: function() {
