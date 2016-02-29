@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.1 (http://www.wkm.com.br)
+ * Realize v0.8.2 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -53329,7 +53329,7 @@ var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var ContainerMixin = require('realize/mixins/container_mixin.jsx');
 var FormContainerMixin = require('realize/mixins/form/form_container_mixin.jsx');
 
-var TabButton = React.createClass({
+window.TabButton = React.createClass({
   displayName: 'TabButton',
 
   mixins: [CssClassMixin, ContainerMixin, FormContainerMixin],
