@@ -93,7 +93,10 @@ window.SelectComponentMixin = {
   },
 
   loadOptions: function() {
-    $.ajax({
+    if(!!this.state.xhr)
+      this.state.xhr.abort();
+
+    this.state.xhr = $.ajax({
       url: this.props.optionsUrl,
       method: 'GET',
       dataType: 'json',
