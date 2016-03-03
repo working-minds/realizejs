@@ -35,7 +35,9 @@ window.GridForm = React.createClass({
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
     onLoadSuccess: React.PropTypes.func,
-    onLoadError: React.PropTypes.func
+    onLoadError: React.PropTypes.func,
+    onDestroySuccess: React.PropTypes.func,
+    onDestroyError: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -65,7 +67,9 @@ window.GridForm = React.createClass({
       onSuccess: function(data, status, xhr) { return true; },
       onError: function(xhr, status, error) { return true; },
       onLoadSuccess: function(data) {},
-      onLoadError: function(xhr, status, error) {}
+      onLoadError: function(xhr, status, error) {},
+      onDestroySuccess: function(data) {},
+      onDestroyError: function(xhr, status, error) {}
     };
   },
 
@@ -95,6 +99,8 @@ window.GridForm = React.createClass({
       </div>
     );
   },
+
+  /* Form renderer */
 
   renderForm: function() {
     if(this.props.readOnly) {
@@ -148,6 +154,8 @@ window.GridForm = React.createClass({
     return [];
   },
 
+  /* Default action buttons parser */
+
   getActionButtons: function() {
     var actionButtons = this.props.actionButtons || {};
 
@@ -168,20 +176,30 @@ window.GridForm = React.createClass({
     }
 
     return [
-      {
-        icon: 'edit',
-        onClick: this.editAction
-      },
-      {
-        icon: 'destroy',
-        onClick: this.destroyAction
-      }
+      this.getDefaultEditActionProps(),
+      this.getDefaultDestroyActionProps()
     ];
   },
 
   getDefaultCollectionActionButtons: function() {
     return [];
   },
+
+  getDefaultEditActionProps: function() {
+    return $.extend({}, {
+      icon: 'edit',
+      onClick: this.editAction
+    }, this.props.editActionButton);
+  },
+
+  getDefaultDestroyActionProps: function() {
+    return $.extend({}, {
+      icon: 'destroy',
+      onClick: this.destroyAction
+    }, this.props.destroyActionButton);
+  },
+
+  /* Event handlers */
 
   onSubmit: function(event, postData) {
     this.props.onSubmit(event, postData);
@@ -208,6 +226,8 @@ window.GridForm = React.createClass({
   onError: function(xhr, status, error) {
     return this.props.onError(xhr, status, error);
   },
+
+  /* Grid member actions */
 
   editAction: function(event, id, data) {
     this.setState({
@@ -236,14 +256,19 @@ window.GridForm = React.createClass({
     }
   },
 
-  handleDestroy: function(data) {
-    this.loadGridData(data);
+  /* Destroy event handlers */
+
+  handleDestroy: function(data, status, xhr) {
+    this.props.onDestroySuccess(data, status, xhr);
+    this.loadGridData();
   },
 
   handleDestroyError: function(xhr, status, error) {
     this.setState({isLoading: false});
-    console.log(error);
+    this.props.onDestroyError(xhr, status, error);
   },
+
+  /* Utilities */
 
   loadGridData: function() {
     var gridRef = this.refs.grid;
