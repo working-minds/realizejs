@@ -4,10 +4,10 @@ window.GridActionsMixin = {
     rowHref: React.PropTypes.string,
     haveShowAction: React.PropTypes.bool,
 
-    createAction: React.PropTypes.object,
-    showAction: React.PropTypes.object,
-    editAction: React.PropTypes.object,
-    destroyAction: React.PropTypes.object
+    createActionButton: React.PropTypes.object,
+    showActionButton: React.PropTypes.object,
+    editActionButton: React.PropTypes.object,
+    destroyActionButton: React.PropTypes.object
   },
 
   getDefaultProps: function() {

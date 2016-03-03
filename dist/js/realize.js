@@ -47783,7 +47783,9 @@ window.GridForm = React.createClass({
     onSuccess: React.PropTypes.func,
     onError: React.PropTypes.func,
     onLoadSuccess: React.PropTypes.func,
-    onLoadError: React.PropTypes.func
+    onLoadError: React.PropTypes.func,
+    onDestroySuccess: React.PropTypes.func,
+    onDestroyError: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -47817,7 +47819,9 @@ window.GridForm = React.createClass({
         return true;
       },
       onLoadSuccess: function onLoadSuccess(data) {},
-      onLoadError: function onLoadError(xhr, status, error) {}
+      onLoadError: function onLoadError(xhr, status, error) {},
+      onDestroySuccess: function onDestroySuccess(data) {},
+      onDestroyError: function onDestroyError(xhr, status, error) {}
     };
   },
 
@@ -47849,6 +47853,8 @@ window.GridForm = React.createClass({
       )
     );
   },
+
+  /* Form renderer */
 
   renderForm: function renderForm() {
     if (this.props.readOnly) {
@@ -47902,6 +47908,8 @@ window.GridForm = React.createClass({
     return [];
   },
 
+  /* Default action buttons parser */
+
   getActionButtons: function getActionButtons() {
     var actionButtons = this.props.actionButtons || {};
 
@@ -47921,18 +47929,28 @@ window.GridForm = React.createClass({
       return [];
     }
 
-    return [{
-      icon: 'edit',
-      onClick: this.editAction
-    }, {
-      icon: 'destroy',
-      onClick: this.destroyAction
-    }];
+    return [this.getDefaultEditActionProps(), this.getDefaultDestroyActionProps()];
   },
 
   getDefaultCollectionActionButtons: function getDefaultCollectionActionButtons() {
     return [];
   },
+
+  getDefaultEditActionProps: function getDefaultEditActionProps() {
+    return $.extend({}, {
+      icon: 'edit',
+      onClick: this.editAction
+    }, this.props.editActionButton);
+  },
+
+  getDefaultDestroyActionProps: function getDefaultDestroyActionProps() {
+    return $.extend({}, {
+      icon: 'destroy',
+      onClick: this.destroyAction
+    }, this.props.destroyActionButton);
+  },
+
+  /* Event handlers */
 
   onSubmit: function onSubmit(event, postData) {
     this.props.onSubmit(event, postData);
@@ -47959,6 +47977,8 @@ window.GridForm = React.createClass({
   onError: function onError(xhr, status, error) {
     return this.props.onError(xhr, status, error);
   },
+
+  /* Grid member actions */
 
   editAction: function editAction(event, id, data) {
     this.setState({
@@ -47987,14 +48007,19 @@ window.GridForm = React.createClass({
     }
   },
 
-  handleDestroy: function handleDestroy(data) {
-    this.loadGridData(data);
+  /* Destroy event handlers */
+
+  handleDestroy: function handleDestroy(data, status, xhr) {
+    this.props.onDestroySuccess(data, status, xhr);
+    this.loadGridData();
   },
 
   handleDestroyError: function handleDestroyError(xhr, status, error) {
     this.setState({ isLoading: false });
-    console.log(error);
+    this.props.onDestroyError(xhr, status, error);
   },
+
+  /* Utilities */
 
   loadGridData: function loadGridData() {
     var gridRef = this.refs.grid;
@@ -54221,10 +54246,10 @@ window.GridActionsMixin = {
     rowHref: React.PropTypes.string,
     haveShowAction: React.PropTypes.bool,
 
-    createAction: React.PropTypes.object,
-    showAction: React.PropTypes.object,
-    editAction: React.PropTypes.object,
-    destroyAction: React.PropTypes.object
+    createActionButton: React.PropTypes.object,
+    showActionButton: React.PropTypes.object,
+    editActionButton: React.PropTypes.object,
+    destroyActionButton: React.PropTypes.object
   },
 
   getDefaultProps: function getDefaultProps() {
