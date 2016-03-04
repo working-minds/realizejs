@@ -1,4 +1,5 @@
 var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+var _difference = require('lodash/difference');
 
 window.PermissionManagerModal = React.createClass({
   mixins: [RequestHandlerMixin],
@@ -95,7 +96,7 @@ window.PermissionManagerModal = React.createClass({
         var permissions = permissionsByPrincipal.map(function(a) {return a.permission;});
         var implies = permissionsByPrincipal.map(function(a) {return a.implies;});
         implies = [].concat.apply([], implies);
-        permissions = _.difference(permissions, implies);
+        permissions = _difference(permissions, implies);
 
         postData.push({
           principal_id: principalPermissions[i].principal_id,
