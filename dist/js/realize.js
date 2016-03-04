@@ -48251,24 +48251,20 @@ window.HeaderSection = React.createClass({
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var TooltipMixin = require('realize/mixins/tooltip_mixin.jsx');
 
 window.Icon = React.createClass({
   displayName: 'Icon',
 
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, TooltipMixin],
 
   propTypes: {
-    type: React.PropTypes.string,
-    tooltipDelay: React.PropTypes.number,
-    tooltipText: React.PropTypes.string,
-    tooltipPosition: React.PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
+    type: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
-      type: '',
-      tooltipDelay: 10,
-      tooltipPosition: 'top'
+      type: ''
     };
   },
 
@@ -48281,21 +48277,10 @@ window.Icon = React.createClass({
   render: function render() {
     return React.createElement(
       'i',
-      _extends({ className: this.getClassName(),
-        'data-position': this.props.tooltipPosition,
-        'data-delay': this.props.tooltipDelay,
-        'data-tooltip': this.props.tooltipText
-      }, this.propsWithoutCSS()),
+      _extends({ className: this.getTooltipClassName()
+      }, this.tooltipAttributes(), this.propsWithoutCSS()),
       this.iconType()
     );
-  },
-
-  getClassName: function getClassName() {
-    var className = this.className();
-
-    if (this.props.tooltipText != false) className += ' tooltipped';
-
-    return className;
   },
 
   iconType: function iconType() {
@@ -48309,7 +48294,7 @@ window.Icon = React.createClass({
 });
 
 }).call(this,require("react"),require("realize/realize.js"))
-},{"react":381,"realize/mixins/css_class_mixin.jsx":494,"realize/realize.js":512}],434:[function(require,module,exports){
+},{"react":381,"realize/mixins/css_class_mixin.jsx":494,"realize/mixins/tooltip_mixin.jsx":509,"realize/realize.js":512}],434:[function(require,module,exports){
 (function (React){
 'use strict';
 
@@ -55125,9 +55110,24 @@ module.exports = RestActionsMixin;
 
 }).call(this,require("react"),require("realize/realize.js"))
 },{"react":381,"realize/realize.js":512}],509:[function(require,module,exports){
-"use strict";
+(function (React){
+'use strict';
 
 window.TooltipMixin = {
+  propTypes: {
+    tooltipDelay: React.PropTypes.number,
+    tooltipText: React.PropTypes.string,
+    tooltipPosition: React.PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      tooltipDelay: 10,
+      tooltipPosition: 'top',
+      tooltipText: null
+    };
+  },
+
   componentDidUpdate: function componentDidUpdate() {
     this.initializeTooltip();
   },
@@ -55137,13 +55137,31 @@ window.TooltipMixin = {
   },
 
   initializeTooltip: function initializeTooltip() {
-    $(".tooltipped").tooltip({ delay: 100 });
+    if (!!this.props.tooltipText) {
+      $('.tooltipped').tooltip();
+    }
+  },
+
+  getTooltipClassName: function getTooltipClassName() {
+    var className = this.className();
+    if (!!this.props.tooltipText) className += ' tooltipped';
+
+    return className;
+  },
+
+  tooltipAttributes: function tooltipAttributes() {
+    return {
+      'data-position': this.props.tooltipPosition,
+      'data-delay': this.props.tooltipDelay,
+      'data-tooltip': this.props.tooltipText
+    };
   }
 };
 
 module.exports = TooltipMixin;
 
-},{}],510:[function(require,module,exports){
+}).call(this,require("react"))
+},{"react":381}],510:[function(require,module,exports){
 'use strict';
 
 window.UtilsMixin = {
@@ -55876,4 +55894,4 @@ var utils = {
 
 module.exports = utils;
 
-},{}]},{},[404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,510,401,402,403,488,489,490,491,492,509,511,512,513,514,515,516,517,518,519,520]);
+},{}]},{},[404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,401,402,403,488,489,490,491,492,511,512,513,514,515,516,517,518,519,520]);

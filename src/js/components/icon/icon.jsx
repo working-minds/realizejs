@@ -1,20 +1,16 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var TooltipMixin = require('realize/mixins/tooltip_mixin.jsx');
 
 window.Icon = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, TooltipMixin],
 
   propTypes: {
-    type: React.PropTypes.string,
-    tooltipDelay: React.PropTypes.number,
-    tooltipText: React.PropTypes.string,
-    tooltipPosition: React.PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
+    type: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
-      type: '',
-      tooltipDelay: 10,
-      tooltipPosition: 'top'
+      type: ''
     };
   },
 
@@ -26,23 +22,12 @@ window.Icon = React.createClass({
 
   render: function() {
     return (
-        <i className={this.getClassName()}
-          data-position={this.props.tooltipPosition}
-          data-delay={this.props.tooltipDelay}
-          data-tooltip={this.props.tooltipText}
-          {...this.propsWithoutCSS()}>
-          {this.iconType()}
-        </i>
+      <i className={this.getTooltipClassName()}
+        {...this.tooltipAttributes()}
+        {...this.propsWithoutCSS()}>
+        {this.iconType()}
+      </i>
     );
-  },
-
-  getClassName: function() {
-    var className = this.className();
-
-    if (this.props.tooltipText != false)
-      className += ' tooltipped';
-
-    return className;
   },
 
   iconType: function() {
