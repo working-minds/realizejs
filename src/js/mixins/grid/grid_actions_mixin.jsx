@@ -12,7 +12,7 @@ window.GridActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionButtons: null,
+      actionButtons: {},
       rowHref: null,
       haveShowAction: false,
       createActionButton: {},
@@ -33,24 +33,18 @@ window.GridActionsMixin = {
   },
 
   getActionButtons: function() {
-    var actionButtons = this.props.actionButtons || {};
+    var propsActionButtons = this.props.actionButtons;
+    var propsExtend = propsActionButtons.extend;
+    var extendActionButtons = (typeof(propsExtend) == "boolean") ? propsExtend : true;
 
-    if(!actionButtons.member) {
-      actionButtons.member = this.getDefaultMemberActionButtons();
-    }
-
-    if(!actionButtons.collection) {
-      actionButtons.collection = this.getDefaultCollectionActionButtons();
-    }
-
-    return actionButtons;
+    return $.extend(extendActionButtons, this.getDefaultActionButtonsObject(), this.props.actionButtons);
   },
 
-  getMemberActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.member) {
-      return this.props.actionButtons.member;
-    } else {
-      return this.getDefaultMemberActionButtons();
+  getDefaultActionButtonsObject: function() {
+    return {
+      extend: true,
+      member: this.getDefaultMemberActionButtons(),
+      collection: this.getDefaultCollectionActionButtons()
     }
   },
 
@@ -65,14 +59,6 @@ window.GridActionsMixin = {
     }
 
     return actions;
-  },
-
-  getCollectionActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.collection) {
-      return this.props.actionButtons.collection;
-    } else {
-      return this.getDefaultCollectionActionButtons();
-    }
   },
 
   getDefaultCollectionActionButtons: function() {

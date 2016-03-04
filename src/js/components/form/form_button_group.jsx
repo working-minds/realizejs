@@ -1,4 +1,5 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var _isEmpty = require('lodash/isEmpty');
 
 window.FormButtonGroup = React.createClass({
   mixins: [CssClassMixin],
@@ -33,7 +34,7 @@ window.FormButtonGroup = React.createClass({
   },
 
   renderOtherButtons: function() {
-    if (!_.isEmpty(this.props.inputs) && this.isAllInputsHidden()) {
+    if (!_isEmpty(this.props.inputs) && this.isAllInputsHidden()) {
       return '';
     }
 
@@ -49,7 +50,7 @@ window.FormButtonGroup = React.createClass({
   },
 
   renderSubmitButton: function() {
-    if ((!_.isEmpty(this.props.inputs) && this.isAllInputsHidden()) || !this.props.submitButton) {
+    if ((!_isEmpty(this.props.inputs) && this.isAllInputsHidden()) || !this.props.submitButton) {
       return '';
     }
 
