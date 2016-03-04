@@ -19,7 +19,6 @@ window.GridForm = React.createClass({
     data: React.PropTypes.object,
     dataRowsParam: React.PropTypes.string,
     countParam: React.PropTypes.string,
-    actionUrls: React.PropTypes.object,
     actionButtons: React.PropTypes.object,
     form: React.PropTypes.object,
     createButton: React.PropTypes.object,

@@ -1,6 +1,6 @@
 {
   "name": "realize",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "authors": [
     "Pedro Jesus <pjesus@wkm.com.br>",
     "Lucas Toledo <ltoledo@wkm.com.br>",
@@ -34,7 +34,6 @@
     "numeral": "~1.5.3",
     "jquery-serialize-object": "~2.5.0",
     "string": "~3.3.0",
-    "jquery.inputmask":"~3.1.63",
-    "underscore": "*"
+    "jquery.inputmask":"~3.1.63"
   }
 }

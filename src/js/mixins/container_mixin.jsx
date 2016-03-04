@@ -1,3 +1,5 @@
+var _isEqual = require('lodash/isEqual');
+
 window.ContainerMixin = {
   propTypes: {
     forwardedProps: React.PropTypes.object
@@ -73,7 +75,7 @@ window.ContainerMixin = {
   },
 
   childPropValueIsNotDefault: function (propValue, defaultPropValue) {
-    return !_.isEqual(propValue, defaultPropValue);
+    return !_isEqual(propValue, defaultPropValue);
   },
 
 

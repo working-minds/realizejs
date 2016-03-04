@@ -1,3 +1,5 @@
+var _merge = require('lodash/merge');
+
 window.RestActionsMixin = {
   propTypes: {
     actionUrls: React.PropTypes.object,
@@ -7,14 +9,14 @@ window.RestActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionUrls: null,
+      actionUrls: {},
       actionMethods: null,
-      destroyConfirm: 'Tem certeza que deseja remover este item?'
+      destroyConfirm: Realize.i18n.t('table.destroyConfirm')
     };
   },
 
   getRestActionUrl: function(action, id) {
-    var actionUrls = this.props.actionUrls || Realize.config.restUrls;
+    var actionUrls = _merge(Realize.config.restUrls, this.props.actionUrls);
     var actionUrl = actionUrls[action];
     var actionBaseUrl = this.getActionBaseUrl();
     var actionQueryString = this.getActionQueryString();
@@ -28,7 +30,7 @@ window.RestActionsMixin = {
   },
 
   getRestActionMethod: function(action) {
-    var actionMethods = this.props.actionMethods || Realize.config.restMethods;
+    var actionMethods = _merge(Realize.config.restMethods, this.props.actionMethods);
     return actionMethods[action];
   },
 

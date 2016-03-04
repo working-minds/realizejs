@@ -16,6 +16,7 @@ Realize.i18n.registerLocale({
 
   table: {
     emptyResult: 'No results found.',
+    destroyConfirm: 'Are you sure that you want to delete this item?',
     selection: {
       clear: 'clear selection',
       selectAll: 'select all :count items',

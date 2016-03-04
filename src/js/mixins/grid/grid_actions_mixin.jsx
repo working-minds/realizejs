@@ -1,3 +1,6 @@
+var _mergeWith = require('lodash/mergewith');
+var _isArray = require('lodash/isarray');
+
 window.GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
@@ -12,7 +15,7 @@ window.GridActionsMixin = {
 
   getDefaultProps: function() {
     return {
-      actionButtons: null,
+      actionButtons: {},
       rowHref: null,
       haveShowAction: false,
       createActionButton: {},
@@ -33,24 +36,26 @@ window.GridActionsMixin = {
   },
 
   getActionButtons: function() {
-    var actionButtons = this.props.actionButtons || {};
-
-    if(!actionButtons.member) {
-      actionButtons.member = this.getDefaultMemberActionButtons();
-    }
-
-    if(!actionButtons.collection) {
-      actionButtons.collection = this.getDefaultCollectionActionButtons();
-    }
-
-    return actionButtons;
+    return _mergeWith(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
   },
 
-  getMemberActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.member) {
-      return this.props.actionButtons.member;
+  mergeActionButtons: function(defaultObject, propsObject) {
+    var propsActionButtons = this.props.actionButtons;
+    var propsExtend = propsActionButtons.extend;
+    var extendActionButtons = (typeof(propsExtend) == "boolean") ? propsExtend : false;
+
+    if(extendActionButtons && _isArray(propsObject) && _isArray(defaultObject)) {
+      return propsObject.concat(defaultObject);
     } else {
-      return this.getDefaultMemberActionButtons();
+      return propsObject;
+    }
+  },
+
+  getDefaultActionButtonsObject: function() {
+    return {
+      extend: true,
+      member: this.getDefaultMemberActionButtons(),
+      collection: this.getDefaultCollectionActionButtons()
     }
   },
 
@@ -65,14 +70,6 @@ window.GridActionsMixin = {
     }
 
     return actions;
-  },
-
-  getCollectionActionButtons: function() {
-    if($.isPlainObject(this.props.actionButtons) && !!this.props.actionButtons.collection) {
-      return this.props.actionButtons.collection;
-    } else {
-      return this.getDefaultCollectionActionButtons();
-    }
   },
 
   getDefaultCollectionActionButtons: function() {
