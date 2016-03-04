@@ -1,3 +1,6 @@
+var _mergeWith = require('lodash/mergewith');
+var _isArray = require('lodash/isarray');
+
 window.GridActionsMixin = {
   propTypes: {
     actionButtons: React.PropTypes.object,
@@ -33,11 +36,19 @@ window.GridActionsMixin = {
   },
 
   getActionButtons: function() {
+    return _mergeWith(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
+  },
+
+  mergeActionButtons: function(defaultObject, propsObject) {
     var propsActionButtons = this.props.actionButtons;
     var propsExtend = propsActionButtons.extend;
-    var extendActionButtons = (typeof(propsExtend) == "boolean") ? propsExtend : true;
+    var extendActionButtons = (typeof(propsExtend) == "boolean") ? propsExtend : false;
 
-    return $.extend(extendActionButtons, this.getDefaultActionButtonsObject(), this.props.actionButtons);
+    if(extendActionButtons && _isArray(propsObject) && _isArray(defaultObject)) {
+      return propsObject.concat(defaultObject);
+    } else {
+      return propsObject;
+    }
   },
 
   getDefaultActionButtonsObject: function() {
