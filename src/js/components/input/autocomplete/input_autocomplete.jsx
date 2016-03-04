@@ -169,6 +169,10 @@ window.InputAutocomplete = React.createClass({
   selectOption: function() {
     var resultRef = this.refs.result;
     var resultListRef = resultRef.refs.list;
+
+    if(!resultListRef)
+        return;
+        
     var activeOptionRef = resultListRef.refs["option_" + this.state.active];
 
     this.handleSelect({
