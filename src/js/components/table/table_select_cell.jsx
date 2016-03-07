@@ -41,9 +41,6 @@ window.TableSelectCell = React.createClass({
 
   handleChange: function(event) {
     this.props.onSelectToggle(event, this.props.dataRowIds, !this.props.selected);
-  },
-
-  handleClick: function(event) {
     event.stopPropagation();
   }
 });

@@ -57084,9 +57084,6 @@ window.TableSelectCell = React.createClass({
 
   handleChange: function handleChange(event) {
     this.props.onSelectToggle(event, this.props.dataRowIds, !this.props.selected);
-  },
-
-  handleClick: function handleClick(event) {
     event.stopPropagation();
   }
 });
