@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.4 (http://www.wkm.com.br)
+ * Realize v0.8.5 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -51055,7 +51055,10 @@ window.Grid = React.createClass({
     paginationOnTop: React.PropTypes.bool,
     clearThemeTable: React.PropTypes.bool,
     pagination: React.PropTypes.bool,
-    perPageOptions: React.PropTypes.array
+    perPageOptions: React.PropTypes.array,
+    onSelectDataRow: React.PropTypes.func,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAllRows: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -51083,6 +51086,9 @@ window.Grid = React.createClass({
       pagination: true,
       onLoadSuccess: function onLoadSuccess(data) {},
       onLoadError: function onLoadError(xhr, status, error) {},
+      onSelectDataRow: function onSelectDataRow(event, selectedRowIds) {},
+      onRemoveSelection: function onRemoveSelection(event) {},
+      onSelectAllRows: function onSelectAllRows(event) {},
       data: {
         dataRows: [],
         count: 0
@@ -51356,29 +51362,38 @@ window.Grid = React.createClass({
   /* Selection handlers */
 
   selectDataRows: function selectDataRows(event, selectedRowIds) {
-    event.preventDefault();
+    this.props.onSelectDataRow(event, selectedRowIds);
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
 
-    this.setState({
-      selectedRowIds: selectedRowIds,
-      allSelected: false
-    });
+      this.setState({
+        selectedRowIds: selectedRowIds,
+        allSelected: false
+      });
+    }
   },
 
   removeSelection: function removeSelection(event) {
-    event.preventDefault();
+    this.props.onRemoveSelection(event);
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
 
-    this.setState({
-      selectedRowIds: [],
-      allSelected: false
-    });
+      this.setState({
+        selectedRowIds: [],
+        allSelected: false
+      });
+    }
   },
 
   selectAllRows: function selectAllRows(event) {
-    event.preventDefault();
+    this.props.onSelectAllRows(event);
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
 
-    this.setState({
-      allSelected: true
-    });
+      this.setState({
+        allSelected: true
+      });
+    }
   }
 });
 
@@ -57069,9 +57084,6 @@ window.TableSelectCell = React.createClass({
 
   handleChange: function handleChange(event) {
     this.props.onSelectToggle(event, this.props.dataRowIds, !this.props.selected);
-  },
-
-  handleClick: function handleClick(event) {
     event.stopPropagation();
   }
 });
@@ -58537,7 +58549,10 @@ window.MaterializeSelectMixin = {
 
   handleChangeMaterialize: function handleChangeMaterialize(selectElement) {
     var $selectElement = $(selectElement);
-    var fakeEvent = { currentTarget: selectElement };
+    var fakeEvent = {
+      currentTarget: selectElement,
+      target: selectElement
+    };
 
     //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();

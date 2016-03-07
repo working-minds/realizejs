@@ -20,7 +20,10 @@ window.MaterializeSelectMixin = {
 
   handleChangeMaterialize: function(selectElement) {
     var $selectElement = $(selectElement);
-    var fakeEvent = { currentTarget: selectElement };
+    var fakeEvent = {
+      currentTarget: selectElement,
+      target: selectElement
+    };
 
     //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();
