@@ -39,7 +39,10 @@ window.Grid = React.createClass({
     paginationOnTop: React.PropTypes.bool,
     clearThemeTable: React.PropTypes.bool,
     pagination: React.PropTypes.bool,
-    perPageOptions: React.PropTypes.array
+    perPageOptions: React.PropTypes.array,
+    onSelectDataRow: React.PropTypes.func,
+    onRemoveSelection: React.PropTypes.func,
+    onSelectAllRows: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -67,6 +70,9 @@ window.Grid = React.createClass({
       pagination: true,
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
+      onSelectDataRow: function(event, selectedRowIds) {},
+      onRemoveSelection: function(event) {},
+      onSelectAllRows: function(event) {},
       data: {
         dataRows: [],
         count: 0
@@ -350,28 +356,37 @@ window.Grid = React.createClass({
   /* Selection handlers */
 
   selectDataRows: function(event, selectedRowIds) {
-    event.preventDefault();
+    this.props.onSelectDataRow(event, selectedRowIds);
+    if(!event.isDefaultPrevented()) {
+      event.preventDefault();
 
-    this.setState({
-      selectedRowIds: selectedRowIds,
-      allSelected: false
-    });
+      this.setState({
+        selectedRowIds: selectedRowIds,
+        allSelected: false
+      });
+    }
   },
 
   removeSelection: function(event) {
-    event.preventDefault();
+    this.props.onRemoveSelection(event);
+    if(!event.isDefaultPrevented()) {
+      event.preventDefault();
 
-    this.setState({
-      selectedRowIds: [],
-      allSelected: false
-    });
+      this.setState({
+        selectedRowIds: [],
+        allSelected: false
+      });
+    }
   },
 
   selectAllRows: function(event) {
-    event.preventDefault();
+    this.props.onSelectAllRows(event);
+    if(!event.isDefaultPrevented()) {
+      event.preventDefault();
 
-    this.setState({
-      allSelected: true
-    });
+      this.setState({
+        allSelected: true
+      });
+    }
   }
 });
