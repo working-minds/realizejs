@@ -6,10 +6,7 @@ window.InputComponentMixin = {
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,
-    errors: React.PropTypes.oneOfType([
-      React.PropTypes.object,
-      React.PropTypes.array
-    ]),
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     onChange: React.PropTypes.func,
     onFocus: React.PropTypes.func
   },

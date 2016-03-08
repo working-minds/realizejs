@@ -53461,7 +53461,7 @@ window.Input = React.createClass({
     component: React.PropTypes.string,
     formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,
-    errors: React.PropTypes.object,
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     resource: React.PropTypes.string,
     scope: React.PropTypes.oneOf(['resource', 'global']),
     maxLength: React.PropTypes.number
