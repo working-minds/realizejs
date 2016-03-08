@@ -32,7 +32,8 @@ window.InputMasked = React.createClass({
 
   getInitialState: function() {
     return {
-      placeholder: this.getPlaceholder()
+      placeholder: this.getPlaceholder(),
+      applyMask: true
     }
   },
 
@@ -63,7 +64,7 @@ window.InputMasked = React.createClass({
         value={this.state.value}
         placeholder={this.state.placeholder}
         className={this.inputClassName()}
-        onChange={this.handleChange}
+        onKeyUp={this.handleChange}
         onFocus={this._handleFocus}
         ref="input">
 
@@ -78,15 +79,19 @@ window.InputMasked = React.createClass({
   },
 
   componentDidUpdate: function() {
-    this.applyMask();
+    if(this.state.applyMask) {
+      this.applyMask();
+    }
   },
 
   handleChange: function(event) {
     this.props.onChange(event);
 
     if(!event.isDefaultPrevented()) {
-      var value = $(event.target).inputmask('unmaskedvalue');
-      this.setState({value: value});
+      this.setState({
+        value: event.target.value,
+        applyMask: false
+      });
     }
   },
 
@@ -177,7 +182,10 @@ window.InputMasked = React.createClass({
     var appliedPlaceholder = appliedMaskOptions.placeholder;
 
     if(!!appliedPlaceholder) {
-      this.setState({ placeholder: appliedPlaceholder });
+      this.setState({
+        placeholder: appliedPlaceholder,
+        applyMask: true
+      });
     }
   }
 });

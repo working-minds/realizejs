@@ -125,7 +125,7 @@ window.Form = React.createClass({
     FormActions.submit(this.props.id, event, postData);
 
     if(!event.isDefaultPrevented()) {
-      this.setState({isLoading: true, errors: {}, showSuccessFlash: false});
+      this.setState({isLoading: true, errors: [], showSuccessFlash: false});
       this.submit(postData);
     }
   },

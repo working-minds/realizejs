@@ -50496,13 +50496,14 @@ window.BulkEditForm = React.createClass({
 
   generateInputs: function generateInputs(inputComponents, inputGroup, i) {
     var inputIndex = 0;
+    var inputsProps = inputGroup.inputs;
 
     inputComponents.push(React.createElement(
       'h5',
       { key: "header_" + i },
       inputGroup.label
     ));
-    var inputsProps = inputGroup.inputs;
+
     for (var inputId in inputsProps) {
       if (inputsProps.hasOwnProperty(inputId)) {
         var inputProps = inputsProps[inputId];
@@ -50538,7 +50539,7 @@ window.BulkEditForm = React.createClass({
         } else {
           inputComponents.push(React.createElement(
             Container,
-            { className: 'row' },
+            { className: 'row', key: "container_" + inputId },
             React.createElement(InputSwitch, {
               id: switchId,
               name: switchName,
@@ -50719,7 +50720,7 @@ window.Form = React.createClass({
     FormActions.submit(this.props.id, event, postData);
 
     if (!event.isDefaultPrevented()) {
-      this.setState({ isLoading: true, errors: {}, showSuccessFlash: false });
+      this.setState({ isLoading: true, errors: [], showSuccessFlash: false });
       this.submit(postData);
     }
   },
@@ -53460,7 +53461,7 @@ window.Input = React.createClass({
     component: React.PropTypes.string,
     formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,
-    errors: React.PropTypes.object,
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     resource: React.PropTypes.string,
     scope: React.PropTypes.oneOf(['resource', 'global']),
     maxLength: React.PropTypes.number
@@ -54098,7 +54099,8 @@ window.InputMasked = React.createClass({
 
   getInitialState: function getInitialState() {
     return {
-      placeholder: this.getPlaceholder()
+      placeholder: this.getPlaceholder(),
+      applyMask: true
     };
   },
 
@@ -54129,7 +54131,7 @@ window.InputMasked = React.createClass({
         value: this.state.value,
         placeholder: this.state.placeholder,
         className: this.inputClassName(),
-        onChange: this.handleChange,
+        onKeyUp: this.handleChange,
         onFocus: this._handleFocus,
         ref: 'input' }),
       this.props.children
@@ -54142,15 +54144,19 @@ window.InputMasked = React.createClass({
   },
 
   componentDidUpdate: function componentDidUpdate() {
-    this.applyMask();
+    if (this.state.applyMask) {
+      this.applyMask();
+    }
   },
 
   handleChange: function handleChange(event) {
     this.props.onChange(event);
 
     if (!event.isDefaultPrevented()) {
-      var value = $(event.target).inputmask('unmaskedvalue');
-      this.setState({ value: value });
+      this.setState({
+        value: event.target.value,
+        applyMask: false
+      });
     }
   },
 
@@ -54241,7 +54247,10 @@ window.InputMasked = React.createClass({
     var appliedPlaceholder = appliedMaskOptions.placeholder;
 
     if (!!appliedPlaceholder) {
-      this.setState({ placeholder: appliedPlaceholder });
+      this.setState({
+        placeholder: appliedPlaceholder,
+        applyMask: true
+      });
     }
   }
 });
@@ -58348,7 +58357,7 @@ window.InputComponentMixin = {
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,
-    errors: React.PropTypes.node,
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     onChange: React.PropTypes.func,
     onFocus: React.PropTypes.func
   },
