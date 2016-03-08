@@ -94,9 +94,10 @@ window.BulkEditForm = React.createClass({
 
   generateInputs: function (inputComponents, inputGroup, i) {
     var inputIndex = 0;
+    var inputsProps = inputGroup.inputs;
 
     inputComponents.push(<h5 key={"header_" + i}>{inputGroup.label}</h5>);
-    var inputsProps = inputGroup.inputs;
+
     for (var inputId in inputsProps) {
       if (inputsProps.hasOwnProperty(inputId)) {
         var inputProps = inputsProps[inputId];
@@ -133,7 +134,7 @@ window.BulkEditForm = React.createClass({
           );
         } else {
           inputComponents.push(
-            <Container className="row">
+            <Container className="row" key={"container_" + inputId}>
               <InputSwitch
                 id={switchId}
                 name={switchName}
@@ -174,12 +175,9 @@ window.BulkEditForm = React.createClass({
 
     var disabled = $.extend([], this.state.disabled);
 
-    if(!sw.checked)
-    {
+    if(!sw.checked) {
       disabled.push(inputId);
-    }
-    else
-    {
+    } else {
       disabled.splice(disabled.indexOf(inputId), 1);
     }
 
