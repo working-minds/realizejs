@@ -52453,6 +52453,8 @@ window.InputAutocomplete = React.createClass({
   selectOption: function selectOption() {
     var resultRef = this.refs.result;
     var resultListRef = resultRef.refs.list;
+    if (!resultListRef) return;
+
     var activeOptionRef = resultListRef.refs["option_" + this.state.active];
 
     this.handleSelect({
@@ -58592,7 +58594,8 @@ window.SelectComponentMixin = {
     multiple: React.PropTypes.bool,
     onLoad: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
-    onSelect: React.PropTypes.func
+    onSelect: React.PropTypes.func,
+    requestTimeout: React.PropTypes.number
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -58609,7 +58612,8 @@ window.SelectComponentMixin = {
       },
       onLoadError: function onLoadError(xhr, status, error) {
         console.log('Select Load error:' + error);
-      }
+      },
+      requestTimeout: 300
     };
   },
 
@@ -58620,7 +58624,8 @@ window.SelectComponentMixin = {
       disabled: this.props.disabled,
       mustDisable: false,
       loadParams: {},
-      loadData: []
+      loadData: [],
+      hasPendingRequest: false
     };
   },
 
@@ -58675,14 +58680,29 @@ window.SelectComponentMixin = {
   },
 
   loadOptions: function loadOptions() {
-    $.ajax({
-      url: this.props.optionsUrl,
-      method: 'GET',
-      dataType: 'json',
-      data: this.state.loadParams,
-      success: this.handleLoad,
-      error: this.onLoadError
-    });
+    this.state.hasPendingRequest = true;
+    var requestTime = new Date().getTime();
+    var timeout = 0;
+
+    if (!!this.state.xhr && this.state.xhr.readyState != 4) this.state.xhr.abort();
+
+    if (!!this.state.lastXhrRequestTime) timeout = this.props.requestTimeout;
+
+    if (!!this.state.lastXhrRequestTime && this.state.lastXhrRequestTime + timeout > requestTime) clearTimeout(this.state.xhrTimer);
+
+    var context = this;
+    this.state.xhrTimer = setTimeout(function () {
+      context.state.xhr = $.ajax({
+        url: context.props.optionsUrl,
+        method: 'GET',
+        dataType: 'json',
+        data: context.state.loadParams,
+        success: context.handleLoad,
+        error: context.handleLoadError
+      });
+    }, timeout);
+
+    this.state.lastXhrRequestTime = requestTime;
   },
 
   handleLoad: function handleLoad(data) {
@@ -58709,7 +58729,13 @@ window.SelectComponentMixin = {
       mustDisable: !!this.props.dependsOn && options.length <= 0
     }, this.triggerDependableChanged);
 
+    this.state.hasPendingRequest = false;
     this.props.onLoad(data);
+  },
+
+  handleLoadError: function handleLoadError(xhr, status, error) {
+    this.state.hasPendingRequest = false;
+    this.props.onLoadError(xhr, status, error);
   },
 
   cacheOptions: function cacheOptions(options) {
