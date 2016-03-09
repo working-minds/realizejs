@@ -14,7 +14,8 @@ window.Input = React.createClass({
     errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     resource: React.PropTypes.string,
     scope: React.PropTypes.oneOf(['resource', 'global']),
-    maxLength: React.PropTypes.number
+    maxLength: React.PropTypes.number,
+    renderLabel: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -27,7 +28,8 @@ window.Input = React.createClass({
       errors: {},
       resource: null,
       scope: 'resource',
-      maxLength: null
+      maxLength: null,
+      renderLabel: true
     };
   },
 
@@ -52,8 +54,12 @@ window.Input = React.createClass({
 
   render: function() {
     var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
+    var renderLabel = this.props.renderLabel;
+    
     if(this.hasOwnProperty(renderFunction)) {
       return this[renderFunction]();
+    } else if(!renderLabel) {
+      return this.renderInputWithoutLabel();
     } else {
       return this.renderInput();
     }
