@@ -163,7 +163,7 @@ window.Input = React.createClass({
       masked: InputMasked
     };
 
-    return (mapping[component] || window[component]);
+    return (mapping[component] || window[component] || component);
   },
 
   getInputComponentId: function() {

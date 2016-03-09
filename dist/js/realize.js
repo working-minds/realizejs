@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.5 (http://www.wkm.com.br)
+ * Realize v0.8.7 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -53447,7 +53447,7 @@ window.Input = React.createClass({
       masked: InputMasked
     };
 
-    return mapping[component] || window[component];
+    return mapping[component] || window[component] || component;
   },
 
   getInputComponentId: function getInputComponentId() {
