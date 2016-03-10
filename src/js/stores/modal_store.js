@@ -40,3 +40,4 @@ var ModalStore = Reflux.createStore({
 });
 
 module.exports = ModalStore;
+window.ModalStore = ModalStore;
