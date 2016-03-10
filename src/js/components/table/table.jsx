@@ -144,7 +144,7 @@ window.Table = React.createClass({
 
   renderHeaderSelectCell: function() {
     if(this.props.selectable === 'none' || this.props.selectable === 'one') {
-      return <th></th>;
+      return <th className= {"table-select"}></th>;
     }
 
     return (

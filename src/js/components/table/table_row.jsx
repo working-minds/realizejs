@@ -65,12 +65,12 @@ window.TableRow = React.createClass({
 
   renderSelectCell: function() {
     if(this.props.selectable === 'none') {
-      return <td></td>;
+      return <td className= {"table-select"}></td>;
     }
 
     var rowSelectableFilter = this.props.rowSelectableFilter;
     if(typeof rowSelectableFilter === "function" && !rowSelectableFilter(this.props.data)) {
-      return <td></td>;
+      return <td className= {"table-select"}></td>;
     }
 
     return (
