@@ -1,4 +1,5 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var moment = require('moment');
 
 window.TableCell = React.createClass({
   mixins: [CssClassMixin],

@@ -30,7 +30,7 @@ Realize.i18n.registerLocale({
       formats: {
         number: '0,0.[000]',
         percentage: '0.00%',
-        currency: 'R$ 0,0.00',
+        currency: '$ 0,0.00',
         date: 'DD/MM/YYYY',
         datetime: 'DD/MM/YYYY HH:mm',
         time: 'HH:mm:ss'
