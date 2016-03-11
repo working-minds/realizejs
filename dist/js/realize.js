@@ -50171,7 +50171,7 @@ window.FlashContent = React.createClass({
   mixins: [CssClassMixin],
   propTypes: {
     type: React.PropTypes.string,
-    message: React.PropTypes.node
+    message: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string, React.PropTypes.array])
   },
 
   getInitialState: function getInitialState() {
@@ -50184,13 +50184,22 @@ window.FlashContent = React.createClass({
     return React.createElement(
       'div',
       { className: this.className() },
-      React.createElement(
+      this.renderMessages()
+    );
+  },
+
+  renderMessages: function renderMessages() {
+    var isArray = Array.isArray(this.props.message);
+    var messages = !isArray ? [this.props.message] : this.props.message;
+    return messages.map(function (message) {
+      return typeof message == "string" ? React.createElement(
         'p',
         null,
-        this.props.message
-      )
-    );
+        message
+      ) : message;
+    });
   }
+
 });
 
 }).call(this,require("react"))
@@ -50847,6 +50856,302 @@ window.InputGroup = React.createClass({
 
 }).call(this,require("react"),require("realize/realize.js"))
 },{"react":349,"realize/mixins/css_class_mixin.jsx":462,"realize/realize.js":480}],392:[function(require,module,exports){
+(function (React,ReactDOM){
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
+var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
+
+window.GridForm = React.createClass({
+  displayName: 'GridForm',
+
+  mixins: [CssClassMixin, UtilsMixin, RestActionsMixin],
+
+  propTypes: {
+    url: React.PropTypes.string,
+    paginationConfigs: React.PropTypes.object,
+    sortConfigs: React.PropTypes.object,
+    sortData: React.PropTypes.object,
+    filter: React.PropTypes.object,
+    columns: React.PropTypes.object,
+    data: React.PropTypes.object,
+    dataRowsParam: React.PropTypes.string,
+    countParam: React.PropTypes.string,
+    actionButtons: React.PropTypes.object,
+    form: React.PropTypes.object,
+    createButton: React.PropTypes.object,
+    updateButton: React.PropTypes.object,
+    cancelButton: React.PropTypes.object,
+    isLoading: React.PropTypes.bool,
+    selectable: React.PropTypes.bool,
+    eagerLoad: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool,
+    formComponent: React.PropTypes.func,
+    onSubmit: React.PropTypes.func,
+    onReset: React.PropTypes.func,
+    onSuccess: React.PropTypes.func,
+    onError: React.PropTypes.func,
+    onLoadSuccess: React.PropTypes.func,
+    onLoadError: React.PropTypes.func,
+    onDestroySuccess: React.PropTypes.func,
+    onDestroyError: React.PropTypes.func
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      form: {},
+      actionButtons: null,
+      themeClassKey: 'gridForm',
+      isLoading: false,
+      createButton: {
+        name: 'actions.add',
+        icon: 'add'
+      },
+      updateButton: {
+        name: 'actions.update',
+        icon: 'edit'
+      },
+      cancelButton: {
+        name: 'actions.cancel',
+        style: 'cancel'
+      },
+      selectable: true,
+      eagerLoad: true,
+      readOnly: false,
+      formComponent: Form,
+      onSubmit: function onSubmit(event, postData) {},
+      onReset: function onReset(event) {},
+      onSuccess: function onSuccess(data, status, xhr) {
+        return true;
+      },
+      onError: function onError(xhr, status, error) {
+        return true;
+      },
+      onLoadSuccess: function onLoadSuccess(data) {},
+      onLoadError: function onLoadError(xhr, status, error) {},
+      onDestroySuccess: function onDestroySuccess(data) {},
+      onDestroyError: function onDestroyError(xhr, status, error) {}
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      formAction: 'create',
+      selectedDataRow: null,
+      selectedRowId: null,
+      isLoading: this.props.isLoading
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: this.className() },
+      React.createElement(
+        'div',
+        { className: this.className() + "__form" },
+        this.renderForm()
+      ),
+      React.createElement(
+        'div',
+        { className: this.className() + "__grid" },
+        React.createElement(Grid, _extends({}, this.propsWithoutCSS(), {
+          actionButtons: this.getActionButtons(),
+          ref: 'grid'
+        }))
+      )
+    );
+  },
+
+  /* Form renderer */
+
+  renderForm: function renderForm() {
+    if (this.props.readOnly) {
+      return;
+    }
+
+    var formProps = React.__spread({ style: 'filter' }, this.props.form, {
+      action: this.getFormAction(),
+      data: this.state.selectedDataRow,
+      method: this.getFormMethod(),
+      submitButton: this.getFormSubmitButton(),
+      otherButtons: this.getFormOtherButtons(),
+      onSubmit: this.onSubmit,
+      onReset: this.onReset,
+      onSuccess: this.onSuccess,
+      onError: this.onError,
+      key: "form_" + this.generateUUID(),
+      ref: "form"
+    });
+
+    return React.createElement(this.props.formComponent, formProps, null);
+  },
+
+  getFormAction: function getFormAction() {
+    return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
+  },
+
+  getFormMethod: function getFormMethod() {
+    return this.getRestActionMethod(this.state.formAction);
+  },
+
+  getFormSubmitButton: function getFormSubmitButton() {
+    if (this.state.formAction == 'create') {
+      return this.props.createButton;
+    } else if (this.state.formAction == 'update') {
+      return this.props.updateButton;
+    }
+
+    return '';
+  },
+
+  getFormOtherButtons: function getFormOtherButtons() {
+    if (this.state.formAction == 'update') {
+      var cancelButtonProps = $.extend({}, this.props.cancelButton, {
+        type: "reset"
+      });
+
+      return [cancelButtonProps];
+    }
+
+    return [];
+  },
+
+  /* Default action buttons parser */
+
+  getActionButtons: function getActionButtons() {
+    var actionButtons = this.props.actionButtons || {};
+
+    if (!actionButtons.member) {
+      actionButtons.member = this.getDefaultMemberActionButtons();
+    }
+
+    if (!actionButtons.collection) {
+      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    }
+
+    return actionButtons;
+  },
+
+  getDefaultMemberActionButtons: function getDefaultMemberActionButtons() {
+    if (this.props.readOnly) {
+      return [];
+    }
+
+    return [this.getDefaultEditActionProps(), this.getDefaultDestroyActionProps()];
+  },
+
+  getDefaultCollectionActionButtons: function getDefaultCollectionActionButtons() {
+    return [];
+  },
+
+  getDefaultEditActionProps: function getDefaultEditActionProps() {
+    return $.extend({}, {
+      icon: 'edit',
+      onClick: this.editAction
+    }, this.props.editActionButton);
+  },
+
+  getDefaultDestroyActionProps: function getDefaultDestroyActionProps() {
+    return $.extend({}, {
+      icon: 'destroy',
+      onClick: this.destroyAction
+    }, this.props.destroyActionButton);
+  },
+
+  /* Event handlers */
+
+  onSubmit: function onSubmit(event, postData) {
+    this.props.onSubmit(event, postData);
+  },
+
+  onReset: function onReset(event) {
+    this.setState({
+      formAction: 'create',
+      selectedRowId: null,
+      selectedDataRow: null
+    });
+
+    this.clearFormErrors();
+    this.props.onReset(event);
+  },
+
+  onSuccess: function onSuccess(data, status, xhr) {
+    if (this.props.onSuccess(data, status, xhr)) {
+      this.loadGridData();
+      this.resetForm();
+    }
+  },
+
+  onError: function onError(xhr, status, error) {
+    return this.props.onError(xhr, status, error);
+  },
+
+  /* Grid member actions */
+
+  editAction: function editAction(event, id, data) {
+    this.setState({
+      formAction: 'update',
+      selectedRowId: id,
+      selectedDataRow: data
+    });
+
+    this.clearFormErrors();
+  },
+
+  destroyAction: function destroyAction(event, id) {
+    var destroyUrl = this.getRestActionUrl('destroy', id);
+    var destroyMethod = this.getRestActionMethod('destroy');
+
+    if (!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
+      this.setState({ isLoading: true });
+      this.resetForm();
+
+      $.ajax({
+        url: destroyUrl,
+        method: destroyMethod,
+        success: this.handleDestroy,
+        error: this.handleDestroyError
+      });
+    }
+  },
+
+  /* Destroy event handlers */
+
+  handleDestroy: function handleDestroy(data, status, xhr) {
+    this.props.onDestroySuccess(data, status, xhr);
+    this.loadGridData();
+  },
+
+  handleDestroyError: function handleDestroyError(xhr, status, error) {
+    this.setState({ isLoading: false });
+    this.props.onDestroyError(xhr, status, error);
+  },
+
+  /* Utilities */
+
+  loadGridData: function loadGridData() {
+    var gridRef = this.refs.grid;
+    gridRef.loadData();
+  },
+
+  resetForm: function resetForm() {
+    var formNode = ReactDOM.findDOMNode(this.refs.form);
+    formNode.reset();
+  },
+
+  clearFormErrors: function clearFormErrors() {
+    var formRef = this.refs.form;
+    formRef.clearErrors();
+  }
+
+});
+
+}).call(this,require("react"),require("react-dom"))
+},{"react":349,"react-dom":187,"realize/mixins/css_class_mixin.jsx":462,"realize/mixins/rest_actions_mixin.jsx":476,"realize/mixins/utils_mixin.jsx":478}],393:[function(require,module,exports){
 (function (React,ReactDOM,Realize){
 'use strict';
 
@@ -51233,7 +51538,7 @@ window.Grid = React.createClass({
 });
 
 }).call(this,require("react"),require("react-dom"),require("realize/realize.js"))
-},{"react":349,"react-dom":187,"realize/mixins/css_class_mixin.jsx":462,"realize/mixins/grid/grid_actions_mixin.jsx":467,"realize/mixins/request_handler_mixin.jsx":475,"realize/mixins/rest_actions_mixin.jsx":476,"realize/realize.js":480}],393:[function(require,module,exports){
+},{"react":349,"react-dom":187,"realize/mixins/css_class_mixin.jsx":462,"realize/mixins/grid/grid_actions_mixin.jsx":467,"realize/mixins/request_handler_mixin.jsx":475,"realize/mixins/rest_actions_mixin.jsx":476,"realize/realize.js":480}],394:[function(require,module,exports){
 (function (React,ReactDOM){
 'use strict';
 
@@ -51358,7 +51663,7 @@ window.GridFilter = React.createClass({
 });
 
 }).call(this,require("react"),require("react-dom"))
-},{"react":349,"react-dom":187,"realize/mixins/css_class_mixin.jsx":462}],394:[function(require,module,exports){
+},{"react":349,"react-dom":187,"realize/mixins/css_class_mixin.jsx":462}],395:[function(require,module,exports){
 (function (React){
 'use strict';
 
@@ -51468,7 +51773,7 @@ window.GridPagination = React.createClass({
 });
 
 }).call(this,require("react"))
-},{"react":349,"realize/mixins/css_class_mixin.jsx":462}],395:[function(require,module,exports){
+},{"react":349,"realize/mixins/css_class_mixin.jsx":462}],396:[function(require,module,exports){
 (function (React){
 'use strict';
 
@@ -51497,303 +51802,7 @@ window.GridTable = React.createClass({
 });
 
 }).call(this,require("react"))
-},{"react":349,"realize/mixins/css_class_mixin.jsx":462}],396:[function(require,module,exports){
-(function (React,ReactDOM){
-'use strict';
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
-var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
-
-window.GridForm = React.createClass({
-  displayName: 'GridForm',
-
-  mixins: [CssClassMixin, UtilsMixin, RestActionsMixin],
-
-  propTypes: {
-    url: React.PropTypes.string,
-    paginationConfigs: React.PropTypes.object,
-    sortConfigs: React.PropTypes.object,
-    sortData: React.PropTypes.object,
-    filter: React.PropTypes.object,
-    columns: React.PropTypes.object,
-    data: React.PropTypes.object,
-    dataRowsParam: React.PropTypes.string,
-    countParam: React.PropTypes.string,
-    actionButtons: React.PropTypes.object,
-    form: React.PropTypes.object,
-    createButton: React.PropTypes.object,
-    updateButton: React.PropTypes.object,
-    cancelButton: React.PropTypes.object,
-    isLoading: React.PropTypes.bool,
-    selectable: React.PropTypes.bool,
-    eagerLoad: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    formComponent: React.PropTypes.func,
-    onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
-    onLoadSuccess: React.PropTypes.func,
-    onLoadError: React.PropTypes.func,
-    onDestroySuccess: React.PropTypes.func,
-    onDestroyError: React.PropTypes.func
-  },
-
-  getDefaultProps: function getDefaultProps() {
-    return {
-      form: {},
-      actionButtons: null,
-      themeClassKey: 'gridForm',
-      isLoading: false,
-      createButton: {
-        name: 'actions.add',
-        icon: 'add'
-      },
-      updateButton: {
-        name: 'actions.update',
-        icon: 'edit'
-      },
-      cancelButton: {
-        name: 'actions.cancel',
-        style: 'cancel'
-      },
-      selectable: true,
-      eagerLoad: true,
-      readOnly: false,
-      formComponent: Form,
-      onSubmit: function onSubmit(event, postData) {},
-      onReset: function onReset(event) {},
-      onSuccess: function onSuccess(data, status, xhr) {
-        return true;
-      },
-      onError: function onError(xhr, status, error) {
-        return true;
-      },
-      onLoadSuccess: function onLoadSuccess(data) {},
-      onLoadError: function onLoadError(xhr, status, error) {},
-      onDestroySuccess: function onDestroySuccess(data) {},
-      onDestroyError: function onDestroyError(xhr, status, error) {}
-    };
-  },
-
-  getInitialState: function getInitialState() {
-    return {
-      formAction: 'create',
-      selectedDataRow: null,
-      selectedRowId: null,
-      isLoading: this.props.isLoading
-    };
-  },
-
-  render: function render() {
-    return React.createElement(
-      'div',
-      { className: this.className() },
-      React.createElement(
-        'div',
-        { className: this.className() + "__form" },
-        this.renderForm()
-      ),
-      React.createElement(
-        'div',
-        { className: this.className() + "__grid" },
-        React.createElement(Grid, _extends({}, this.propsWithoutCSS(), {
-          actionButtons: this.getActionButtons(),
-          ref: 'grid'
-        }))
-      )
-    );
-  },
-
-  /* Form renderer */
-
-  renderForm: function renderForm() {
-    if (this.props.readOnly) {
-      return;
-    }
-
-    var formProps = React.__spread({ style: 'filter' }, this.props.form, {
-      action: this.getFormAction(),
-      data: this.state.selectedDataRow,
-      method: this.getFormMethod(),
-      submitButton: this.getFormSubmitButton(),
-      otherButtons: this.getFormOtherButtons(),
-      onSubmit: this.onSubmit,
-      onReset: this.onReset,
-      onSuccess: this.onSuccess,
-      onError: this.onError,
-      key: "form_" + this.generateUUID(),
-      ref: "form"
-    });
-
-    return React.createElement(this.props.formComponent, formProps, null);
-  },
-
-  getFormAction: function getFormAction() {
-    return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
-  },
-
-  getFormMethod: function getFormMethod() {
-    return this.getRestActionMethod(this.state.formAction);
-  },
-
-  getFormSubmitButton: function getFormSubmitButton() {
-    if (this.state.formAction == 'create') {
-      return this.props.createButton;
-    } else if (this.state.formAction == 'update') {
-      return this.props.updateButton;
-    }
-
-    return '';
-  },
-
-  getFormOtherButtons: function getFormOtherButtons() {
-    if (this.state.formAction == 'update') {
-      var cancelButtonProps = $.extend({}, this.props.cancelButton, {
-        type: "reset"
-      });
-
-      return [cancelButtonProps];
-    }
-
-    return [];
-  },
-
-  /* Default action buttons parser */
-
-  getActionButtons: function getActionButtons() {
-    var actionButtons = this.props.actionButtons || {};
-
-    if (!actionButtons.member) {
-      actionButtons.member = this.getDefaultMemberActionButtons();
-    }
-
-    if (!actionButtons.collection) {
-      actionButtons.collection = this.getDefaultCollectionActionButtons();
-    }
-
-    return actionButtons;
-  },
-
-  getDefaultMemberActionButtons: function getDefaultMemberActionButtons() {
-    if (this.props.readOnly) {
-      return [];
-    }
-
-    return [this.getDefaultEditActionProps(), this.getDefaultDestroyActionProps()];
-  },
-
-  getDefaultCollectionActionButtons: function getDefaultCollectionActionButtons() {
-    return [];
-  },
-
-  getDefaultEditActionProps: function getDefaultEditActionProps() {
-    return $.extend({}, {
-      icon: 'edit',
-      onClick: this.editAction
-    }, this.props.editActionButton);
-  },
-
-  getDefaultDestroyActionProps: function getDefaultDestroyActionProps() {
-    return $.extend({}, {
-      icon: 'destroy',
-      onClick: this.destroyAction
-    }, this.props.destroyActionButton);
-  },
-
-  /* Event handlers */
-
-  onSubmit: function onSubmit(event, postData) {
-    this.props.onSubmit(event, postData);
-  },
-
-  onReset: function onReset(event) {
-    this.setState({
-      formAction: 'create',
-      selectedRowId: null,
-      selectedDataRow: null
-    });
-
-    this.clearFormErrors();
-    this.props.onReset(event);
-  },
-
-  onSuccess: function onSuccess(data, status, xhr) {
-    if (this.props.onSuccess(data, status, xhr)) {
-      this.loadGridData();
-      this.resetForm();
-    }
-  },
-
-  onError: function onError(xhr, status, error) {
-    return this.props.onError(xhr, status, error);
-  },
-
-  /* Grid member actions */
-
-  editAction: function editAction(event, id, data) {
-    this.setState({
-      formAction: 'update',
-      selectedRowId: id,
-      selectedDataRow: data
-    });
-
-    this.clearFormErrors();
-  },
-
-  destroyAction: function destroyAction(event, id) {
-    var destroyUrl = this.getRestActionUrl('destroy', id);
-    var destroyMethod = this.getRestActionMethod('destroy');
-
-    if (!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({ isLoading: true });
-      this.resetForm();
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
-      });
-    }
-  },
-
-  /* Destroy event handlers */
-
-  handleDestroy: function handleDestroy(data, status, xhr) {
-    this.props.onDestroySuccess(data, status, xhr);
-    this.loadGridData();
-  },
-
-  handleDestroyError: function handleDestroyError(xhr, status, error) {
-    this.setState({ isLoading: false });
-    this.props.onDestroyError(xhr, status, error);
-  },
-
-  /* Utilities */
-
-  loadGridData: function loadGridData() {
-    var gridRef = this.refs.grid;
-    gridRef.loadData();
-  },
-
-  resetForm: function resetForm() {
-    var formNode = ReactDOM.findDOMNode(this.refs.form);
-    formNode.reset();
-  },
-
-  clearFormErrors: function clearFormErrors() {
-    var formRef = this.refs.form;
-    formRef.clearErrors();
-  }
-
-});
-
-}).call(this,require("react"),require("react-dom"))
-},{"react":349,"react-dom":187,"realize/mixins/css_class_mixin.jsx":462,"realize/mixins/rest_actions_mixin.jsx":476,"realize/mixins/utils_mixin.jsx":478}],397:[function(require,module,exports){
+},{"react":349,"realize/mixins/css_class_mixin.jsx":462}],397:[function(require,module,exports){
 (function (React){
 'use strict';
 
@@ -53300,7 +53309,8 @@ window.Input = React.createClass({
     errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     resource: React.PropTypes.string,
     scope: React.PropTypes.oneOf(['resource', 'global']),
-    maxLength: React.PropTypes.number
+    maxLength: React.PropTypes.number,
+    renderLabel: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -53313,7 +53323,8 @@ window.Input = React.createClass({
       errors: {},
       resource: null,
       scope: 'resource',
-      maxLength: null
+      maxLength: null,
+      renderLabel: true
     };
   },
 
@@ -53338,8 +53349,12 @@ window.Input = React.createClass({
 
   render: function render() {
     var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
+    var renderLabel = this.props.renderLabel;
+
     if (this.hasOwnProperty(renderFunction)) {
       return this[renderFunction]();
+    } else if (!renderLabel) {
+      return this.renderInputWithoutLabel();
     } else {
       return this.renderInput();
     }
@@ -59156,6 +59171,7 @@ var ModalStore = Reflux.createStore({
 });
 
 module.exports = ModalStore;
+window.ModalStore = ModalStore;
 
 }).call(this,require("reflux"))
 },{"realize/actions/modal_actions.js":371,"reflux":366}],485:[function(require,module,exports){
@@ -59685,4 +59701,4 @@ var utils = {
 
 module.exports = utils;
 
-},{}]},{},[372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,369,370,371,456,457,458,459,460,479,480,481,482,483,484,485,486,487,488]);
+},{}]},{},[372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,393,394,395,396,392,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,369,370,371,456,457,458,459,460,479,480,481,482,483,484,485,486,487,488]);
