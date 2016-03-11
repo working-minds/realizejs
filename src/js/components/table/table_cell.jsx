@@ -1,5 +1,6 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var moment = require('moment');
+var numeral = require('realize/numeralWithLocale.js');
 
 window.TableCell = React.createClass({
   mixins: [CssClassMixin],
@@ -20,6 +21,11 @@ window.TableCell = React.createClass({
       formatString: null,
       data: {}
     };
+  },
+
+  componentWillMount: function() {
+    var currentLanguage = Realize.i18n.currentLocale.toLowerCase();
+    numeral.language(currentLanguage);
   },
 
   render: function() {
