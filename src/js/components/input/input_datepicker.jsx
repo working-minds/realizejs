@@ -1,5 +1,6 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var moment = require('moment');
 
 window.InputDatepicker = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin],

@@ -31,7 +31,8 @@ module.exports = function(grunt) {
         transform: [
           ['babelify', {
             presets: ['es2015', 'stage-2', 'react']
-          }]
+          }],
+          'require-globify'
         ],
         browserifyOptions: {
           insertGlobalVars: {

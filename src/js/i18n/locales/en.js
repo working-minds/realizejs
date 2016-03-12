@@ -24,6 +24,17 @@ Realize.i18n.registerLocale({
         singular: '1 item selected',
         plural: ':count items selected'
       }
+    },
+
+    cell: {
+      formats: {
+        number: '0,0.[000]',
+        percentage: '0.00%',
+        currency: '$ 0,0.00',
+        date: 'MM/DD/YYYY',
+        datetime: 'MM/DD/YYYY HH:mm',
+        time: 'HH:mm:ss'
+      }
     }
   },
 

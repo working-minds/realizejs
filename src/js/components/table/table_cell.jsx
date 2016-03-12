@@ -1,4 +1,6 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var moment = require('moment');
+var numeral = require('realize/numeralWithLocale.js');
 
 window.TableCell = React.createClass({
   mixins: [CssClassMixin],
@@ -8,15 +10,22 @@ window.TableCell = React.createClass({
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time'])
+    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
+    formatString: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'table.cell',
       format: 'text',
+      formatString: null,
       data: {}
     };
+  },
+
+  componentWillMount: function() {
+    var currentLanguage = Realize.i18n.currentLocale.toLowerCase();
+    numeral.language(currentLanguage);
   },
 
   render: function() {
@@ -74,7 +83,7 @@ window.TableCell = React.createClass({
 
   numberValue: function(value) {
     value = parseFloat(value);
-    return numeral(value).format('0,0.[000]');
+    return numeral(value).format(this.getFormatString());
   },
 
   percentageValue: function(value) {
@@ -83,12 +92,12 @@ window.TableCell = React.createClass({
       value = value / 100.0;
     }
 
-    return numeral(value).format('0.00%');
+    return numeral(value).format(this.getFormatString());
   },
 
   currencyValue: function(value) {
     value = parseFloat(value);
-    return numeral(value).format('$ 0,0.00');
+    return numeral(value).format(this.getFormatString());
   },
 
   booleanValue: function(value) {
@@ -97,16 +106,23 @@ window.TableCell = React.createClass({
 
   dateValue: function(value) {
     value = moment(value);
-    return value.format("DD/MM/YYYY");
+    return value.format(this.getFormatString());
   },
 
   datetimeValue: function(value) {
     value = moment(value);
-    return value.format("DD/MM/YYYY HH:mm");
+    return value.format(this.getFormatString());
   },
 
   timeValue: function(value) {
-    value = moment(value);
-    return value.format("HH:mm:ss");
+    value = moment.utc(value);
+    return value.format(this.getFormatString());
+  },
+
+  getFormatString: function() {
+    var format = this.props.format;
+    var formatString = this.props.formatString;
+
+    return formatString || Realize.i18n.t('table.cell.formats.' + format);
   }
 });
