@@ -14,7 +14,7 @@ var i18n = {
     }
 
     var currentLocaleObj = this.locales[locale] || {};
-    this.locales[locale] = $.extend({}, currentLocaleObj, newLocaleObj);
+    this.locales[locale] = $.extend(true, {}, currentLocaleObj, newLocaleObj);
   },
 
   setLocale: function(locale) {
