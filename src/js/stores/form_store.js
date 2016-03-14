@@ -54,3 +54,4 @@ var FormStore = Reflux.createStore({
 });
 
 module.exports = FormStore;
+window.FormStore = FormStore;

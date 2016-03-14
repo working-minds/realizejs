@@ -25,3 +25,4 @@ var InputSelectStore = Reflux.createStore({
 });
 
 module.exports = InputSelectStore;
+window.InputSelectStore = InputSelectStore;
