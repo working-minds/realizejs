@@ -43,5 +43,5 @@ exports.config = {
 };
 
 exports.setConfig = function(newConfig) {
-  $.extend(true, Realize.config, newConfig);
+  $.extend(true, exports.config, newConfig);
 };

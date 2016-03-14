@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.7 (http://www.wkm.com.br)
+ * Realize v0.8.9 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -62618,7 +62618,6 @@ window.Tabs = React.createClass({
 
 }).call(this,require("react"),require("react-dom"))
 },{"react":378,"react-dom":216,"realize/mixins/container_mixin.jsx":490,"realize/mixins/css_class_mixin.jsx":491}],485:[function(require,module,exports){
-(function (Realize){
 'use strict';
 
 module.exports = exports = {};
@@ -62662,11 +62661,10 @@ exports.config = {
 };
 
 exports.setConfig = function (newConfig) {
-  $.extend(true, Realize.config, newConfig);
+  $.extend(true, exports.config, newConfig);
 };
 
-}).call(this,require("realize/realize.js"))
-},{"realize/realize.js":510}],486:[function(require,module,exports){
+},{}],486:[function(require,module,exports){
 (function (React,ReactDOM,Reflux,__argument0,__argument1,__argument2,__argument3,Realize){
 "use strict";
 
