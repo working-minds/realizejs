@@ -28,8 +28,8 @@ window.FlashContent = React.createClass({
  renderMessages: function () {
    var isArray = Array.isArray(this.props.message);
    var messages = !isArray ? [this.props.message] : this.props.message;
-   return messages.map(function(message) {
-     return typeof message == "string" ? <p>{message}</p> : message;
+   return messages.map(function(message, index) {
+     return typeof message == "string" ? <p key={"flash_content_" + index}>{message}</p> : message;
    });
  }
 

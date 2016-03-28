@@ -55519,7 +55519,13 @@ window.Flash = React.createClass({
   render: function render() {
     return React.createElement(
       ReactCSSTransitionGroup,
-      { transitionName: 'dismiss', transitionAppear: true, transitionAppearTimeout: 500 },
+      {
+        transitionName: 'dismiss',
+        transitionAppear: true,
+        transitionAppearTimeout: 500,
+        transitionEnterTimeout: 500,
+        transitionLeaveTimeout: 500
+      },
       this.state.dismissed ? '' : this.renderFlash()
     );
   },
@@ -55578,10 +55584,10 @@ window.FlashContent = React.createClass({
   renderMessages: function renderMessages() {
     var isArray = Array.isArray(this.props.message);
     var messages = !isArray ? [this.props.message] : this.props.message;
-    return messages.map(function (message) {
+    return messages.map(function (message, index) {
       return typeof message == "string" ? React.createElement(
         'p',
-        null,
+        { key: "flash_content_" + index },
         message
       ) : message;
     });
@@ -56134,7 +56140,7 @@ window.InputGroup = React.createClass({
   propTypes: {
     inputs: React.PropTypes.object,
     data: React.PropTypes.object,
-    errors: React.PropTypes.object,
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     resource: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
@@ -59108,7 +59114,7 @@ window.InputError = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    errors: React.PropTypes.node
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array])
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -63916,7 +63922,7 @@ window.SelectComponentMixin = {
     if (this.props.optionsUrl) {
       if (!!this.props.dependsOn) {
         this.listenToDependableChange();
-        this.loadDependentOptions();
+        this.loadDependentOptions(null, true);
       } else {
         this.loadOptions();
       }
@@ -64041,16 +64047,16 @@ window.SelectComponentMixin = {
   },
 
   onDependableChange: function onDependableChange(event, dependableValue) {
-    this.loadDependentOptions(dependableValue);
+    this.loadDependentOptions(dependableValue, false);
   },
 
-  loadDependentOptions: function loadDependentOptions(dependableValue) {
+  loadDependentOptions: function loadDependentOptions(dependableValue, keepValue) {
     if (!dependableValue) {
       dependableValue = this.getDependableNode().val();
     }
 
     if (!dependableValue || dependableValue.length === 0) {
-      this.emptyAndDisable();
+      this.emptyAndDisable(keepValue);
       return false;
     }
 
@@ -64076,12 +64082,18 @@ window.SelectComponentMixin = {
     $valuesElement.trigger('dependable_changed', [optionValues]);
   },
 
-  emptyAndDisable: function emptyAndDisable() {
-    this.setState({
+  emptyAndDisable: function emptyAndDisable(keepValue) {
+    var newState = {
       options: [],
       optionsCache: [],
       mustDisable: true
-    });
+    };
+
+    if (!keepValue) {
+      newState.value = [];
+    }
+
+    this.setState(newState);
   },
 
   isDisabled: function isDisabled() {

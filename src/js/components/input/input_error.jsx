@@ -4,7 +4,7 @@ window.InputError = React.createClass({
   mixins: [CssClassMixin],
 
   propTypes: {
-    errors: React.PropTypes.node
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array])
   },
 
   getDefaultProps: function() {
