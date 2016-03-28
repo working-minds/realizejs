@@ -57,7 +57,7 @@ window.SelectComponentMixin = {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {
         this.listenToDependableChange();
-        this.loadDependentOptions();
+        this.loadDependentOptions(null, true);
       } else {
         this.loadOptions();
       }
@@ -187,16 +187,16 @@ window.SelectComponentMixin = {
   },
 
   onDependableChange: function(event, dependableValue) {
-    this.loadDependentOptions(dependableValue);
+    this.loadDependentOptions(dependableValue, false);
   },
 
-  loadDependentOptions: function(dependableValue) {
+  loadDependentOptions: function(dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
     }
 
     if(!dependableValue || dependableValue.length === 0) {
-      this.emptyAndDisable();
+      this.emptyAndDisable(keepValue);
       return false;
     }
 
@@ -222,12 +222,18 @@ window.SelectComponentMixin = {
     $valuesElement.trigger('dependable_changed', [optionValues]);
   },
 
-  emptyAndDisable: function() {
-    this.setState({
+  emptyAndDisable: function(keepValue) {
+    var newState = {
       options: [],
       optionsCache: [],
       mustDisable: true
-    });
+    };
+
+    if(!keepValue) {
+      newState.value = [];
+    }
+
+    this.setState(newState);
   },
 
   isDisabled: function () {

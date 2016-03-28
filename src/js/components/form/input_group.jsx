@@ -6,7 +6,7 @@ window.InputGroup = React.createClass({
   propTypes: {
     inputs: React.PropTypes.object,
     data: React.PropTypes.object,
-    errors: React.PropTypes.object,
+    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
     resource: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
