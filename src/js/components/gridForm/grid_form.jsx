@@ -2,6 +2,9 @@ var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
 var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
 
+var _merge = require('lodash/merge');
+var _findIndex = require('lodash/findindex');
+
 window.GridForm = React.createClass({
   mixins: [
     CssClassMixin,
@@ -10,6 +13,8 @@ window.GridForm = React.createClass({
   ],
 
   propTypes: {
+    clientSide: React.PropTypes.bool,
+    clientSideIdField: React.PropTypes.string,
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
@@ -41,6 +46,8 @@ window.GridForm = React.createClass({
 
   getDefaultProps: function() {
     return {
+      clientSide: false,
+      clientSideIdField: '_clientSideId',
       form: {},
       actionButtons: null,
       themeClassKey: 'gridForm',
@@ -77,7 +84,8 @@ window.GridForm = React.createClass({
       formAction: 'create',
       selectedDataRow: null,
       selectedRowId: null,
-      isLoading: this.props.isLoading
+      isLoading: this.props.isLoading,
+      clientSideData: []
     };
   },
 
@@ -90,7 +98,7 @@ window.GridForm = React.createClass({
 
         <div className={this.className() + "__grid"}>
           <Grid
-            {...this.propsWithoutCSS()}
+            {...this.getGridProps()}
             actionButtons={this.getActionButtons()}
             ref="grid"
           />
@@ -106,10 +114,12 @@ window.GridForm = React.createClass({
       return;
     }
 
-    var formProps = React.__spread({style: 'filter'}, this.props.form, {
+    var formProps = _merge({style: 'filter'}, this.props.form, {
       action: this.getFormAction(),
       data: this.state.selectedDataRow,
       method: this.getFormMethod(),
+      resource: !!this.props.clientSide ? null : this.props.form.resource,
+      inputs: this.getFormInputs(),
       submitButton: this.getFormSubmitButton(),
       otherButtons: this.getFormOtherButtons(),
       onSubmit: this.onSubmit,
@@ -151,6 +161,15 @@ window.GridForm = React.createClass({
     }
 
     return [];
+  },
+
+  getFormInputs: function() {
+    var formInputs = this.props.form.inputs;
+    if(!!this.props.clientSide) {
+      formInputs[this.props.clientSideIdField] = { component: 'hidden' };
+    }
+
+    return formInputs;
   },
 
   /* Default action buttons parser */
@@ -202,6 +221,9 @@ window.GridForm = React.createClass({
 
   onSubmit: function(event, postData) {
     this.props.onSubmit(event, postData);
+    if(!!this.props.clientSide) {
+      this.handleClientSideSubmit(event, postData);
+    }
   },
 
   onReset: function(event) {
@@ -239,6 +261,15 @@ window.GridForm = React.createClass({
   },
 
   destroyAction: function(event, id) {
+    if(!!this.props.clientSide) {
+      this.destroyActionClientSide(event, id);
+    }
+    else {
+      this.destroyActionServerSide(event, id);
+    }
+  },
+
+  destroyActionServerSide: function(event, id) {
     var destroyUrl = this.getRestActionUrl('destroy', id);
     var destroyMethod = this.getRestActionMethod('destroy');
 
@@ -265,6 +296,63 @@ window.GridForm = React.createClass({
   handleDestroyError: function(xhr, status, error) {
     this.setState({isLoading: false});
     this.props.onDestroyError(xhr, status, error);
+  },
+
+  /* Client side mode handlers */
+
+  getGridProps: function() {
+    var gridProps = _merge({}, this.propsWithoutCSS());
+    if(!!this.props.clientSide) {
+      _merge(gridProps, {
+        url: '',
+        pagination: false,
+        selectable: false,
+        eagerLoad: false,
+        key: this.generateUUID(),
+        dataRowIdField: this.props.clientSideIdField,
+        data: {
+          dataRows: this.state.clientSideData
+        },
+        sortConfigs: {
+          sortable: false
+        }
+      });
+    }
+
+    return gridProps;
+  },
+
+  handleClientSideSubmit: function(event, postData) {
+    event.preventDefault();
+
+    var submittedDataRow = _merge({}, postData);
+    var submittedDataRowIndex = this.findClientSideDataIndex(submittedDataRow[this.props.clientSideIdField]);
+
+    if(submittedDataRowIndex >= 0) {
+      this.state.clientSideData.splice(submittedDataRowIndex, 1, submittedDataRow);
+    } else {
+      submittedDataRow[this.props.clientSideIdField] = this.generateUUID();
+      this.state.clientSideData.push(submittedDataRow);
+    }
+
+    this.setState({
+      formAction: 'create',
+      selectedRowId: null,
+      selectedDataRow: null
+    });
+  },
+
+  destroyActionClientSide: function(event, id) {
+    var itemIndex = this.findClientSideDataIndex(id);
+
+    this.state.clientSideData.splice(itemIndex, 1);
+    this.forceUpdate();
+  },
+
+  findClientSideDataIndex: function(id) {
+    return _findIndex(this.state.clientSideData, function(item) {
+      return item[this.props.clientSideIdField] == id;
+    }.bind(this));
   },
 
   /* Utilities */
