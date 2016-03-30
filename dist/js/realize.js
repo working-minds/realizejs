@@ -57841,6 +57841,15 @@ window.GridForm = React.createClass({
     return [];
   },
 
+  getFormInputs: function getFormInputs() {
+    var formInputs = this.props.form.inputs;
+    if (!!this.props.clientSide) {
+      formInputs[this.props.clientSideIdField] = { component: 'hidden' };
+    }
+
+    return formInputs;
+  },
+
   /* Default action buttons parser */
 
   getActionButtons: function getActionButtons() {
@@ -57989,20 +57998,35 @@ window.GridForm = React.createClass({
 
   handleClientSideSubmit: function handleClientSideSubmit(event, postData) {
     event.preventDefault();
-    var newDataRow = _merge({}, postData);
-    newDataRow[this.props.clientSideIdField] = this.generateUUID();
 
-    this.state.clientSideData.push(newDataRow);
-    this.forceUpdate();
+    var submittedDataRow = _merge({}, postData);
+    var submittedDataRowIndex = this.findClientSideDataIndex(submittedDataRow[this.props.clientSideIdField]);
+
+    if (submittedDataRowIndex >= 0) {
+      this.state.clientSideData.splice(submittedDataRowIndex, 1, submittedDataRow);
+    } else {
+      submittedDataRow[this.props.clientSideIdField] = this.generateUUID();
+      this.state.clientSideData.push(submittedDataRow);
+    }
+
+    this.setState({
+      formAction: 'create',
+      selectedRowId: null,
+      selectedDataRow: null
+    });
   },
 
   destroyActionClientSide: function destroyActionClientSide(event, id) {
-    var itemIndex = _findIndex(this.state.clientSideData, function (item) {
-      return item[this.props.clientSideIdField] == id;
-    });
+    var itemIndex = this.findClientSideDataIndex(id);
 
     this.state.clientSideData.splice(itemIndex, 1);
     this.forceUpdate();
+  },
+
+  findClientSideDataIndex: function findClientSideDataIndex(id) {
+    return _findIndex(this.state.clientSideData, function (item) {
+      return item[this.props.clientSideIdField] == id;
+    }.bind(this));
   },
 
   /* Utilities */
