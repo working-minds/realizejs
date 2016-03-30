@@ -3,7 +3,7 @@ var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
 var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
 
 var _merge = require('lodash/merge');
-var _find = require('lodash/find');
+var _findIndex = require('lodash/findindex');
 
 window.GridForm = React.createClass({
   mixins: [
@@ -14,6 +14,7 @@ window.GridForm = React.createClass({
 
   propTypes: {
     clientSide: React.PropTypes.bool,
+    clientSideIdField: React.PropTypes.string,
     url: React.PropTypes.string,
     paginationConfigs: React.PropTypes.object,
     sortConfigs: React.PropTypes.object,
@@ -46,6 +47,7 @@ window.GridForm = React.createClass({
   getDefaultProps: function() {
     return {
       clientSide: false,
+      clientSideIdField: '_clientSideId',
       form: {},
       actionButtons: null,
       themeClassKey: 'gridForm',
@@ -117,6 +119,7 @@ window.GridForm = React.createClass({
       data: this.state.selectedDataRow,
       method: this.getFormMethod(),
       resource: !!this.props.clientSide ? null : this.props.form.resource,
+      inputs: this.getFormInputs(),
       submitButton: this.getFormSubmitButton(),
       otherButtons: this.getFormOtherButtons(),
       onSubmit: this.onSubmit,
@@ -249,6 +252,15 @@ window.GridForm = React.createClass({
   },
 
   destroyAction: function(event, id) {
+    if(!!this.props.clientSide) {
+      this.destroyActionClientSide(event, id);
+    }
+    else {
+      this.destroyActionServerSide(event, id);
+    }
+  },
+
+  destroyActionServerSide: function(event, id) {
     var destroyUrl = this.getRestActionUrl('destroy', id);
     var destroyMethod = this.getRestActionMethod('destroy');
 
@@ -288,7 +300,7 @@ window.GridForm = React.createClass({
         selectable: false,
         eagerLoad: false,
         key: this.generateUUID(),
-        dataRowIdField: "_clientSideId",
+        dataRowIdField: this.props.clientSideIdField,
         data: {
           dataRows: this.state.clientSideData
         },
@@ -303,8 +315,19 @@ window.GridForm = React.createClass({
 
   handleClientSideSubmit: function(event, postData) {
     event.preventDefault();
-    var newDataRow = _merge({ _clientSideId: this.generateUUID() }, postData);
+    var newDataRow = _merge({}, postData);
+    newDataRow[this.props.clientSideIdField] = this.generateUUID();
+
     this.state.clientSideData.push(newDataRow);
+    this.forceUpdate();
+  },
+
+  destroyActionClientSide: function(event, id) {
+    var itemIndex = _findIndex(this.state.clientSideData, function(item) {
+      return item[this.props.clientSideIdField] == id;
+    });
+
+    this.state.clientSideData.splice(itemIndex, 1);
     this.forceUpdate();
   },
 
