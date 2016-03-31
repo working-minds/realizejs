@@ -96,6 +96,18 @@ window.InputComponentMixin = {
   inputNodeIsCheckbox: function() {
     var inputNode = ReactDOM.findDOMNode(this.refs.input);
     return (!!inputNode && inputNode.type === "checkbox");
+  },
+
+
+  getValue: function() {
+    var componentGetValue = this._getValue;
+
+    // workaround para o problema de não ser possível sobrescrever funções de mixins.
+    if(!!componentGetValue && typeof componentGetValue == "function") {
+      return componentGetValue();
+    } else {
+      return this.state.value;
+    }
   }
 
 };

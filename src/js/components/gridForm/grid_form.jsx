@@ -134,6 +134,10 @@ window.GridForm = React.createClass({
   },
 
   getFormAction: function() {
+    if(!!this.props.clientSide) {
+      return null;
+    }
+
     return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 

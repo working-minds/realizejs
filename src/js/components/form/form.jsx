@@ -104,7 +104,7 @@ window.Form = React.createClass({
 
   renderInputs: function() {
     if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
-      return '';
+      return [];
     }
 
     return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} />;

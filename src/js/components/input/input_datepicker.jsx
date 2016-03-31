@@ -3,7 +3,7 @@ var InputComponentMixin = require('realize/mixins/input/input_component_mixin.js
 var moment = require('moment');
 
 window.InputDatepicker = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin, UtilsMixin],
   propTypes: {
     mask: React.PropTypes.string
   },
@@ -14,6 +14,12 @@ window.InputDatepicker = React.createClass({
       mask: null,
       format: null,
       maskType: 'date'
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      inputMaskedKey: this.generateUUID()
     };
   },
 
@@ -28,6 +34,9 @@ window.InputDatepicker = React.createClass({
           {...this.props}
           value={this.formatDateValue()}
           className={this.className()}
+          onChange={this._handleChange}
+          onIncomplete={this.handleMaskIncomplete}
+          key={this.state.inputMaskedKey}
           ref="input"
         />
 
@@ -48,13 +57,27 @@ window.InputDatepicker = React.createClass({
     return (this.props.format || Realize.i18n.t('date.formats.date'));
   },
 
+  formatDateValue: function() {
+    //TODO: testar se o valor já está formatado, e não reformatar.
+    var date = moment(this.state.value);
+    var formattedValue = date.format(this.getDateFormat());
+    if(formattedValue == "Invalid date") {
+      return this.state.value;
+    }
+
+    return formattedValue;
+  },
+
+  /* Pickadate handlers */
+
   setPickadatePlugin: function() {
     var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
     $inputNode.pickadate({
       editable: true,
       selectMonths: true,
       selectYears: true,
-      format: this.getDateFormat().toLowerCase()
+      format: this.getDateFormat().toLowerCase(),
+      onSet: this.handlePickadateSet
     });
 
     var picker = $inputNode.pickadate('picker');
@@ -75,14 +98,21 @@ window.InputDatepicker = React.createClass({
     event.stopPropagation();
   },
 
-  formatDateValue: function() {
-    var date = moment(this.props.value);
-    var formattedValue = date.format(this.getDateFormat());
-    if(formattedValue == "Invalid date") {
-      return this.props.value;
-    }
+  handlePickadateSet: function(selectedDate) {
+    this.setState({
+      value: selectedDate.select,
+      inputMaskedKey: this.generateUUID()
+    }, this.setPickadatePlugin);
+  },
 
-    return formattedValue;
+  /* Mask event handlers */
+
+  handleMaskIncomplete: function(event) {
+    this.setState({value: null});
+  },
+
+  _getValue: function() {
+    return this.formatDateValue();
   }
 });
 

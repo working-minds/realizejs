@@ -1,5 +1,7 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 
+var _filter = require('lodash/filter');
+
 window.InputGroup = React.createClass({
   mixins: [CssClassMixin],
 
@@ -69,11 +71,11 @@ window.InputGroup = React.createClass({
           <Input
             disabled={this.props.disabled}
             readOnly={this.props.readOnly}
+            formStyle={this.props.formStyle}
             {...inputProps}
             data={this.props.data}
             errors={this.props.errors}
             resource={this.props.resource}
-            formStyle={this.props.formStyle}
             key={"input_" + inputIndex}
             ref={"input_" + inputIndex}
           />
@@ -106,5 +108,18 @@ window.InputGroup = React.createClass({
         <hr />
       </div>
     );
+  },
+
+  serialize: function() {
+    var inputRefs = _filter(this.refs, function(ref, refName) {
+      return refName.match(/^input_/);
+    });
+
+    var inputValues = {};
+    inputRefs.forEach(function(inputRef) {
+      inputValues[inputRef.getName()] = inputRef.getValue();
+    });
+
+    return inputValues;
   }
 });

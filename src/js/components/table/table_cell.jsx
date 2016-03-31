@@ -11,15 +11,17 @@ window.TableCell = React.createClass({
     dataRowIdField: React.PropTypes.string,
     value: React.PropTypes.func,
     format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
-    formatString: React.PropTypes.string
+    formatString: React.PropTypes.string,
+    component: React.PropTypes.string
   },
 
   getDefaultProps: function() {
     return {
       themeClassKey: 'table.cell',
+      data: {},
       format: 'text',
       formatString: null,
-      data: {}
+      component: null
     };
   },
 
