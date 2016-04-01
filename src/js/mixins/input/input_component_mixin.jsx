@@ -98,6 +98,7 @@ window.InputComponentMixin = {
     return (!!inputNode && inputNode.type === "checkbox");
   },
 
+  /* Serializer functions */
 
   getValue: function() {
     var componentGetValue = this._getValue;

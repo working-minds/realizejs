@@ -1,6 +1,7 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 
 var _filter = require('lodash/filter');
+var _merge = require('lodash/merge');
 
 window.InputGroup = React.createClass({
   mixins: [CssClassMixin],
@@ -117,7 +118,7 @@ window.InputGroup = React.createClass({
 
     var inputValues = {};
     inputRefs.forEach(function(inputRef) {
-      inputValues[inputRef.getName()] = inputRef.getValue();
+      _merge(inputValues, inputRef.serialize());
     });
 
     return inputValues;

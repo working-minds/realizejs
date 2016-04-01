@@ -233,5 +233,16 @@ window.Input = React.createClass({
     } else {
       return this.getInputComponentValue();
     }
+  },
+
+  serialize: function() {
+    var inputComponentRef = this.refs.inputComponent;
+    if(typeof inputComponentRef.serialize == "function") {
+      return inputComponentRef.serialize();
+    }
+
+    var serializedInput = {};
+    serializedInput[this.getName()] = this.getValue();
+    return serializedInput;
   }
 });
