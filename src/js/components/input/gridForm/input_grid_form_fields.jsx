@@ -37,6 +37,8 @@ window.InputGridFormFields = React.createClass({
     };
   },
 
+  /* Rendering functions */
+
   render: function() {
     return (
       <div id={this.props.id} className={this.className()} ref="form">
@@ -101,10 +103,18 @@ window.InputGridFormFields = React.createClass({
     );
   },
 
+  /* Submit handling functions */
+
   submitFormFields: function(event) {
     var inputGroupRef = this.refs.inputGroup;
     var fieldsData = inputGroupRef.serialize();
 
-    console.log(fieldsData);
+    this.props.onSubmit(event, fieldsData);
+  },
+
+  /* Reset handling functions */
+
+  reset: function() {
+    console.log('reset!');
   }
 });

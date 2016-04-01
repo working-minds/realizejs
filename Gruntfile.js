@@ -8,13 +8,24 @@ module.exports = function(grunt) {
             ' */\n',
 
     watch: {
-      scripts: {
+      development: {
         files: [
           'src/js/**/*.js',
           'src/js/**/*.jsx',
           'src/css/**/*.css'
         ],
-        tasks: ['build'],
+        tasks: ['buildDevelopment'],
+        options: {
+          interrupt: true
+        }
+      },
+      production: {
+        files: [
+          'src/js/**/*.js',
+          'src/js/**/*.jsx',
+          'src/css/**/*.css'
+        ],
+        tasks: ['buildProduction'],
         options: {
           interrupt: true
         }
@@ -123,7 +134,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-browserify');
 
-  grunt.registerTask('build', [
+  grunt.registerTask('buildProduction', [
     'browserify:js',
     'sass:build',
     'concat:css',
@@ -132,5 +143,12 @@ module.exports = function(grunt) {
     'clean'
   ]);
 
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('buildDevelopment', [
+    'browserify:js',
+    'sass:build',
+    'concat:css',
+    'clean'
+  ]);
+
+  grunt.registerTask('default', ['buildProduction']);
 };

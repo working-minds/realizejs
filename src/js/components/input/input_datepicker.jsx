@@ -35,7 +35,7 @@ window.InputDatepicker = React.createClass({
       <span>
         <InputMasked
           {...this.props}
-          value={this.formatDateValue()}
+          value={this.getFormattedDateValue()}
           className={this.className()}
           onChange={this._handleChange}
           onIncomplete={this.handleMaskIncomplete}
@@ -60,7 +60,7 @@ window.InputDatepicker = React.createClass({
     return (this.props.format || Realize.i18n.t('date.formats.date'));
   },
 
-  formatDateValue: function() {
+  getFormattedDateValue: function() {
     var date = moment(this.state.value, moment.ISO_8601);
     if(date.isValid()) {
       return date.format(this.getDateFormat());
@@ -115,7 +115,7 @@ window.InputDatepicker = React.createClass({
   },
 
   _getValue: function() {
-    return this.formatDateValue();
+    return this.getFormattedDateValue();
   }
 });
 

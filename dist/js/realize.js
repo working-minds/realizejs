@@ -65829,6 +65829,8 @@ window.Form = React.createClass({
     };
   },
 
+  /* Rendering functions */
+
   render: function render() {
     return React.createElement(
       'form',
@@ -65869,6 +65871,15 @@ window.Form = React.createClass({
     }
   },
 
+  /* Serializer functions */
+
+  serialize: function serialize() {
+    var form = ReactDOM.findDOMNode(this.refs.form);
+    return $(form).serializeObject();
+  },
+
+  /* Submit handling functions */
+
   handleSubmit: function handleSubmit(event) {
     event.nativeEvent.preventDefault();
     var postData = this.serialize();
@@ -65879,16 +65890,6 @@ window.Form = React.createClass({
       this.setState({ isLoading: true, errors: [], showSuccessFlash: false });
       this.submit(postData);
     }
-  },
-
-  handleReset: function handleReset(event) {
-    this.props.onReset(event);
-    FormActions.reset(this.props.id, event);
-  },
-
-  serialize: function serialize() {
-    var form = ReactDOM.findDOMNode(this.refs.form);
-    return $(form).serializeObject();
   },
 
   submit: function submit(postData) {
@@ -65938,6 +65939,24 @@ window.Form = React.createClass({
     var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.submit();
   },
+
+  /* Reset handling functions */
+
+  handleReset: function handleReset(event) {
+    this.props.onReset(event);
+    FormActions.reset(this.props.id, event);
+  },
+
+  reset: function reset() {
+    var formNode = ReactDOM.findDOMNode(this.refs.form);
+    formNode.reset();
+  },
+
+  haveNativeReset: function haveNativeReset() {
+    return true;
+  },
+
+  /* Utilities */
 
   isLoading: function isLoading() {
     var isLoading = this.state.isLoading;
@@ -66836,7 +66855,7 @@ window.GridTable = React.createClass({
 
 }).call(this,require("react"))
 },{"react":509,"realize/mixins/css_class_mixin.jsx":624}],556:[function(require,module,exports){
-(function (React,ReactDOM){
+(function (React){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -67005,7 +67024,8 @@ window.GridForm = React.createClass({
   getFormOtherButtons: function getFormOtherButtons() {
     if (this.state.formAction == 'update') {
       var cancelButtonProps = $.extend({}, this.props.cancelButton, {
-        type: "reset"
+        type: "reset",
+        onClick: this.handleResetClick
       });
 
       return [cancelButtonProps];
@@ -67065,7 +67085,7 @@ window.GridForm = React.createClass({
     }, this.props.destroyActionButton);
   },
 
-  /* Event handlers */
+  /* Form Submit event handlers */
 
   onSubmit: function onSubmit(event, postData) {
     this.props.onSubmit(event, postData);
@@ -67073,6 +67093,19 @@ window.GridForm = React.createClass({
       this.handleClientSideSubmit(event, postData);
     }
   },
+
+  onSuccess: function onSuccess(data, status, xhr) {
+    if (this.props.onSuccess(data, status, xhr)) {
+      this.loadGridData();
+      this.resetForm();
+    }
+  },
+
+  onError: function onError(xhr, status, error) {
+    return this.props.onError(xhr, status, error);
+  },
+
+  /* Form Reset event handlers */
 
   onReset: function onReset(event) {
     this.setState({
@@ -67085,15 +67118,18 @@ window.GridForm = React.createClass({
     this.props.onReset(event);
   },
 
-  onSuccess: function onSuccess(data, status, xhr) {
-    if (this.props.onSuccess(data, status, xhr)) {
-      this.loadGridData();
-      this.resetForm();
+  handleResetClick: function handleResetClick(event) {
+    var formRef = this.refs.form;
+    if (!(typeof formRef.haveNativeReset == "function" && !!formRef.haveNativeReset())) {
+      this.onReset(event);
     }
   },
 
-  onError: function onError(xhr, status, error) {
-    return this.props.onError(xhr, status, error);
+  resetForm: function resetForm() {
+    var formRef = this.refs.form;
+    if (typeof formRef.reset == "function") {
+      formRef.reset();
+    }
   },
 
   /* Grid member actions */
@@ -67209,20 +67245,17 @@ window.GridForm = React.createClass({
     gridRef.loadData();
   },
 
-  resetForm: function resetForm() {
-    var formNode = ReactDOM.findDOMNode(this.refs.form);
-    formNode.reset();
-  },
-
   clearFormErrors: function clearFormErrors() {
     var formRef = this.refs.form;
-    formRef.clearErrors();
+    if (typeof formRef.clearErrors == "function") {
+      formRef.clearErrors();
+    }
   }
 
 });
 
-}).call(this,require("react"),require("react-dom"))
-},{"lodash/findindex":125,"lodash/merge":152,"react":509,"react-dom":347,"realize/mixins/css_class_mixin.jsx":624,"realize/mixins/rest_actions_mixin.jsx":638,"realize/mixins/utils_mixin.jsx":640}],557:[function(require,module,exports){
+}).call(this,require("react"))
+},{"lodash/findindex":125,"lodash/merge":152,"react":509,"realize/mixins/css_class_mixin.jsx":624,"realize/mixins/rest_actions_mixin.jsx":638,"realize/mixins/utils_mixin.jsx":640}],557:[function(require,module,exports){
 (function (React){
 'use strict';
 
@@ -68731,7 +68764,7 @@ window.InputGridForm = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'input.gridForm',
-      className: 'col l12 m12 s12',
+      className: '',
       fields: {},
       form: {},
       clientSide: true
@@ -68837,6 +68870,8 @@ window.InputGridFormFields = React.createClass({
     };
   },
 
+  /* Rendering functions */
+
   render: function render() {
     return React.createElement(
       'div',
@@ -68892,11 +68927,19 @@ window.InputGridFormFields = React.createClass({
     }));
   },
 
+  /* Submit handling functions */
+
   submitFormFields: function submitFormFields(event) {
     var inputGroupRef = this.refs.inputGroup;
     var fieldsData = inputGroupRef.serialize();
 
-    console.log(fieldsData);
+    this.props.onSubmit(event, fieldsData);
+  },
+
+  /* Reset handling functions */
+
+  reset: function reset() {
+    console.log('reset!');
   }
 });
 
@@ -69302,7 +69345,7 @@ window.InputDatepicker = React.createClass({
       'span',
       null,
       React.createElement(InputMasked, _extends({}, this.props, {
-        value: this.formatDateValue(),
+        value: this.getFormattedDateValue(),
         className: this.className(),
         onChange: this._handleChange,
         onIncomplete: this.handleMaskIncomplete,
@@ -69325,7 +69368,7 @@ window.InputDatepicker = React.createClass({
     return this.props.format || Realize.i18n.t('date.formats.date');
   },
 
-  formatDateValue: function formatDateValue() {
+  getFormattedDateValue: function getFormattedDateValue() {
     var date = moment(this.state.value, moment.ISO_8601);
     if (date.isValid()) {
       return date.format(this.getDateFormat());
@@ -69380,7 +69423,7 @@ window.InputDatepicker = React.createClass({
   },
 
   _getValue: function _getValue() {
-    return this.formatDateValue();
+    return this.getFormattedDateValue();
   }
 });
 
@@ -72143,13 +72186,21 @@ window.TableCell = React.createClass({
   },
 
   dateValue: function dateValue(value) {
-    value = moment(value);
-    return value.format(this.getFormatString());
+    var dateValue = moment(value, moment.ISO_8601);
+    if (dateValue.isValid()) {
+      return dateValue.format(this.getFormatString());
+    }
+
+    return value;
   },
 
   datetimeValue: function datetimeValue(value) {
-    value = moment(value);
-    return value.format(this.getFormatString());
+    var dateTimeValue = moment(value, moment.ISO_8601);
+    if (dateTimeValue.isValid()) {
+      return dateTimeValue.format(this.getFormatString());
+    }
+
+    return value;
   },
 
   timeValue: function timeValue(value) {

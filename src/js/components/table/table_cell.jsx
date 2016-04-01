@@ -107,13 +107,21 @@ window.TableCell = React.createClass({
   },
 
   dateValue: function(value) {
-    value = moment(value);
-    return value.format(this.getFormatString());
+    var dateValue = moment(value, moment.ISO_8601);
+    if(dateValue.isValid()) {
+      return dateValue.format(this.getFormatString());
+    }
+
+    return value;
   },
 
   datetimeValue: function(value) {
-    value = moment(value);
-    return value.format(this.getFormatString());
+    var dateTimeValue = moment(value, moment.ISO_8601);
+    if(dateTimeValue.isValid()) {
+      return dateTimeValue.format(this.getFormatString());
+    }
+
+    return value;
   },
 
   timeValue: function(value) {

@@ -16,7 +16,7 @@ window.InputGridForm = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'input.gridForm',
-      className: 'col l12 m12 s12',
+      className: '',
       fields: {},
       form: {},
       clientSide: true
