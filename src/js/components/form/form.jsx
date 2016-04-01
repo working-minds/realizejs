@@ -76,6 +76,8 @@ window.Form = React.createClass({
     };
   },
 
+  /* Rendering functions */
+
   render: function() {
     return (
       <form action={this.props.action}
@@ -104,7 +106,7 @@ window.Form = React.createClass({
 
   renderInputs: function() {
     if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
-      return '';
+      return [];
     }
 
     return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} />;
@@ -118,6 +120,15 @@ window.Form = React.createClass({
     }
   },
 
+  /* Serializer functions */
+
+  serialize : function() {
+    var form = ReactDOM.findDOMNode(this.refs.form);
+    return $(form).serializeObject();
+  },
+
+  /* Submit handling functions */
+
   handleSubmit: function(event) {
     event.nativeEvent.preventDefault();
     var postData = this.serialize();
@@ -128,16 +139,6 @@ window.Form = React.createClass({
       this.setState({isLoading: true, errors: [], showSuccessFlash: false});
       this.submit(postData);
     }
-  },
-
-  handleReset: function(event) {
-    this.props.onReset(event);
-    FormActions.reset(this.props.id, event);
-  },
-
-  serialize : function() {
-    var form = ReactDOM.findDOMNode(this.refs.form);
-    return $(form).serializeObject();
   },
 
   submit: function(postData) {
@@ -187,6 +188,24 @@ window.Form = React.createClass({
     var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.submit();
   },
+
+  /* Reset handling functions */
+
+  handleReset: function(event) {
+    this.props.onReset(event);
+    FormActions.reset(this.props.id, event);
+  },
+
+  reset: function() {
+    var formNode = ReactDOM.findDOMNode(this.refs.form);
+    formNode.reset();
+  },
+
+  haveNativeReset: function() {
+    return true;
+  },
+
+  /* Utilities */
 
   isLoading: function() {
     var isLoading = this.state.isLoading;

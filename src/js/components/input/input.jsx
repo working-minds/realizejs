@@ -39,10 +39,6 @@ window.Input = React.createClass({
     };
   },
 
-  themeClassKeyByStyle: function() {
-    return 'input.wrapper.' + this.props.formStyle;
-  },
-
   inputClassName: function() {
     var className = this.className();
     if(!this.props.className) {
@@ -112,6 +108,10 @@ window.Input = React.createClass({
     return this.renderInputWithoutLabel();
   },
 
+  renderGridformInput: function() {
+    return this.renderInputWithoutLabel();
+  },
+
   renderHiddenInput: function() {
     return this.renderComponentInput();
   },
@@ -159,6 +159,7 @@ window.Input = React.createClass({
       datepicker: InputDatepicker,
       number: InputNumber,
       file: InputFile,
+      gridform: InputGridForm,
       hidden: InputHidden,
       password: InputPassword,
       select: InputSelect,
@@ -217,5 +218,31 @@ window.Input = React.createClass({
     if(this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
       return this.props.errors[this.props.resource][this.props.id];
     return this.props.errors[this.props.id];
+  },
+
+  /* Serializer functions */
+
+  getName: function() {
+    return this.getInputComponentName();
+  },
+
+  getValue: function() {
+    var inputComponentRef = this.refs.inputComponent;
+    if(typeof inputComponentRef.getValue == "function") {
+      return inputComponentRef.getValue();
+    } else {
+      return this.getInputComponentValue();
+    }
+  },
+
+  serialize: function() {
+    var inputComponentRef = this.refs.inputComponent;
+    if(typeof inputComponentRef.serialize == "function") {
+      return inputComponentRef.serialize();
+    }
+
+    var serializedInput = {};
+    serializedInput[this.getName()] = this.getValue();
+    return serializedInput;
   }
 });

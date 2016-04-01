@@ -24,9 +24,9 @@ window.InputMasked = React.createClass({
       mask: null,
       maskType: null,
       regex: null,
-      onComplete: function() {},
-      onIncomplete: function() {},
-      onCleared: function() {}
+      onComplete: function() { },
+      onIncomplete: function() { },
+      onCleared: function() { }
     };
   },
 
@@ -84,16 +84,7 @@ window.InputMasked = React.createClass({
     }
   },
 
-  handleChange: function(event) {
-    this.props.onChange(event);
-
-    if(!event.isDefaultPrevented()) {
-      this.setState({
-        value: event.target.value,
-        applyMask: false
-      });
-    }
-  },
+  /* input mask functions */
 
   applyMask: function() {
     var appliedMask = {};
@@ -156,8 +147,8 @@ window.InputMasked = React.createClass({
       clearIncomplete: true
     }, this.filterMaskOptionProps());
 
-    maskOptions.oncomplete = this.props.onComplete;
-    maskOptions.onincomplete = this.props.onIncomplete;
+    maskOptions.oncomplete = this.handleComplete;
+    maskOptions.onincomplete = this.handleIncomplete;
     maskOptions.oncleared = this.props.onCleared;
 
     return maskOptions;
@@ -187,5 +178,32 @@ window.InputMasked = React.createClass({
         applyMask: true
       });
     }
+  },
+
+  /* event handlers */
+
+  handleComplete: function(event) {
+    this.props.onComplete(event);
+    this.updateValue(event.target.value);
+  },
+
+  handleIncomplete: function(event) {
+    this.props.onIncomplete(event);
+    this.updateValue(null);
+  },
+
+  handleChange: function(event) {
+    this.props.onChange(event);
+
+    if(!event.isDefaultPrevented()) {
+      this.updateValue(event.target.value);
+    }
+  },
+
+  updateValue: function(value) {
+    this.setState({
+      value: value,
+      applyMask: false
+    });
   }
 });

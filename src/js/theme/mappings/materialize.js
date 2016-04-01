@@ -196,6 +196,14 @@ Realize.themes.registerTheme({
       display: {
         cssClass: 'colorpicker__display'
       }
+    },
+
+    gridform: {
+      cssClass: 'input-gridForm',
+
+      label: {
+        cssClass: 'input-gridForm__label'
+      }
     }
   },
 
