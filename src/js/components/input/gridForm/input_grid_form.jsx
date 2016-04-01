@@ -1,17 +1,17 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
 
 var _merge = require('lodash/merge');
 var _mapValues = require('lodash/mapValues');
 
 window.InputGridForm = React.createClass({
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
-    clientSide: React.PropTypes.bool,
-    value: React.PropTypes.array
+    clientSide: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -20,14 +20,7 @@ window.InputGridForm = React.createClass({
       className: '',
       fields: {},
       form: {},
-      clientSide: true,
-      value: []
-    };
-  },
-
-  getInitialState: function() {
-    return {
-      value: this.props.value
+      clientSide: true
     };
   },
 
@@ -46,7 +39,8 @@ window.InputGridForm = React.createClass({
         />
         <InputHidden
           {...this.propsWithoutCSS()}
-          value={this.state.value}
+          value={this._getValue()}
+          ref="input"
         />
       </div>
     );
@@ -67,10 +61,15 @@ window.InputGridForm = React.createClass({
 
   /* GridForm Props parsers */
 
+  getDefaultFormProps: function() {
+    return {
+      formStyle: 'filter'
+    };
+  },
+
   parseFormProp: function() {
-    var formProp = this.props.form;
+    var formProp = _merge(this.getDefaultFormProps(), this.props.form);
     var fieldsProp = _merge({}, this.props.fields);
-    formProp.formStyle = 'filter';
     formProp.inputs = _mapValues(fieldsProp, function(field) {
       delete field.format;
       return field;
@@ -81,12 +80,33 @@ window.InputGridForm = React.createClass({
 
   parseColumnsProp: function() {
     var columnsProp = _merge({}, this.props.fields);
-    columnsProp = _mapValues(columnsProp, function(column) {
+    columnsProp = _mapValues(columnsProp, function(column, columnKey) {
       delete column.component;
+      column.name = this.getColumnName(column, columnKey);
       return column;
-    });
+    }.bind(this));
 
     return columnsProp;
+  },
+
+  getColumnName: function(column, columnKey) {
+    var columnName = column.name || columnKey;
+    if(this.columnHaveDisplayValueKey(columnName)) {
+      columnName += "Display";
+    }
+
+    return columnName;
+  },
+
+  columnHaveDisplayValueKey: function(columnName) {
+    var value = this.state.value;
+    var firstValueRow = value == null ? null : value[0];
+    if(firstValueRow == null) {
+      return false;
+    }
+
+    var valueKeys = Object.keys(firstValueRow);
+    return valueKeys.indexOf(columnName + "Display") >= 0;
   },
 
   /* GridForm Result serializer */
@@ -96,5 +116,9 @@ window.InputGridForm = React.createClass({
     this.setState({
       value: gridFormRef.serialize()
     });
+  },
+
+  _getValue: function() {
+    return JSON.stringify(this.state.value);
   }
 });

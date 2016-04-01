@@ -88,9 +88,11 @@ window.TableRow = React.createClass({
     var columns = this.props.columns;
     var cellComponents = [];
 
-    $.each(columns, function(columnName, columnProps) {
+    $.each(columns, function(columnKey, columnProps) {
+      var columnName = columnProps.name || columnKey;
       cellComponents.push(
-        <TableCell {...columnProps}
+        <TableCell
+          {...columnProps}
           {...this.propsWithoutCSS()}
           name={columnName}
           key={columnName}

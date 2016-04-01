@@ -68756,6 +68756,7 @@ window.InputDatefilterSelect = React.createClass({
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
 
 var _merge = require('lodash/merge');
 var _mapValues = require('lodash/mapValues');
@@ -68763,14 +68764,13 @@ var _mapValues = require('lodash/mapValues');
 window.InputGridForm = React.createClass({
   displayName: 'InputGridForm',
 
-  mixins: [CssClassMixin],
+  mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
-    clientSide: React.PropTypes.bool,
-    value: React.PropTypes.array
+    clientSide: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -68779,14 +68779,7 @@ window.InputGridForm = React.createClass({
       className: '',
       fields: {},
       form: {},
-      clientSide: true,
-      value: []
-    };
-  },
-
-  getInitialState: function getInitialState() {
-    return {
-      value: this.props.value
+      clientSide: true
     };
   },
 
@@ -68804,7 +68797,8 @@ window.InputGridForm = React.createClass({
         ref: 'gridForm'
       })),
       React.createElement(InputHidden, _extends({}, this.propsWithoutCSS(), {
-        value: this.state.value
+        value: this._getValue(),
+        ref: 'input'
       }))
     );
   },
@@ -68824,10 +68818,15 @@ window.InputGridForm = React.createClass({
 
   /* GridForm Props parsers */
 
+  getDefaultFormProps: function getDefaultFormProps() {
+    return {
+      formStyle: 'filter'
+    };
+  },
+
   parseFormProp: function parseFormProp() {
-    var formProp = this.props.form;
+    var formProp = _merge(this.getDefaultFormProps(), this.props.form);
     var fieldsProp = _merge({}, this.props.fields);
-    formProp.formStyle = 'filter';
     formProp.inputs = _mapValues(fieldsProp, function (field) {
       delete field.format;
       return field;
@@ -68838,12 +68837,33 @@ window.InputGridForm = React.createClass({
 
   parseColumnsProp: function parseColumnsProp() {
     var columnsProp = _merge({}, this.props.fields);
-    columnsProp = _mapValues(columnsProp, function (column) {
+    columnsProp = _mapValues(columnsProp, function (column, columnKey) {
       delete column.component;
+      column.name = this.getColumnName(column, columnKey);
       return column;
-    });
+    }.bind(this));
 
     return columnsProp;
+  },
+
+  getColumnName: function getColumnName(column, columnKey) {
+    var columnName = column.name || columnKey;
+    if (this.columnHaveDisplayValueKey(columnName)) {
+      columnName += "Display";
+    }
+
+    return columnName;
+  },
+
+  columnHaveDisplayValueKey: function columnHaveDisplayValueKey(columnName) {
+    var value = this.state.value;
+    var firstValueRow = value == null ? null : value[0];
+    if (firstValueRow == null) {
+      return false;
+    }
+
+    var valueKeys = Object.keys(firstValueRow);
+    return valueKeys.indexOf(columnName + "Display") >= 0;
   },
 
   /* GridForm Result serializer */
@@ -68853,11 +68873,15 @@ window.InputGridForm = React.createClass({
     this.setState({
       value: gridFormRef.serialize()
     });
+  },
+
+  _getValue: function _getValue() {
+    return JSON.stringify(this.state.value);
   }
 });
 
 }).call(this,require("react"))
-},{"lodash/mapValues":151,"lodash/merge":152,"react":509,"realize/mixins/css_class_mixin.jsx":624}],575:[function(require,module,exports){
+},{"lodash/mapValues":151,"lodash/merge":152,"react":509,"realize/mixins/css_class_mixin.jsx":624,"realize/mixins/input/input_component_mixin.jsx":631}],575:[function(require,module,exports){
 (function (React){
 'use strict';
 
@@ -72464,7 +72488,8 @@ window.TableRow = React.createClass({
     var columns = this.props.columns;
     var cellComponents = [];
 
-    $.each(columns, function (columnName, columnProps) {
+    $.each(columns, function (columnKey, columnProps) {
+      var columnName = columnProps.name || columnKey;
       cellComponents.push(React.createElement(TableCell, _extends({}, columnProps, this.propsWithoutCSS(), {
         name: columnName,
         key: columnName
