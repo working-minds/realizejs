@@ -360,20 +360,25 @@ window.GridForm = React.createClass({
       formAction: 'create',
       selectedRowId: null,
       selectedDataRow: null
-    });
+    }, this.props.onSuccess);
   },
 
   destroyActionClientSide: function(event, id) {
     var itemIndex = this.findClientSideDataIndex(id);
 
     this.state.clientSideData.splice(itemIndex, 1);
-    this.forceUpdate();
+    this.forceUpdate(this.props.onDestroySuccess);
   },
 
   findClientSideDataIndex: function(id) {
     return _findIndex(this.state.clientSideData, function(item) {
       return item[this.props.clientSideIdField] == id;
     }.bind(this));
+  },
+
+  serialize: function() {
+    var gridRef = this.refs.grid;
+    return gridRef.serialize();
   },
 
   /* Utilities */

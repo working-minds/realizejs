@@ -10,7 +10,8 @@ window.InputGridForm = React.createClass({
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
-    clientSide: React.PropTypes.bool
+    clientSide: React.PropTypes.bool,
+    value: React.PropTypes.array
   },
 
   getDefaultProps: function() {
@@ -19,7 +20,14 @@ window.InputGridForm = React.createClass({
       className: '',
       fields: {},
       form: {},
-      clientSide: true
+      clientSide: true,
+      value: []
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      value: this.props.value
     };
   },
 
@@ -32,6 +40,13 @@ window.InputGridForm = React.createClass({
           formComponent={InputGridFormFields}
           form={this.parseFormProp()}
           columns={this.parseColumnsProp()}
+          onSuccess={this.serializeGridForm}
+          onDestroySuccess={this.serializeGridForm}
+          ref="gridForm"
+        />
+        <InputHidden
+          {...this.propsWithoutCSS()}
+          value={this.state.value}
         />
       </div>
     );
@@ -72,5 +87,14 @@ window.InputGridForm = React.createClass({
     });
 
     return columnsProp;
+  },
+
+  /* GridForm Result serializer */
+
+  serializeGridForm: function() {
+    var gridFormRef = this.refs.gridForm;
+    this.setState({
+      value: gridFormRef.serialize()
+    });
   }
 });

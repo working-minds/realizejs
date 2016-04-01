@@ -66371,7 +66371,7 @@ window.Grid = React.createClass({
     return filterForm.serializeObject();
   },
 
-  /* Renderers */
+  /* Rendering functions */
 
   renderFilter: function renderFilter() {
     if ($.isEmptyObject(this.props.filter)) {
@@ -66469,7 +66469,7 @@ window.Grid = React.createClass({
     this.loadData();
   },
 
-  /* Data load handler */
+  /* Server-side data load handler */
 
   loadData: function loadData() {
     this.setState({ gridIsLoading: true });
@@ -66586,6 +66586,12 @@ window.Grid = React.createClass({
         allSelected: true
       });
     }
+  },
+
+  /* Serializer function */
+
+  serialize: function serialize() {
+    return this.state.dataRows;
   }
 });
 
@@ -67222,20 +67228,25 @@ window.GridForm = React.createClass({
       formAction: 'create',
       selectedRowId: null,
       selectedDataRow: null
-    });
+    }, this.props.onSuccess);
   },
 
   destroyActionClientSide: function destroyActionClientSide(event, id) {
     var itemIndex = this.findClientSideDataIndex(id);
 
     this.state.clientSideData.splice(itemIndex, 1);
-    this.forceUpdate();
+    this.forceUpdate(this.props.onDestroySuccess);
   },
 
   findClientSideDataIndex: function findClientSideDataIndex(id) {
     return _findIndex(this.state.clientSideData, function (item) {
       return item[this.props.clientSideIdField] == id;
     }.bind(this));
+  },
+
+  serialize: function serialize() {
+    var gridRef = this.refs.grid;
+    return gridRef.serialize();
   },
 
   /* Utilities */
@@ -68758,7 +68769,8 @@ window.InputGridForm = React.createClass({
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
-    clientSide: React.PropTypes.bool
+    clientSide: React.PropTypes.bool,
+    value: React.PropTypes.array
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -68767,7 +68779,14 @@ window.InputGridForm = React.createClass({
       className: '',
       fields: {},
       form: {},
-      clientSide: true
+      clientSide: true,
+      value: []
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
+      value: this.props.value
     };
   },
 
@@ -68779,7 +68798,13 @@ window.InputGridForm = React.createClass({
       React.createElement(GridForm, _extends({}, this.propsWithoutCSS(), {
         formComponent: InputGridFormFields,
         form: this.parseFormProp(),
-        columns: this.parseColumnsProp()
+        columns: this.parseColumnsProp(),
+        onSuccess: this.serializeGridForm,
+        onDestroySuccess: this.serializeGridForm,
+        ref: 'gridForm'
+      })),
+      React.createElement(InputHidden, _extends({}, this.propsWithoutCSS(), {
+        value: this.state.value
       }))
     );
   },
@@ -68819,6 +68844,15 @@ window.InputGridForm = React.createClass({
     });
 
     return columnsProp;
+  },
+
+  /* GridForm Result serializer */
+
+  serializeGridForm: function serializeGridForm() {
+    var gridFormRef = this.refs.gridForm;
+    this.setState({
+      value: gridFormRef.serialize()
+    });
   }
 });
 
@@ -73989,7 +74023,7 @@ window.InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.node,
+    value: React.PropTypes.any,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,

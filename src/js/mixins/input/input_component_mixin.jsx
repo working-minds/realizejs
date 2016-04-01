@@ -2,7 +2,7 @@ window.InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.node,
+    value: React.PropTypes.any,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,
