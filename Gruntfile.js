@@ -19,13 +19,13 @@ module.exports = function(grunt) {
           interrupt: true
         }
       },
-      production: {
+      release: {
         files: [
           'src/js/**/*.js',
           'src/js/**/*.jsx',
           'src/css/**/*.css'
         ],
-        tasks: ['buildProduction'],
+        tasks: ['buildRelease'],
         options: {
           interrupt: true
         }
@@ -134,7 +134,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsxhint');
   grunt.loadNpmTasks('grunt-browserify');
 
-  grunt.registerTask('buildProduction', [
+  grunt.registerTask('buildRelease', [
     'browserify:js',
     'sass:build',
     'concat:css',
@@ -150,5 +150,5 @@ module.exports = function(grunt) {
     'clean'
   ]);
 
-  grunt.registerTask('default', ['buildProduction']);
+  grunt.registerTask('default', ['buildRelease']);
 };
