@@ -1,9 +1,10 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
-var moment = require('moment');
+
+var moment = require('realize/momentWithLocale.js');
 
 window.InputDatepicker = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin, UtilsMixin],
   propTypes: {
     mask: React.PropTypes.string
   },
@@ -17,7 +18,15 @@ window.InputDatepicker = React.createClass({
     };
   },
 
+  getInitialState: function() {
+    return {
+      inputMaskedKey: this.generateUUID()
+    };
+  },
+
   componentDidMount: function() {
+    var currentLocale = Realize.i18n.currentLocale.toLowerCase();
+    moment.locale(currentLocale);
     this.setPickadatePlugin();
   },
 
@@ -26,8 +35,11 @@ window.InputDatepicker = React.createClass({
       <span>
         <InputMasked
           {...this.props}
-          value={this.formatDateValue()}
+          value={this.getFormattedDateValue()}
           className={this.className()}
+          onChange={this._handleChange}
+          onIncomplete={this.handleMaskIncomplete}
+          key={this.state.inputMaskedKey}
           ref="input"
         />
 
@@ -48,13 +60,25 @@ window.InputDatepicker = React.createClass({
     return (this.props.format || Realize.i18n.t('date.formats.date'));
   },
 
+  getFormattedDateValue: function() {
+    var date = moment(this.state.value, moment.ISO_8601);
+    if(date.isValid()) {
+      return date.format(this.getDateFormat());
+    }
+
+    return this.state.value;
+  },
+
+  /* Pickadate handlers */
+
   setPickadatePlugin: function() {
     var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
     $inputNode.pickadate({
       editable: true,
       selectMonths: true,
       selectYears: true,
-      format: this.getDateFormat().toLowerCase()
+      format: this.getDateFormat().toLowerCase(),
+      onSet: this.handlePickadateSet
     });
 
     var picker = $inputNode.pickadate('picker');
@@ -75,14 +99,23 @@ window.InputDatepicker = React.createClass({
     event.stopPropagation();
   },
 
-  formatDateValue: function() {
-    var date = moment(this.props.value);
-    var formattedValue = date.format(this.getDateFormat());
-    if(formattedValue == "Invalid date") {
-      return this.props.value;
-    }
+  handlePickadateSet: function(pickadateObject) {
+    var selectedDate = moment(pickadateObject.select).format();
 
-    return formattedValue;
+    this.setState({
+      value: selectedDate,
+      inputMaskedKey: this.generateUUID()
+    }, this.setPickadatePlugin);
+  },
+
+  /* Mask event handlers */
+
+  handleMaskIncomplete: function(event) {
+    this.setState({value: null});
+  },
+
+  _getValue: function() {
+    return this.getFormattedDateValue();
   }
 });
 

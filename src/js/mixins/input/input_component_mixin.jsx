@@ -2,7 +2,7 @@ window.InputComponentMixin = {
   propTypes: {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
-    value: React.PropTypes.node,
+    value: React.PropTypes.any,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
     placeholder: Realize.PropTypes.localizedString,
@@ -96,6 +96,19 @@ window.InputComponentMixin = {
   inputNodeIsCheckbox: function() {
     var inputNode = ReactDOM.findDOMNode(this.refs.input);
     return (!!inputNode && inputNode.type === "checkbox");
+  },
+
+  /* Serializer functions */
+
+  getValue: function() {
+    var componentGetValue = this._getValue;
+
+    // workaround para o problema de não ser possível sobrescrever funções de mixins.
+    if(!!componentGetValue && typeof componentGetValue == "function") {
+      return componentGetValue();
+    } else {
+      return this.state.value;
+    }
   }
 
 };

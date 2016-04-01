@@ -1,3 +1,5 @@
+var _map = require('lodash/map');
+
 window.SelectComponentMixin = {
   propTypes: {
     options: React.PropTypes.array,
@@ -238,6 +240,22 @@ window.SelectComponentMixin = {
 
   isDisabled: function () {
     return this.state.disabled || this.state.mustDisable;
+  },
+
+  /* Serializer functions */
+
+  getDisplayValues: function() {
+    return _map(this.selectedOptions(), function(selectedOption) {
+      return selectedOption[this.props.nameField];
+    }.bind(this));
+  },
+
+  serialize: function() {
+    var serializedInput = {};
+    serializedInput[this.props.name] = this.getValue();
+    serializedInput[this.props.name + "Display"] = this.getDisplayValues();
+
+    return serializedInput;
   }
 
 };

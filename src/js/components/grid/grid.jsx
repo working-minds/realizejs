@@ -165,7 +165,7 @@ window.Grid = React.createClass({
     return filterForm.serializeObject();
   },
 
-  /* Renderers */
+  /* Rendering functions */
 
   renderFilter: function() {
     if($.isEmptyObject(this.props.filter)) {
@@ -271,7 +271,7 @@ window.Grid = React.createClass({
     this.loadData();
   },
 
-  /* Data load handler */
+  /* Server-side data load handler */
 
   loadData: function() {
     this.setState({gridIsLoading: true});
@@ -388,5 +388,11 @@ window.Grid = React.createClass({
         allSelected: true
       });
     }
+  },
+
+  /* Serializer function */
+
+  serialize: function() {
+    return this.state.dataRows;
   }
 });

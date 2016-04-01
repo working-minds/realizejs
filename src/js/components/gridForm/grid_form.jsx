@@ -134,6 +134,10 @@ window.GridForm = React.createClass({
   },
 
   getFormAction: function() {
+    if(!!this.props.clientSide) {
+      return null;
+    }
+
     return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
   },
 
@@ -154,7 +158,8 @@ window.GridForm = React.createClass({
   getFormOtherButtons: function() {
     if(this.state.formAction == 'update') {
       var cancelButtonProps = $.extend({}, this.props.cancelButton, {
-        type: "reset"
+        type: "reset",
+        onClick: this.handleResetClick
       });
 
       return [cancelButtonProps];
@@ -217,7 +222,7 @@ window.GridForm = React.createClass({
     }, this.props.destroyActionButton);
   },
 
-  /* Event handlers */
+  /* Form Submit event handlers */
 
   onSubmit: function(event, postData) {
     this.props.onSubmit(event, postData);
@@ -225,6 +230,19 @@ window.GridForm = React.createClass({
       this.handleClientSideSubmit(event, postData);
     }
   },
+
+  onSuccess: function(data, status, xhr) {
+      if(this.props.onSuccess(data, status, xhr)) {
+      this.loadGridData();
+      this.resetForm();
+    }
+  },
+
+  onError: function(xhr, status, error) {
+    return this.props.onError(xhr, status, error);
+  },
+
+  /* Form Reset event handlers */
 
   onReset: function(event) {
     this.setState({
@@ -237,15 +255,18 @@ window.GridForm = React.createClass({
     this.props.onReset(event);
   },
 
-  onSuccess: function(data, status, xhr) {
-      if(this.props.onSuccess(data, status, xhr)) {
-      this.loadGridData();
-      this.resetForm();
+  handleResetClick: function(event) {
+    var formRef = this.refs.form;
+    if(!(typeof formRef.haveNativeReset == "function" && !!formRef.haveNativeReset())) {
+      this.onReset(event);
     }
   },
 
-  onError: function(xhr, status, error) {
-    return this.props.onError(xhr, status, error);
+  resetForm: function() {
+    var formRef = this.refs.form;
+    if(typeof formRef.reset == "function") {
+      formRef.reset();
+    }
   },
 
   /* Grid member actions */
@@ -339,20 +360,25 @@ window.GridForm = React.createClass({
       formAction: 'create',
       selectedRowId: null,
       selectedDataRow: null
-    });
+    }, this.props.onSuccess);
   },
 
   destroyActionClientSide: function(event, id) {
     var itemIndex = this.findClientSideDataIndex(id);
 
     this.state.clientSideData.splice(itemIndex, 1);
-    this.forceUpdate();
+    this.forceUpdate(this.props.onDestroySuccess);
   },
 
   findClientSideDataIndex: function(id) {
     return _findIndex(this.state.clientSideData, function(item) {
       return item[this.props.clientSideIdField] == id;
     }.bind(this));
+  },
+
+  serialize: function() {
+    var gridRef = this.refs.grid;
+    return gridRef.serialize();
   },
 
   /* Utilities */
@@ -362,14 +388,11 @@ window.GridForm = React.createClass({
     gridRef.loadData();
   },
 
-  resetForm: function() {
-    var formNode = ReactDOM.findDOMNode(this.refs.form);
-    formNode.reset();
-  },
-
   clearFormErrors: function() {
     var formRef = this.refs.form;
-    formRef.clearErrors();
+    if(typeof formRef.clearErrors == "function") {
+      formRef.clearErrors();
+    }
   }
 
 });
