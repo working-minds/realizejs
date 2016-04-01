@@ -1,6 +1,7 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
-var moment = require('moment');
+
+var moment = require('realize/momentWithLocale.js');
 
 window.InputDatepicker = React.createClass({
   mixins: [CssClassMixin, InputComponentMixin, UtilsMixin],
@@ -24,6 +25,8 @@ window.InputDatepicker = React.createClass({
   },
 
   componentDidMount: function() {
+    var currentLocale = Realize.i18n.currentLocale.toLowerCase();
+    moment.locale(currentLocale);
     this.setPickadatePlugin();
   },
 
@@ -58,14 +61,12 @@ window.InputDatepicker = React.createClass({
   },
 
   formatDateValue: function() {
-    //TODO: testar se o valor já está formatado, e não reformatar.
-    var date = moment(this.state.value);
-    var formattedValue = date.format(this.getDateFormat());
-    if(formattedValue == "Invalid date") {
-      return this.state.value;
+    var date = moment(this.state.value, moment.ISO_8601);
+    if(date.isValid()) {
+      return date.format(this.getDateFormat());
     }
 
-    return formattedValue;
+    return this.state.value;
   },
 
   /* Pickadate handlers */
@@ -98,9 +99,11 @@ window.InputDatepicker = React.createClass({
     event.stopPropagation();
   },
 
-  handlePickadateSet: function(selectedDate) {
+  handlePickadateSet: function(pickadateObject) {
+    var selectedDate = moment(pickadateObject.select).format();
+
     this.setState({
-      value: selectedDate.select,
+      value: selectedDate,
       inputMaskedKey: this.generateUUID()
     }, this.setPickadatePlugin);
   },
