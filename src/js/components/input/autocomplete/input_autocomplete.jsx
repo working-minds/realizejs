@@ -141,7 +141,7 @@ window.InputAutocomplete = React.createClass({
     this.state.loadParams[this.props.searchParam] = searchValue;
     this.loadOptions();
 
-    if (typeof this.props.onSearchChange) {
+    if (typeof this.props.onSearchChange === 'function') {
       this.props.onSearchChange(searchValue);
     }
   },
