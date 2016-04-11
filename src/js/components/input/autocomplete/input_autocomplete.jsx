@@ -15,7 +15,8 @@ window.InputAutocomplete = React.createClass({
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
     searchParam: React.PropTypes.string,
-    actionButtons: React.PropTypes.array
+    actionButtons: React.PropTypes.array,
+    onSearchChange: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -88,7 +89,7 @@ window.InputAutocomplete = React.createClass({
   },
 
   handleDocumentClick: function(event) {
-    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.getResultComponent()));
     var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
     var searchInput = $resultNode.find('input[type=text]')[0];
 
@@ -99,9 +100,13 @@ window.InputAutocomplete = React.createClass({
     }
   },
 
+  getResultComponent: function() {
+    return this.refs.result;
+  },
+
   hideResult: function() {
     $(document).off('click', this.handleDocumentClick);
-    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.getResultComponent()));
     var $searchInput = $resultNode.find('input[type=text]');
     $resultNode.hide();
     $searchInput.val('');
@@ -121,7 +126,7 @@ window.InputAutocomplete = React.createClass({
     }
 
     $(document).on('click', this.handleDocumentClick);
-    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.getResultComponent()));
     var searchInput = $resultNode.find('input[type=text]')[0];
 
     $resultNode.show();
@@ -130,10 +135,15 @@ window.InputAutocomplete = React.createClass({
 
   searchOptions: function(event) {
     var $searchInput = $(event.currentTarget);
+    var searchValue = $searchInput.val();
 
-    this.state.searchValue = $searchInput.val();
-    this.state.loadParams[this.props.searchParam] = this.state.searchValue;
+    this.state.searchValue = searchValue;
+    this.state.loadParams[this.props.searchParam] = searchValue;
     this.loadOptions();
+
+    if (typeof this.props.onSearchChange) {
+      this.props.onSearchChange(searchValue);
+    }
   },
 
   handleSearchNavigation: function(event) {
@@ -162,7 +172,7 @@ window.InputAutocomplete = React.createClass({
   },
 
   moveActiveDown: function() {
-    var $resultNode = $(ReactDOM.findDOMNode(this.refs.result));
+    var $resultNode = $(ReactDOM.findDOMNode(this.getResultComponent()));
     var resultListCount = $resultNode.find('li').length;
 
     this.setState({
@@ -171,11 +181,11 @@ window.InputAutocomplete = React.createClass({
   },
 
   selectOption: function() {
-    var resultRef = this.refs.result;
+    var resultRef = this.getResultComponent();
     var resultListRef = resultRef.refs.list;
     if(!resultListRef)
         return;
-        
+
     var activeOptionRef = resultListRef.refs["option_" + this.state.active];
 
     this.handleSelect(null, {
