@@ -19,7 +19,7 @@ window.Button = React.createClass({
     confirmsWith: Realize.PropTypes.localizedString,
     element: React.PropTypes.oneOf(['button', 'a']),
     target: React.PropTypes.string,
-    method: React.PropTypes.string
+    method: React.PropTypes.string,
   },
 
   getDefaultProps: function() {
@@ -77,6 +77,8 @@ window.Button = React.createClass({
         {
           className: this.getClassName(),
           type: this.props.type,
+          hidden: this.props.hidden,
+          visible: this.props.visible,
           disabled: this.props.disabled || this.props.isLoading,
           href: this.getHref(),
           onClick: this.handleClick,
@@ -133,7 +135,7 @@ window.Button = React.createClass({
     } else {
       iconProps = { type: this.props.icon };
     }
-    
+
     return <Icon className={this.getIconClassName()} {...iconProps} key="icon" />;
   },
 
@@ -160,5 +162,5 @@ window.Button = React.createClass({
       return 'right';
     }
   }
-  
+
 });
