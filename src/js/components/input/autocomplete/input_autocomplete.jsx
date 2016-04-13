@@ -16,7 +16,7 @@ window.InputAutocomplete = React.createClass({
     maxOptionsParam: React.PropTypes.string,
     searchParam: React.PropTypes.string,
     actionButtons: React.PropTypes.array,
-    onSearchChange: React.PropTypes.func
+    onSearchValueChange: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -141,8 +141,8 @@ window.InputAutocomplete = React.createClass({
     this.state.loadParams[this.props.searchParam] = searchValue;
     this.loadOptions();
 
-    if (typeof this.props.onSearchChange === 'function') {
-      this.props.onSearchChange(searchValue);
+    if (typeof this.props.onSearchValueChange === 'function') {
+      this.props.onSearchValueChange(searchValue);
     }
   },
 

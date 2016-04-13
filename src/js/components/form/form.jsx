@@ -89,6 +89,8 @@ window.Form = React.createClass({
         onSubmit={this.handleSubmit}
         onReset={this.handleReset}
         className={this.className()}
+        hidden={this.props.hidden}
+        visible={this.props.visible}
         ref="form">
 
         {this.renderFlashErrors()}
