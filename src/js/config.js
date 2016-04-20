@@ -1,6 +1,4 @@
-module.exports = exports = {};
-
-exports.config = {
+export default {
   restUrls: {
     index: ':url',
     show: ':url/:id',
@@ -40,8 +38,8 @@ exports.config = {
       fieldValueFormat: '%{field}'
     }
   }
-};
+}
 
-exports.setConfig = function(newConfig) {
+export const setConfig = function(newConfig) {
   $.extend(true, exports.config, newConfig);
 };
