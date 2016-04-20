@@ -1,9 +1,10 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React from 'react';
+import CssClassMixin from '../../mixins/css_class_mixin.jsx';
 
-window.Input = React.createClass({
-  mixins: [CssClassMixin],
+@mixin(CssClassMixin)
+export class Input extends React.Component {
 
-  propTypes: {
+  static propTypes = {
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
@@ -16,10 +17,9 @@ window.Input = React.createClass({
     scope: React.PropTypes.oneOf(['resource', 'global']),
     maxLength: React.PropTypes.number,
     renderLabel: React.PropTypes.bool
-  },
+  }
 
-  getDefaultProps: function() {
-    return {
+  static defaultProps = {
       themeClassKey: 'input',
       value: null,
       component: 'text',
@@ -30,28 +30,25 @@ window.Input = React.createClass({
       scope: 'resource',
       maxLength: null,
       renderLabel: true
-    };
-  },
+  }
 
-  getInitialState: function() {
-    return {
+  state = {
       value: this.props.value
-    };
-  },
+  }
 
-  inputClassName: function() {
+  inputClassName() {
     var className = this.className();
     if(!this.props.className) {
       className += ' ' + Realize.themes.getCssClass('input.grid.' + this.props.formStyle);
     }
 
     return className;
-  },
+  }
 
-  render: function() {
+  render() {
     var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
     var renderLabel = this.props.renderLabel;
-    
+
     if(this.hasOwnProperty(renderFunction)) {
       return this[renderFunction]();
     } else if(!renderLabel) {
@@ -59,9 +56,9 @@ window.Input = React.createClass({
     } else {
       return this.renderInput();
     }
-  },
+  }
 
-  renderInput: function() {
+  renderInput() {
     return (
       <div className={this.inputClassName()} id={this.getInputContainerId()}>
         {this.renderComponentInput()}
@@ -69,54 +66,54 @@ window.Input = React.createClass({
         {this.renderInputErrors()}
       </div>
     );
-  },
+  }
 
-  renderInputWithoutLabel: function() {
+  renderInputWithoutLabel() {
     return (
       <div className={this.inputClassName()} id={this.getInputContainerId()}>
         {this.renderComponentInput()}
         {this.renderInputErrors()}
       </div>
     );
-  },
+  }
 
-  renderAutocompleteInput: function() {
+  renderAutocompleteInput() {
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderDatefilterInput: function() {
+  renderDatefilterInput() {
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderDatepickerInput: function() {
+  renderDatepickerInput() {
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderNumberInput: function(){
+  renderNumberInput(){
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderSwitchInput: function(){
+  renderSwitchInput(){
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderFileInput: function() {
+  renderFileInput() {
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderColorpickerInput: function() {
+  renderColorpickerInput() {
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderGridformInput: function() {
+  renderGridformInput() {
     return this.renderInputWithoutLabel();
-  },
+  }
 
-  renderHiddenInput: function() {
+  renderHiddenInput() {
     return this.renderComponentInput();
-  },
+  }
 
-  renderComponentInput: function() {
+  renderComponentInput() {
     var componentInputClass = this.getInputComponentClass(this.props.component);
     var isGrid = (componentInputClass === InputGridForm);
 
@@ -132,33 +129,33 @@ window.Input = React.createClass({
     });
 
     return React.createElement(componentInputClass, componentInputProps);
-  },
+  }
 
-  renderLabel: function() {
+  renderLabel() {
     var inputValue = this.getInputComponentValue();
     var isActive = this.labelIsActive(inputValue);
 
     return (
       <Label {...this.propsWithoutCSS()} id={this.getInputComponentId()} active={isActive} />
     );
-  },
+  }
 
-  labelIsActive: function(inputValue) {
+  labelIsActive(inputValue) {
     if (this.props.component === 'checkbox')
       return false;
 
     return (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
-  },
+  }
 
-  renderInputErrors: function() {
+  renderInputErrors() {
     return (<InputError errors={this.getInputErrors()} />);
-  },
+  }
 
-  getInputContainerId: function() {
+  getInputContainerId() {
     return "input__" + this.props.id;
-  },
+  }
 
-  getInputComponentClass: function(component) {
+  getInputComponentClass(component) {
     var mapping = {
       text: InputText,
       autocomplete: InputAutocomplete,
@@ -180,27 +177,27 @@ window.Input = React.createClass({
     };
 
     return (mapping[component] || window[component] || component);
-  },
+  }
 
-  getInputComponentId: function() {
+  getInputComponentId() {
     var inputId = this.props.id;
     if(this.props.resource !== null && this.props.scope === "resource") {
       inputId = this.props.resource + '_' + inputId;
     }
 
     return inputId;
-  },
+  }
 
-  getInputComponentName: function() {
+  getInputComponentName() {
     var inputName = (this.props.name || this.props.id);
     if(this.props.resource !== null && this.props.scope === "resource") {
       inputName = this.props.resource + '[' + inputName + ']';
     }
 
     return inputName;
-  },
+  }
 
-  getInputComponentValue: function() {
+  getInputComponentValue() {
     if(!!this.props.value) {
       return this.props.value;
     }
@@ -213,38 +210,38 @@ window.Input = React.createClass({
     }
 
     return dataValue;
-  },
+  }
 
-  getMaxLength: function() {
+  getMaxLength() {
     var acceptComponents = ['text', 'masked', 'number', 'textarea'];
 
     if (!!this.props.maxLength && (acceptComponents.indexOf(this.props.component) != -1)) {
       return this.props.maxLength;
     }
-  },
+  }
 
-  getInputErrors: function() {
+  getInputErrors() {
     if(this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
       return this.props.errors[this.props.resource][this.props.id];
     return this.props.errors[this.props.id];
-  },
+  }
 
   /* Serializer functions */
 
-  getName: function() {
+  getName() {
     return this.getInputComponentName();
-  },
+  }
 
-  getValue: function() {
+  getValue() {
     var inputComponentRef = this.refs.inputComponent;
     if(typeof inputComponentRef.getValue == "function") {
       return inputComponentRef.getValue();
     } else {
       return this.getInputComponentValue();
     }
-  },
+  }
 
-  serialize: function() {
+  serialize() {
     var inputComponentRef = this.refs.inputComponent;
     if(typeof inputComponentRef.serialize == "function") {
       return inputComponentRef.serialize();
@@ -254,4 +251,4 @@ window.Input = React.createClass({
     serializedInput[this.getName()] = this.getValue();
     return serializedInput;
   }
-});
+}
