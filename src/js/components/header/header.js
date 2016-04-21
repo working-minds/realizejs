@@ -1,24 +1,26 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.Header = React.createClass({
-  mixins: [CssClassMixin],
+import CssClassMixin from 'mixins/css_class_mixin';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'header',
-      wrapperClassName: 'nav-wrapper container'
-    };
-  },
+@mixin(CssClassMixin)
+export default class Header extends Component {
+  static defaultProps = {
+    themeClassKey: 'header',
+    wrapperClassName: 'nav-wrapper container'
+  };
 
-  componentDidMount: function(){
+  componentDidMount (){
     $(".button-collapse").sideNav({
       edge: 'right',
       closeOnClick: true
     });
     $('.collapsible').collapsible();
-  },
+  }
 
-  render: function() {
+  render () {
     return (
       <nav className={this.className()} role="navigation">
         <div className={this.props.wrapperClassName}>
@@ -27,5 +29,4 @@ window.Header = React.createClass({
       </nav>
     );
   }
-
-});
+}

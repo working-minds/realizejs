@@ -1,6 +1,8 @@
 // TODO: remover
 import React from 'react';
 import ReactDOM from 'react-dom';
+import $ from 'jquery';
+import 'materialize-css';
 
 import Realize from './realize';
 import * as Components from 'components';

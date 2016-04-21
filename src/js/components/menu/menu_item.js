@@ -1,28 +1,31 @@
-window.MenuItem = React.createClass({
-  propTypes: {
-    icon: React.PropTypes.string,
-    iconAlign: React.PropTypes.string,
-    href: React.PropTypes.string,
-    target: React.PropTypes.string,
-    onClick: React.PropTypes.object,
-    className: React.PropTypes.string,
-    method: React.PropTypes.string,
-    element: React.PropTypes.string
-  },
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-  getDefaultProps: function() {
-    return {
-      iconAlign: 'left',
-      method: 'get',
-      element: 'a'
-    };
-  },
+import Button from 'components/button/button';
 
-  render: function() {
+export default class MenuItem extends Component {
+  static propTypes = {
+    icon: PropTypes.string,
+    iconAlign: PropTypes.string,
+    href: PropTypes.string,
+    target: PropTypes.string,
+    onClick: PropTypes.object,
+    className: PropTypes.string,
+    method: PropTypes.string,
+    element: PropTypes.string
+  };
+
+  static defaultProps = {
+    iconAlign: 'left',
+    method: 'get',
+    element: 'a'
+  };
+
+  render () {
     return (
       <li>
         <Button {...this.props} clearTheme={true} name={this.props.text} />
       </li>
     );
   }
-});
+}
