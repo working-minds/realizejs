@@ -1,25 +1,40 @@
-window.HeaderButton = React.createClass({
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-  propTypes: {
-    imgSrc: React.PropTypes.string,
-    imgAlt: React.PropTypes.string,
-    icon: React.PropTypes.string,
-    iconAlign: React.PropTypes.string,
-    text: React.PropTypes.string,
-    href: React.PropTypes.string,
-    target: React.PropTypes.string,
-    onClick: React.PropTypes.func,
-    ref: React.PropTypes.string
-  },
+export default class HeaderButton extends Component {
+  static propTypes = {
+    imgSrc: PropTypes.string,
+    imgAlt: PropTypes.string,
+    icon: PropTypes.string,
+    iconAlign: PropTypes.string,
+    text: PropTypes.string,
+    href: PropTypes.string,
+    target: PropTypes.string,
+    onClick: PropTypes.func,
+    ref: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      iconAlign: ' '
-    };
-  },
+  static defaultProps = {
+    iconAlign: ' '
+  };
 
-  render: function () {
-    var button = '';
+  renderButton () {
+    return (
+      <a href={this.props.href} ref={this.props.ref}  onClick={this.props.onClick} target={this.props.target} >
+        <i className={'material-icons ' + this.props.iconAlign}>{this.props.icon}</i>{this.props.text}
+      </a>
+    );
+  }
+
+  renderImage (){
+    return (
+      <a className="brand-logo" href={this.props.href}>
+        <img src={this.props.imgSrc} alt={this.props.imgAlt}/>
+      </a>);
+  }
+
+  render () {
+    let button = '';
     if(this.props.imgSrc)
       button = this.renderImage();
     else
@@ -28,21 +43,5 @@ window.HeaderButton = React.createClass({
     return (
       button
     );
-  },
-
-  renderButton: function() {
-    return (
-      <a href={this.props.href} ref={this.props.ref}  onClick={this.props.onClick} target={this.props.target} >
-        <i className={'material-icons ' + this.props.iconAlign}>{this.props.icon}</i>{this.props.text}
-      </a>
-    );
-  },
-
-  renderImage: function(){
-    return (
-      <a className="brand-logo" href={this.props.href}>
-        <img src={this.props.imgSrc} alt={this.props.imgAlt}/>
-      </a>);
   }
-
-});
+}

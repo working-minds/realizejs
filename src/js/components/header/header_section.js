@@ -1,28 +1,28 @@
-window.HeaderSection = React.createClass({
-  propTypes: {
-    align: React.PropTypes.string,
-    id: React.PropTypes.string
-  },
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-  getDefaultProps: function() {
-    return {
-      align: 'left',
-      className: 'hide-on-med-and-down'
-    };
-  },
+export default class HeaderSection extends Component {
+  static propTypes = {
+    align: PropTypes.string,
+    id: PropTypes.string
+  };
 
-  render: function () {
-    return (
-      <ul className={this.props.className + ' ' + this.props.align} id={this.props.id}>
-        {this.renderChildren()}
-      </ul>
-    );
-  },
+  static defaultProps = {
+    align: 'left',
+    className: 'hide-on-med-and-down'
+  };
 
-  renderChildren: function () {
+  renderChildren () {
     return React.Children.map(this.props.children, function(child, i) {
       return <li key={"item_" + i}>{child}</li>;
     });
   }
 
-});
+  render () {
+    return (
+      <ul className={this.props.className + ' ' + this.props.align} id={this.props.id}>
+        {this.renderChildren()}
+      </ul>
+    );
+  }
+}
