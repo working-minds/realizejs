@@ -1,32 +1,26 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.ButtonGroup = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    buttons: React.PropTypes.array
-  },
+import CssClassMixin from 'mixins/css_class_mixin';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'button.group',
-      buttons: []
-    };
-  },
+@mixin(CssClassMixin)
+export default class ButtonGroup extends Component {
+  static propTypes = {
+    buttons: PropTypes.array
+  };
 
-  render: function() {
-    return (
-      <div className={this.className()}>
-        {this.renderButtons()}
-      </div>
-    );
-  },
+  static defaultProps = {
+    themeClassKey: 'button.group',
+    buttons: []
+  };
 
-  renderButtons: function() {
-    var buttonsProps = this.props.buttons;
-    var buttons = [];
+  renderButtons () {
+    const buttonsProps = this.props.buttons;
+    let buttons = [];
 
-    for(var i = 0; i < buttonsProps.length; i++) {
-      var buttonProps = buttonsProps[i];
+    for(let i = 0; i < buttonsProps.length; i++) {
+      let buttonProps = buttonsProps[i];
 
       buttons.push(<Button {...buttonProps} key={"button_" + i} />);
     }
@@ -34,4 +28,11 @@ window.ButtonGroup = React.createClass({
     return buttons;
   }
 
-});
+  render () {
+    return (
+      <div className={this.className()}>
+        {this.renderButtons()}
+      </div>
+    );
+  }
+}
