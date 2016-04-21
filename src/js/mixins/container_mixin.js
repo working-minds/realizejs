@@ -1,26 +1,29 @@
-var _isEqual = require('lodash/isEqual');
+import React from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import isEqual from 'lodash/isEqual';
 
-window.ContainerMixin = {
+export default {
   propTypes: {
-    forwardedProps: React.PropTypes.object
+    forwardedProps: PropTypes.object
   },
 
-  getDefaultProps: function() {
+  getDefaultProps () {
     return {
       forwardedProps: {}
     };
   },
 
-  getChildren: function() {
+  getChildren () {
     return this.cloneChildrenWithProps();
   },
 
-  renderChildren: function() {
+  renderChildren () {
     return this.cloneChildrenWithProps();
   },
 
-  filterChildren : function(childType) {
-    var result = [];
+  filterChildren (childType) {
+    let result = [];
     React.Children.map(this.props.children, function(child) {
       if (!!child && child.type == childType) {
         result.push(child);
@@ -30,12 +33,12 @@ window.ContainerMixin = {
     return result;
   },
 
-  cloneChildrenWithProps: function(options) {
-    var props = this.buildPropsToForward();
+  cloneChildrenWithProps (options) {
+    let props = this.buildPropsToForward();
 
     if (!!options && !!options.childrenType) {
       return React.Children.map(this.filterChildren(options.childrenType), function(child) {
-        var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        let forwardedProps = $.extend({}, this.props.forwardedProps, props);
         if(!child || !child.type) {
           return null;
         }
@@ -44,7 +47,7 @@ window.ContainerMixin = {
       }.bind(this));
     } else {
       return React.Children.map(this.props.children, function(child) {
-        var forwardedProps = $.extend({}, this.props.forwardedProps, props);
+        let forwardedProps = $.extend({}, this.props.forwardedProps, props);
         if(!child || !child.type) {
           return null;
         }
@@ -54,9 +57,9 @@ window.ContainerMixin = {
     }
   },
 
-  buildChildPropsToKeep: function(child) {
-    var defaultChildProps = {};
-    var keepProps = [];
+  buildChildPropsToKeep (child) {
+    let defaultChildProps = {};
+    let keepProps = [];
 
     if(!!child.type.getDefaultProps)
       defaultChildProps = child.type.getDefaultProps();
@@ -74,22 +77,22 @@ window.ContainerMixin = {
     return newProps;
   },
 
-  childPropValueIsNotDefault: function (propValue, defaultPropValue) {
-    return !_isEqual(propValue, defaultPropValue);
+  childPropValueIsNotDefault (propValue, defaultPropValue) {
+    return !isEqual(propValue, defaultPropValue);
   },
 
 
-  shouldKeepChildPropValueAnyway: function (propName, keepList) {
+  shouldKeepChildPropValueAnyway (propName, keepList) {
     return keepList.indexOf(propName) >= 0;
   },
 
-  buildPropsToForward: function() {
-    var propsToForward = !!this.propsToForward ? this.propsToForward() : [];
-    var forwardMapping = !!this.propsToForwardMapping ? this.propsToForwardMapping() : {};
-    var props = {};
+  buildPropsToForward () {
+    let propsToForward = !!this.propsToForward ? this.propsToForward() : [];
+    let forwardMapping = !!this.propsToForwardMapping ? this.propsToForwardMapping() : {};
+    let props = {};
 
-    for(var i = 0; i < propsToForward.length; i++) {
-      var propToForward = propsToForward[i];
+    for(let i = 0; i < propsToForward.length; i++) {
+      let propToForward = propsToForward[i];
 
       props[propToForward] = this.props[propToForward];
     }
@@ -97,6 +100,4 @@ window.ContainerMixin = {
     return $.extend(props, forwardMapping);
   }
 
-};
-
-module.exports = ContainerMixin;
+}
