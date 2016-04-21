@@ -1,55 +1,48 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.TableSelectionIndicator = React.createClass({
-  mixins: [CssClassMixin],
+import { CssClassMixin } from 'mixins';
 
-  propTypes: {
-    dataRows: React.PropTypes.array,
-    selectedRowIds: React.PropTypes.array,
-    actionButtons: React.PropTypes.array,
-    message: React.PropTypes.object,
-    removeSelectionButtonName: Realize.PropTypes.localizedString,
-    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
-    selectAllButtonName: Realize.PropTypes.localizedString,
-    allSelected: React.PropTypes.bool,
-    count: React.PropTypes.number,
-    onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func,
-    forceShowSelectAllButton: React.PropTypes.bool
-  },
+@mixin(CssClassMixin)
+export default class TableSelectionIndicator extends Component {
+  static propTypes = {
+    dataRows: PropTypes.array,
+    selectedRowIds: PropTypes.array,
+    actionButtons: PropTypes.array,
+    message: PropTypes.object,
+    removeSelectionButtonName: PropTypes.localizedString,
+    selectable: PropTypes.oneOf(['multiple', 'none', 'one']),
+    selectAllButtonName: PropTypes.localizedString,
+    allSelected: PropTypes.bool,
+    count: PropTypes.number,
+    onRemoveSelection: PropTypes.func,
+    onSelectAll: PropTypes.func,
+    rowSelectableFilter: PropTypes.func,
+    forceShowSelectAllButton: PropTypes.bool
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'table.selectionIndicator',
-      dataRows: [],
-      selectedRowIds: [],
-      actionButtons: [],
-      message: {
-        plural: 'table.selection.select.plural',
-        singular: 'table.selection.select.singular'
-      },
-      removeSelectionButtonName: 'table.selection.clear',
-      selectable: 'multiple',
-      selectAllButtonName: 'table.selection.selectAll',
-      allSelected: false,
-      rowSelectableFilter: null,
-      forceShowSelectAllButton: false,
-      onRemoveSelection: function(event) {},
-      onSelectAll: function(event) {}
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'table.selectionIndicator',
+    dataRows: [],
+    selectedRowIds: [],
+    actionButtons: [],
+    message: {
+      plural: 'table.selection.select.plural',
+      singular: 'table.selection.select.singular'
+    },
+    removeSelectionButtonName: 'table.selection.clear',
+    selectable: 'multiple',
+    selectAllButtonName: 'table.selection.selectAll',
+    allSelected: false,
+    rowSelectableFilter: null,
+    forceShowSelectAllButton: false,
+    onRemoveSelection: function(event) {},
+    onSelectAll: function(event) {}
+  };
 
-  render: function() {
-    return (
-      <div className={this.className()}>
-        <span>{this.renderMessage()}</span> {this.renderActions()}
-      </div>
-    );
-  },
-
-  renderMessage: function() {
-    var count = this.getSelectionCount();
+  renderMessage () {
+    let count = this.getSelectionCount();
     if(count === 0) {
       return '';
     } else if(count === 1) {
@@ -58,10 +51,10 @@ window.TableSelectionIndicator = React.createClass({
       var message = Realize.i18n.t(this.props.message.plural);
       return message.replace(/:count/, count);
     }
-  },
+  }
 
-  renderActions: function() {
-    var count = this.getSelectionCount();
+  renderActions () {
+    let count = this.getSelectionCount();
     if(count === 0 || this.props.selectable !== 'multiple') {
       return '';
     }
@@ -72,17 +65,17 @@ window.TableSelectionIndicator = React.createClass({
         {this.renderSelectAllButton()})
       </span>
     );
-  },
+  }
 
-  renderRemoveSelectionButton: function() {
+  renderRemoveSelectionButton () {
     return (
       <a href="#!" onClick={this.props.onRemoveSelection}>
         {Realize.i18n.t(this.props.removeSelectionButtonName)}
       </a>
     );
-  },
+  }
 
-  renderSelectAllButton: function() {
+  renderSelectAllButton () {
     if(typeof this.props.rowSelectableFilter === "function" || this.props.allSelected) {
       if(!this.props.forceShowSelectAllButton){
         return '';
@@ -97,20 +90,28 @@ window.TableSelectionIndicator = React.createClass({
         </a>
       </span>
     );
-  },
+  }
 
-  getSelectionCount: function() {
+  render () {
+    return (
+      <div className={this.className()}>
+        <span>{this.renderMessage()}</span> {this.renderActions()}
+      </div>
+    );
+  }
+
+  getSelectionCount () {
     if(this.props.allSelected && !!this.props.count) {
       return this.props.count;
     } else {
       return this.props.selectedRowIds.length;
     }
-  },
+  }
 
-  getSelectAllButtonName: function() {
-    var buttonName = Realize.i18n.t(this.props.selectAllButtonName);
-    var count = this.props.count || this.props.dataRows.length;
+  getSelectAllButtonName () {
+    let buttonName = Realize.i18n.t(this.props.selectAllButtonName);
+    let count = this.props.count || this.props.dataRows.length;
 
     return buttonName.replace(/:count/, count);
   }
-});
+}

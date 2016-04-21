@@ -1,4 +1,4 @@
-export default {
+export const config = {
   restUrls: {
     index: ':url',
     show: ':url/:id',

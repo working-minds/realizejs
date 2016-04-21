@@ -1,50 +1,41 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.TableActions = React.createClass({
-  mixins: [CssClassMixin],
+import CssClassMixin from 'mixins/css_class_mixin';
+import TableActionButton from './table_action_button';
 
-  propTypes: {
-    dataRows: React.PropTypes.array,
+@mixin(CssClassMixin)
+export default class TableActions extends Component {
+  static propTypes = {
+    dataRows: PropTypes.array,
     selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
-    selectedRowIds: React.PropTypes.array,
-    selectedRowIdsParam: React.PropTypes.string,
-    actionButtons: React.PropTypes.array,
-    allSelected: React.PropTypes.bool,
-    count: React.PropTypes.number,
-    onRemoveSelection: React.PropTypes.func,
-    onSelectAll: React.PropTypes.func,
-    rowSelectableFilter: React.PropTypes.func,
-    forceShowSelectAllButton: React.PropTypes.bool
-  },
+    selectedRowIds: PropTypes.array,
+    selectedRowIdsParam: PropTypes.string,
+    actionButtons: PropTypes.array,
+    allSelected: PropTypes.bool,
+    count: PropTypes.number,
+    onRemoveSelection: PropTypes.func,
+    onSelectAll: PropTypes.func,
+    rowSelectableFilter: PropTypes.func,
+    forceShowSelectAllButton: PropTypes.bool
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'table.actions',
-      actionButtons: [],
-      selectable: 'multiple',
-      selectedRowIds: [],
-      allSelected: false,
-      rowSelectableFilter: null,
-      forceShowSelectAllButton: false,
-      onRemoveSelection: function(event) {},
-      onSelectAll: function(event) {}
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'table.actions',
+    actionButtons: [],
+    selectable: 'multiple',
+    selectedRowIds: [],
+    allSelected: false,
+    rowSelectableFilter: null,
+    forceShowSelectAllButton: false,
+    onRemoveSelection: function(event) {},
+    onSelectAll: function(event) {}
+  };
 
-  render: function() {
-    return (
-      <div className={this.className()}>
-        <div>
-          <TableSelectionIndicator {...this.propsWithoutCSS()} />
-          {this.renderButtons()}
-        </div>
-      </div>
-    );
-  },
-
-  renderButtons: function() {
-    var actionButtons = [];
-    var actionButtonsProps = this.props.actionButtons;
+  renderButtons () {
+    let actionButtons = [];
+    let actionButtonsProps = this.props.actionButtons;
 
     for(var i = 0; i < actionButtonsProps.length; i++) {
       var actionButtonProps = actionButtonsProps[i];
@@ -61,4 +52,15 @@ window.TableActions = React.createClass({
 
     return actionButtons;
   }
-});
+
+  render () {
+    return (
+      <div className={this.className()}>
+        <div>
+          <TableSelectionIndicator {...this.propsWithoutCSS()} />
+          {this.renderButtons()}
+        </div>
+      </div>
+    );
+  }
+}

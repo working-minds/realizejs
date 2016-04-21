@@ -1,10 +1,10 @@
-var numeral = require('numeral');
-var supportedLanguages = require('../../node_modules/numeral/languages/*.js', { mode: 'list' });
+let numeral = require('numeral');
+let languages = require.context('numeral/languages/', false, /\.js$/);
+let supportedLanguages = Object.keys(languages);
 
-supportedLanguages.forEach(function(language) {
-  var languageObj = language.module;
-  var languageName = language.name;
-  numeral.language(languageName, languageObj);
+supportedLanguages.forEach((languageName) => {
+  let language = languages[languageName];
+  numeral.language(languageName, language);
 });
 
-module.exports = numeral;
+export default numeral;

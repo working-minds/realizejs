@@ -1,44 +1,41 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.TableRowActions = React.createClass({
-  mixins: [CssClassMixin, RequestHandlerMixin],
+import { CssClassMixin, RequestHandlerMixin } from 'mixins';
+import TableRowActionButton from './table_row_action_button';
 
-  propTypes: {
-    data: React.PropTypes.object,
-    dataRowIdField: React.PropTypes.string,
-    actionButtons: React.PropTypes.array,
-    conditionParams: React.PropTypes.object,
-    component: React.PropTypes.string,
-    paramsToComponent: React.PropTypes.object
-  },
+@mixin(
+  CssClassMixin,
+  RequestHandlerMixin
+)
+export default class TableRowActions extends Component {
+  static propTypes = {
+    data: PropTypes.object,
+    dataRowIdField: PropTypes.string,
+    actionButtons: PropTypes.array,
+    conditionParams: PropTypes.object,
+    component: PropTypes.string,
+    paramsToComponent: PropTypes.object
+  };
 
-  getDefaultProps: function() {
-    return {
-      data: {},
-      dataRowIdField: 'id',
-      actionButtons: [],
-      themeClassKey: 'table.row.actions',
-      conditionParams: {},
-      component: null,
-      paramsToComponent: {}
-    };
-  },
+  static defaultProps = {
+    data: {},
+    dataRowIdField: 'id',
+    actionButtons: [],
+    themeClassKey: 'table.row.actions',
+    conditionParams: {},
+    component: null,
+    paramsToComponent: {}
+  };
 
-  render: function() {
-    return (
-      <td className={this.className()}>
-        {this.renderButtons()}
-      </td>
-    );
-  },
+  renderButtons () {
+    let actionButtons = [];
+    let actionButtonsProps = this.props.actionButtons;
 
-  renderButtons: function() {
-    var actionButtons = [];
-    var actionButtonsProps = this.props.actionButtons;
-
-    for(var i = 0; i < actionButtonsProps.length; i++) {
-      var actionButtonProps = actionButtonsProps[i];
+    for(let i = 0; i < actionButtonsProps.length; i++) {
+      let actionButtonProps = actionButtonsProps[i];
 
       if(!!actionButtonProps.component) {
         return React.createElement(eval(actionButtonProps.component), $.extend({}, this.props, actionButtonProps.paramsToComponent))
@@ -51,4 +48,12 @@ window.TableRowActions = React.createClass({
 
     return actionButtons;
   }
-});
+
+  render () {
+    return (
+      <td className={this.className()}>
+        {this.renderButtons()}
+      </td>
+    );
+  }
+}
