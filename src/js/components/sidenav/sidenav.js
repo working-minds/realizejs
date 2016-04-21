@@ -1,29 +1,49 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.SideNav = React.createClass({
-  mixins: [CssClassMixin],
+import CssClassMixin from 'mixins/css_class_mixin';
 
-  propTypes: {
-    items: React.PropTypes.array,
-    icon: React.PropTypes.string,
-    iconAlign: React.PropTypes.string,
-    text: React.PropTypes.string,
-    ref_id:React.PropTypes.string
-  },
+import Menu from 'components/menu/menu';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'sidenav.button',
-      items: [],
-      icon: 'view_headline',
-      iconAlign: '',
-      ref_id: 'sideNav',
-      text: ''
-    };
-  },
+@mixin(CssClassMixin)
+export default class SideNav extends Component {
+  static propTypes = {
+    items: PropTypes.array,
+    icon: PropTypes.string,
+    iconAlign: PropTypes.string,
+    text: PropTypes.string,
+    ref_id:PropTypes.string
+  };
 
-  render: function () {
-    var iconAlign = this.props.text? 'left' : '';
+  static defaultProps = {
+    themeClassKey: 'sidenav.button',
+    items: [],
+    icon: 'view_headline',
+    iconAlign: '',
+    ref_id: 'sideNav',
+    text: ''
+  };
+
+  componentDidMount (){
+    $(ReactDOM.findDOMNode(this.refs.sideNav)).sideNav();
+  }
+
+  renderMenu (){
+    return (
+      <Menu
+        ref_id={this.props.ref_id}
+        className="side-nav full"
+        items={this.props.items}>
+        {this.props.children}
+      </Menu>
+    );
+  }
+
+  render () {
+    let iconAlign = this.props.text? 'left' : '';
 
     return (
       <div>
@@ -34,14 +54,5 @@ window.SideNav = React.createClass({
         {this.renderMenu()}
       </div>
     );
-  },
-
-  renderMenu: function(){
-    return (<Menu ref_id={this.props.ref_id} className="side-nav full" items={this.props.items}>{this.props.children}</Menu>);
-  },
-
-  componentDidMount: function(){
-    $(ReactDOM.findDOMNode(this.refs.sideNav)).sideNav();
   }
-
-});
+}

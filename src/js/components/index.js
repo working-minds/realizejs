@@ -6,3 +6,4 @@ export * from './icon';
 export * from './indicator';
 export * from './label';
 export * from './menu';
+export * from './sidenav';
