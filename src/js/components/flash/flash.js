@@ -1,48 +1,63 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-window.Flash = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    type: React.PropTypes.oneOf(['info', 'warning', 'error', 'success']),
-    message: React.PropTypes.node,
-    dismissTimeout: React.PropTypes.number,
-    canDismiss: React.PropTypes.bool,
-    onDismiss: React.PropTypes.func,
-    dismissed: React.PropTypes.bool
-  },
+import CssClassMixin from 'mixins/css_class_mixin';
 
-  getDefaultProps: function() {
-    return {
-      type: 'info',
-      dismissTimeout: -1,
-      canDismiss: true,
-      dismissed: false,
-      message: '',
-      onDismiss: function() {
-        return true;
-      }
-    };
-  },
+import FlashContent from './flash_content';
+import FlashDismmiss from './flash_dismiss';
 
-  getInitialState: function() {
-    return {
+@mixin(CssClassMixin)
+export default class Flash extends Component {
+  static propTypes = {
+    type: PropTypes.oneOf(['info', 'warning', 'error', 'success']),
+    message: PropTypes.node,
+    dismissTimeout: PropTypes.number,
+    canDismiss: PropTypes.bool,
+    onDismiss: PropTypes.func,
+    dismissed: PropTypes.bool
+  };
+
+  static defaultProps = {
+    type: 'info',
+    dismissTimeout: -1,
+    canDismiss: true,
+    dismissed: false,
+    message: '',
+    onDismiss: function() {
+      return true;
+    }
+  };
+
+  constructor (props) {
+    super(props);
+    this.state = {
       themeClassKey: 'flash flash.' + this.props.type,
       dismissed: this.props.dismissed
     };
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps (nextProps) {
     this.setState({dismissed: nextProps.dismissed});
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount () {
     if(this.props.dismissTimeout > 0) {
       this.setDismissTimeout();
     }
-  },
+  }
 
-  render: function() {
+  renderFlash () {
+    return (
+      <div className={this.className()} ref="flash">
+        <FlashContent {...this.props} />
+        {this.props.canDismiss ? <FlashDismiss {...this.props} onClick={this.dismiss} />: ''}
+      </div>
+    );
+  }
+
+  render () {
     return (
       <ReactCSSTransitionGroup
         transitionName="dismiss"
@@ -54,25 +69,16 @@ window.Flash = React.createClass({
         {this.state.dismissed ? '' : this.renderFlash()}
       </ReactCSSTransitionGroup>
     );
-  },
+  }
 
-  renderFlash: function() {
-    return (
-      <div className={this.className()} ref="flash">
-        <FlashContent {...this.props} />
-        {this.props.canDismiss ? <FlashDismiss {...this.props} onClick={this.dismiss} />: ''}
-      </div>
-    );
-  },
-
-  dismiss: function() {
+  dismiss = () => {
     this.setState({dismissed: true});
     this.props.onDismiss();
-  },
-
-  setDismissTimeout: function() {
-    setTimeout(function() {
-      this.dismiss();
-    }.bind(this), this.props.dismissTimeout);
   }
-});
+
+  setDismissTimeout () {
+    setTimeout(() => {
+      this.dismiss();
+    }, this.props.dismissTimeout);
+  }
+}

@@ -1,11 +1,13 @@
-window.TooltipMixin = {
+import PropTypes from 'prop_types';
+
+export default {
   propTypes: {
-    tooltipDelay: React.PropTypes.number,
-    tooltipText: React.PropTypes.string,
-    tooltipPosition: React.PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
+    tooltipDelay: PropTypes.number,
+    tooltipText: PropTypes.string,
+    tooltipPosition: PropTypes.oneOf(['bottom', 'top', 'left', 'right'])
   },
 
-  getDefaultProps: function() {
+  getDefaultProps () {
     return {
       tooltipDelay: 10,
       tooltipPosition: 'top',
@@ -13,35 +15,33 @@ window.TooltipMixin = {
     };
   },
 
-  componentDidUpdate: function () {
+  componentDidUpdate () {
     this.initializeTooltip();
   },
 
-  componentDidMount: function () {
+  componentDidMount () {
     this.initializeTooltip();
   },
 
-  initializeTooltip: function () {
+  initializeTooltip () {
     if(!!this.props.tooltipText) {
       $('.tooltipped').tooltip();
     }
   },
 
-  getTooltipClassName: function() {
-    var className = this.className();
+  getTooltipClassName () {
+    let className = this.className();
     if(!!this.props.tooltipText)
       className += ' tooltipped';
 
     return className;
   },
 
-  tooltipAttributes: function() {
+  tooltipAttributes () {
     return {
       'data-position': this.props.tooltipPosition,
       'data-delay': this.props.tooltipDelay,
       'data-tooltip': this.props.tooltipText
     };
   }
-};
-
-module.exports = TooltipMixin;
+}

@@ -1,36 +1,40 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.FlashContent = React.createClass({
- mixins: [CssClassMixin],
- propTypes: {
-   type: React.PropTypes.string,
-   message: React.PropTypes.oneOfType([
-     React.PropTypes.element,
-     React.PropTypes.string,
-     React.PropTypes.array
-   ])
- },
+import CssClassMixin from 'mixins/css_class_mixin';
 
- getInitialState: function () {
-   return {
-     themeClassKey: 'flash.content flash.' + this.props.type + '.content'
-   };
- },
+@mixin(CssClassMixin)
+export default class FlashContent extends Component {
+  static propTypes = {
+    type: PropTypes.string,
+    message: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.string,
+      PropTypes.array
+    ])
+  };
 
- render: function () {
-   return (
-     <div className={this.className()}>
-       {this.renderMessages()}
-     </div>
-   );
- },
+  constructor (props) {
+    super(props);
+    this.state = {
+      themeClassKey: 'flash.content flash.' + this.props.type + '.content'
+    };
+  }
 
- renderMessages: function () {
-   var isArray = Array.isArray(this.props.message);
-   var messages = !isArray ? [this.props.message] : this.props.message;
-   return messages.map(function(message, index) {
-     return typeof message == "string" ? <p key={"flash_content_" + index}>{message}</p> : message;
-   });
- }
+  renderMessages () {
+    const isArray = Array.isArray(this.props.message);
+    const messages = !isArray ? [this.props.message] : this.props.message;
+    return messages.map(function(message, index) {
+      return typeof message == "string" ? <p key={"flash_content_" + index}>{message}</p> : message;
+    });
+  }
 
-});
+  render () {
+    return (
+      <div className={this.className()}>
+        {this.renderMessages()}
+      </div>
+    );
+  }
+}
