@@ -1,4 +1,6 @@
-Realize.themes.registerTheme({
+import themes from '../theme';
+
+themes.registerTheme({
   grid: {
     cssClass: 'grid row',
 

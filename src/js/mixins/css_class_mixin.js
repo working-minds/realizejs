@@ -1,8 +1,12 @@
-window.CssClassMixin = {
+import PropTypes from 'prop_types';
+import themes from 'theme/theme';
+import $ from 'jquery';
+
+export default {
   propTypes: {
-    clearTheme: React.PropTypes.bool,
-    className: React.PropTypes.string,
-    themeClassKey: React.PropTypes.string
+    clearTheme: PropTypes.bool,
+    className: PropTypes.string,
+    themeClassKey: PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -15,7 +19,7 @@ window.CssClassMixin = {
     var themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
-      themedClassName += Realize.themes.getCssClass(themeClassKey);
+      themedClassName += themes.getCssClass(themeClassKey);
     }
 
     if(!!className) {
@@ -50,6 +54,4 @@ window.CssClassMixin = {
 
     return props;
   }
-};
-
-module.exports = CssClassMixin;
+}
