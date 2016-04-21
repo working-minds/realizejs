@@ -1,60 +1,63 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, {Component} from 'react';
+import PropTypes from 'prop_types';
+import {mixin} from 'utils/decorators';
 
-window.Label = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    active: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    required: React.PropTypes.bool
-  },
+import CssClassMixin from 'mixins/css_class_mixin';
 
-  getDefaultProps: function() {
-    return {
-      active: false,
-      name: '',
-      label: '',
-      themeClassKey: 'label',
-      required: false
+@mixin(CssClassMixin)
+export default class Label extends Component {
+    static propTypes = {
+        id: PropTypes.string,
+        name: PropTypes.string,
+        label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+        active: PropTypes.bool,
+        onClick: PropTypes.func,
+        required: React.PropTypes.bool
     };
-  },
 
-  getInitialState: function() {
-    return {
-      themeClassKey: this.getLabelThemeClassKey(this.props)
+    static getDefaultProps = {
+        active: false,
+        name: '',
+        label: '',
+        themeClassKey: 'label',
+        required: false
     };
-  },
 
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      themeClassKey: this.getLabelThemeClassKey(nextProps)
-    });
-  },
-
-  getLabelThemeClassKey: function(props) {
-    var themeClassKey = props.themeClassKey;
-    if(props.active) {
-      themeClassKey += ' label.active';
+    constructor(props) {
+        super(props);
+        this.state = {
+            themeClassKey: this.getLabelThemeClassKey(this.props)
+        };
     }
 
-    return themeClassKey;
-  },
-
-  render: function() {
-    var labelProp = this.props.label;
-    if(typeof(labelProp) == "boolean" && !labelProp) {
-      return <span />;
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            themeClassKey: this.getLabelThemeClassKey(nextProps)
+        });
     }
-    var text = (labelProp || this.props.name)
-    if(this.props.required)
-      text += ' *'
 
-    return (
-      <label htmlFor={this.props.id} onClick={this.props.onClick} className={this.className()}>
-        {text}
-      </label>
-    );
-  }
-});
+    getLabelThemeClassKey(props) {
+        let themeClassKey = props.themeClassKey;
+        if (props.active) {
+            themeClassKey += ' label.active';
+        }
+
+        return themeClassKey;
+    };
+
+    render() {
+        let labelProp = this.props.label;
+        if (typeof(labelProp) == "boolean" && !labelProp) {
+            return <span />;
+        }
+        var text = (labelProp || this.props.name)
+        if (this.props.required)
+            text += ' *'
+
+        return (
+            <label htmlFor={this.props.id} onClick={this.props.onClick} className={this.className()}>
+                {text}
+            </label>
+        );
+    }
+}
