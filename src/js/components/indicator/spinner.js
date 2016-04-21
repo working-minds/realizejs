@@ -1,22 +1,22 @@
-window.Spinner = React.createClass({
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-  propTypes: {
-    size: React.PropTypes.string,
-    color: React.PropTypes.string,
-    active: React.PropTypes.bool,
-    className: React.PropTypes.string
-  },
+export default class Spinner extends Component {
+  static propTypes = {
+    size: PropTypes.string,
+    color: PropTypes.string,
+    active: PropTypes.bool,
+    className: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      size: 'small',
-      color: 'green',
-      active: true,
-      className: ''
-    };
-  },
+  static defaultProps = {
+    size: 'small',
+    color: 'green',
+    active: true,
+    className: ''
+  };
 
-  render: function() {
+  render () {
     return (
       <div className={this.wrapperClassName()}>
         <div className={this.layerClassName()}>
@@ -31,22 +31,22 @@ window.Spinner = React.createClass({
           </div>
         </div>
       </div>
-    ); 
-  },
+    );
+  }
 
-  wrapperClassName: function() {
-    var className = "spinner preloader-wrapper " + this.props.size;
+  wrapperClassName () {
+    let className = "spinner preloader-wrapper " + this.props.size;
     if(this.props.active) {
       className += " active";
     }
 
     className += " " + this.props.className;
     return className;
-  },
+  }
 
-  layerClassName: function() {
-    var className = "spinner-layer spinner-" + this.props.color + "-only";
+  layerClassName () {
+    let className = "spinner-layer spinner-" + this.props.color + "-only";
 
     return className;
   }
-});
+}

@@ -1,47 +1,50 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.Label = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    active: React.PropTypes.bool,
-    onClick: React.PropTypes.func
-  },
+import CssClassMixin from 'mixins/css_class_mixin';
 
-  getDefaultProps: function() {
-    return {
-      active: false,
-      name: '',
-      label: '',
-      themeClassKey: 'label'
-    };
-  },
+@mixin(CssClassMixin)
+export default class Label extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    name: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    active: PropTypes.bool,
+    onClick: PropTypes.func
+  };
 
-  getInitialState: function() {
-    return {
+  static defaultProps = {
+    active: false,
+    name: '',
+    label: '',
+    themeClassKey: 'label'
+  };
+
+  constructor (props) {
+    super(props);
+    this.state = {
       themeClassKey: this.getLabelThemeClassKey(this.props)
     };
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps (nextProps) {
     this.setState({
       themeClassKey: this.getLabelThemeClassKey(nextProps)
     });
-  },
+  }
 
-  getLabelThemeClassKey: function(props) {
-    var themeClassKey = props.themeClassKey;
+  getLabelThemeClassKey (props) {
+    let themeClassKey = props.themeClassKey;
     if(props.active) {
       themeClassKey += ' label.active';
     }
 
     return themeClassKey;
-  },
+  }
 
-  render: function() {
-    var labelProp = this.props.label;
+  render () {
+    let labelProp = this.props.label;
     if(typeof(labelProp) == "boolean" && !labelProp) {
       return <span />;
     }
@@ -52,4 +55,4 @@ window.Label = React.createClass({
       </label>
     );
   }
-});
+}
