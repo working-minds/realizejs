@@ -1,15 +1,33 @@
-var Realize = {};
+import RealizeConfig from './config';
+import PropTypes from './prop_types';
+import utils from './utils';
+import themes from './theme/theme.js';
+import i18n from './i18n/i18n';
 
-//TODO: ajustar o assign do config
-var RealizeConfig = require('./config.js');
-Realize.config = RealizeConfig.config;
-Realize.setConfig = RealizeConfig.setConfig;
+import defaultTheme from 'theme/mappings/default';
+import materializeTheme from 'theme/mappings/materialize';
 
-Realize.PropTypes = require('./propTypes.js');
-Realize.utils = require('./utils.js');
-Realize.themes = require('./theme/theme.js');
-Realize.i18n = require('./i18n/i18n.js');
+export default {
+  ...RealizeConfig,
 
-module.exports = Realize;
+  PropTypes,
+  utils,
+  themes,
+  i18n
+}
 
-import './components/input/input.jsx'
+// TODO: remover
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Button from 'components/button/button';
+
+
+ReactDOM.render(
+  <Button
+    name="my button"
+    actionUrl="https://randomuser.me/api/"
+    method="GET"
+    onSuccess={(data) => console.log(data)}>
+  </Button>,
+  document.getElementById('app')
+)

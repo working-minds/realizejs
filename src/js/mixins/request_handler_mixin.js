@@ -1,9 +1,12 @@
-window.RequestHandlerMixin = {
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+
+export default {
   propTypes: {
-    onRequest: React.PropTypes.func,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
-    onComplete: React.PropTypes.func
+    onRequest: PropTypes.func,
+    onSuccess: PropTypes.func,
+    onError: PropTypes.func,
+    onComplete: PropTypes.func
   },
 
   current_xhr: null,
@@ -28,9 +31,9 @@ window.RequestHandlerMixin = {
       url: url,
       data: (requestData || {}),
       method: (method || 'GET'),
-      success: this.successCallback,
-      error: this.errorCallback,
-      complete: this.completeCallback
+      success: this.successCallback.bind(this),
+      error: this.errorCallback.bind(this),
+      complete: this.completeCallback.bind(this)
     };
 
     if(!!dataType) {
@@ -99,6 +102,4 @@ window.RequestHandlerMixin = {
   handleHtmlResponse: function(responseHtml) {
 
   }
-};
-
-module.exports = RequestHandlerMixin;
+}

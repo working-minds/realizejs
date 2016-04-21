@@ -1,11 +1,12 @@
-var utils = require('../utils.js');
+import $ from 'jquery';
+import utils from '../utils';
 
-var themes = {
+export default {
   themes: {},
   defaultTheme: 'default',
   currentTheme: 'materialize',
 
-  registerTheme: function(newThemeObj, theme) {
+  registerTheme (newThemeObj, theme) {
     if(!$.isPlainObject(newThemeObj)) {
       throw 'Invalid Theme Object.'
     }
@@ -18,14 +19,14 @@ var themes = {
     this.themes[theme] = $.extend({}, currentThemeObj, newThemeObj);
   },
 
-  getCurrent: function() {
+  getCurrent () {
     var defaultThemeObj = this.themes[this.defaultTheme];
     var currentThemeObj = this.themes[this.currentTheme];
 
     return $.extend({}, defaultThemeObj, currentThemeObj);
   },
 
-  getProp: function(key) {
+  getProp (key) {
     if(!key) {
       return '';
     }
@@ -34,7 +35,7 @@ var themes = {
     return utils.getProp(key, currentTheme);
   },
 
-  getCssClass: function(keys) {
+  getCssClass (keys) {
     var keysArr = keys.split(' ');
     var themeClass = "";
 
@@ -47,6 +48,4 @@ var themes = {
 
     return themeClass.trim();
   }
-};
-
-module.exports = themes;
+}

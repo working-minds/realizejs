@@ -12,7 +12,16 @@ export default {
     chunkFilename: '[id].bundle.js'
   },
 
-  resolve: ['', '.js', '.jsx'],
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
+    root: [
+      path.resolve(__dirname, 'src/js'),
+      path.resolve(__dirname, 'node_modules')
+    ],
+    moduleDirectories: [
+      'components'
+    ]
+  },
 
   module: {
     loaders: [

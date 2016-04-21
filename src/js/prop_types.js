@@ -1,6 +1,8 @@
-var i18n = require('./i18n/i18n.js');
+import { PropTypes } from 'react';
+import i18n from './i18n/i18n';
 
-var propTypes = {
+export default {
+  ...PropTypes,
   localizedString: function(props, propName, componentName) {
     var value = props[propName];
     if (value === null || value === undefined || (typeof value === "string" && value.length === 0)) {
@@ -12,6 +14,4 @@ var propTypes = {
       return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
     }
   }
-};
-
-module.exports = propTypes;
+}
