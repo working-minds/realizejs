@@ -1,24 +1,24 @@
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.Container = React.createClass({
-  mixins: [ContainerMixin],
+import ContainerMixin from 'mixins/container_mixin';
 
-  propTypes: {
-    className: React.PropTypes.string
-  },
+@mixin(ContainerMixin)
+export default class Container extends Component {
+  static propTypes = {
+    className: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      className: 'row'
-    };
-  },
+  static defaultProps = {
+    className: 'row'
+  }
 
-  render: function() {
+  render () {
     return (
       <div className={this.props.className}>
         {this.renderChildren()}
       </div>
-    )
+    );
   }
-
-});
+}
