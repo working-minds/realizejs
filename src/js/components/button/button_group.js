@@ -4,6 +4,8 @@ import { mixin } from 'utils/decorators';
 
 import CssClassMixin from 'mixins/css_class_mixin';
 
+import Button from './button';
+
 @mixin(CssClassMixin)
 export default class ButtonGroup extends Component {
   static propTypes = {

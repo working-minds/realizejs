@@ -38,7 +38,6 @@
     "grunt-jsxhint": "^0.6.0",
     "jquery": "^2.2.3",
     "react-mixin": "https://github.com/rafaelfbs/react-mixin/archive/v3.0.6.tar.gz",
-    "react-mixin-decorator": "^1.2.3",
     "react-tools": "^0.13.3",
     "require-globify": "^1.3.0",
     "traits-decorator": "^1.0.1",

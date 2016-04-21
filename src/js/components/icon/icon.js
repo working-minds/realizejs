@@ -1,26 +1,32 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var TooltipMixin = require('realize/mixins/tooltip_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import themes from 'theme/theme';
+import { mixin } from 'utils/decorators';
 
-window.Icon = React.createClass({
-  mixins: [CssClassMixin, TooltipMixin],
+import CssClassMixin from 'mixins/css_class_mixin';
+import TooltipMixin from 'mixins/tooltip_mixin';
 
-  propTypes: {
-    type: React.PropTypes.string
-  },
+@mixin(
+  CssClassMixin,
+  TooltipMixin
+)
+export default class Icon extends Component {
+  static propTypes = {
+    type: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      type: ''
-    };
-  },
+  static defaultProps = {
+    type: ''
+  };
 
-  getInitialState: function() {
-    return {
+  constructor (props) {
+    super(props);
+    this.state = {
       themeClassKey: 'icon'
-    };
-  },
+    }
+  }
 
-  render: function() {
+  render () {
     return (
       <i className={this.getTooltipClassName()}
         {...this.tooltipAttributes()}
@@ -28,14 +34,14 @@ window.Icon = React.createClass({
         {this.iconType()}
       </i>
     );
-  },
+  }
 
-  iconType: function() {
-    var iconType = Realize.themes.getProp('icon.' + this.props.type);
+  iconType () {
+    var iconType = themes.getProp('icon.' + this.props.type);
     if(!iconType) {
       iconType = this.props.type;
     }
 
     return iconType;
   }
-});
+}
