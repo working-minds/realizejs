@@ -98,7 +98,7 @@ export default class Button extends Component {
   }
 
   getClassName (){
-    var className = this.className();
+    let className = this.className();
     if (this.props.disabled && this.props.element === 'a')
       className = 'button btn-flat disable-action-button';
 
@@ -136,7 +136,7 @@ export default class Button extends Component {
       return '';
     }
 
-    var iconProps = null;
+    let iconProps = null;
     if($.isPlainObject(this.props.icon)) {
       iconProps = this.props.icon;
     } else {
@@ -151,13 +151,13 @@ export default class Button extends Component {
   }
 
   handleClick = (event) => {
-    var buttonOnClick = this.props.onClick;
-    var buttonAction = this.props.actionUrl;
+    let buttonOnClick = this.props.onClick;
+    let buttonAction = this.props.actionUrl;
 
     if($.isFunction(buttonOnClick)) {
       this.props.onClick(event);
     } else if(!!buttonAction) {
-      var actionData = this.props.actionData;
+      let actionData = this.props.actionData;
       this.performRequest(buttonAction, actionData, (this.getMethod() || 'POST'));
     }
   }

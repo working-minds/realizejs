@@ -15,19 +15,3 @@ export default {
   themes,
   i18n
 }
-
-// TODO: remover
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Button from 'components/button/button';
-
-
-ReactDOM.render(
-  <Button
-    name="my button"
-    actionUrl="https://randomuser.me/api/"
-    method="GET"
-    onSuccess={(data) => console.log(data)}>
-  </Button>,
-  document.getElementById('app')
-)

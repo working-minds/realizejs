@@ -3,7 +3,7 @@ import webpack from 'webpack';
 
 export default {
   entry: {
-    app: path.resolve(__dirname, 'src/js/realize.js')
+    app: path.resolve(__dirname, 'src/js/main.js')
   },
 
   output: {
