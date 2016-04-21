@@ -1,62 +1,44 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var moment = require('moment');
-var numeral = require('realize/numeralWithLocale.js');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import moment from 'moment';
+import numeral from 'numeralWithLocale';
+import i18n from 'i18n/i18n';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.TableCell = React.createClass({
-  mixins: [CssClassMixin],
+import CssClassMixin from 'mixins/css_class_mixin';
 
-  propTypes: {
-    name: React.PropTypes.string,
-    data: React.PropTypes.object,
-    dataRowIdField: React.PropTypes.string,
-    value: React.PropTypes.func,
-    format: React.PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
-    formatString: React.PropTypes.string,
-    component: React.PropTypes.string
-  },
+@mixin(CssClassMixin)
+export default class TableCell extends Component {
+  static propTypes = {
+    name: PropTypes.string,
+    data: PropTypes.object,
+    dataRowIdField: PropTypes.string,
+    value: PropTypes.func,
+    format: PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
+    formatString: PropTypes.string,
+    component: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'table.cell',
-      data: {},
-      format: 'text',
-      formatString: null,
-      component: null
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'table.cell',
+    data: {},
+    format: 'text',
+    formatString: null,
+    component: null
+  };
 
-  componentWillMount: function() {
-    var currentLanguage = Realize.i18n.currentLocale.toLowerCase();
+  componentWillMoun () {
+    let currentLanguage = i18n.currentLocale.toLowerCase();
     numeral.language(currentLanguage);
-  },
+  }
 
-  render: function() {
-    return (
-      <td className={this.cellClassName()}>
-        {this.renderValue()}
-      </td>
-    );
-  },
+  renderValue () {
+    let format = this.props.format;
+    let customValue = this.props.value;
+    let dataValue = this.props.data[this.props.name];
 
-  cellClassName: function() {
-    var className = this.className();
-    if(!!this.props.format) {
-      className += ' table-cell--' + this.props.format;
-    }
-
-    if(!!this.props.name) {
-      className += ' table-cell--' + this.props.name;
-    }
-
-    return className;
-  },
-
-  renderValue: function() {
-    var format = this.props.format;
-    var customValue = this.props.value;
-    var dataValue = this.props.data[this.props.name];
-
-    var value = null;
+    let value = null;
 
     if(!!customValue) {
       value = customValue(this.props.data, this.props);
@@ -77,62 +59,83 @@ window.TableCell = React.createClass({
       return value;
     }
 
-  },
+  }
 
-  textValue: function(value) {
+  render () {
+    return (
+      <td className={this.cellClassName()}>
+        {this.renderValue()}
+      </td>
+    );
+  }
+
+  cellClassName () {
+    let className = this.className();
+    if(!!this.props.format) {
+      className += ' table-cell--' + this.props.format;
+    }
+
+    if(!!this.props.name) {
+      className += ' table-cell--' + this.props.name;
+    }
+
+    return className;
+  }
+
+  textValue (value) {
     return value;
-  },
+  }
 
-  numberValue: function(value) {
+  numberValue (value) {
     value = parseFloat(value);
     return numeral(value).format(this.getFormatString());
-  },
+  }
 
-  percentageValue: function(value) {
+  percentageValue (value) {
     value = parseFloat(value);
     if(value > 1.0 || value < -1.0) {
       value = value / 100.0;
     }
 
     return numeral(value).format(this.getFormatString());
-  },
+  }
 
-  currencyValue: function(value) {
+  currencyValue (value) {
     value = parseFloat(value);
     return numeral(value).format(this.getFormatString());
-  },
+  }
 
-  booleanValue: function(value) {
-    return Realize.i18n.t(String(value));
-  },
+  booleanValue (value) {
+    return i18n.t(String(value));
+  }
 
-  dateValue: function(value) {
-    var dateValue = moment.utc(value, moment.ISO_8601);
+  dateValue (value) {
+    let dateValue = moment.utc(value, moment.ISO_8601);
     if(dateValue.isValid()) {
       return dateValue.format(this.getFormatString());
     }
 
     return value;
-  },
+  }
 
-  datetimeValue: function(value) {
-    var dateTimeValue = moment.utc(value, moment.ISO_8601);
+  datetimeValue (value) {
+    let dateTimeValue = moment.utc(value, moment.ISO_8601);
     if(dateTimeValue.isValid()) {
       return dateTimeValue.format(this.getFormatString());
     }
 
     return value;
-  },
+  }
 
-  timeValue: function(value) {
+  timeValue (value) {
     value = moment.utc(value);
     return value.format(this.getFormatString());
-  },
-
-  getFormatString: function() {
-    var format = this.props.format;
-    var formatString = this.props.formatString;
-
-    return formatString || Realize.i18n.t('table.cell.formats.' + format);
   }
-});
+
+  getFormatString () {
+    let format = this.props.format;
+    let formatString = this.props.formatString;
+
+    return formatString || i18n.t('table.cell.formats.' + format);
+  }
+}

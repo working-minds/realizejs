@@ -2,6 +2,9 @@ import path from 'path';
 import webpack from 'webpack';
 
 export default {
+  debug: true,
+  devtool: 'inline-source-map',
+
   entry: {
     app: path.resolve(__dirname, 'src/js/main.js')
   },
@@ -17,9 +20,6 @@ export default {
     root: [
       path.resolve(__dirname, 'src/js'),
       path.resolve(__dirname, 'node_modules')
-    ],
-    moduleDirectories: [
-      'components'
     ]
   },
 

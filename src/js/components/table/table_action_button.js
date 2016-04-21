@@ -1,53 +1,45 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.TableActionButton = React.createClass({
-  mixins: [CssClassMixin, RequestHandlerMixin],
+import { CssClassMixin, RequestHandlerMixin } from 'mixins';
 
-  propTypes: {
-    selectedRowIds: React.PropTypes.array,
-    selectedRowIdsParam: React.PropTypes.string,
-    allSelected: React.PropTypes.bool,
-    allSelectedData: React.PropTypes.object,
-    count: React.PropTypes.number,
-    actionUrl: React.PropTypes.string,
-    method: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    selectionContext: React.PropTypes.oneOf(['none', 'atLeastOne']),
-    conditionToShowActionButton: React.PropTypes.func,
-    component: React.PropTypes.string,
-    params: React.PropTypes.object
-  },
+@mixin(CssClassMixin, RequestHandlerMixin)
+export default class TableActionButton extends Component {
+  static propTypes = {
+    selectedRowIds: PropTypes.array,
+    selectedRowIdsParam: PropTypes.string,
+    allSelected: PropTypes.bool,
+    allSelectedData: PropTypes.object,
+    count: PropTypes.number,
+    actionUrl: PropTypes.string,
+    method: PropTypes.string,
+    disabled: PropTypes.bool,
+    selectionContext: PropTypes.oneOf(['none', 'atLeastOne']),
+    conditionToShowActionButton: PropTypes.func,
+    component: PropTypes.string,
+    params: PropTypes.object
+  };
 
-  getDefaultProps: function() {
-    return {
-      selectedRowIds: [],
-      allSelected: false,
-      method: null,
-      conditionParams: null,
-      disabled: false,
-      selectionContext: 'none',
-      component: 'Button',
-      params: null,
-      conditionToShowActionButton: function(data) { return true }
-    };
-  },
+  static defaultProps = {
+    selectedRowIds: [],
+    allSelected: false,
+    method: null,
+    conditionParams: null,
+    disabled: false,
+    selectionContext: 'none',
+    component: 'Button',
+    params: null,
+    conditionToShowActionButton: function(data) { return true }
+  };
 
-  render: function() {
-    return (
-      <span>
-        {this.renderButton()}
-      </span>
-    );
-  },
-
-  renderButton: function() {
-    var component = [];
+  renderButton () {
+    let component = [];
     if(!this.props.conditionToShowActionButton(this.props.conditionParams)) {
       return component;
     }
 
-    var buttonProps = React.__spread({}, this.props, {
+    let buttonProps = React.__spread({}, this.props, {
       isLoading: this.state.isLoading,
       disabled: this.isDisabled(),
       method: this.actionButtonMethod(),
@@ -56,18 +48,26 @@ window.TableActionButton = React.createClass({
       key: this.props.name
     });
 
-    var buttonComponent = React.createElement(eval(this.props.component), buttonProps);
+    let buttonComponent = React.createElement(eval(this.props.component), buttonProps);
     component.push(buttonComponent);
 
     return component;
-  },
+  }
 
-  isDisabled: function() {
+  render () {
+    return (
+      <span>
+        {this.renderButton()}
+      </span>
+    );
+  }
+
+  isDisabled () {
     if(!!this.props.disabled || !!this.state.isLoading) {
       return true;
     }
 
-    var selectionContext = this.props.selectionContext;
+    let selectionContext = this.props.selectionContext;
     if (selectionContext === 'none') {
       return false;
     } else if (selectionContext === 'atLeastOne') {
@@ -75,53 +75,53 @@ window.TableActionButton = React.createClass({
     }
 
     return false;
-  },
+  }
 
-  actionButtonMethod: function() {
-    var buttonHref = this.props.href;
+  actionButtonMethod () {
+    let buttonHref = this.props.href;
     if(!buttonHref) {
       return null;
     }
 
     return this.props.method;
-  },
+  }
 
-  actionButtonHref: function() {
-    var buttonHref = this.props.href;
+  actionButtonHref () {
+    let buttonHref = this.props.href;
     if(!buttonHref) {
       return '#!';
     }
 
-    var selectedData = this.getSelectedData();
+    let selectedData = this.getSelectedData();
     buttonHref = (buttonHref + '?' + $.param(selectedData));
 
     if (!!this.props.params) {
-      for(var property in this.props.params) {
+      for(let property in this.props.params) {
         buttonHref = buttonHref + '&' + property + '=' + this.props.params[property]
       }
     }
 
     return buttonHref;
-  },
+  }
 
-  actionButtonClick: function(event) {
+  actionButtonClick = (event) => {
     if(this.isDisabled()) {
       return;
     }
 
-    var buttonOnClick = this.props.onClick;
-    var buttonAction = this.props.actionUrl;
-    var selectedData = this.getSelectedData();
+    let buttonOnClick = this.props.onClick;
+    let buttonAction = this.props.actionUrl;
+    let selectedData = this.getSelectedData();
 
     if($.isFunction(buttonOnClick)) {
       buttonOnClick(event, selectedData);
     } else if(!!buttonAction) {
       this.performRequest(buttonAction, selectedData, this.props.method);
     }
-  },
+  }
 
-  getSelectedData: function() {
-    var selectedData = {};
+  getSelectedData () {
+    let selectedData = {};
     if(this.props.allSelected && !!this.props.allSelectedData && !$.isEmptyObject(this.props.allSelectedData)) {
       selectedData = this.props.allSelectedData;
     } else {
@@ -130,4 +130,4 @@ window.TableActionButton = React.createClass({
 
     return selectedData;
   }
-});
+}

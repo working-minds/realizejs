@@ -1,47 +1,50 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import uuid from 'uuid';
+import { mixin } from 'utils/decorators';
 
-window.TableSelectCell = React.createClass({
-  mixins: [CssClassMixin, UtilsMixin],
+import { CssClassMixin } from 'mixins';
 
-  propTypes: {
-    rowId: React.PropTypes.string,
-    cellElement: React.PropTypes.string,
-    dataRowIds: React.PropTypes.array,
-    selected: React.PropTypes.bool,
-    onSelectToggle: React.PropTypes.func
-  },
+import { InputCheckbox, Label } from 'components';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'table.select',
-      className: 'table-select',
-      rowId: '',
-      cellElement: 'td',
-      dataRowIds: [],
-      selected: false,
-      onSelectToggle: function(event, dataRows, selected) {}
-    };
-  },
+@mixin(CssClassMixin)
+export default class TableSelectCell extends Component {
+  static propTypes = {
+    rowId: PropTypes.string,
+    cellElement: PropTypes.string,
+    dataRowIds: PropTypes.array,
+    selected: PropTypes.bool,
+    onSelectToggle: PropTypes.func
+  };
 
-  render: function() {
+  static defaultProps = {
+    themeClassKey: 'table.select',
+    className: 'table-select',
+    rowId: '',
+    cellElement: 'td',
+    dataRowIds: [],
+    selected: false,
+    onSelectToggle: function(event, dataRows, selected) {}
+  };
+
+  render () {
     return (
       React.createElement(this.props.cellElement,
         { className: this.className() },
         [
-          <InputCheckbox id={this.getCheckboxId()} checked={this.props.selected} key={this.generateUUID()} />,
+          <InputCheckbox id={this.getCheckboxId()} checked={this.props.selected} key={uuid.v4()} />,
           <Label id={this.getCheckboxId()} key="label" onClick={this.handleChange} />
         ]
       )
     );
-  },
+  }
 
-  getCheckboxId: function() {
+  getCheckboxId () {
     return "select_" + String(this.props.rowId);
-  },
+  }
 
-  handleChange: function(event) {
+  handleChange = (event) => {
     this.props.onSelectToggle(event, this.props.dataRowIds, !this.props.selected);
     event.stopPropagation();
   }
-});
+}

@@ -42,6 +42,7 @@
     "react-tools": "^0.13.3",
     "require-globify": "^1.3.0",
     "traits-decorator": "^1.0.1",
+    "uuid": "^2.0.2",
     "webpack": "^1.13.0"
   },
   "dependencies": {

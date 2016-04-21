@@ -1,44 +1,42 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.TableRowActionButton = React.createClass({
-  mixins: [CssClassMixin, RequestHandlerMixin],
+import { CssClassMixin, RequestHandlerMixin } from 'mixins';
 
-  propTypes: {
-    data: React.PropTypes.object,
-    dataRowIdField: React.PropTypes.string,
-    count: React.PropTypes.number,
-    actionUrl: React.PropTypes.string,
-    method: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    conditionToShowActionButton: React.PropTypes.func,
-    component: React.PropTypes.string,
-    element: React.PropTypes.string
-  },
+import Button from 'components/button/button';
 
-  getDefaultProps: function() {
-    return {
-      data: {},
-      dataRowIdField: 'id',
-      method: null,
-      disabled: false,
-      component: null,
-      element: 'a',
-      themeClassKey: 'button.flat',
-      conditionToShowActionButton: function(data) { return true }
-    };
-  },
+@mixin(
+  CssClassMixin,
+  RequestHandlerMixin
+)
+export default class TableRowActionButton extends Component {
+  static propTypes = {
+    data: PropTypes.object,
+    dataRowIdField: PropTypes.string,
+    count: PropTypes.number,
+    actionUrl: PropTypes.string,
+    method: PropTypes.string,
+    disabled: PropTypes.bool,
+    conditionToShowActionButton: PropTypes.func,
+    component: PropTypes.string,
+    element: PropTypes.string
+  };
 
-  render: function() {
-    return (
-      <span>
-        {this.renderButton()}
-      </span>
-    );
-  },
+  static defaultProps = {
+    data: {},
+    dataRowIdField: 'id',
+    method: null,
+    disabled: false,
+    component: null,
+    element: 'a',
+    themeClassKey: 'button.flat',
+    conditionToShowActionButton: function(data) { return true }
+  };
 
-  renderButton: function() {
-    var component = [];
+  renderButton () {
+    let component = [];
     if(!this.props.conditionToShowActionButton(this.props.data)) {
       return component;
     }
@@ -58,59 +56,66 @@ window.TableRowActionButton = React.createClass({
     }
 
     return component;
-  },
+  }
 
-  actionButtonMethod: function() {
-    var buttonHref = this.props.href;
+  render () {
+    return (
+      <span>
+        {this.renderButton()}
+      </span>
+    );
+  }
+
+  actionButtonMethod () {
+    let buttonHref = this.props.href;
     if(!buttonHref) {
       return null;
     }
 
     return this.props.method;
-  },
+  }
 
-  actionButtonHref: function() {
-    var buttonHref = this.props.href;
+  actionButtonHref () {
+    let buttonHref = this.props.href;
     if(!!buttonHref) {
-      var dataRowId = this.props.data[this.props.dataRowIdField];
+      let dataRowId = this.props.data[this.props.dataRowIdField];
       buttonHref = buttonHref.replace(/:id/, dataRowId);
     }
 
     return buttonHref;
-  },
+  }
 
-  actionButtonUrl: function() {
-    var buttonActionUrl = this.props.actionUrl;
+  actionButtonUrl () {
+    let buttonActionUrl = this.props.actionUrl;
     if(!!buttonActionUrl) {
-      var dataRowId = this.props.data[this.props.dataRowIdField];
+      let dataRowId = this.props.data[this.props.dataRowIdField];
       buttonActionUrl = buttonActionUrl.replace(/:id/, dataRowId);
     }
 
     return buttonActionUrl;
-  },
+  }
 
-  actionButtonClick: function(event) {
-    var buttonOnClick = this.props.onClick;
-    var buttonAction = this.actionButtonUrl();
+  actionButtonClick (event) {
+    let buttonOnClick = this.props.onClick;
+    let buttonAction = this.actionButtonUrl();
 
     if($.isFunction(buttonOnClick)) {
-      var dataRowId = this.props.data[this.props.dataRowIdField];
+      let dataRowId = this.props.data[this.props.dataRowIdField];
       buttonOnClick(event, dataRowId, this.props.data);
     } else if(!!buttonAction) {
-      var actionData = this.getActionData(this.props);
+      let actionData = this.getActionData(this.props);
       this.performRequest(buttonAction, actionData, (this.props.method || 'POST'));
     }
 
     event.stopPropagation();
-  },
+  }
 
-  getActionData: function() {
-    var dataIdParam = this.props.dataIdParam || 'id';
-    var dataRowId = this.props.data[this.props.dataRowIdField];
-    var actionData = {};
+  getActionData () {
+    let dataIdParam = this.props.dataIdParam || 'id';
+    let dataRowId = this.props.data[this.props.dataRowIdField];
+    let actionData = {};
 
     actionData[dataIdParam] = dataRowId;
     return actionData;
   }
-
-});
+}
