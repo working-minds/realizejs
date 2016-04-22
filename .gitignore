@@ -1,9 +1,26 @@
-
-bower_components
-node_modules
-tmp
-
-.sass-cache
-.DS_Cache
-
+### Base Development Environment ###
 .idea
+node_modules
+dist
+build
+bower_components
+tmp
+.sass-cache
+npm-debug.log
+
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Windows ###
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Windows shortcuts
+*.lnk

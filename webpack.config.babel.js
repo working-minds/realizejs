@@ -25,7 +25,12 @@ export default {
 
   module: {
     loaders: [
-      { test: /\.js[x]?$/, loader: 'babel', include: path.resolve(__dirname, 'src/js'), exclude: /node_modules/ }
+      {
+        test: /\.js[x]?$/,
+        loader: 'babel',
+        include: path.resolve(__dirname, 'src/js'),
+        exclude: /node_modules/
+      }
     ]
   }
 }

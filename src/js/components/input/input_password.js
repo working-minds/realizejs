@@ -1,19 +1,23 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var React = require('react');
+var CssClassMixin = require('../../mixins/css_class_mixin.jsx');
+var InputComponentMixin = require('../../mixins/input/input_component_mixin.jsx');
+import mixin from 'react-mixin'
 
-window.InputPassword = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
-  propTypes: {
-    confirms: React.PropTypes.string
-  },
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.text'
-    };
-  },
+@mixin.decorate(CssClassMixin)
+@mixin.decorate(InputComponentMixin)
+export default class InputPassword extends React.Component {
 
-  render: function() {
+  static propTypes = {
+    type: React.PropTypes.string
+  };
+
+  static defaultProps = {
+    type: 'text',
+    themeClassKey: 'input.text'
+  };
+
+  render() {
     return (
       <input
         {...this.props}
@@ -25,4 +29,4 @@ window.InputPassword = React.createClass({
         type="password" ref="input" />
     );
   }
-});
+}

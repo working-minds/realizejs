@@ -20,14 +20,16 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.7.7",
     "babel-core": "^6.7.6",
     "babel-loader": "^6.2.4",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
     "babel-preset-stage-0": "^6.5.0",
-    "babel-preset-stage-2": "^6.1.18",
     "babelify": "^7.2.0",
+    "chai": "^3.5.0",
+    "enzyme": "^2.2.0",
     "form-serializer": "^2.5.0",
     "grunt": "~0.4.5",
     "grunt-browserify": "^4.0.1",
@@ -40,13 +42,30 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-jsxhint": "^0.6.0",
     "jquery": "^2.2.3",
+    "json-loader": "^0.5.4",
+    "karma": "^0.13.22",
+    "karma-chai-sinon": "^0.1.5",
+    "karma-mocha": "^0.2.2",
+    "karma-mocha-reporter": "^2.0.1",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^1.7.0",
+    "mocha": "^2.4.5",
+    "phantomjs-prebuilt": "^2.1.7",
     "materialize-css": "^0.97.6",
+    "react-addons-test-utils": "^0.14.7",
     "react-mixin": "https://github.com/rafaelfbs/react-mixin/archive/v3.0.6.tar.gz",
     "react-tools": "^0.13.3",
     "require-globify": "^1.3.0",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
     "traits-decorator": "^1.0.1",
     "uuid": "^2.0.2",
     "webpack": "^1.13.0"
+  },
+  "peerDependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
   },
   "dependencies": {
     "lodash": "^4.11.2",
@@ -56,10 +75,16 @@
     "react-addons-css-transition-group": "^0.14.7",
     "react-color": "^1.3.7",
     "react-dom": "^0.14.7",
-    "reflux": "^0.3.0"
+    "reflux": "^0.3.0",
+    "string": "^3.3.0",
+    "jquery.inputmask":"~3.1.63"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.babel.js",
-    "watch": "webpack --config webpack.config.babel.js --watch"
+    "webpack": "webpack --config webpack.config.babel.js",
+    "watch": "webpack --config webpack.config.babel.js --watch",
+    "test": "npm run test:karma -- --single-run",
+    "test:watch": "npm run test:karma -- --auto-watch",
+    "test:karma": "karma start test/karma.conf.js",
+    "build": "webpack --config webpack.config.babel.js"
   }
 }

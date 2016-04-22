@@ -1,8 +1,8 @@
-import PropTypes from 'prop_types';
-import themes from 'theme/theme';
-import $ from 'jquery';
+import React from 'react'
+import Realize from '../realize.js'
+import $ from 'jquery'
 
-export default {
+window.CssClassMixin = {
   propTypes: {
     clearTheme: PropTypes.bool,
     className: PropTypes.string,
