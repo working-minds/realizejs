@@ -1,21 +1,27 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { config, i18n, themes } from 'realize'
+import { mixin } from 'utils/decorators';
 
-window.Tab = React.createClass({
-  mixins: [
-    CssClassMixin,
-    ContainerMixin
-  ],
+import {
+  CssClassMixin,
+  ContainerMixin
+} from 'mixins';
 
-  propTypes: {
+@mixin(
+  CssClassMixin,
+  ContainerMixin
+)
+export default class Tab extends Component {
+  static propTypes = {
     id: React.PropTypes.string
-  },
+  };
 
-  render: function () {
+  render () {
     return (
       <div id={this.props.id} className={this.className()}>
         {this.renderChildren()}
       </div>
     );
   }
-});
+}

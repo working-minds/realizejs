@@ -11,3 +11,4 @@ export * from './menu';
 export * from './pagination';
 export * from './sidenav';
 export * from './table';
+export * from './tabs';
