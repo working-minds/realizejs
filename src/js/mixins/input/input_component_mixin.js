@@ -1,14 +1,19 @@
-window.InputComponentMixin = {
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { themes, i18n } from 'realize';
+
+export default {
   propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.any,
-    disabled: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    placeholder: Realize.PropTypes.localizedString,
-    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
-    onChange: React.PropTypes.func,
-    onFocus: React.PropTypes.func
+    id: PropTypes.string,
+    name: PropTypes.string,
+    value: PropTypes.any,
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    placeholder: PropTypes.localizedString,
+    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+    onChange: PropTypes.func,
+    onFocus: PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -77,14 +82,14 @@ window.InputComponentMixin = {
     var errors = this.props.errors;
 
     if(!!errors && errors.length > 0) {
-      className += ' ' + Realize.themes.getCssClass('input.error');
+      className += ' ' + themes.getCssClass('input.error');
     }
 
     return className;
   },
 
   getPlaceholder: function() {
-    var placeholder = Realize.i18n.t(this.props.placeholder);
+    var placeholder = i18n.t(this.props.placeholder);
     if(typeof placeholder !== "string" || placeholder.length === 0) {
       return null;
     }
@@ -110,6 +115,4 @@ window.InputComponentMixin = {
     }
   }
 
-};
-
-module.exports = InputComponentMixin;
+}

@@ -1,41 +1,59 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.PaginationItem = React.createClass({
-  mixins: [CssClassMixin],
+import { CssClassMixin } from 'mixins';
+import { Icon } from 'components';
 
-  propTypes: {
-    disabled: React.PropTypes.bool,
-    active: React.PropTypes.bool,
-    iconType: React.PropTypes.string,
-    text: React.PropTypes.string,
-    onClick: React.PropTypes.func
-  },
+@mixin(CssClassMixin)
+export default class PaginationItem extends Component {
+  static propTypes = {
+    disabled: PropTypes.bool,
+    active: PropTypes.bool,
+    iconType: PropTypes.string,
+    text: PropTypes.string,
+    onClick: PropTypes.func
+  };
 
-  getDefaultProps: function() {
-    return {
-      disabled: false,
-      active: false,
-      iconType: null,
-      text: '',
-      onClick: function(event) {
-        return true;
-      }
-    };
-  },
+  static defaultProps = {
+    disabled: false,
+    active: false,
+    iconType: null,
+    text: '',
+    onClick: function(event) {
+      return true;
+    }
+  };
 
-  getInitialState: function() {
-    return {
+  constructor (props) {
+    super(props);
+    this.state = {
       themeClassKey: this.buildThemeClassKey()
     };
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps (nextProps) {
     this.setState({
       themeClassKey: this.buildThemeClassKey(nextProps)
     });
-  },
+  }
 
-  buildThemeClassKey: function(props) {
+  renderIcon () {
+    return <Icon type={this.props.iconType} />;
+  }
+
+  render () {
+    return (
+      <li className={this.className()} onClick={this.handleClick}>
+        <a href="#!">
+          {this.props.text}
+          {!!this.props.iconType ? this.renderIcon() : ''}
+        </a>
+      </li>
+    );
+  }
+
+  buildThemeClassKey (props) {
     props = props || this.props;
     var themeClassKey = 'pagination.item';
     if(props.disabled) {
@@ -47,26 +65,11 @@ window.PaginationItem = React.createClass({
     }
 
     return themeClassKey;
-  },
+  }
 
-  render: function() {
-    return (
-      <li className={this.className()} onClick={this.handleClick}>
-        <a href="#!">
-          {this.props.text}
-          {!!this.props.iconType ? this.renderIcon() : ''}
-        </a>
-      </li>
-    );
-  },
-
-  renderIcon: function() {
-    return <Icon type={this.props.iconType} />;
-  },
-
-  handleClick: function() {
+  handleClick = () => {
     if(!this.props.disabled) {
       this.props.onClick();
     }
   }
-});
+}

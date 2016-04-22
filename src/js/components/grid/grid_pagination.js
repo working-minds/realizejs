@@ -1,48 +1,41 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.GridPagination = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    count: React.PropTypes.number,
-    page: React.PropTypes.number,
-    perPage: React.PropTypes.number,
-    window: React.PropTypes.number,
-    onPagination: React.PropTypes.func,
-    onChangePerPage: React.PropTypes.func,
-    pageRowsCount: React.PropTypes.number,
-    type: React.PropTypes.string,
-    perPageOptions: React.PropTypes.array
-  },
+import { CssClassMixin } from 'mixins';
+import { Input, Pagination } from 'components';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'grid.pagination',
-      onPagination: function(page) {
-        return true;
-      },
-      onChangePerPage: function(perPage) { return true }
-    };
-  },
+@mixin(CssClassMixin)
+export default class GridPagination extends Component {
+  static propTypes = {
+    count: PropTypes.number,
+    page: PropTypes.number,
+    perPage: PropTypes.number,
+    window: PropTypes.number,
+    onPagination: PropTypes.func,
+    onChangePerPage: PropTypes.func,
+    pageRowsCount: PropTypes.number,
+    type: PropTypes.string,
+    perPageOptions: PropTypes.array
+  };
 
-  render: function() {
-    return (
-      <div className={this.className()}>
-        {this.renderPagination()}
-        {this.renderRangePagination()}
-        {this.renderPerPage()}
-      </div>
-    );
-  },
+  static defaultProps = {
+    themeClassKey: 'grid.pagination',
+    onPagination: function(page) {
+      return true;
+    },
+    onChangePerPage: function(perPage) { return true }
+  };
 
-  renderRangePagination: function() {
+  renderRangePagination () {
     return (
       <div className='range_pagination'>
         <span>{this.rangePaginationText()}</span>
       </div>
     );
-  },
+  }
 
-  renderPerPage: function() {
+  renderPerPage () {
     return (
       <div className='per_page'>
         <Input value={this.props.perPage} component='select'
@@ -53,11 +46,11 @@ window.GridPagination = React.createClass({
           />
       </div>
     );
-  },
+  }
 
-  renderPagination: function() {
-    var totalRowsCount = this.props.count;
-    var pageRowsCount = this.props.pageRowsCount;
+  renderPagination () {
+    let totalRowsCount = this.props.count;
+    let pageRowsCount = this.props.pageRowsCount;
     if (totalRowsCount <= pageRowsCount) {
       return null;
     }
@@ -74,23 +67,32 @@ window.GridPagination = React.createClass({
         />
       </div>
     )
-  },
+  }
 
-  changePerPage: function(event) {
-    var perPage = parseInt(event.currentTarget.value);
+  render () {
+    return (
+      <div className={this.className()}>
+        {this.renderPagination()}
+        {this.renderRangePagination()}
+        {this.renderPerPage()}
+      </div>
+    );
+  }
+
+  changePerPage (event) {
+    let perPage = parseInt(event.currentTarget.value);
     this.props.onChangePerPage(perPage);
-  },
+  }
 
-  rangePaginationText: function() {
-    var perPage = this.props.perPage;
-    var page = this.props.page;
-    var pageRowsCount = this.props.pageRowsCount;
+  rangePaginationText () {
+    let perPage = this.props.perPage;
+    let page = this.props.page;
+    let pageRowsCount = this.props.pageRowsCount;
 
-    var firstElement = (perPage*page-(perPage-1));
-    var lastElement = (pageRowsCount < perPage) ? this.props.count : perPage*page;
-    var totalElement = this.props.count;
+    let firstElement = (perPage*page-(perPage-1));
+    let lastElement = (pageRowsCount < perPage) ? this.props.count : perPage*page;
+    let totalElement = this.props.count;
 
     return firstElement+' - '+lastElement+' de '+totalElement;
   }
-
-});
+}

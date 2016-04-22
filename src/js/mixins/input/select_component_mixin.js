@@ -1,22 +1,24 @@
-var utils = require('../../utils.js');
-var _map = require('lodash/map');
+import utils from '../../utils.js';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import map from 'lodash/map';
 
-window.SelectComponentMixin = {
+export default {
   propTypes: {
-    options: React.PropTypes.array,
-    dependsOn: React.PropTypes.object,
-    optionsUrl: React.PropTypes.string,
-    optionsParam: React.PropTypes.string,
-    nameField: React.PropTypes.string,
-    valueField: React.PropTypes.string,
-    multiple: React.PropTypes.bool,
-    onLoad: React.PropTypes.func,
-    onLoadError: React.PropTypes.func,
-    onSelect: React.PropTypes.func,
-    requestTimeout: React.PropTypes.number
+    options: PropTypes.array,
+    dependsOn: PropTypes.object,
+    optionsUrl: PropTypes.string,
+    optionsParam: PropTypes.string,
+    nameField: PropTypes.string,
+    valueField: PropTypes.string,
+    multiple: PropTypes.bool,
+    onLoad: PropTypes.func,
+    onLoadError: PropTypes.func,
+    onSelect: PropTypes.func,
+    requestTimeout: PropTypes.number
   },
 
-  getDefaultProps: function() {
+  getDefaultProps () {
     return {
       dependsOn: null,
       optionsParam: null,
@@ -35,7 +37,7 @@ window.SelectComponentMixin = {
     };
   },
 
-  getInitialState: function() {
+  getInitialState () {
     return {
       options: this.props.options,
       optionsCache: this.props.options,
@@ -47,7 +49,7 @@ window.SelectComponentMixin = {
     };
   },
 
-  componentWillMount: function() {
+  componentWillMount () {
     // SelecComponent alwalys handle value as an array.
     this.state.value = this.ensureIsArray(this.state.value);
 
@@ -56,7 +58,7 @@ window.SelectComponentMixin = {
     }
   },
 
-  componentDidMount: function() {
+  componentDidMount () {
     if(this.props.optionsUrl) {
       if(!!this.props.dependsOn) {
         this.listenToDependableChange();
@@ -71,13 +73,13 @@ window.SelectComponentMixin = {
     }
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount () {
     if(!!this.props.dependsOn) {
       this.unbindDependableChangeListener();
     }
   },
 
-  ensureIsArray: function(value) {
+  ensureIsArray (value) {
     if(value === null || value === undefined || value.length === 0) {
       value = [];
     } else if(!$.isArray(value)) {
@@ -86,7 +88,7 @@ window.SelectComponentMixin = {
     return value;
   },
 
-  selectedOptions: function() {
+  selectedOptions () {
     var selectedOptions = [];
     $.each(this.state.optionsCache, function(i, option) {
       if(this.state.value.indexOf(option.value) >= 0) {
@@ -98,7 +100,7 @@ window.SelectComponentMixin = {
     return selectedOptions;
   },
 
-  loadOptions: function() {
+  loadOptions () {
     this.state.hasPendingRequest = true;
     var requestTime = new Date().getTime();
     var timeout = 0;
@@ -128,7 +130,7 @@ window.SelectComponentMixin = {
     this.state.lastXhrRequestTime = requestTime;
   },
 
-  handleLoad: function(data) {
+  handleLoad (data) {
     var options = [];
     var optionsParam = this.props.optionsParam;
     if(!!optionsParam) {
@@ -156,12 +158,12 @@ window.SelectComponentMixin = {
     this.props.onLoad(data);
   },
 
-  handleLoadError: function handleLoadError(xhr, status, error) {
+  handleLoadError (xhr, status, error) {
     this.state.hasPendingRequest = false;
     this.props.onLoadError(xhr, status, error);
   },
 
-  cacheOptions: function(options) {
+  cacheOptions (options) {
     var optionsCache = options.slice(0);
     var optionValuesCache = $.map(optionsCache, function(option) {
       return option.value;
@@ -177,23 +179,23 @@ window.SelectComponentMixin = {
     return optionsCache;
   },
 
-  listenToDependableChange: function() {
+  listenToDependableChange () {
     var dependableId = this.props.dependsOn.dependableId;
     dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
     $('body').delegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
-  unbindDependableChangeListener: function() {
+  unbindDependableChangeListener () {
     var dependableId = this.props.dependsOn.dependableId;
     dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
-  onDependableChange: function(event, dependableValue) {
+  onDependableChange (event, dependableValue) {
     this.loadDependentOptions(dependableValue, false);
   },
 
-  loadDependentOptions: function(dependableValue, keepValue) {
+  loadDependentOptions (dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
     }
@@ -213,7 +215,7 @@ window.SelectComponentMixin = {
     this.loadOptions();
   },
 
-  getDependableNode: function() {
+  getDependableNode () {
     var dependsOnObj = this.props.dependsOn;
     return $(document.getElementById(dependsOnObj.dependableId));
   },
@@ -225,7 +227,7 @@ window.SelectComponentMixin = {
     $valuesElement.trigger('dependable_changed', [optionValues]);
   },
 
-  emptyAndDisable: function(keepValue) {
+  emptyAndDisable (keepValue) {
     var newState = {
       options: [],
       optionsCache: [],
@@ -239,26 +241,23 @@ window.SelectComponentMixin = {
     this.setState(newState);
   },
 
-  isDisabled: function () {
+  isDisabled () {
     return this.state.disabled || this.state.mustDisable;
   },
 
   /* Serializer functions */
 
-  getDisplayValues: function() {
-    return _map(this.selectedOptions(), function(selectedOption) {
+  getDisplayValues () {
+    return map(this.selectedOptions(), function(selectedOption) {
       return selectedOption[this.props.nameField];
     }.bind(this));
   },
 
-  serialize: function() {
+  serialize () {
     var serializedInput = {};
     serializedInput[this.props.name] = this.getValue();
     serializedInput[this.props.name + "Display"] = this.getDisplayValues();
 
     return serializedInput;
   }
-
-};
-
-module.exports = SelectComponentMixin;
+}

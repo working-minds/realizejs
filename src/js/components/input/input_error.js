@@ -1,40 +1,40 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.InputError = React.createClass({
-  mixins: [CssClassMixin],
+import { CssClassMixin } from 'mixins';
 
-  propTypes: {
+@mixin(CssClassMixin)
+export default class InputError extends Component {
+  static propTypes = {
     errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array])
-  },
+  };
 
-  getDefaultProps: function() {
-    return {
-      errors: [],
-      themeClassKey: 'input.error.hint'
-    };
-  },
+  static defaultProps = {
+    errors: [],
+    themeClassKey: 'input.error.hint'
+  };
 
-  render: function() {
+  render () {
     return (
       <span className={this.className()}>
         {this.errorMessages()}
       </span>
     );
-  },
+  }
 
-  errorMessages: function() {
-    var errors = this.props.errors;
-    var errorMessage = '';
+  errorMessages () {
+    let errors = this.props.errors;
+    let errorMessage = '';
     if(!$.isArray(errors)) {
       errors = [errors];
     }
 
-    for(var i = 0; i < errors.length; i++) {
-      var error = errors[i];
+    for(let i = 0; i < errors.length; i++) {
+      let error = errors[i];
       errorMessage += error + ' / ';
     }
 
     return errorMessage.replace(/[\/\s]*$/, '');
   }
-
-});
+}

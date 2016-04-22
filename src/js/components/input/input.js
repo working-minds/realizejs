@@ -1,23 +1,28 @@
-import React from 'react';
-import CssClassMixin from '../../mixins/css_class_mixin.jsx';
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import capitalize from 'lodash/capitalize';
+import { mixin } from 'utils/decorators';
+
+import { CssClassMixin } from 'mixins';
+import { Label } from 'components';
+import * as InputComponents from 'components/input';
 
 @mixin(CssClassMixin)
-export class Input extends React.Component {
-
+export default class Input extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    value: React.PropTypes.any,
-    component: React.PropTypes.string,
-    formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
-    data: React.PropTypes.object,
-    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
-    resource: React.PropTypes.string,
-    scope: React.PropTypes.oneOf(['resource', 'global']),
-    maxLength: React.PropTypes.number,
-    renderLabel: React.PropTypes.bool
-  }
+    id: PropTypes.string,
+    name: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    value: PropTypes.any,
+    component: PropTypes.string,
+    formStyle: PropTypes.oneOf(['default', 'filter', 'oneLine']),
+    data: PropTypes.object,
+    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+    resource: PropTypes.string,
+    scope: PropTypes.oneOf(['resource', 'global']),
+    maxLength: PropTypes.number,
+    renderLabel: PropTypes.bool
+  };
 
   static defaultProps = {
       themeClassKey: 'input',
@@ -30,35 +35,16 @@ export class Input extends React.Component {
       scope: 'resource',
       maxLength: null,
       renderLabel: true
-  }
+  };
 
-  state = {
+  constructor (props) {
+    super(props);
+    this.state = {
       value: this.props.value
-  }
-
-  inputClassName() {
-    var className = this.className();
-    if(!this.props.className) {
-      className += ' ' + Realize.themes.getCssClass('input.grid.' + this.props.formStyle);
-    }
-
-    return className;
-  }
-
-  render() {
-    var renderFunction = 'render' + S(this.props.component).capitalize().s + 'Input';
-    var renderLabel = this.props.renderLabel;
-
-    if(this.hasOwnProperty(renderFunction)) {
-      return this[renderFunction]();
-    } else if(!renderLabel) {
-      return this.renderInputWithoutLabel();
-    } else {
-      return this.renderInput();
     }
   }
 
-  renderInput() {
+  renderInput () {
     return (
       <div className={this.inputClassName()} id={this.getInputContainerId()}>
         {this.renderComponentInput()}
@@ -68,7 +54,7 @@ export class Input extends React.Component {
     );
   }
 
-  renderInputWithoutLabel() {
+  renderInputWithoutLabel () {
     return (
       <div className={this.inputClassName()} id={this.getInputContainerId()}>
         {this.renderComponentInput()}
@@ -77,43 +63,43 @@ export class Input extends React.Component {
     );
   }
 
-  renderAutocompleteInput() {
+  renderAutocompleteInput () {
     return this.renderInputWithoutLabel();
   }
 
-  renderDatefilterInput() {
+  renderDatefilterInput () {
     return this.renderInputWithoutLabel();
   }
 
-  renderDatepickerInput() {
+  renderDatepickerInput () {
     return this.renderInputWithoutLabel();
   }
 
-  renderNumberInput(){
+  renderNumberInput (){
     return this.renderInputWithoutLabel();
   }
 
-  renderSwitchInput(){
+  renderSwitchInput (){
     return this.renderInputWithoutLabel();
   }
 
-  renderFileInput() {
+  renderFileInput () {
     return this.renderInputWithoutLabel();
   }
 
-  renderColorpickerInput() {
+  renderColorpickerInput () {
     return this.renderInputWithoutLabel();
   }
 
-  renderGridformInput() {
+  renderGridformInput () {
     return this.renderInputWithoutLabel();
   }
 
-  renderHiddenInput() {
+  renderHiddenInput () {
     return this.renderComponentInput();
   }
 
-  renderComponentInput() {
+  renderComponentInput () {
     var componentInputClass = this.getInputComponentClass(this.props.component);
     var isGrid = (componentInputClass === InputGridForm);
 
@@ -131,7 +117,7 @@ export class Input extends React.Component {
     return React.createElement(componentInputClass, componentInputProps);
   }
 
-  renderLabel() {
+  renderLabel () {
     var inputValue = this.getInputComponentValue();
     var isActive = this.labelIsActive(inputValue);
 
@@ -147,39 +133,61 @@ export class Input extends React.Component {
     return (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
   }
 
-  renderInputErrors() {
-    return (<InputError errors={this.getInputErrors()} />);
+  renderInputErrors () {
+    return (<InputComponents.InputError errors={this.getInputErrors()} />);
   }
 
-  getInputContainerId() {
+  render () {
+    var renderFunction = 'render' + capitalize(this.props.component) + 'Input';
+    var renderLabel = this.props.renderLabel;
+
+    if(this.hasOwnProperty(renderFunction)) {
+      return this[renderFunction]();
+    } else if(!renderLabel) {
+      return this.renderInputWithoutLabel();
+    } else {
+      return this.renderInput();
+    }
+  }
+
+  inputClassName () {
+    var className = this.className();
+    if(!this.props.className) {
+      className += ' ' + Realize.themes.getCssClass('input.grid.' + this.props.formStyle);
+    }
+
+    return className;
+  }
+
+  getInputContainerId () {
     return "input__" + this.props.id;
   }
 
-  getInputComponentClass(component) {
+  getInputComponentClass (component) {
     var mapping = {
-      text: InputText,
-      autocomplete: InputAutocomplete,
-      checkbox: InputCheckbox,
-      colorpicker: InputColorpicker,
-      datefilter: InputDatefilter,
-      datepicker: InputDatepicker,
-      number: InputNumber,
-      file: InputFile,
-      gridform: InputGridForm,
-      hidden: InputHidden,
-      password: InputPassword,
-      select: InputSelect,
-      switch: InputSwitch,
-      textarea: InputTextarea,
-      checkbox_group: InputCheckboxGroup,
-      radio_group: InputRadioGroup,
-      masked: InputMasked
+      text: InputComponents.InputText,
+      autocomplete: InputComponents.InputAutocomplete,
+      checkbox: InputComponents.InputCheckbox,
+      colorpicker: InputComponents.InputColorpicker,
+      datefilter: InputComponents.InputDatefilter,
+      datepicker: InputComponents.InputDatepicker,
+      number: InputComponents.InputNumber,
+      file: InputComponents.InputFile,
+      gridform: InputComponents.InputGridForm,
+      hidden: InputComponents.InputHidden,
+      password: InputComponents.InputPassword,
+      select: InputComponents.InputSelect,
+      switch: InputComponents.InputSwitch,
+      textarea: InputComponents.InputTextarea,
+      checkbox_group: InputComponents.InputCheckboxGroup,
+      radio_group: InputComponents.InputRadioGroup,
+      masked: InputComponents.InputMasked
     };
 
     return (mapping[component] || window[component] || component);
   }
 
-  getInputComponentId() {
+  getInputComponentId () {
     var inputId = this.props.id;
     if(this.props.resource !== null && this.props.scope === "resource") {
       inputId = this.props.resource + '_' + inputId;
@@ -188,7 +196,7 @@ export class Input extends React.Component {
     return inputId;
   }
 
-  getInputComponentName() {
+  getInputComponentName () {
     var inputName = (this.props.name || this.props.id);
     if(this.props.resource !== null && this.props.scope === "resource") {
       inputName = this.props.resource + '[' + inputName + ']';
@@ -197,7 +205,7 @@ export class Input extends React.Component {
     return inputName;
   }
 
-  getInputComponentValue() {
+  getInputComponentValue () {
     if(!!this.props.value) {
       return this.props.value;
     }
@@ -212,7 +220,7 @@ export class Input extends React.Component {
     return dataValue;
   }
 
-  getMaxLength() {
+  getMaxLength () {
     var acceptComponents = ['text', 'masked', 'number', 'textarea'];
 
     if (!!this.props.maxLength && (acceptComponents.indexOf(this.props.component) != -1)) {
@@ -220,7 +228,7 @@ export class Input extends React.Component {
     }
   }
 
-  getInputErrors() {
+  getInputErrors () {
     if(this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
       return this.props.errors[this.props.resource][this.props.id];
     return this.props.errors[this.props.id];
@@ -228,11 +236,11 @@ export class Input extends React.Component {
 
   /* Serializer functions */
 
-  getName() {
+  getName () {
     return this.getInputComponentName();
   }
 
-  getValue() {
+  getValue () {
     var inputComponentRef = this.refs.inputComponent;
     if(typeof inputComponentRef.getValue == "function") {
       return inputComponentRef.getValue();
@@ -241,7 +249,7 @@ export class Input extends React.Component {
     }
   }
 
-  serialize() {
+  serialize () {
     var inputComponentRef = this.refs.inputComponent;
     if(typeof inputComponentRef.serialize == "function") {
       return inputComponentRef.serialize();
