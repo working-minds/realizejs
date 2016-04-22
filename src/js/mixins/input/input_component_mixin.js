@@ -16,7 +16,7 @@ export default {
     onFocus: PropTypes.func
   },
 
-  getDefaultProps: function() {
+  defaultProps: function() {
     return {
       disabled: false,
       readOnly: false,
