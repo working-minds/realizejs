@@ -1,30 +1,34 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
-var FormContainerMixin = require('realize/mixins/form/form_container_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { config, i18n, themes } from 'realize'
+import { mixin } from 'utils/decorators';
 
-window.TabButton = React.createClass({
-  mixins: [
-    CssClassMixin,
-    ContainerMixin,
-    FormContainerMixin
-  ],
+import {
+  CssClassMixin,
+  ContainerMixin,
+  FormContainerMixin
+} from 'mixins';
 
-  propTypes: {
-    id: React.PropTypes.string,
-    title: React.PropTypes.string,
-    active: React.PropTypes.bool
-  },
+@mixin(
+  CssClassMixin,
+  ContainerMixin,
+  FormContainerMixin
+)
+export default class TabButton extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    title: PropTypes.string,
+    active: PropTypes.bool
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'tabs.tabButton',
-      errorThemeClassKey: 'tabs.tabButton.error',
-      className: 's1',
-      active: false
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'tabs.tabButton',
+    errorThemeClassKey: 'tabs.tabButton.error',
+    className: 's1',
+    active: false
+  };
 
-  render: function () {
+  render () {
     return (
       <li className={this.formContainerClassName()}>
         <a href={'#' + this.props.id} className={this.props.active ? "active" : ""}>
@@ -33,5 +37,4 @@ window.TabButton = React.createClass({
       </li>
     );
   }
-
-});
+}

@@ -1,25 +1,30 @@
-window.FormContainerMixin = {
+import React from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { themes } from 'realize';
+
+export default {
   propTypes: {
-    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
-    errorThemeClassKey: React.PropTypes.string
+    errors: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
+    errorThemeClassKey: PropTypes.string
   },
 
-  getDefaultProps: function() {
+  getDefaultProps () {
     return {
       errors: {}
     };
   },
 
-  formContainerClassName: function() {
+  formContainerClassName () {
     var className = this.className();
     if(this.inputChildrenHaveErrors() || (!!this.props.errors && !$.isEmptyObject(this.props.errors))) {
-      className += ' ' + Realize.themes.getCssClass(this.props.errorThemeClassKey);
+      className += ' ' + themes.getCssClass(this.props.errorThemeClassKey);
     }
 
     return className;
   },
 
-  inputChildrenHaveErrors: function() {
+  inputChildrenHaveErrors () {
     var errorIds = $.map(this.props.errors, function(error, errorId) {
       return errorId;
     });
@@ -27,7 +32,7 @@ window.FormContainerMixin = {
     return this.checkInputChildrenForErrors(errorIds, this.props.children);
   },
 
-  checkInputChildrenForErrors: function(errorIds, children) {
+  checkInputChildrenForErrors (errorIds, children) {
     var inputChildrenHaveErrors = false;
 
     React.Children.forEach(children, function(child) {
@@ -47,7 +52,7 @@ window.FormContainerMixin = {
     return inputChildrenHaveErrors;
   },
 
-  checkInputGroupForErrors: function (errorIds, inputGroup) {
+  checkInputGroupForErrors (errorIds, inputGroup) {
     var inputGroupHaveErrors = false;
     var inputsIds = $.map(inputGroup.props.inputs, function(inputProps) {
       return inputProps.id;
@@ -63,6 +68,4 @@ window.FormContainerMixin = {
     return inputGroupHaveErrors;
   }
 
-};
-
-module.exports = FormContainerMixin;
+}

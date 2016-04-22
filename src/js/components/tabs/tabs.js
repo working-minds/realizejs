@@ -1,43 +1,33 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { config, i18n, themes } from 'realize';
+import { mixin } from 'utils/decorators';
 
-window.Tabs = React.createClass({
-  mixins: [
-    CssClassMixin,
-    ContainerMixin
-  ],
+import {
+  CssClassMixin,
+  ContainerMixin
+} from 'mixins';
 
-  propTypes: {
-    themeClassKey: React.PropTypes.string,
-    className: React.PropTypes.string,
-    activeTab: React.PropTypes.number
-  },
+@mixin(
+  CssClassMixin,
+  ContainerMixin
+)
+export default class Tabs extends Component {
+  static propTypes = {
+    activeTab: PropTypes.number
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'tabs',
-      activeTab: 1
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'tabs',
+    activeTab: 1
+  };
 
-  componentDidMount: function () {
+  componentDidMount () {
     $(ReactDOM.findDOMNode(this.refs.tabsContainer)).tabs();
-  },
+  }
 
-  render: function () {
-    return (
-      <div className={this.className()}>
-        <ul className="tabs z-depth-1" ref="tabsContainer">
-          {this.renderTabButtons()}
-        </ul>
-        <div>
-          {this.renderChildren()}
-        </div>
-      </div>
-    );
-  },
-
-  renderTabButtons: function () {
+  renderTabButtons () {
     var tabs = [];
     var children = this.getChildren();
 
@@ -48,4 +38,17 @@ window.Tabs = React.createClass({
 
     return tabs;
   }
-});
+
+  render () {
+    return (
+      <div className={this.className()}>
+        <ul className="tabs z-depth-1" ref="tabsContainer">
+          {this.renderTabButtons()}
+        </ul>
+        <div>
+          {this.renderChildren()}
+        </div>
+      </div>
+    );
+  }
+}
