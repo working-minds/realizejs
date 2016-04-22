@@ -4,3 +4,4 @@ window.jQuery = jQuery;
 window.$ = jQuery;
 
 require('materialize-css');
+require('form-serializer');

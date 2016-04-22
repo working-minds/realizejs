@@ -1,19 +1,21 @@
-var _mergeWith = require('lodash/mergeWith');
-var _isArray = require('lodash/isArray');
+import PropTypes from 'prop_types';
+import mergeWith from 'lodash/mergewith';
+import isArray from 'lodash/isArray';
+import $ from 'jquery';
 
-window.GridActionsMixin = {
+export default {
   propTypes: {
-    actionButtons: React.PropTypes.object,
-    rowHref: React.PropTypes.string,
-    haveShowAction: React.PropTypes.bool,
+    actionButtons: PropTypes.object,
+    rowHref: PropTypes.string,
+    haveShowAction: PropTypes.bool,
 
-    createActionButton: React.PropTypes.object,
-    showActionButton: React.PropTypes.object,
-    editActionButton: React.PropTypes.object,
-    destroyActionButton: React.PropTypes.object
+    createActionButton: PropTypes.object,
+    showActionButton: PropTypes.object,
+    editActionButton: PropTypes.object,
+    destroyActionButton: PropTypes.object
   },
 
-  getDefaultProps: function() {
+  getDefaultProps () {
     return {
       actionButtons: {},
       rowHref: null,
@@ -25,7 +27,7 @@ window.GridActionsMixin = {
     };
   },
 
-  getRowHref: function() {
+  getRowHref () {
     var rowHref = this.props.rowHref;
     var haveShowAction = this.props.haveShowAction;
     if(!haveShowAction || (!!rowHref && typeof rowHref == "string")) {
@@ -36,22 +38,22 @@ window.GridActionsMixin = {
   },
 
   getActionButtons: function() {
-    return _mergeWith(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
+    return mergeWith(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
   },
 
-  mergeActionButtons: function(defaultObject, propsObject) {
+  mergeActionButtons (defaultObject, propsObject) {
     var propsActionButtons = this.props.actionButtons;
     var propsExtend = propsActionButtons.extend;
     var extendActionButtons = (typeof(propsExtend) == "boolean") ? propsExtend : false;
 
-    if(extendActionButtons && _isArray(propsObject) && _isArray(defaultObject)) {
+    if(extendActionButtons && isArray(propsObject) && isArray(defaultObject)) {
       return propsObject.concat(defaultObject);
     } else {
       return propsObject;
     }
   },
 
-  getDefaultActionButtonsObject: function() {
+  getDefaultActionButtonsObject () {
     return {
       extend: true,
       member: this.getDefaultMemberActionButtons(),
@@ -59,7 +61,7 @@ window.GridActionsMixin = {
     }
   },
 
-  getDefaultMemberActionButtons: function() {
+  getDefaultMemberActionButtons () {
     var actions = [
       this.getDefaultEditActionProps(),
       this.getDefaultDestroyActionProps()
@@ -72,11 +74,11 @@ window.GridActionsMixin = {
     return actions;
   },
 
-  getDefaultCollectionActionButtons: function() {
+  getDefaultCollectionActionButtons () {
     return [this.getDefaultCreateActionProps()];
   },
 
-  getDefaultCreateActionProps: function() {
+  getDefaultCreateActionProps () {
     return $.extend({}, {
       name: 'actions.new',
       context: 'none',
@@ -84,21 +86,21 @@ window.GridActionsMixin = {
     }, this.props.createActionButton);
   },
 
-  getDefaultShowActionProps: function() {
+  getDefaultShowActionProps () {
     return $.extend({}, {
       icon: 'search',
       href: this.getRestActionUrl('show')
     }, this.props.showActionButton);
   },
 
-  getDefaultEditActionProps: function() {
+  getDefaultEditActionProps () {
     return $.extend({}, {
       icon: 'edit',
       href: this.getRestActionUrl('edit')
     }, this.props.editActionButton);
   },
 
-  getDefaultDestroyActionProps: function() {
+  getDefaultDestroyActionProps () {
     return $.extend({}, {
       icon: 'destroy',
       method: this.getRestActionMethod('destroy'),
@@ -106,6 +108,4 @@ window.GridActionsMixin = {
       confirmsWith: this.props.destroyConfirm
     }, this.props.destroyActionButton);
   }
-};
-
-module.exports = GridActionsMixin;
+}

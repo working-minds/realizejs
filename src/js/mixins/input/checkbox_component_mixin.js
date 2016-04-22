@@ -1,7 +1,11 @@
-window.CheckboxComponentMixin = {
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+
+export default {
   propTypes: {
-    checked: React.PropTypes.bool,
-    renderAsIndeterminate: React.PropTypes.bool
+    checked: PropTypes.bool,
+    renderAsIndeterminate: PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -72,6 +76,4 @@ window.CheckboxComponentMixin = {
       this.setState(newState);
     }
   }
-};
-
-module.exports = CheckboxComponentMixin;
+}

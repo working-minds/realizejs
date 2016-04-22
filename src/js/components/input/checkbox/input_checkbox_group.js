@@ -1,50 +1,55 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
-var SelectComponentMixin = require('realize/mixins/input/select_component_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.InputCheckboxGroup = React.createClass({
-  mixins: [
-    CssClassMixin,
-    InputComponentMixin,
-    SelectComponentMixin
-  ],
+import {
+  CssClassMixin,
+  InputComponentMixin,
+  SelectComponentMixin
+} from 'mixins';
 
-  propTypes: {
-    name: React.PropTypes.string,
+import { InputCheckbox, Label } from 'components';
+
+@mixin(
+  CssClassMixin,
+  InputComponentMixin,
+  SelectComponentMixin
+)
+export default class InputCheckboxGroup extends Component {
+  static propTypes = {
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
     currentValues: React.PropTypes.string
-  },
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.checkbox',
-      name:'',
-      align: 'vertical'
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'input.checkbox',
+    name:'',
+    align: 'vertical'
+  };
 
-  getInitialState: function() {
-    return {
+  constructor (props) {
+    super(props);
+    this.state = {
       currentValues: this.props.currentValues
     };
-  },
+  }
 
-  renderChildItems: function() {
-    var items = React.Children.map(this.props.children, function(item) {
+  renderChildItems () {
+    let items = React.Children.map(this.props.children, function(item) {
       if((item !== null) && (item.props.children[0].type.displayName == "input"))
         return item;
     });
     return items;
-  },
+  }
 
-  renderPropItems: function() {
-    var selectOptions = [];
-    var options = this.state.options;
+  renderPropItems () {
+    let selectOptions = [];
+    let options = this.state.options;
 
-    for(var i = 0; i < options.length; i++) {
-      var optionProps = options[i];
+    for(let i = 0; i < options.length; i++) {
+      let optionProps = options[i];
 
-      var filledClass =  optionProps.filled? 'filled-in' : '';
+      let filledClass =  optionProps.filled? 'filled-in' : '';
       optionProps.id = this.props.id + '_' + i;
 
       selectOptions.push(
@@ -55,22 +60,21 @@ window.InputCheckboxGroup = React.createClass({
       );
     }
     return selectOptions;
-  },
+  }
 
-  render: function() {
+  render () {
     return (
       <div className={'input-checkbox-group align-' + this.props.align}>
         {this.renderChildItems()}
         {this.renderPropItems()}
       </div>
     );
-  },
+  }
 
-  isChecked: function(item){
-    var currentValues = this.state.currentValues;
+  isChecked (item) {
+    let currentValues = this.state.currentValues;
     if(!$.isArray(currentValues))
       currentValues = [currentValues];
     return ($.inArray( item.value , currentValues ) !== -1);
   }
-
-});
+}

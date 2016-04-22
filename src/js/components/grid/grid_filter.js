@@ -1,77 +1,74 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.GridFilter = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    inputs: React.PropTypes.object,
-    action: React.PropTypes.string,
-    method: React.PropTypes.string,
-    submitButton: React.PropTypes.object,
-    clearButton: React.PropTypes.object,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
-    onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func,
-    isLoading: React.PropTypes.bool,
-    collapsible: React.PropTypes.bool
-  },
+import { CssClassMixin } from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      method: "GET",
-      collapsible: false,
-      submitButton: {
-        name: 'actions.filter',
-        icon: 'search'
-      },
-      clearButton: {
-        name: 'actions.clear',
-        type: 'reset',
-        style: 'cancel'
-      },
-      onSuccess: function(data) {
-        return true;
-      },
-      onError: function(xhr, status, error) {
-        return true;
-      },
-      onSubmit: function(event) {
-        return true;
-      }
-    };
-  },
+import { Form } from 'components';
 
-  getInitialState: function() {
-    return {
+@mixin(CssClassMixin)
+export default class GridFilter extends Component {
+  static propTypes = {
+    inputs: PropTypes.object,
+    action: PropTypes.string,
+    method: PropTypes.string,
+    submitButton: PropTypes.object,
+    clearButton: PropTypes.object,
+    onSuccess: PropTypes.func,
+    onError: PropTypes.func,
+    onSubmit: PropTypes.func,
+    onReset: PropTypes.func,
+    isLoading: PropTypes.bool,
+    collapsible: PropTypes.bool
+  };
+
+  static defaultProps = {
+    method: "GET",
+    collapsible: false,
+    submitButton: {
+      name: 'actions.filter',
+      icon: 'search'
+    },
+    clearButton: {
+      name: 'actions.clear',
+      type: 'reset',
+      style: 'cancel'
+    },
+    onSuccess: function(data) {
+      return true;
+    },
+    onError: function(xhr, status, error) {
+      return true;
+    },
+    onSubmit: function(event) {
+      return true;
+    }
+  };
+
+  constructor (props) {
+    super(props);
+    this.state = {
       themeClassKey: 'grid.filter.wrapper'
     };
-  },
+  }
 
-  render: function() {
-    return(
-      <div className={this.className()}>
-        {this.renderFilters()}
-      </div>
-    );
-  },
+  componentDidUpdate (){
+    let collapsible = ReactDOM.findDOMNode(this.refs.collapsible);
+    if (!!collapsible) {
+      $(collapsible).collapsible();
+    }
+  }
 
-  renderFilters: function() {
+  renderFilters () {
     if(this.props.collapsible)  {
       return this.renderCollapsibleFilter();
     } else {
      return this.renderFormFilters();
     }
-  },
+  }
 
-  componentDidUpdate: function(){
-    var collapsible = ReactDOM.findDOMNode(this.refs.collapsible);
-    if (!!collapsible) {
-      $(collapsible).collapsible();
-    }
-  },
-
-  renderCollapsibleFilter: function() {
-    var component = [];
+  renderCollapsibleFilter () {
+    let component = [];
 
     component.push(
       <ul className='collapsible' data-collapsible='accordion' ref='collapsible' key='collapsible_form'>
@@ -88,16 +85,23 @@ window.GridFilter = React.createClass({
     );
 
     return component;
-  },
+  }
 
-  renderFormFilters: function() {
+  renderFormFilters () {
     return (
       <Form {...this.props} otherButtons={[this.props.clearButton]} style="filter" ref="form" />
     )
-  },
-
-  serialize: function() {
-    return this.refs.form.serialize();
   }
 
-});
+  render () {
+    return(
+      <div className={this.className()}>
+        {this.renderFilters()}
+      </div>
+    );
+  }
+
+  serialize () {
+    return this.refs.form.serialize();
+  }
+}

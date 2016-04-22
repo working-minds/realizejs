@@ -1,25 +1,25 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
-var CheckboxComponentMixin = require('realize/mixins/input/checkbox_component_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.InputCheckbox = React.createClass({
-  mixins: [
-    CssClassMixin,
-    InputComponentMixin,
-    CheckboxComponentMixin
-  ],
+import {
+  CssClassMixin,
+  InputComponentMixin,
+  CheckboxComponentMixin
+} from 'mixins';
 
-  propTypes: {
-    renderAsIndeterminate: React.PropTypes.bool
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin,
+  CheckboxComponentMixin
+)
+export default class InputCheckbox extends Component {
+  static propTypes = {};
+  static defaultProps = {
+    themeClassKey: 'input.checkbox'
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.checkbox'
-    };
-  },
-
-  render: function() {
+  render () {
     return (
       <input {...this.props}
         checked={this.state.checked}
@@ -30,5 +30,4 @@ window.InputCheckbox = React.createClass({
       />
     );
   }
-
-});
+}

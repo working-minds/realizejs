@@ -1,22 +1,24 @@
-var _merge = require('lodash/merge');
+import PropTypes from 'prop_types';
+import merge from 'lodash/merge';
+import { config, i18n } from 'realize';
 
-window.RestActionsMixin = {
+export default {
   propTypes: {
-    actionUrls: React.PropTypes.object,
-    actionMethods: React.PropTypes.object,
-    destroyConfirm: React.PropTypes.node
+    actionUrls: PropTypes.object,
+    actionMethods: PropTypes.object,
+    destroyConfirm: PropTypes.node
   },
 
-  getDefaultProps: function() {
+  getDefaultProps () {
     return {
       actionUrls: {},
       actionMethods: null,
-      destroyConfirm: Realize.i18n.t('table.destroyConfirm')
+      destroyConfirm: i18n.t('table.destroyConfirm')
     };
   },
 
-  getRestActionUrl: function(action, id) {
-    var actionUrls = _merge(Realize.config.restUrls, this.props.actionUrls);
+  getRestActionUrl (action, id) {
+    var actionUrls = merge(config.restUrls, this.props.actionUrls);
     var actionUrl = actionUrls[action];
     var actionBaseUrl = this.getActionBaseUrl();
     var actionQueryString = this.getActionQueryString();
@@ -29,12 +31,12 @@ window.RestActionsMixin = {
     return actionUrl + actionQueryString;
   },
 
-  getRestActionMethod: function(action) {
-    var actionMethods = _merge(Realize.config.restMethods, this.props.actionMethods);
+  getRestActionMethod (action) {
+    var actionMethods = merge(config.restMethods, this.props.actionMethods);
     return actionMethods[action];
   },
 
-  getActionBaseUrl: function() {
+  getActionBaseUrl () {
     var baseUrlMatches = this.props.url.match(/^(.*)\?/);
     if(!!baseUrlMatches) {
       return baseUrlMatches[1];
@@ -43,7 +45,7 @@ window.RestActionsMixin = {
     }
   },
 
-  getActionQueryString: function() {
+  getActionQueryString () {
     var queryStringMatches = this.props.url.match(/\?.*$/);
     if(!!queryStringMatches) {
       return queryStringMatches[0];
@@ -51,6 +53,4 @@ window.RestActionsMixin = {
       return "";
     }
   }
-};
-
-module.exports = RestActionsMixin;
+}

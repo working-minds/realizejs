@@ -1,20 +1,27 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.InputText = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
-  propTypes: {
-    type: React.PropTypes.string
-  },
+import {
+  CssClassMixin,
+  InputComponentMixin
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      type: 'text',
-      themeClassKey: 'input.text'
-    };
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputText extends Component {
+  static propTypes = {
+    type: PropTypes.string
+  };
 
-  render: function() {
+  static defaultProps = {
+    type: 'text',
+    themeClassKey: 'input.text'
+  };
+
+  render () {
     return (
       <input {...this.props}
         value={this.state.value}
@@ -26,4 +33,4 @@ window.InputText = React.createClass({
       />
     );
   }
-});
+}
