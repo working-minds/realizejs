@@ -1,43 +1,33 @@
-window.HeaderNotifications = React.createClass({
-  propTypes: {
-    ouSlug: React.PropTypes.string,
-    className: React.PropTypes.string,
-    text: React.PropTypes.string,
-    icon: React.PropTypes.string,
-    baseUrl: React.PropTypes.string
-  },
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
 
-  getDefaultProps: function() {
-    return {
-      ouSlug: null,
-      className: 'notifications',
-      icon: 'add_alert',
-      text: '',
-      baseUrl: '/notifications'
-    }
-  },
+import { NotificationNumber, NotificationList } from 'components/notification';
 
-  getInitialState: function() {
-    return {
-      count: 0,
-      active: false
-    }
-  },
+export default class HeaderNotifications extends Component {
+  static propTypes = {
+    ouSlug: PropTypes.string,
+    className: PropTypes.string,
+    text: PropTypes.string,
+    icon: PropTypes.string,
+    baseUrl: PropTypes.string
+  };
 
-  handleClick: function(){
-    var list = ReactDOM.findDOMNode(this.refs.notificationsList);
-    $(list).slideDown();
-    this.state.active = !this.state.active;
-    this.forceUpdate();
-  },
+  static defaultProps = {
+    ouSlug: null,
+    className: 'notifications',
+    icon: 'add_alert',
+    text: '',
+    baseUrl: '/notifications'
+  };
 
-  closeList: function() {
-    this.setState({
-      active: false
-    })
-  },
+  state = {
+    count: 0,
+    active: false
+  };
 
-  componentDidMount: function() {
+  componentDidMount () {
     //TODO: alterar estes event handlers para o React.
     $('html').on('click', this.closeList);
 
@@ -50,9 +40,44 @@ window.HeaderNotifications = React.createClass({
     });
 
     this.loadNotifications();
-  },
+  }
 
-  loadNotifications: function() {
+  renderIcon () {
+    var component = [];
+
+    if (this.state.count > 0) {
+      component.push(<i className="material-icons" key="notification_icon">notifications</i>);
+    } else {
+      component.push(<i className="material-icons" key="notification_icon">notifications_none</i>);
+    }
+
+    return component;
+  }
+
+  render (){
+    return (
+      <div className={this.props.className}>
+        <a onClick={this.handleClick}>
+          {this.renderIcon()}
+          <NotificationNumber count={this.state.count} />
+        </a>
+        <NotificationsList ref='notificationsList'
+                           active={this.state.active}
+                           baseUrl={this.props.baseUrl}
+                           handleClickItem={this.handleClickItem}
+                           notifications={this.state.notifications}
+          />
+      </div>
+    );
+  }
+
+  closeList () {
+    this.setState({
+      active: false
+    })
+  }
+
+  loadNotifications () {
     $.ajax({
       url: this.props.baseUrl,
       dataType: 'json',
@@ -70,21 +95,16 @@ window.HeaderNotifications = React.createClass({
         });
       }.bind(this)
     });
-  },
+  }
 
-  renderIcon: function() {
-    var component = [];
+  handleClick = () => {
+    var list = ReactDOM.findDOMNode(this.refs.notificationsList);
+    $(list).slideDown();
+    this.state.active = !this.state.active;
+    this.forceUpdate();
+  }
 
-    if (this.state.count > 0) {
-      component.push(<i className="material-icons" key="notification_icon">notifications</i>);
-    } else {
-      component.push(<i className="material-icons" key="notification_icon">notifications_none</i>);
-    }
-
-    return component;
-  },
-
-  handleClickItem: function(responseData) {
+  handleClickItem = (responseData) => {
     $.ajax({
       url: this.props.baseUrl,
       dataType: 'json',
@@ -101,54 +121,5 @@ window.HeaderNotifications = React.createClass({
         });
       }.bind(this)
     });
-
-  },
-
-  render : function(){
-    return (
-      <div className={this.props.className}>
-        <a onClick={this.handleClick}>
-          {this.renderIcon()}
-          <NotificationNumber count={this.state.count} />
-        </a>
-        <NotificationsList ref='notificationsList'
-                           active={this.state.active}
-                           baseUrl={this.props.baseUrl}
-                           handleClickItem={this.handleClickItem}
-                           notifications={this.state.notifications}
-          />
-      </div>
-    );
   }
-
-});
-
-var NotificationNumber= React.createClass({
-  propTypes: {
-    className: React.PropTypes.string,
-    count: React.PropTypes.number
-  },
-
-  getDefaultProps: function(){
-    return {
-      className: 'notification-number',
-      count: 0
-    }
-  },
-
-  unreadNotificationNumber: function(){
-    var component = [];
-    if (!!this.props.count && this.props.count > 0)
-      component.push(<span className={this.props.className} key="notification_count">{this.props.count}</span>);
-    return component;
-  },
-
-  render: function() {
-    return (
-      <span className='jewelCount'>
-        {this.unreadNotificationNumber()}
-      </span>
-    )
-  }
-
-});
+}

@@ -1,39 +1,35 @@
-var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
-var ModalRendererMixin = require('realize/mixins/modal_renderer_mixin.jsx');
-var moment = require('moment');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import moment from 'moment';
+import { mixin } from 'utils/decorators';
 
-window.NotificationsList = React.createClass({
-  mixins: [RequestHandlerMixin, ModalRendererMixin],
+import {
+  RequestHandlerMixin,
+  ModalRendererMixin
+} from 'mixins';
 
-  propTypes: {
-    className: React.PropTypes.string,
-    active: React.PropTypes.bool,
-    notifications: React.PropTypes.array,
-    handleClickItem: React.PropTypes.func,
-    baseUrl: React.PropTypes.string
-  },
+@mixin(
+  RequestHandlerMixin,
+  ModalRendererMixin
+)
+export default class NotificationsList extends Component {
+  static propTypes = {
+    className: PropTypes.string,
+    active: PropTypes.bool,
+    notifications: PropTypes.array,
+    handleClickItem: PropTypes.func,
+    baseUrl: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      className: 'notifications-list z-depth-1',
-      active: false,
-      notifications: [],
-      baseUrl: '/notifications',
-      handleClickItem: function(data) {}
-    }
-  },
+  static defaultProps = {
+    className: 'notifications-list z-depth-1',
+    active: false,
+    notifications: [],
+    baseUrl: '/notifications',
+    handleClickItem: function(data) {}
+  };
 
-  handleClick: function(event, id) {
-    var url = this.props.baseUrl+'/'+id;
-    this.performRequest(url);
-  },
-
-  onSuccess: function(responseData) {
-    this.renderModalHtml(responseData);
-    this.props.handleClickItem(responseData);
-  },
-
-  renderNotification: function() {
+  renderNotification () {
     var component = [];
     var notifications = this.props.notifications;
 
@@ -52,9 +48,9 @@ window.NotificationsList = React.createClass({
     }
 
     return component;
-  },
+  }
 
-  renderSeeAll: function() {
+  renderSeeAll () {
     var component = [];
 
     if (this.props.notifications.length === 0) {
@@ -74,9 +70,9 @@ window.NotificationsList = React.createClass({
     }
 
     return component;
-  },
+  }
 
-  render: function() {
+  render () {
     var display = this.props.active ? 'block' : 'none';
     return (
       <div className={this.props.className} style={{display: display}}>
@@ -88,4 +84,13 @@ window.NotificationsList = React.createClass({
     )
   }
 
-});
+  onSuccess (responseData) {
+    this.renderModalHtml(responseData);
+    this.props.handleClickItem(responseData);
+  }
+
+  handleClick = (event, id) => {
+    var url = this.props.baseUrl+'/'+id;
+    this.performRequest(url);
+  }
+}
