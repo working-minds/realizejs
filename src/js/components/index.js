@@ -8,6 +8,8 @@ export * from './indicator';
 export * from './input';
 export * from './label';
 export * from './menu';
+export * from './modal';
+export * from './notification';
 export * from './pagination';
 export * from './sidenav';
 export * from './table';
