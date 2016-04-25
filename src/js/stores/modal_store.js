@@ -1,6 +1,7 @@
-var ModalActions = require('realize/actions/modal_actions.js');
+import Reflux from 'reflux';
+import ModalActions from 'actions/modal_actions';
 
-var ModalStore = Reflux.createStore({
+export default Reflux.createStore({
   listenables: [ModalActions],
   optionProps: [
     'dismissible', 'opacity', 'inDuration', 'outDuration', 'ready', 'complete'
@@ -38,6 +39,3 @@ var ModalStore = Reflux.createStore({
   }
 
 });
-
-module.exports = ModalStore;
-window.ModalStore = ModalStore;
