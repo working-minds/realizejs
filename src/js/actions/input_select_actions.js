@@ -1,6 +1,6 @@
-window.InputSelectActions = Reflux.createActions([
+import Reflux from 'reflux';
+
+export default Reflux.createActions([
   'select',
   'selectSearchValue'
 ]);
-
-module.exports = InputSelectActions;
