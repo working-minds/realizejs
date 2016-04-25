@@ -1,4 +1,7 @@
-window.MaterializeSelectMixin = {
+import ReactDOM from 'react-dom';
+import $ from 'jquery'
+
+export default {
   componentDidMount: function() {
     this.applyMaterialize(true);
   },
@@ -35,6 +38,4 @@ window.MaterializeSelectMixin = {
 
     this.props.onChange(fakeEvent, newValue, this);
   }
-};
-
-module.exports = MaterializeSelectMixin;
+}

@@ -1,6 +1,9 @@
-window.ModalRendererMixin = {
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+
+export default {
   propTypes: {
-    modalContainerId: React.PropTypes.string
+    modalContainerId: PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -20,6 +23,4 @@ window.ModalRendererMixin = {
 
     $modalContainer.html(modalHtml);
   }
-};
-
-module.exports = ModalRendererMixin;
+}
