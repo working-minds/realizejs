@@ -1,71 +1,79 @@
-var ModalStore = require('realize/stores/modal_store.js');
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import Reflux from 'reflux';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
 
-window.Modal = React.createClass({
-  mixins: [
-    Reflux.connect(ModalStore, 'modalStore'),
-    CssClassMixin,
-    ContainerMixin
-  ],
+import {
+  ModalHeader,
+  ModalContent,
+  ModalFooter
+} from 'components/modal';
 
-  propTypes: {
-    id: React.PropTypes.string,
-    opened: React.PropTypes.bool,
-    marginHeaderFooter: React.PropTypes.number,
-    width: React.PropTypes.string,
-    minContentHeight: React.PropTypes.number,
-    useAvailableHeight: React.PropTypes.bool,
+import {
+  CssClassMixin,
+  ContainerMixin
+} from 'mixins';
 
-    dismissible: React.PropTypes.bool,
-    opacity: React.PropTypes.number,
-    inDuration: React.PropTypes.number,
-    outDuration: React.PropTypes.number,
-    ready: React.PropTypes.func,
-    complete: React.PropTypes.func
-  },
+import { ModalStore } from 'stores';
 
-  getDefaultProps: function() {
-    return {
-      id: '',
-      themeClassKey: 'modal',
-      opened: false,
-      marginHeaderFooter: 100,
-      width: '60%',
-      minContentHeight: 0,
-      useAvailableHeight: false,
+@mixin(
+  Reflux.connect(ModalStore, 'modalStore'),
+  CssClassMixin,
+  ContainerMixin
+)
+export default class Modal extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    opened: PropTypes.bool,
+    marginHeaderFooter: PropTypes.number,
+    width: PropTypes.string,
+    minContentHeight: PropTypes.number,
+    useAvailableHeight: PropTypes.bool,
 
-      dismissible: true,
-      opacity: 0.4,
-      inDuration: 300,
-      outDuration: 200,
-      ready: function() { return true; },
-      complete: function() { return true; }
-    };
-  },
+    dismissible: PropTypes.bool,
+    opacity: PropTypes.number,
+    inDuration: PropTypes.number,
+    outDuration: PropTypes.number,
+    ready: PropTypes.func,
+    complete: PropTypes.func
+  };
 
-  getInitialState: function() {
-    return {
-      modalStore: null
-    };
-  },
+  static defaultProps = {
+    id: '',
+    themeClassKey: 'modal',
+    opened: false,
+    marginHeaderFooter: 100,
+    width: '60%',
+    minContentHeight: 0,
+    useAvailableHeight: false,
 
-  /* Lifecycle functions */
+    dismissible: true,
+    opacity: 0.4,
+    inDuration: 300,
+    outDuration: 200,
+    ready: function() { return true; },
+    complete: function() { return true; }
+  };
 
-  componentDidMount: function() {
+  state = {
+    modalStore: null
+  };
+
+  componentDidMount () {
     this.resizeContent();
     $(window).on('resize', this.resizeContent);
 
     if(!!this.props.opened) {
       this.open();
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount () {
     $(window).off('resize', this.resizeContent);
-  },
+  }
 
-  componentDidUpdate: function() {
+  componentDidUpdate () {
     this.resizeContent();
     if(!!this.state.opened) {
       this.open();
@@ -74,29 +82,33 @@ window.Modal = React.createClass({
     if(this.state.modalStore) {
       this.handleModalStoreState();
     }
-  },
+  }
 
-  handleModalStoreState: function() {
-    var modalStore = this.state.modalStore;
-    var shouldOpenModal = modalStore.shouldOpen;
-    var shouldCloseModal = modalStore.shouldClose;
-    var modalToOpenId = modalStore.modalId;
+  renderHeader () {
+    return (
+      <div ref="headerContainer" className="modal-header-container">
+        {this.filterChildren(ModalHeader)}
+      </div>
+    );
+  }
 
-    if(modalToOpenId == this.props.id) {
-      if(shouldOpenModal) {
-        this.open();
-      }
+  renderContent () {
+    return (
+      <div ref="contentContainer" className="modal-content-container">
+        {this.filterChildren(ModalContent)}
+      </div>
+    );
+  }
 
-      if(shouldCloseModal) {
-        this.close();
-      }
-    }
+  renderFooter () {
+    return (
+      <div ref="footerContainer" className="modal-footer-container">
+        {this.filterChildren(ModalFooter)}
+      </div>
+    );
+  }
 
-  },
-
-  /* Rendering functions */
-
-  render: function() {
+  render () {
     var header = this.filterChildren(ModalHeader)? this.renderHeader() : '';
     var content = this.filterChildren(ModalContent)? this.renderContent() : '';
     var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
@@ -111,35 +123,26 @@ window.Modal = React.createClass({
         {footer}
       </div>
     );
-  },
+  }
 
-  renderHeader: function() {
-    return (
-      <div ref="headerContainer" className="modal-header-container">
-        {this.filterChildren(ModalHeader)}
-      </div>
-    );
-  },
+  handleModalStoreState () {
+    var modalStore = this.state.modalStore;
+    var shouldOpenModal = modalStore.shouldOpen;
+    var shouldCloseModal = modalStore.shouldClose;
+    var modalToOpenId = modalStore.modalId;
 
-  renderContent: function() {
-    return (
-      <div ref="contentContainer" className="modal-content-container">
-        {this.filterChildren(ModalContent)}
-      </div>
-    );
-  },
+    if(modalToOpenId == this.props.id) {
+      if(shouldOpenModal) {
+        this.open();
+      }
 
-  renderFooter: function() {
-    return (
-      <div ref="footerContainer" className="modal-footer-container">
-        {this.filterChildren(ModalFooter)}
-      </div>
-    );
-  },
+      if(shouldCloseModal) {
+        this.close();
+      }
+    }
+  }
 
-  /* Modal opener handlers */
-
-  open: function(options) {
+  open (options) {
     var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.openModal({
@@ -150,28 +153,24 @@ window.Modal = React.createClass({
       ready: this.handleReady,              // Callback for Modal open
       complete: this.props.complete         // Callback for Modal close
     });
-  },
+  }
 
-  handleReady: function() {
+  handleReady () {
     this.resizeContent();
     ModalActions.openFinished();
 
     if(typeof this.props.ready === "function") {
       this.props.ready();
     }
-  },
+  }
 
-  /* Modal close handlers */
-
-  close: function() {
+  close () {
     var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.closeModal();
-  },
+  }
 
-  /* Modal resize handlers */
-
-  resizeContent: function() {
+  resizeContent () {
     var modal = ReactDOM.findDOMNode(this.refs.modal);
     var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
 
@@ -188,16 +187,16 @@ window.Modal = React.createClass({
     }
 
     $(contentContainer).css("height", containerHeight);
-  },
+  }
 
-  getAvailableHeight: function() {
+  getAvailableHeight () {
     var headerContainer = ReactDOM.findDOMNode(this.refs.headerContainer);
     var footerContainer = ReactDOM.findDOMNode(this.refs.footerContainer);
 
     return ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
-  },
+  }
 
-  getContentHeight: function() {
+  getContentHeight () {
     var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
     var minContentHeight = this.props.minContentHeight;
     var contentHeight = 0;
@@ -209,14 +208,4 @@ window.Modal = React.createClass({
 
     return Math.max(minContentHeight, contentHeight);
   }
-
-});
-
-
-
-
-
-
-
-
-
+}

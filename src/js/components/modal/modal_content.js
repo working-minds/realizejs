@@ -1,15 +1,15 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-window.ModalContent  = React.createClass({
-  mixins: [CssClassMixin],
+import { CssClassMixin } from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.content'
-    };
-  },
+@mixin(CssClassMixin)
+export default class ModalContent extends Component {
+  static defaultProps = {
+    themeClassKey: 'modal.content'
+  };
 
-  render: function() {
+  render () {
     return <div className={this.className()}>{this.props.children}</div>;
   }
-});
+}

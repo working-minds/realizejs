@@ -1,44 +1,43 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-window.ModalButton = React.createClass({
-  mixins: [CssClassMixin],
+import { Button } from 'components';
+import { CssClassMixin } from 'mixins';
 
-  propTypes: {
-    modalId: React.PropTypes.string,
-    openerId: React.PropTypes.string
-  },
+@mixin(CssClassMixin)
+export default class ModalButton extends Component {
+  static propTypes = {
+    modalId: PropTypes.string,
+    openerId: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      modalId: '',
-      openerId: ''
-    };
-  },
+  static defaultProps = {
+    modalId: '',
+    openerId: ''
+  };
 
-  render: function() {
+  render () {
     return (
       <Button {...this.props}
         className={this.getClassName()}
         onClick={this.openModal}
-        ref="modalButton"
-      />
+        ref="modalButton"/>
     );
-  },
+  }
 
-  getClassName: function() {
-    var className = this.className();
+  getClassName () {
+    let className = this.className();
     if(this.props.disabled && this.props.element === 'a')
       className = 'button btn-flat disable-action-button';
 
     return className;
-  },
+  }
 
-  openModal: function(event) {
+  openModal (event) {
     event.nativeEvent.preventDefault();
     event.stopPropagation();
     event.preventDefault();
 
     ModalActions.open(this.props);
   }
-
-});
+}
