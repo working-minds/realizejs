@@ -1,46 +1,56 @@
-var ColorPicker = require('react-color').default;
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.InputColorpicker = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
-  propTypes: {
+import ColorPicker from 'react-color';
+
+import {
+  Label,
+  InputHidden
+} from 'components';
+
+import {
+  CssClassMixin,
+  InputComponentMixin
+} from 'mixins';
+
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputColorpicker extends Component {
+  static propTypes = {
     type: React.PropTypes.string
-  },
+  }
 
-  getDefaultProps: function() {
-    return {
-      wrapperThemeClassKey: 'input.colorpicker.wrapper',
-      displayThemeClassKey: 'input.colorpicker.display',
-      themeClassKey: 'input.colorpicker',
-      defaultColor: 'EEE',
-      type: 'sketch',
-      position: 'below',
-      display: false,
-      positionCSS: {
-        marginTop: '0'
-      }
-    };
-  },
+  static defaultProps = {
+    wrapperThemeClassKey: 'input.colorpicker.wrapper',
+    displayThemeClassKey: 'input.colorpicker.display',
+    themeClassKey: 'input.colorpicker',
+    defaultColor: 'EEE',
+    type: 'sketch',
+    position: 'below',
+    display: false,
+    positionCSS: {
+      marginTop: '0'
+    }
+  };
 
-  getInitialState: function() {
-    return {
-      displayColorPicker: this.props.display,
-      color: {}
-    };
-  },
+  state = {
+    displayColorPicker: this.props.display,
+    color: {}
+  };
 
-  componentWillMount: function() {
+  componentWillMount () {
     var value = this.props.value;
     if(!value) {
       this.setState({
         value: this.props.defaultColor
       });
     }
+  }
 
-  },
-
-  render: function() {
+  render () {
     return (
       <div className={this.themedClassName(this.props.wrapperThemeClassKey)}>
         <input
@@ -71,26 +81,26 @@ window.InputColorpicker = React.createClass({
         />
       </div>
     );
-  },
+  }
 
-  displayBackgroundStyle: function() {
+  displayBackgroundStyle () {
     var colorHex = this.state.value || this.props.defaultColor;
 
     return {
       backgroundColor: '#' + colorHex
     };
-  },
+  }
 
-  showColorPicker: function() {
+  showColorPicker () {
     this.setState({
       displayColorPicker: true
     });
-  },
+  }
 
-  onColorSelect: function(color) {
+  onColorSelect (color) {
     this.setState({
       color: color,
       value: color.hex
     });
   }
-});
+}

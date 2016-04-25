@@ -3,17 +3,16 @@ import PropTypes from 'prop_types';
 import $ from 'jquery';
 import merge from 'lodash/merge';
 import findIndex from 'lodash/findIndex';
+import { uuid } from 'utils';
 import { mixin } from 'utils/decorators';
 
 import {
   CssClassMixin,
-  UtilsMixin,
   RestActionsMixin
 } from 'mixins';
 
 @mixin(
   CssClassMixin,
-  UtilsMixin,
   RestActionsMixin
 )
 export default class GridForm extends Component {
@@ -108,7 +107,7 @@ export default class GridForm extends Component {
       onReset: this.onReset,
       onSuccess: this.onSuccess,
       onError: this.onError,
-      key: "form_" + this.generateUUID(),
+      key: "form_" + uuid.v4(),
       ref: "form"
     });
 
@@ -317,7 +316,7 @@ export default class GridForm extends Component {
         pagination: false,
         selectable: 'none',
         eagerLoad: false,
-        key: this.generateUUID(),
+        key: uuid.v4(),
         dataRowIdField: this.props.clientSideIdField,
         data: {
           dataRows: this.state.clientSideData
@@ -340,7 +339,7 @@ export default class GridForm extends Component {
     if(submittedDataRowIndex >= 0) {
       this.state.clientSideData.splice(submittedDataRowIndex, 1, submittedDataRow);
     } else {
-      submittedDataRow[this.props.clientSideIdField] = this.generateUUID();
+      submittedDataRow[this.props.clientSideIdField] = uuid.v4();
       this.state.clientSideData.push(submittedDataRow);
     }
 
