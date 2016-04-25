@@ -1,9 +1,14 @@
-window.FormActionsListenerMixin = {
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+
+import FormStore from 'stores/form_store';
+
+export default {
   propTypes: {
-    onFormSubmit: React.PropTypes.func,
-    onFormSuccess: React.PropTypes.func,
-    onFormError: React.PropTypes.func,
-    onFormReset: React.PropTypes.func
+    onFormSubmit: PropTypes.func,
+    onFormSuccess: PropTypes.func,
+    onFormError: PropTypes.func,
+    onFormReset: PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -67,6 +72,4 @@ window.FormActionsListenerMixin = {
     return formActionParameters;
   }
 
-};
-
-module.exports = FormActionsListenerMixin;
+}

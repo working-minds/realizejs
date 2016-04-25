@@ -61,7 +61,8 @@
     "sinon-chai": "^2.8.0",
     "traits-decorator": "^1.0.1",
     "uuid": "^2.0.2",
-    "webpack": "^1.13.0"
+    "webpack": "^1.13.0",
+    "webpack-node-externals": "^1.1.0"
   },
   "peerDependencies": {
     "react": "^0.14.7",
@@ -80,6 +81,10 @@
     "jquery.inputmask":"~3.1.63"
   },
   "scripts": {
+    "build:browser": "webpack --config webpack.browser.config.babel.js",
+    "build:node": "webpack --config webpack.node.config.babel.js",
+    "watch:browser": "webpack --config webpack.browser.config.babel.js --watch",
+    "watch:node": "webpack --config webpack.node.config.babel.js --watch",
     "webpack": "webpack --config webpack.config.babel.js",
     "watch": "webpack --config webpack.config.babel.js --watch",
     "test": "npm run test:karma -- --single-run",
