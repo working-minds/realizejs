@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop_types';
 import { themes } from 'realize';
 
-import { Button } from 'components';
 import { CssClassMixin } from 'mixins';
 
 @mixin(CssClassMixin)
