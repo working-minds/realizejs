@@ -1,6 +1,7 @@
 export * from './button';
 export * from './container';
 export * from './flash';
+export * from './form';
 export * from './grid';
 export * from './header';
 export * from './icon';

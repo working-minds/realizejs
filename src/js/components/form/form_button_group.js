@@ -1,40 +1,34 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var _isEmpty = require('lodash/isEmpty');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import isEmpty from 'lodash/isEmpty';
+import { mixin } from 'utils/decorators';
 
-window.FormButtonGroup = React.createClass({
-  mixins: [CssClassMixin],
+import { Button } from 'components';
+import { CssClassMixin } from 'mixins';
 
-  propTypes: {
-    inputs: React.PropTypes.object,
-    submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
-    otherButtons: React.PropTypes.array,
-    isLoading: React.PropTypes.bool
-  },
+@mixin(CssClassMixin)
+export default class FormButtonGroup extends Component {
+  static propTypes = {
+    inputs: PropTypes.object,
+    submitButton: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    otherButtons: PropTypes.array,
+    isLoading: PropTypes.bool
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'form.buttonGroup',
-      inputs: {},
-      submitButton: {
-        name: 'actions.send',
-        icon: 'send'
-      },
-      otherButtons: [],
-      isLoading: false
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'form.buttonGroup',
+    inputs: {},
+    submitButton: {
+      name: 'actions.send',
+      icon: 'send'
+    },
+    otherButtons: [],
+    isLoading: false
+  };
 
-  render: function() {
-    return (
-      <div className={this.className()}>
-        {this.renderOtherButtons()}
-        {this.renderSubmitButton()}
-      </div>
-    );
-  },
-
-  renderOtherButtons: function() {
-    if (!_isEmpty(this.props.inputs) && this.isAllInputsHidden()) {
+  renderOtherButtons () {
+    if (!isEmpty(this.props.inputs) && this.isAllInputsHidden()) {
       return '';
     }
 
@@ -47,19 +41,28 @@ window.FormButtonGroup = React.createClass({
     }
 
     return otherButtons;
-  },
+  }
 
-  renderSubmitButton: function() {
-    if ((!_isEmpty(this.props.inputs) && this.isAllInputsHidden()) || !this.props.submitButton) {
+  renderSubmitButton () {
+    if ((!isEmpty(this.props.inputs) && this.isAllInputsHidden()) || !this.props.submitButton) {
       return '';
     }
 
     var submitButton = [];
     submitButton.push(<Button {...this.submitButtonProps()} ref="submitButton" key='submit_button' />);
     return submitButton;
-  },
+  }
 
-  isAllInputsHidden: function() {
+  render () {
+    return (
+      <div className={this.className()}>
+        {this.renderOtherButtons()}
+        {this.renderSubmitButton()}
+      </div>
+    );
+  }
+
+  isAllInputsHidden () {
     var allHidden = true;
     var inputs = this.props.inputs;
 
@@ -72,9 +75,9 @@ window.FormButtonGroup = React.createClass({
     }
 
     return allHidden;
-  },
+  }
 
-  submitButtonProps: function() {
+  submitButtonProps () {
     var isLoading = this.props.isLoading;
     return $.extend({}, this.props.submitButton, {
       type: "submit",
@@ -82,4 +85,4 @@ window.FormButtonGroup = React.createClass({
       isLoading: isLoading
     });
   }
-});
+}

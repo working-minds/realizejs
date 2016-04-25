@@ -1,50 +1,58 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.BulkEditForm = React.createClass({
-  mixins: [CssClassMixin, UtilsMixin],
+import {
+  Container,
+  Form,
+  Input
+} from 'components';
 
-  propTypes: {
-    inputs: React.PropTypes.object,
-    data: React.PropTypes.object,
-    action: React.PropTypes.string,
-    method: React.PropTypes.string,
-    dataType: React.PropTypes.string,
-    contentType: React.PropTypes.string,
-    style: React.PropTypes.string,
-    resource: React.PropTypes.string,
-    submitButton: React.PropTypes.object,
-    otherButtons: React.PropTypes.array,
-    isLoading: React.PropTypes.bool,
-    onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func
-  },
+import { CssClassMixin, UtilsMixin } from 'mixins';
 
-  getDefaultProps: function () {
-    return {
-      inputs: {},
-      data: {},
-      action: '',
-      method: 'POST',
-      dataType: undefined,
-      contentType: undefined,
-      submitButton: {
-        name: 'Enviar',
-        icon: 'send'
-      },
-      otherButtons: [],
-      isLoading: false,
-      themeClassKey: 'form',
-      style: 'default',
-      resource: null,
-      onSubmit: function (event, postData) {},
-      onReset: function (event) {}
-    };
-  },
+@mixin(CssClassMixin)
+export default class BulkEditForm extends Component {
+  static propTypes = {
+    inputs: PropTypes.object,
+    data: PropTypes.object,
+    action: PropTypes.string,
+    method: PropTypes.string,
+    dataType: PropTypes.string,
+    contentType: PropTypes.string,
+    style: PropTypes.string,
+    resource: PropTypes.string,
+    submitButton: PropTypes.object,
+    otherButtons: PropTypes.array,
+    isLoading: PropTypes.bool,
+    onSubmit: PropTypes.func,
+    onReset: PropTypes.func
+  };
 
-  getInitialState: function() {
-    var disabled = [];
+  static defaultProps = {
+    inputs: {},
+    data: {},
+    action: '',
+    method: 'POST',
+    dataType: undefined,
+    contentType: undefined,
+    submitButton: {
+      name: 'Enviar',
+      icon: 'send'
+    },
+    otherButtons: [],
+    isLoading: false,
+    themeClassKey: 'form',
+    style: 'default',
+    resource: null,
+    onSubmit: function (event, postData) {},
+    onReset: function (event) {}
+  };
 
+  constructor (props) {
+    super(props);
+
+    let disabled = [];
     for(var i = 0; i < this.props.inputGroups.length; i++ ) {
       var inputs = this.props.inputGroups[i].inputs;
       for(var inputId in inputs) {
@@ -52,35 +60,13 @@ window.BulkEditForm = React.createClass({
       }
     }
 
-    return {
+    this.state = {
       disabled: disabled,
       inputKeys: this.generateInputIds()
     };
-  },
+  }
 
-  render: function() {
-    var formProps = $.extend({}, this.props);
-    delete formProps.inputGroups;
-
-    return (
-      <Form {...formProps}>
-        {this.renderChildren()}
-      </Form>
-    );
-  },
-
-  generateInputIds: function(){
-    var idsMap = {};
-    for (var i = 0; i < this.props.inputGroups.length; i++ ){
-      var inputs = this.props.inputGroups[i].inputs;
-      for(var inputId in inputs)
-        idsMap[inputId] = "input_" + inputId + this.generateUUID();
-    }
-
-    return idsMap;
-  },
-
-  renderChildren: function () {
+  renderChildren () {
     var inputComponents = [];
 
     for(var i = 0; i < this.props.inputGroups.length; i++ ) {
@@ -89,10 +75,31 @@ window.BulkEditForm = React.createClass({
     }
 
     return inputComponents;
-  },
+  }
 
+  render () {
+    var formProps = $.extend({}, this.props);
+    delete formProps.inputGroups;
 
-  generateInputs: function (inputComponents, inputGroup, i) {
+    return (
+      <Form {...formProps}>
+        {this.renderChildren()}
+      </Form>
+    );
+  }
+
+  generateInputIds (){
+    var idsMap = {};
+    for (var i = 0; i < this.props.inputGroups.length; i++ ){
+      var inputs = this.props.inputGroups[i].inputs;
+      for(var inputId in inputs)
+        idsMap[inputId] = "input_" + inputId + this.generateUUID();
+    }
+
+    return idsMap;
+  }
+
+  generateInputs (inputComponents, inputGroup, i) {
     var inputIndex = 0;
     var inputsProps = inputGroup.inputs;
 
@@ -162,10 +169,9 @@ window.BulkEditForm = React.createClass({
     }
 
     return inputComponents;
-  },
+  }
 
-
-  handleSwitchChange: function (event) {
+  handleSwitchChange (event) {
     var sw = event.target;
     var inputId = sw.id.replace(/^enable_/, '');
 
@@ -185,5 +191,4 @@ window.BulkEditForm = React.createClass({
     inputKeys[inputId] = "input_" + inputId + this.generateUUID();
     this.setState( { disabled: disabled, inputKeys: inputKeys });
   }
-
-});
+}
