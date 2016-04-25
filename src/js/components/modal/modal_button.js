@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
 import { Button } from 'components';
 import { CssClassMixin } from 'mixins';

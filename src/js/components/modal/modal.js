@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Reflux from 'reflux';
 import PropTypes from 'prop_types';
 import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
 import {
   ModalHeader,
