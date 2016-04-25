@@ -1,64 +1,44 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import filter from 'lodash/filter';
+import merge from 'lodash/merge';
+import { mixin } from 'utils/decorators';
 
-var _filter = require('lodash/filter');
-var _merge = require('lodash/merge');
+import { Input } from 'components';
+import { CssClassMixin } from 'mixins';
 
-window.InputGroup = React.createClass({
-  mixins: [CssClassMixin],
+@mixin(CssClassMixin)
+export default class InputGroup extends Component {
+  static propTypes = {
+    inputs: PropTypes.object,
+    data: PropTypes.object,
+    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+    resource: PropTypes.string,
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    label: PropTypes.string,
+    separator: PropTypes.bool,
+    formStyle: PropTypes.string,
+    wrapperClassName: PropTypes.string,
+    inputWrapperComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.element, PropTypes.string])
+  };
 
-  propTypes: {
-    inputs: React.PropTypes.object,
-    data: React.PropTypes.object,
-    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
-    resource: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    label: React.PropTypes.string,
-    separator: React.PropTypes.bool,
-    formStyle: React.PropTypes.string,
-    wrapperClassName: React.PropTypes.string,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string])
-  },
+  static defaultProps = {
+    inputs: {},
+    data: {},
+    errors: {},
+    formStyle: 'default',
+    label: null,
+    separator: false,
+    disabled: false,
+    readOnly: false,
+    themeClassKey: 'form.inputGroup',
+    wrapperClassName: 'wrapper_input_group',
+    inputWrapperComponent: null
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'form.inputGroup',
-      inputs: {},
-      data: {},
-      errors: {},
-      formStyle: 'default',
-      label: null,
-      separator: false,
-      disabled: false,
-      readOnly: false,
-      wrapperClassName: 'wrapper_input_group',
-      inputWrapperComponent: null
-    };
-  },
-
-  render: function() {
-    return (
-      <div className={this.props.wrapperClassName}>
-        <div className={this.inputGroupClassName()}>
-          {this.renderLabel()}
-          {this.renderInputs()}
-          {this.props.children}
-        </div>
-        {this.renderDivider()}
-      </div>
-    );
-  },
-
-  inputGroupClassName: function() {
-    var className = this.className();
-    if(this.props.label !== null) {
-      className += ' ' + Realize.themes.getCssClass('form.inputGroup.section');
-    }
-
-    return className;
-  },
-
-  renderInputs: function() {
+  renderInputs () {
     var inputsProps = this.props.inputs;
     var inputComponents = [];
     var inputIndex = 0;
@@ -91,17 +71,17 @@ window.InputGroup = React.createClass({
     }
 
     return inputComponents;
-  },
+  }
 
-  renderLabel: function() {
+  renderLabel () {
     if(this.props.label === null) {
       return '';
     }
 
     return (<h5>{this.props.label}</h5>);
-  },
+  }
 
-  renderDivider: function() {
+  renderDivider () {
     if(!this.props.separator) {
       return '';
     }
@@ -113,10 +93,32 @@ window.InputGroup = React.createClass({
         <hr />
       </div>
     );
-  },
+  }
 
-  getInputWrapperComponent: function() {
-    var inputWrapperComponent = this.props.inputWrapperComponent;
+  render () {
+    return (
+      <div className={this.props.wrapperClassName}>
+        <div className={this.inputGroupClassName()}>
+          {this.renderLabel()}
+          {this.renderInputs()}
+          {this.props.children}
+        </div>
+        {this.renderDivider()}
+      </div>
+    );
+  }
+
+  inputGroupClassName () {
+    var className = this.className();
+    if(this.props.label !== null) {
+      className += ' ' + Realize.themes.getCssClass('form.inputGroup.section');
+    }
+
+    return className;
+  }
+
+  getInputWrapperComponent() {
+    let inputWrapperComponent = this.props.inputWrapperComponent;
     if(typeof inputWrapperComponent == "string") {
       return window[inputWrapperComponent];
     }
@@ -126,18 +128,18 @@ window.InputGroup = React.createClass({
     else {
       return window.Input;
     }
-  },
+  }
 
-  serialize: function() {
-    var inputRefs = _filter(this.refs, function(ref, refName) {
+  serialize () {
+    var inputRefs = filter(this.refs, function(ref, refName) {
       return refName.match(/^input_/);
     });
 
     var inputValues = {};
     inputRefs.forEach(function(inputRef) {
-      _merge(inputValues, inputRef.serialize());
+      merge(inputValues, inputRef.serialize());
     });
 
     return inputValues;
   }
-});
+}

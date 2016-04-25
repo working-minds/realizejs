@@ -1,86 +1,92 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
-var FormErrorHandlerMixin = require('realize/mixins/form/form_error_handler_mixin.jsx');
-var FormSuccessHandlerMixin = require('realize/mixins/form/form_success_handler_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.Form = React.createClass({
-  mixins: [
-    CssClassMixin,
-    ContainerMixin,
-    FormErrorHandlerMixin,
-    FormSuccessHandlerMixin
-  ],
+import {
+  InputGroup,
+  FormButtonGroup
+} from 'components';
 
-  propTypes: {
-    id: React.PropTypes.string,
-    inputs: React.PropTypes.object,
-    data: React.PropTypes.object,
-    action: React.PropTypes.string,
-    method: React.PropTypes.string,
-    dataType: React.PropTypes.string,
-    contentType: React.PropTypes.string,
-    multipart: React.PropTypes.bool,
-    style: React.PropTypes.string,
-    resource: React.PropTypes.string,
-    ajaxSubmit: React.PropTypes.bool,
-    isLoading: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string]),
-    submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
-    otherButtons: React.PropTypes.array,
-    onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func
-  },
+import {
+  CssClassMixin,
+  ContainerMixin,
+  FormErrorHandlerMixin,
+  FormSuccessHandlerMixin
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'form',
-      id: null,
-      inputs: {},
-      data: {},
-      action: '',
-      method: 'POST',
-      dataType: undefined,
-      contentType: undefined,
-      multipart: false,
-      style: 'default',
-      resource: null,
-      ajaxSubmit: true,
-      isLoading: false,
-      disabled: false,
-      readOnly: false,
-      inputWrapperComponent: null,
-      submitButton: {
-        name: 'actions.send',
-        icon: 'send'
-      },
-      otherButtons: [],
-      onSubmit: function(event, postData) {},
-      onReset: function(event) {}
-    };
-  },
+@mixin(
+  CssClassMixin,
+  ContainerMixin,
+  FormErrorHandlerMixin,
+  FormSuccessHandlerMixin
+)
+export default class Form extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    inputs: PropTypes.object,
+    data: PropTypes.object,
+    action: PropTypes.string,
+    method: PropTypes.string,
+    dataType: PropTypes.string,
+    contentType: PropTypes.string,
+    multipart: PropTypes.bool,
+    style: PropTypes.string,
+    resource: PropTypes.string,
+    ajaxSubmit: PropTypes.bool,
+    isLoading: PropTypes.bool,
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    inputWrapperComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.element, PropTypes.string]),
+    submitButton: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    otherButtons: PropTypes.array,
+    onSubmit: PropTypes.func,
+    onReset: PropTypes.func
+  };
 
-  getInitialState: function() {
-    return {
-      isLoading: null
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'form',
+    id: null,
+    inputs: {},
+    data: {},
+    action: '',
+    method: 'POST',
+    dataType: undefined,
+    contentType: undefined,
+    multipart: false,
+    style: 'default',
+    resource: null,
+    ajaxSubmit: true,
+    isLoading: false,
+    disabled: false,
+    readOnly: false,
+    inputWrapperComponent: null,
+    submitButton: {
+      name: 'actions.send',
+      icon: 'send'
+    },
+    otherButtons: [],
+    onSubmit: function(event, postData) {},
+    onReset: function(event) {}
+  };
 
-  propsToForward: function() {
-    return ['resource', 'data', 'readOnly', 'disabled'];
-  },
+  state = {
+    isLoading: null
+  };
 
-  propsToForwardMapping: function() {
-    return {
-      errors: this.state.errors,
-      formStyle: this.props.style
-    };
-  },
+  renderMethodTag () {
+    return <input name="_method" type="hidden" value={this.props.method} />;
+  }
 
-  /* Rendering functions */
+  renderInputs () {
+    if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
+      return [];
+    }
 
-  render: function() {
+    return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} ref="inputGroup" />;
+  }
+
+  render () {
     return (
       <form action={this.props.action}
         method={(this.props.method == 'PUT' && !this.props.ajaxSubmit)? 'POST' : this.props.method}
@@ -102,38 +108,33 @@ window.Form = React.createClass({
         <FormButtonGroup {...this.propsWithoutCSS()} isLoading={this.isLoading()} />
       </form>
     );
-  },
+  }
 
-  renderMethodTag: function() {
-    return <input name="_method" type="hidden" value={this.props.method} />;
-  },
+  propsToForward () {
+    return ['resource', 'data', 'readOnly', 'disabled'];
+  }
 
-  renderInputs: function() {
-    if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
-      return [];
-    }
-
-    return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} ref="inputGroup" />;
-  },
-
-  parseFormEncType: function() {
+  parseFormEncType () {
     if(!!this.props.multipart) {
       return "multipart/form-data";
     } else {
       return "application/x-www-form-urlencoded";
     }
-  },
+  }
 
-  /* Serializer functions */
+  propsToForwardMapping () {
+    return {
+      errors: this.state.errors,
+      formStyle: this.props.style
+    };
+  }
 
-  serialize : function() {
+  serialize () {
     var form = ReactDOM.findDOMNode(this.refs.form);
     return $(form).serializeObject();
-  },
+  }
 
-  /* Submit handling functions */
-
-  handleSubmit: function(event) {
+  handleSubmit = (event) => {
     event.nativeEvent.preventDefault();
     var postData = this.serialize();
     this.props.onSubmit(event, postData);
@@ -143,17 +144,17 @@ window.Form = React.createClass({
       this.setState({isLoading: true, errors: [], showSuccessFlash: false});
       this.submit(postData);
     }
-  },
+  }
 
-  submit: function(postData) {
+  submit (postData) {
     if(!!this.props.ajaxSubmit) {
       this.ajaxSubmit(postData);
     } else {
       this.formSubmit();
     }
-  },
+  }
 
-  ajaxSubmit: function(postData) {
+  ajaxSubmit (postData) {
     var submitOptions = {
       url: this.props.action,
       method: this.props.method,
@@ -186,32 +187,28 @@ window.Form = React.createClass({
     }
 
     $.ajax(submitOptions);
-  },
+  }
 
-  formSubmit: function() {
+  formSubmit () {
     var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.submit();
-  },
+  }
 
-  /* Reset handling functions */
-
-  handleReset: function(event) {
+  handleReset = (event) => {
     this.props.onReset(event);
     FormActions.reset(this.props.id, event);
-  },
+  }
 
-  reset: function() {
+  reset () {
     var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.reset();
-  },
+  }
 
-  haveNativeReset: function() {
+  haveNativeReset () {
     return true;
-  },
+  }
 
-  /* Utilities */
-
-  isLoading: function() {
+  isLoading () {
     var isLoading = this.state.isLoading;
     if(isLoading === null) {
       isLoading = this.props.isLoading;
@@ -219,4 +216,4 @@ window.Form = React.createClass({
 
     return isLoading;
   }
-});
+}
