@@ -1,120 +1,101 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
-var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import merge from 'lodash/merge';
+import findIndex from 'lodash/findIndex';
+import { mixin } from 'utils/decorators';
 
-var _merge = require('lodash/merge');
-var _findIndex = require('lodash/findIndex');
+import {
+  CssClassMixin,
+  UtilsMixin,
+  RestActionsMixin
+} from 'mixins';
 
-window.GridForm = React.createClass({
-  mixins: [
-    CssClassMixin,
-    UtilsMixin,
-    RestActionsMixin
-  ],
+@mixin(
+  CssClassMixin,
+  UtilsMixin,
+  RestActionsMixin
+)
+export default class GridForm extends Component {
+  static propTypes = {
+    clientSide: PropTypes.bool,
+    clientSideIdField: PropTypes.string,
+    url: PropTypes.string,
+    paginationConfigs: PropTypes.object,
+    sortConfigs: PropTypes.object,
+    sortData: PropTypes.object,
+    filter: PropTypes.object,
+    columns: PropTypes.object,
+    data: PropTypes.object,
+    dataRowsParam: PropTypes.string,
+    countParam: PropTypes.string,
+    actionButtons: PropTypes.object,
+    form: PropTypes.object,
+    createButton: PropTypes.object,
+    updateButton: PropTypes.object,
+    cancelButton: PropTypes.object,
+    isLoading: PropTypes.bool,
+    selectable: PropTypes.oneOf(['multiple', 'none', 'one']),
+    eagerLoad: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    formComponent: PropTypes.func,
+    onSubmit: PropTypes.func,
+    onReset: PropTypes.func,
+    onSuccess: PropTypes.func,
+    onError: PropTypes.func,
+    onLoadSuccess: PropTypes.func,
+    onLoadError: PropTypes.func,
+    onDestroySuccess: PropTypes.func,
+    onDestroyError: PropTypes.func
+  };
 
-  propTypes: {
-    clientSide: React.PropTypes.bool,
-    clientSideIdField: React.PropTypes.string,
-    url: React.PropTypes.string,
-    paginationConfigs: React.PropTypes.object,
-    sortConfigs: React.PropTypes.object,
-    sortData: React.PropTypes.object,
-    filter: React.PropTypes.object,
-    columns: React.PropTypes.object,
-    data: React.PropTypes.object,
-    dataRowsParam: React.PropTypes.string,
-    countParam: React.PropTypes.string,
-    actionButtons: React.PropTypes.object,
-    form: React.PropTypes.object,
-    createButton: React.PropTypes.object,
-    updateButton: React.PropTypes.object,
-    cancelButton: React.PropTypes.object,
-    isLoading: React.PropTypes.bool,
-    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
-    eagerLoad: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    formComponent: React.PropTypes.func,
-    onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func,
-    onSuccess: React.PropTypes.func,
-    onError: React.PropTypes.func,
-    onLoadSuccess: React.PropTypes.func,
-    onLoadError: React.PropTypes.func,
-    onDestroySuccess: React.PropTypes.func,
-    onDestroyError: React.PropTypes.func
-  },
+  static defaultProps = {
+    clientSide: false,
+    clientSideIdField: '_clientSideId',
+    form: {},
+    actionButtons: null,
+    themeClassKey: 'gridForm',
+    isLoading: false,
+    createButton: {
+      name: 'actions.add',
+      icon: 'add'
+    },
+    updateButton: {
+      name: 'actions.update',
+      icon: 'edit'
+    },
+    cancelButton: {
+      name: 'actions.cancel',
+      style: 'cancel'
+    },
+    selectable: 'multiple',
+    eagerLoad: true,
+    readOnly: false,
+    formComponent: Form,
+    onSubmit: function(event, postData) {},
+    onReset: function(event) {},
+    onSuccess: function(data, status, xhr) { return true; },
+    onError: function(xhr, status, error) { return true; },
+    onLoadSuccess: function(data) {},
+    onLoadError: function(xhr, status, error) {},
+    onDestroySuccess: function(data) {},
+    onDestroyError: function(xhr, status, error) {}
+  };
 
-  getDefaultProps: function() {
-    return {
-      clientSide: false,
-      clientSideIdField: '_clientSideId',
-      form: {},
-      actionButtons: null,
-      themeClassKey: 'gridForm',
-      isLoading: false,
-      createButton: {
-        name: 'actions.add',
-        icon: 'add'
-      },
-      updateButton: {
-        name: 'actions.update',
-        icon: 'edit'
-      },
-      cancelButton: {
-        name: 'actions.cancel',
-        style: 'cancel'
-      },
-      selectable: 'multiple',
-      eagerLoad: true,
-      readOnly: false,
-      formComponent: Form,
-      onSubmit: function(event, postData) {},
-      onReset: function(event) {},
-      onSuccess: function(data, status, xhr) { return true; },
-      onError: function(xhr, status, error) { return true; },
-      onLoadSuccess: function(data) {},
-      onLoadError: function(xhr, status, error) {},
-      onDestroySuccess: function(data) {},
-      onDestroyError: function(xhr, status, error) {}
-    };
-  },
+  state = {
+    formAction: 'create',
+    selectedDataRow: null,
+    selectedRowId: null,
+    isLoading: this.props.isLoading,
+    clientSideData: []
+  };
 
-  getInitialState: function() {
-    return {
-      formAction: 'create',
-      selectedDataRow: null,
-      selectedRowId: null,
-      isLoading: this.props.isLoading,
-      clientSideData: []
-    };
-  },
-
-  render: function() {
-    return (
-      <div className={this.className()}>
-        <div className={this.className() + "__form"}>
-          {this.renderForm()}
-        </div>
-
-        <div className={this.className() + "__grid"}>
-          <Grid
-            {...this.getGridProps()}
-            actionButtons={this.getActionButtons()}
-            ref="grid"
-          />
-        </div>
-      </div>
-    );
-  },
-
-  /* Form renderer */
-
-  renderForm: function() {
+  renderForm () {
     if(this.props.readOnly) {
       return;
     }
 
-    var formProps = _merge({style: 'filter'}, this.props.form, {
+    var formProps = merge({style: 'filter'}, this.props.form, {
       action: this.getFormAction(),
       data: this.state.selectedDataRow,
       method: this.getFormMethod(),
@@ -132,21 +113,39 @@ window.GridForm = React.createClass({
     });
 
     return React.createElement(this.props.formComponent, formProps, null);
-  },
+  }
 
-  getFormAction: function() {
+  render () {
+    return (
+      <div className={this.className()}>
+        <div className={this.className() + "__form"}>
+          {this.renderForm()}
+        </div>
+
+        <div className={this.className() + "__grid"}>
+          <Grid
+            {...this.getGridProps()}
+            actionButtons={this.getActionButtons()}
+            ref="grid"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  getFormAction () {
     if(!!this.props.clientSide) {
       return null;
     }
 
     return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
-  },
+  }
 
-  getFormMethod: function() {
+  getFormMethod () {
     return this.getRestActionMethod(this.state.formAction);
-  },
+  }
 
-  getFormSubmitButton: function() {
+  getFormSubmitButton () {
     if(this.state.formAction == 'create') {
       return this.props.createButton;
     } else if(this.state.formAction == 'update') {
@@ -154,9 +153,9 @@ window.GridForm = React.createClass({
     }
 
     return '';
-  },
+  }
 
-  getFormOtherButtons: function() {
+  getFormOtherButtons () {
     if(this.state.formAction == 'update') {
       var cancelButtonProps = $.extend({}, this.props.cancelButton, {
         type: "reset",
@@ -167,20 +166,18 @@ window.GridForm = React.createClass({
     }
 
     return [];
-  },
+  }
 
-  getFormInputs: function() {
+  getFormInputs () {
     var formInputs = this.props.form.inputs;
     if(!!this.props.clientSide) {
       formInputs[this.props.clientSideIdField] = { component: 'hidden' };
     }
 
     return formInputs;
-  },
+  }
 
-  /* Default action buttons parser */
-
-  getActionButtons: function() {
+  getActionButtons () {
     var actionButtons = this.props.actionButtons || {};
 
     if(!actionButtons.member) {
@@ -192,9 +189,9 @@ window.GridForm = React.createClass({
     }
 
     return actionButtons;
-  },
+  }
 
-  getDefaultMemberActionButtons: function() {
+  getDefaultMemberActionButtons () {
     if(this.props.readOnly) {
       return [];
     }
@@ -203,49 +200,45 @@ window.GridForm = React.createClass({
       this.getDefaultEditActionProps(),
       this.getDefaultDestroyActionProps()
     ];
-  },
+  }
 
-  getDefaultCollectionActionButtons: function() {
+  getDefaultCollectionActionButtons () {
     return [];
-  },
+  }
 
-  getDefaultEditActionProps: function() {
+  getDefaultEditActionProps () {
     return $.extend({}, {
       icon: 'edit',
       onClick: this.editAction
     }, this.props.editActionButton);
-  },
+  }
 
-  getDefaultDestroyActionProps: function() {
+  getDefaultDestroyActionProps () {
     return $.extend({}, {
       icon: 'destroy',
       onClick: this.destroyAction
     }, this.props.destroyActionButton);
-  },
+  }
 
-  /* Form Submit event handlers */
-
-  onSubmit: function(event, postData) {
+  onSubmit (event, postData) {
     this.props.onSubmit(event, postData);
     if(!!this.props.clientSide) {
       this.handleClientSideSubmit(event, postData);
     }
-  },
+  }
 
-  onSuccess: function(data, status, xhr) {
+  onSuccess (data, status, xhr) {
       if(this.props.onSuccess(data, status, xhr)) {
       this.loadGridData();
       this.resetForm();
     }
-  },
+  }
 
-  onError: function(xhr, status, error) {
+  onError (xhr, status, error) {
     return this.props.onError(xhr, status, error);
-  },
+  }
 
-  /* Form Reset event handlers */
-
-  onReset: function(event) {
+  onReset (event) {
     this.setState({
       formAction: 'create',
       selectedRowId: null,
@@ -254,25 +247,23 @@ window.GridForm = React.createClass({
 
     this.clearFormErrors();
     this.props.onReset(event);
-  },
+  }
 
-  handleResetClick: function(event) {
+  handleResetClick = (event) => {
     var formRef = this.refs.form;
     if(!(typeof formRef.haveNativeReset == "function" && !!formRef.haveNativeReset())) {
       this.onReset(event);
     }
-  },
+  }
 
-  resetForm: function() {
+  resetForm () {
     var formRef = this.refs.form;
     if(typeof formRef.reset == "function") {
       formRef.reset();
     }
-  },
+  }
 
-  /* Grid member actions */
-
-  editAction: function(event, id, data) {
+  editAction (event, id, data) {
     this.setState({
       formAction: 'update',
       selectedRowId: id,
@@ -280,18 +271,18 @@ window.GridForm = React.createClass({
     });
 
     this.clearFormErrors();
-  },
+  }
 
-  destroyAction: function(event, id) {
+  destroyAction (event, id) {
     if(!!this.props.clientSide) {
       this.destroyActionClientSide(event, id);
     }
     else {
       this.destroyActionServerSide(event, id);
     }
-  },
+  }
 
-  destroyActionServerSide: function(event, id) {
+  destroyActionServerSide (event, id) {
     var destroyUrl = this.getRestActionUrl('destroy', id);
     var destroyMethod = this.getRestActionMethod('destroy');
 
@@ -306,26 +297,22 @@ window.GridForm = React.createClass({
         error: this.handleDestroyError
       });
     }
-  },
+  }
 
-  /* Destroy event handlers */
-
-  handleDestroy: function(data, status, xhr) {
+  handleDestroy = (data, status, xhr) => {
     this.props.onDestroySuccess(data, status, xhr);
     this.loadGridData();
-  },
+  }
 
-  handleDestroyError: function(xhr, status, error) {
+  handleDestroyError = (xhr, status, error) => {
     this.setState({isLoading: false});
     this.props.onDestroyError(xhr, status, error);
-  },
+  }
 
-  /* Client side mode handlers */
-
-  getGridProps: function() {
-    var gridProps = _merge({}, this.propsWithoutCSS());
+  getGridProps () {
+    var gridProps = merge({}, this.propsWithoutCSS());
     if(!!this.props.clientSide) {
-      _merge(gridProps, {
+      merge(gridProps, {
         url: '',
         pagination: false,
         selectable: 'none',
@@ -342,12 +329,12 @@ window.GridForm = React.createClass({
     }
 
     return gridProps;
-  },
+  }
 
-  handleClientSideSubmit: function(event, postData) {
+  handleClientSideSubmit = (event, postData) => {
     event.preventDefault();
 
-    var submittedDataRow = _merge({}, postData);
+    var submittedDataRow = merge({}, postData);
     var submittedDataRowIndex = this.findClientSideDataIndex(submittedDataRow[this.props.clientSideIdField]);
 
     if(submittedDataRowIndex >= 0) {
@@ -362,38 +349,35 @@ window.GridForm = React.createClass({
       selectedRowId: null,
       selectedDataRow: null
     }, this.props.onSuccess);
-  },
+  }
 
-  destroyActionClientSide: function(event, id) {
+  destroyActionClientSide (event, id) {
     var itemIndex = this.findClientSideDataIndex(id);
 
     this.state.clientSideData.splice(itemIndex, 1);
     this.forceUpdate(this.props.onDestroySuccess);
-  },
+  }
 
-  findClientSideDataIndex: function(id) {
+  findClientSideDataIndex (id) {
     return _findIndex(this.state.clientSideData, function(item) {
       return item[this.props.clientSideIdField] == id;
     }.bind(this));
-  },
+  }
 
-  serialize: function() {
+  serialize () {
     var gridRef = this.refs.grid;
     return gridRef.serialize();
-  },
+  }
 
-  /* Utilities */
-
-  loadGridData: function() {
+  loadGridData () {
     var gridRef = this.refs.grid;
     gridRef.loadData();
-  },
+  }
 
-  clearFormErrors: function() {
+  clearFormErrors () {
     var formRef = this.refs.form;
     if(typeof formRef.clearErrors == "function") {
       formRef.clearErrors();
     }
   }
-
-});
+}
