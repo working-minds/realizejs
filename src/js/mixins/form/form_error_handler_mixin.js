@@ -1,9 +1,12 @@
-window.FormErrorHandlerMixin = {
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+
+export default {
   propTypes: {
-    errorMessage: React.PropTypes.string,
-    baseErrorParam: React.PropTypes.string,
-    onError: React.PropTypes.func,
-    mapping: React.PropTypes.bool
+    errorMessage: PropTypes.string,
+    baseErrorParam: PropTypes.string,
+    onError: PropTypes.func,
+    mapping: PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -93,6 +96,4 @@ window.FormErrorHandlerMixin = {
       </ul>
     );
   }
-};
-
-module.exports = FormErrorHandlerMixin;
+}

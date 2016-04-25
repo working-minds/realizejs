@@ -1,8 +1,8 @@
-window.FormActions = Reflux.createActions([
+import Reflux from 'reflux';
+
+export default Reflux.createActions([
   "submit",
   "success",
   "error",
   "reset"
 ]);
-
-module.exports = FormActions;

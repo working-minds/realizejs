@@ -1,7 +1,12 @@
-window.FormSuccessHandlerMixin = {
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+
+import { Flash } from 'components';
+
+export default {
   propTypes: {
-    onSuccess: React.PropTypes.func,
-    successMessage: React.PropTypes.string
+    onSuccess: PropTypes.func,
+    successMessage: PropTypes.string
   },
 
   getDefaultProps: function() {
@@ -41,6 +46,4 @@ window.FormSuccessHandlerMixin = {
 
     }
   }
-};
-
-module.exports = FormSuccessHandlerMixin;
+}

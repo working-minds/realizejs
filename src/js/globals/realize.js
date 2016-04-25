@@ -1,9 +1,15 @@
 import Realize from '../realize';
-import * as Components from 'components';
 
 window.Realize = Realize;
-window.Components = Components;
+window.Actions = createReference(Realize.Actions);
+window.Components = createReference(Realize.Components);
+window.Mixins = createReference(Realize.Mixins);
+window.Stores = createReference(Realize.Stores);
 
-Object.keys(Components).forEach((componentName) => {
-  window[componentName] = Components[componentName];
-});
+function createReference (items) {
+  Object.keys(items).forEach((item) => {
+    window[item] = items[item];
+  });
+
+  return items;
+}
