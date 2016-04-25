@@ -1,4 +1,5 @@
-window.UtilsMixin = {
+
+export default {
   // source: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
   generateUUID: function() {
     var d = new Date().getTime();
@@ -9,6 +10,4 @@ window.UtilsMixin = {
       return (c =='x' ? r : (r&0x3|0x8)).toString(16);
     });
   }
-};
-
-module.exports = UtilsMixin;
+}
