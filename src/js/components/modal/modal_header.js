@@ -1,29 +1,32 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { themes } from 'realize';
 
-window.ModalHeader = React.createClass({
-  mixins: [CssClassMixin],
+import { CssClassMixin } from 'mixins';
 
-  propTypes: {
-    withTitle: React.PropTypes.bool
-  },
+@mixin(
+  CssClassMixin
+)
+export default class ModalHeader extends Component {
+  static propTypes = {
+    withTitle: PropTypes.bool
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.header',
-      withTitle: true
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'modal.header',
+    withTitle: true
+  };
 
-  render: function() {
+  render () {
     return <div className={this.getClassName()}>{this.props.children}</div>;
-  },
+  }
 
-  getClassName: function() {
-    var className = Realize.themes.getCssClass(this.props.themeClassKey);
+  getClassName () {
+    let className = themes.getCssClass(this.props.themeClassKey);
     if(!this.props.clearTheme && this.props.withTitle) {
-      className += ' '+ Realize.themes.getCssClass('modal.header.withTitle');
+      className += ' '+ themes.getCssClass('modal.header.withTitle');
     }
 
     return className;
   }
-});
+}

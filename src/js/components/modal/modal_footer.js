@@ -1,31 +1,33 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { themes } from 'realize';
 
-window.ModalFooter = React.createClass({
-  mixins: [CssClassMixin],
+import { Button } from 'components';
+import { CssClassMixin } from 'mixins';
 
-  propTypes: {
-    separatorThemeClassKey: React.PropTypes.string,
-    withSeparator: React.PropTypes.bool
-  },
+@mixin(CssClassMixin)
+export default class ModalFooter extends Component {
+  static propTypes = {
+    separatorThemeClassKey: PropTypes.string,
+    withSeparator: PropTypes.bool
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'modal.footer',
-      separatorThemeClassKey: 'modal.footer.withSeparator',
-      withSeparator: true
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'modal.footer',
+    separatorThemeClassKey: 'modal.footer.withSeparator',
+    withSeparator: true
+  };
 
-  render: function() {
+  render () {
     return <div className={this.footerClassName()}>{this.props.children}</div>;
-  },
+  }
 
-  footerClassName: function() {
-    var className = this.className();
+  footerClassName () {
+    let className = this.className();
     if(this.props.withSeparator) {
-      className += " " + Realize.themes.getCssClass(this.props.separatorThemeClassKey);
+      className += " " + themes.getCssClass(this.props.separatorThemeClassKey);
     }
 
     return className;
   }
-});
+}

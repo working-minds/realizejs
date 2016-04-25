@@ -1,42 +1,41 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-window.ModalForm = React.createClass({
-  mixins: [
-    CssClassMixin,
-    ContainerMixin
-  ],
+import {
+  Modal,
+  ModalHeader,
+  ModalContent,
+  ModalFooter,
+  Form,
+  FormButtonGroup
+} from 'components';
 
-  propTypes: {
-    title: React.PropTypes.string,
-    form: React.PropTypes.object
-  },
+import {
+  CssClassMixin,
+  ContainerMixin
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      title: "",
-      form: {}
-    };
-  },
+@mixin(
+  CssClassMixin,
+  ContainerMixin
+)
+export default class ModalForm extends Component {
+  static propTypes = {
+    title: PropTypes.string,
+    form: PropTypes.object
+  };
 
-  getInitialState: function() {
-    return {
-      isLoading: false
-    };
-  },
+  static defaultProps = {
+    title: "",
+    form: {}
+  };
 
-  render: function() {
-    return (
-      <Modal {...this.props}>
-        {this.renderHeader()}
-        {this.renderContent()}
-        {this.renderFooter()}
-      </Modal>
-    );
-  },
+  state = {
+    isLoading: false
+  };
 
-  renderHeader: function() {
-    var modalHeader = this.filterChildren(ModalHeader);
+  renderHeader () {
+    let modalHeader = this.filterChildren(ModalHeader);
     if(!modalHeader || modalHeader.length == 0) {
       modalHeader.push(
         <ModalHeader key="modal-header">
@@ -46,9 +45,9 @@ window.ModalForm = React.createClass({
     }
 
     return modalHeader;
-  },
+  }
 
-  renderContent: function() {
+  renderContent () {
     return (
       <ModalContent>
         <Form
@@ -63,40 +62,50 @@ window.ModalForm = React.createClass({
         </Form>
       </ModalContent>
     );
-  },
+  }
 
-  renderFooter: function() {
+  renderFooter () {
     return (
       <ModalFooter>
         <FormButtonGroup {...this.props.form} submitButton={this.submitButtonProps()} isLoading={this.state.isLoading} />
       </ModalFooter>
     );
-  },
+  }
 
-  submitButtonProps: function() {
+  render () {
+    return (
+      <Modal {...this.props}>
+        {this.renderHeader()}
+        {this.renderContent()}
+        {this.renderFooter()}
+      </Modal>
+    );
+  }
+
+  submitButtonProps () {
     var submitButtonProps = this.props.form.submitButton || this.defaultSubmitButtonProps();
     submitButtonProps.onClick = this.submitForm;
 
     return submitButtonProps;
-  },
+  }
 
-  defaultSubmitButtonProps: function() {
+  defaultSubmitButtonProps () {
     return {
       name: 'actions.send',
       icon: 'send'
     };
-  },
+  }
 
-  submitForm: function(event) {
+  submitForm (event) {
     var formRef = this.refs.form;
 
     formRef.handleSubmit(event);
     this.setState({
       isLoading: true
     });
-  },
+  }
 
-  handleSubmitSuccess: function(data, status, xhr) {
+  handleSubmitSuccess = (data, status, xhr) => {
     var onSuccessCallback = this.props.form.onSuccess;
     if(typeof onSuccessCallback == "function") {
       this.props.onSuccess(data, status, xhr);
@@ -107,9 +116,9 @@ window.ModalForm = React.createClass({
     });
 
     return true;
-  },
+  }
 
-  handleSubmitError: function(xhr, status, error) {
+  handleSubmitError = (xhr, status, error) => {
     var onErrorCallback = this.props.form.onError;
     if(typeof onErrorCallback == "function") {
       this.props.onError(xhr, status, error);
@@ -121,4 +130,4 @@ window.ModalForm = React.createClass({
 
     return true;
   }
-});
+}
