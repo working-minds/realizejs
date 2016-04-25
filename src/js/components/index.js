@@ -3,6 +3,7 @@ export * from './container';
 export * from './flash';
 export * from './form';
 export * from './grid';
+export * from './grid_form';
 export * from './header';
 export * from './icon';
 export * from './indicator';
