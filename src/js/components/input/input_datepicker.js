@@ -1,36 +1,41 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import moment from 'momentWithLocale';
+import { uuid } from 'utils';
+import { mixin } from 'utils/decorators';
 
-var moment = require('realize/momentWithLocale.js');
+import {
+  CssClassMixin,
+  InputComponentMixin
+} from 'mixins';
 
-window.InputDatepicker = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin, UtilsMixin],
-  propTypes: {
-    mask: React.PropTypes.string
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputDatepicker extends Component {
+  static propTypes = {
+    mask: PropTypes.string
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.datepicker',
-      mask: null,
-      format: null,
-      maskType: 'date'
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'input.datepicker',
+    mask: null,
+    format: null,
+    maskType: 'date'
+  };
 
-  getInitialState: function() {
-    return {
-      inputMaskedKey: this.generateUUID()
-    };
-  },
+  state = {
+    inputMaskedKey: uuid.v4()
+  };
 
-  componentDidMount: function() {
+  componentDidMount () {
     var currentLocale = Realize.i18n.currentLocale.toLowerCase();
     moment.locale(currentLocale);
     this.setPickadatePlugin();
-  },
+  }
 
-  render: function() {
+  render () {
     return (
       <span>
         <InputMasked
@@ -54,30 +59,28 @@ window.InputDatepicker = React.createClass({
         />
       </span>
     );
-  },
+  }
 
-  getDateFormat: function() {
+  getDateFormat () {
     return (this.props.format || Realize.i18n.t('date.formats.date'));
-  },
+  }
 
-  getFormattedDateValue: function() {
+  getFormattedDateValue () {
     var date = moment.utc(this.state.value, moment.ISO_8601);
     if(date.isValid()) {
       return date.format(this.getDateFormat());
     }
 
     return this.state.value;
-  },
+  }
 
-  labelIsActive: function() {
+  labelIsActive() {
     let inputValue = this.state.value;
 
     return (inputValue != null && String(inputValue).length > 0);
-  },
+  }
 
-  /* Pickadate handlers */
-
-  setPickadatePlugin: function() {
+  setPickadatePlugin () {
     var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
     $inputNode.pickadate({
       editable: true,
@@ -89,9 +92,9 @@ window.InputDatepicker = React.createClass({
 
     var picker = $inputNode.pickadate('picker');
     picker.on('close', this.props.onChange);
-  },
+  }
 
-  handleCalendarClick: function(event) {
+  handleCalendarClick (event) {
     var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
     var picker = $inputNode.pickadate('picker');
 
@@ -103,26 +106,23 @@ window.InputDatepicker = React.createClass({
     }
 
     event.stopPropagation();
-  },
+  }
 
-  handlePickadateSet: function(pickadateObject) {
-    this.state.value = moment.utc(pickadateObject.select).format();
+  handlePickadateSet (pickadateObject) {
+    var selectedDate = moment(pickadateObject.select).format();
     this.props.onChange(null, this.getFormattedDateValue(), this);
 
     this.setState({
-      inputMaskedKey: this.generateUUID()
+      value: selectedDate,
+      inputMaskedKey: uuid.v4()
     }, this.setPickadatePlugin);
-  },
+  }
 
-  /* Mask event handlers */
-
-  handleMaskIncomplete: function(event) {
+  handleMaskIncomplete (event) {
     this.setState({value: null});
-  },
+  }
 
-  _getValue: function() {
+  _getValue () {
     return this.getFormattedDateValue();
   }
-});
-
-
+}

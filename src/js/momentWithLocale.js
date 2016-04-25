@@ -1,4 +1,4 @@
-var moment = require('moment');
-require('../../node_modules/moment/locale/*.js', { mode: 'list' });
+import moment from 'moment';
+require.context('moment/locale/', false, /\.js$/);
 
-module.exports = moment;
+export default moment;

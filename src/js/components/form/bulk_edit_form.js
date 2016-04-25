@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop_types';
 import $ from 'jquery';
+import { uuid } from 'utils';
 import { mixin } from 'utils/decorators';
 
 import {
@@ -9,7 +10,7 @@ import {
   Input
 } from 'components';
 
-import { CssClassMixin, UtilsMixin } from 'mixins';
+import { CssClassMixin } from 'mixins';
 
 @mixin(CssClassMixin)
 export default class BulkEditForm extends Component {
@@ -93,7 +94,7 @@ export default class BulkEditForm extends Component {
     for (var i = 0; i < this.props.inputGroups.length; i++ ){
       var inputs = this.props.inputGroups[i].inputs;
       for(var inputId in inputs)
-        idsMap[inputId] = "input_" + inputId + this.generateUUID();
+        idsMap[inputId] = "input_" + inputId + uuid.v4();
     }
 
     return idsMap;
@@ -188,7 +189,7 @@ export default class BulkEditForm extends Component {
     }
 
     var inputKeys = this.state.inputKeys;
-    inputKeys[inputId] = "input_" + inputId + this.generateUUID();
+    inputKeys[inputId] = "input_" + inputId + uuid.v4();
     this.setState( { disabled: disabled, inputKeys: inputKeys });
   }
 }

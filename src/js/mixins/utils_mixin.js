@@ -1,4 +1,5 @@
 
+// TODO: refatorar para módulo
 export default {
   // source: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
   generateUUID: function() {
