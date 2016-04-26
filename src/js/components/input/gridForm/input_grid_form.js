@@ -1,36 +1,146 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import merge from 'lodash/merge';
+import mapValues from 'lodash/mapValues';
+import { mixin } from 'utils/decorators';
 
-var _merge = require('lodash/merge');
-var _mapValues = require('lodash/mapValues');
+import {
+  GridForm,
+  InputGridFormFields,
+  InputHidden,
+} from 'components';
 
-window.InputGridForm = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-  propTypes: {
-    label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    fields: React.PropTypes.object,
-    form: React.PropTypes.object,
-    clientSide: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string]),
-    onSuccess: React.PropTypes.func,
-    onDestroySuccess: React.PropTypes.func
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputGridForm extends Component {
+  static propTypes = {
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    fields: PropTypes.object,
+    form: PropTypes.object,
+    clientSide: PropTypes.bool,
+    inputWrapperComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.element, PropTypes.string]),
+    onSuccess: PropTypes.func,
+    onDestroySuccess: PropTypes.func
+  };
 
-  getDefaultProps: function() {
+  static defaultProps = {
+    themeClassKey: 'input.gridForm',
+    className: '',
+    fields: {},
+    form: {},
+    clientSide: true,
+    inputWrapperComponent: null,
+    onSuccess: function() {},
+    onDestroySuccess: function() {}
+  };
+
+  getDefaultFormProps() {
     return {
-      themeClassKey: 'input.gridForm',
-      className: '',
-      fields: {},
-      form: {},
-      clientSide: true,
-      inputWrapperComponent: null,
-      onSuccess: function() {},
-      onDestroySuccess: function() {}
+      formStyle: 'filter',
+      inputWrapperComponent: this.props.inputWrapperComponent
     };
-  },
+  }
 
-  render: function() {
+  getColumnName(column, columnKey) {
+    let columnName = column.name || columnKey;
+    if (this.columnHaveDisplayValueKey(columnName)) {
+      columnName += 'Display';
+    }
+
+    return columnName;
+  }
+
+  getSerializedValue() {
+    return JSON.stringify(this.state.value);
+  }
+
+  parseFormProp() {
+    const formProp = merge(this.getDefaultFormProps(), this.props.form);
+    const fieldsProp = merge({}, this.props.fields);
+    formProp.inputs = mapValues(fieldsProp, (field) => {
+      delete field.format;
+      return field;
+    });
+
+    return formProp;
+  }
+
+  parseColumnsProp() {
+    let columnsProp = merge({}, this.props.fields);
+    columnsProp = mapValues(columnsProp, (column, columnKey) => {
+      delete column.component;
+      delete column.className;
+      delete column.value;
+      column.name = this.getColumnName(column, columnKey);
+      return column;
+    });
+
+    return columnsProp;
+  }
+
+  columnHaveDisplayValueKey(columnName) {
+    const value = this.state.value;
+    const firstValueRow = value == null ? null : value[0];
+    if (firstValueRow == null) {
+      return false;
+    }
+
+    const valueKeys = Object.keys(firstValueRow);
+    return valueKeys.indexOf(`${columnName}Display`) >= 0;
+  }
+
+  /* GridForm Result serializer */
+
+  serializeGridForm() {
+    const gridFormRef = this.refs.gridForm;
+    this.setState({
+      value: gridFormRef.serialize()
+    });
+  }
+
+  _getValue() {
+    return JSON.stringify(this.state.value);
+  }
+
+  /* Event handling functions */
+
+  handleOnSuccess() {
+    let gridFormValue = this.refs.gridForm.serialize();
+
+    this.props.onSuccess(gridFormValue);
+    this.serializeGridForm();
+  }
+
+  handleOnDestroySuccess() {
+    let gridFormValue = this.refs.gridForm.serialize();
+
+    this.props.onDestroySuccess(gridFormValue);
+    this.serializeGridForm();
+  }
+
+  /* Renderers */
+
+  renderLabel() {
+    const label = this.props.label;
+    if (typeof label === 'boolean' && !label) {
+      return [];
+    }
+
+    return (
+      <h3 className={this.themedClassName('input.gridForm.label')}>
+        {label}
+      </h3>
+    );
+  }
+
+  render() {
     return (
       <div className={this.className()}>
         {this.renderLabel()}
@@ -46,105 +156,10 @@ window.InputGridForm = React.createClass({
         />
         <InputHidden
           {...this.propsWithoutCSS()}
-          value={this._getValue()}
+          value={this.getSerializedValue()}
           ref="input"
         />
       </div>
     );
-  },
-
-  renderLabel: function() {
-    var label = this.props.label;
-    if(typeof label == "boolean" && !label) {
-      return [];
-    }
-
-    return (
-      <h3 className={this.themedClassName("input.gridForm.label")}>
-        {label}
-      </h3>
-    );
-  },
-
-  /* GridForm Props parsers */
-
-  getDefaultFormProps: function() {
-    return {
-      formStyle: 'filter',
-      inputWrapperComponent: this.props.inputWrapperComponent
-    };
-  },
-
-  parseFormProp: function() {
-    var formProp = _merge(this.getDefaultFormProps(), this.props.form);
-    var fieldsProp = _merge({}, this.props.fields);
-    formProp.inputs = _mapValues(fieldsProp, function(field) {
-      delete field.format;
-      return field;
-    });
-
-    return formProp;
-  },
-
-  parseColumnsProp: function() {
-    var columnsProp = _merge({}, this.props.fields);
-    columnsProp = _mapValues(columnsProp, function(column, columnKey) {
-      delete column.component;
-      delete column.className;
-      delete column.value;
-      column.name = this.getColumnName(column, columnKey);
-      return column;
-    }.bind(this));
-
-    return columnsProp;
-  },
-
-  getColumnName: function(column, columnKey) {
-    var columnName = column.name || columnKey;
-    if(this.columnHaveDisplayValueKey(columnName)) {
-      columnName += "Display";
-    }
-
-    return columnName;
-  },
-
-  columnHaveDisplayValueKey: function(columnName) {
-    var value = this.state.value;
-    var firstValueRow = value == null ? null : value[0];
-    if(firstValueRow == null) {
-      return false;
-    }
-
-    var valueKeys = Object.keys(firstValueRow);
-    return valueKeys.indexOf(columnName + "Display") >= 0;
-  },
-
-  /* Event handling functions */
-
-  handleOnSuccess: function() {
-    let gridFormValue = this.refs.gridForm.serialize();
-
-    this.props.onSuccess(gridFormValue);
-    this.serializeGridForm();
-  },
-
-  handleOnDestroySuccess: function() {
-    let gridFormValue = this.refs.gridForm.serialize();
-
-    this.props.onDestroySuccess(gridFormValue);
-    this.serializeGridForm();
-  },
-
-  /* GridForm Result serializer */
-
-  serializeGridForm: function() {
-    var gridFormRef = this.refs.gridForm;
-    this.setState({
-      value: gridFormRef.serialize()
-    });
-  },
-
-  _getValue: function() {
-    return JSON.stringify(this.state.value);
   }
-});
+}
