@@ -1,61 +1,71 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { mixin } from 'utils/decorators';
 
-window.InputGridFormFields = React.createClass({
-  mixins: [CssClassMixin],
+import {
+  Button,
+  InputGroup,
+} from 'components';
 
-  propTypes: {
-    id: React.PropTypes.string,
-    inputs: React.PropTypes.object,
-    data: React.PropTypes.object,
-    style: React.PropTypes.string,
-    resource: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
-    otherButtons: React.PropTypes.array,
-    onSubmit: React.PropTypes.func,
-    onReset: React.PropTypes.func
-  },
+import { CssClassMixin } from 'mixins';
 
-  getInitialState: function() {
-    return {
-      errors: this.props.errors
-    };
-  },
+@mixin(CssClassMixin)
+export default class InputGridFormFields extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    inputs: PropTypes.object,
+    data: PropTypes.object,
+    style: PropTypes.string,
+    resource: PropTypes.string,
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    submitButton: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    otherButtons: PropTypes.array,
+    onSubmit: PropTypes.func,
+    onReset: PropTypes.func,
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'form',
-      id: null,
-      inputs: {},
-      data: {},
-      style: 'default',
-      resource: null,
-      disabled: false,
-      readOnly: false,
-      submitButton: {
-        name: 'actions.send',
-        icon: 'send'
-      },
-      otherButtons: [],
-      onSubmit: function(event, postData) {},
-      onReset: function(event) {}
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'form',
+    id: null,
+    inputs: {},
+    data: {},
+    style: 'default',
+    resource: null,
+    disabled: false,
+    readOnly: false,
+    submitButton: {
+      name: 'actions.send',
+      icon: 'send'
+    },
+    otherButtons: [],
+    onSubmit: () => {},
+    onReset: () => {}
+  };
 
-  /* Rendering functions */
+  state = {
+    errors: this.props.errors
+  };
 
-  render: function() {
-    return (
-      <div id={this.props.id} className={this.className()} ref="form">
-        {this.renderInputs()}
-        {this.renderButtons()}
-      </div>
-    );
-  },
+  submitFormFields(event) {
+    const inputGroupRef = this.refs.inputGroup;
+    const fieldsData = inputGroupRef.serialize();
 
-  renderInputs: function() {
-    if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
+    this.props.onSubmit(event, fieldsData);
+    this.clearErrors();
+  }
+
+  clearErrors() {
+    //TODO implementar uma forma de limpar os errors do form nos campos do gridform.
+  }
+
+  reset() {
+    console.log('reset!');
+  }
+
+  renderInputs() {
+    if (!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
       return [];
     }
 
@@ -67,23 +77,23 @@ window.InputGridFormFields = React.createClass({
         ref="inputGroup"
       />
     );
-  },
+  }
 
-  renderButtons: function() {
+  renderButtons() {
     return (
-      <div className={this.themedClassName("form.buttonGroup")}>
+      <div className={this.themedClassName('form.buttonGroup')}>
         {this.renderOtherButtons()}
         {this.renderSubmitButton()}
       </div>
     );
-  },
+  }
 
-  renderOtherButtons: function() {
-    var otherButtonsProps = this.props.otherButtons;
-    var otherButtons = [];
+  renderOtherButtons() {
+    const otherButtonsProps = this.props.otherButtons;
+    const otherButtons = [];
 
-    for(var i = 0; i < otherButtonsProps.length; i++) {
-      var otherButtonProps = otherButtonsProps[i];
+    for (let i = 0; i < otherButtonsProps.length; i++) {
+      const otherButtonProps = otherButtonsProps[i];
       otherButtons.push(
         <Button
           {...otherButtonProps}
@@ -94,10 +104,10 @@ window.InputGridFormFields = React.createClass({
     }
 
     return otherButtons;
-  },
+  }
 
-  renderSubmitButton: function() {
-    if(!this.props.submitButton) {
+  renderSubmitButton() {
+    if (!this.props.submitButton) {
       return [];
     }
 
@@ -108,25 +118,14 @@ window.InputGridFormFields = React.createClass({
         onClick={this.submitFormFields}
       />
     );
-  },
-
-  /* Submit handling functions */
-
-  submitFormFields: function(event) {
-    var inputGroupRef = this.refs.inputGroup;
-    var fieldsData = inputGroupRef.serialize();
-
-    this.props.onSubmit(event, fieldsData);
-    this.clearErrors();
-  },
-
-  clearErrors: function() {
-    //TODO implementar uma forma de limpar os errors do form nos campos do gridform.
-  },
-
-  /* Reset handling functions */
-
-  reset: function() {
-    console.log('reset!');
   }
-});
+
+  render() {
+    return (
+      <div id={this.props.id} className={this.className()} ref="form">
+        {this.renderInputs()}
+        {this.renderButtons()}
+      </div>
+    );
+  }
+}
