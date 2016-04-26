@@ -4,4 +4,5 @@ export InputDatepicker from './input_datepicker';
 export InputError from './input_error';
 export InputText from './input_text';
 
+export * from './autocomplete';
 export * from './checkbox';

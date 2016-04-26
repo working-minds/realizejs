@@ -1,35 +1,56 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { uuid } from 'utils';
+import { mixin } from 'utils/decorators';
 
-window.InputAutocompleteSelect = React.createClass({
-  mixins: [
-    CssClassMixin,
-    UtilsMixin,
-    InputComponentMixin
-  ],
+import {
+  InputText,
+  Label,
+} from 'components';
 
-  propTypes: {
-    selectedOptions: React.PropTypes.array,
-    placeholder: Realize.PropTypes.localizedString
-  },
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      selectedOptions: [],
-      themeClassKey: 'input.autocomplete.select',
-      placeholder: 'select'
-    };
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputAutocompleteSelect extends Component {
+  static propTypes = {
+    selectedOptions: PropTypes.array,
+  };
 
-  getInitialState: function() {
-    return {
-      options: []
-    };
-  },
+  static defaultProps = {
+    selectedOptions: [],
+    themeClassKey: 'input.autocomplete.select',
+    placeholder: 'select',
+  };
 
-  //TODO: este e um componente do materialize. Tornar este componente generico.
-  render: function() {
+  state = {
+    options: [],
+  };
+
+  selectId() {
+    return `autocomplete_select_${this.props.id}`;
+  }
+
+  focusSelect() {
+    const selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
+  }
+
+  renderSelectedOptions() {
+    const options = this.props.selectedOptions;
+
+    return $.map(options, (option) => option.name).join(', ');
+  }
+
+  // TODO: este e um componente do materialize. Tornar este componente generico.
+  render() {
     return (
       <div>
         <div className={this.className()}>
@@ -42,28 +63,11 @@ window.InputAutocompleteSelect = React.createClass({
             onFocus={this.props.onFocus}
             errors={this.props.errors}
             ref="select"
-            key={"autocomplete_select_" + this.generateUUID()}
+            key={`autocomplete_select_${uuid.v4()}`}
           />
         </div>
         <Label {...this.propsWithoutCSS()} id={this.selectId()} />
       </div>
     );
-  },
-
-  renderSelectedOptions: function() {
-    var options = this.props.selectedOptions;
-
-    return $.map(options, function(option) {
-      return option.name;
-    }).join(', ');
-  },
-
-  selectId: function() {
-    return 'autocomplete_select_' + this.props.id;
-  },
-
-  focusSelect: function() {
-    var selectInput = ReactDOM.findDOMNode(this.refs.select);
-    selectInput.focus();
   }
-});
+}

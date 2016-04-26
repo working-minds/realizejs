@@ -1,41 +1,39 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import i18n from 'i18n';
+import { mixin } from 'utils/decorators';
 
-window.InputAutocompleteResult = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    id: React.PropTypes.string,
-    options: React.PropTypes.array,
-    selectedOptions: React.PropTypes.array,
-    active: React.PropTypes.number,
-    searchValue: React.PropTypes.string,
-    actionButtons: React.PropTypes.array,
-    onKeyDown: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    onSelect: React.PropTypes.func,
-    onClear: React.PropTypes.func,
-    onOptionMouseEnter: React.PropTypes.func
-  },
+import {
+  Icon,
+  InputText,
+  InputAutocompleteList,
+} from 'components';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.autocomplete.result',
-      options: [],
-      selectedOptions: []
-    };
-  },
+import { CssClassMixin } from 'mixins';
 
-  render: function() {
-    return (
-      <div className={this.className()}>
-        {this.renderSearchInput()}
-        {this.renderClearButton()}
-        {this.renderResult()}
-        {this.renderActionButtons()}
-      </div>
-    );
-  },
+@mixin(CssClassMixin)
+export default class InputAutocompleteResult extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    options: PropTypes.array,
+    selectedOptions: PropTypes.array,
+    active: PropTypes.number,
+    searchValue: PropTypes.string,
+    actionButtons: PropTypes.array,
+    onKeyDown: PropTypes.func,
+    onChange: PropTypes.func,
+    onSelect: PropTypes.func,
+    onClear: PropTypes.func,
+    onOptionMouseEnter: PropTypes.func,
+  };
 
-  renderSearchInput: function() {
+  static defaultProps = {
+    themeClassKey: 'input.autocomplete.result',
+    options: [],
+    selectedOptions: [],
+  };
+
+  renderSearchInput() {
     return (
       <div className="input-autocomplete__search">
         <Icon type="search" className="prefix" />
@@ -47,29 +45,31 @@ window.InputAutocompleteResult = React.createClass({
         />
       </div>
     );
-  },
+  }
 
-  renderClearButton: function() {
+  renderClearButton() {
     return (
-      <a href="#!"
-         className="input-autocomplete__clear-button"
-         onClick={this.props.onClear}>
-
-        {Realize.i18n.t("inputs.autocomplete.clear")}
+      <a
+        href="#!"
+        className="input-autocomplete__clear-button"
+        onClick={this.props.onClear}
+      >
+        {i18n.t('inputs.autocomplete.clear')}
       </a>
     );
-  },
+  }
 
-  renderResult: function() {
-    var options = this.props.options;
-    if(options.length > 0) {
+  renderResult() {
+    const { options } = this.props;
+
+    if (options.length > 0) {
       return this.renderList();
-    } else {
-      return this.renderEmptyMessage();
     }
-  },
 
-  renderList: function() {
+    return this.renderEmptyMessage();
+  }
+
+  renderList() {
     return (
       <InputAutocompleteList
         id={this.props.id}
@@ -81,22 +81,22 @@ window.InputAutocompleteResult = React.createClass({
         ref="list"
       />
     );
-  },
+  }
 
-  renderEmptyMessage: function() {
+  renderEmptyMessage() {
     return (
       <div className="input-autocomplete__empty-message">
-        {Realize.i18n.t("inputs.autocomplete.emptyResult")}
+        {i18n.t('inputs.autocomplete.emptyResult')}
       </div>
     );
-  },
+  }
 
-  renderActionButtons: function() {
-    var actionButtons = [];
-    var actionButtonsProps = this.props.actionButtons;
+  renderActionButtons() {
+    const actionButtons = [];
+    const actionButtonsProps = this.props.actionButtons;
 
-    for(var i = 0; i < actionButtonsProps.length; i++) {
-      var actionButtonProps = actionButtonsProps[i];
+    for (let i = 0; i < actionButtonsProps.length; i++) {
+      const actionButtonProps = actionButtonsProps[i];
       actionButtons.push(this.renderActionButton(actionButtonProps, i));
     }
 
@@ -105,16 +105,28 @@ window.InputAutocompleteResult = React.createClass({
         {actionButtons}
       </div>
     );
-  },
+  }
 
-  renderActionButton: function(actionButtonProps, i) {
-    var buttonComponent = (actionButtonProps.component || 'Button');
-    var buttonProps = React.__spread({}, actionButtonProps, {
+  renderActionButton(actionButtonProps, i) {
+    const buttonComponent = (actionButtonProps.component || 'Button');
+    const buttonProps = {
+      ...actionButtonProps,
       themeClassKey: 'input.autocomplete.actionButton',
-      element: "a",
-      key: ("action_" + i)
-    });
+      element: 'a',
+      key: (`action_${i}`),
+    };
 
     return React.createElement(eval(buttonComponent), buttonProps);
   }
-});
+
+  render() {
+    return (
+      <div className={this.className()}>
+        {this.renderSearchInput()}
+        {this.renderClearButton()}
+        {this.renderResult()}
+        {this.renderActionButtons()}
+      </div>
+    );
+  }
+}

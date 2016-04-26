@@ -1,56 +1,63 @@
-window.InputAutocompleteValues = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    multiple: React.PropTypes.bool,
-    selectedOptions: React.PropTypes.array
-  },
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
 
-  getDefaultProps: function() {
-    return {
-      multiple: false,
-      selectedOptions: []
-    };
-  },
+import {} from 'components';
 
-  render: function() {
-    return (
-      <select
-        multiple={true}
-        id={this.props.id}
-        name={this.valueInputName()}
-        value={this.selectedOptionsValues()}
-        readOnly={true}
-        style={{display: "none"}}>
-        {this.renderValueInputs()}
-      </select>
+export default class InputAutocompleteValues extends Component {
+  static propTypes = {
+    id: PropTypes.string,
+    name: PropTypes.string,
+    multiple: PropTypes.bool,
+    selectedOptions: PropTypes.array,
+  };
+
+  static defaultProps = {
+    multiple: false,
+    selectedOptions: [],
+  };
+
+  selectedOptionsValues() {
+    return $.map(
+      this.props.selectedOptions,
+      (selectedOption) => selectedOption.value
     );
-  },
+  }
 
-  selectedOptionsValues: function() {
-    return $.map(this.props.selectedOptions, function(selectedOption){
-      return selectedOption.value;
-    });
-  },
+  valueInputName() {
+    let inputName = this.props.name;
 
-  renderValueInputs: function() {
-    var valueInputs = [];
-    var selectedOptions = this.props.selectedOptions;
-
-    for(var i = 0; i < selectedOptions.length; i++) {
-      var option = selectedOptions[i];
-      valueInputs.push(<option value={option.value} key={option.name} />);
-    }
-
-    return valueInputs;
-  },
-
-  valueInputName: function() {
-    var inputName = this.props.name;
-    if(this.props.multiple) {
+    if (this.props.multiple) {
       inputName += '[]';
     }
 
     return inputName;
   }
-});
+
+  renderValueInputs() {
+    const valueInputs = [];
+    const selectedOptions = this.props.selectedOptions;
+
+    for (let i = 0; i < selectedOptions.length; i++) {
+      const option = selectedOptions[i];
+      valueInputs.push(<option value={option.value} key={option.name} />);
+    }
+
+    return valueInputs;
+  }
+
+  render() {
+    return (
+      <select
+        multiple
+        id={this.props.id}
+        name={this.valueInputName()}
+        value={this.selectedOptionsValues()}
+        readOnly
+        style={{ display: 'none' }}
+      >
+        {this.renderValueInputs()}
+      </select>
+    );
+  }
+}
