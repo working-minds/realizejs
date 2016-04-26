@@ -1,6 +1,7 @@
 import PropTypes from 'prop_types';
 import merge from 'lodash/merge';
-import { config, i18n } from 'realize';
+import i18n from 'i18n';
+import config from 'config';
 
 export default {
   propTypes: {
