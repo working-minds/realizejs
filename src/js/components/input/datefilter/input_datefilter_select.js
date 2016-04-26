@@ -1,30 +1,50 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import { uuid } from 'utils';
+import { mixin } from 'utils/decorators';
 
-window.InputDatefilterSelect = React.createClass({
-  mixins: [
-    CssClassMixin,
-    UtilsMixin,
-    InputComponentMixin
-  ],
+import {
+  InputText,
+  Label,
+} from 'components';
 
-  propTypes: {
-    selectedDates: React.PropTypes.array,
-    placeholder: Realize.PropTypes.localizedString,
-    onBlur: React.PropTypes.func
-  },
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      selectedDates: [],
-      themeClassKey: 'input.datefilter.select',
-      placeholder: 'select'
-    };
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputDatefilterSelect extends Component {
+  static propTypes = {
+    selectedDates: PropTypes.array,
+    onBlur: PropTypes.func,
+  };
 
-  //TODO: este e um componente do materialize. Tornar este componente generico.
-  render: function() {
+  static defaultProps = {
+    selectedDates: [],
+    themeClassKey: 'input.datefilter.select',
+    placeholder: 'select',
+  };
+
+  focusSelect() {
+    const selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
+  }
+
+  selectId() {
+    return `datefilter_select_${this.props.id}`;
+  }
+
+  renderSelectedDates() {
+    const dates = this.props.selectedDates;
+    return dates.join(' - ');
+  }
+
+  render() {
     return (
       <div>
         <div className={this.className()}>
@@ -37,25 +57,11 @@ window.InputDatefilterSelect = React.createClass({
             onFocus={this.props.onFocus}
             errors={this.props.errors}
             ref="select"
-            key={"datefilter_select_" + this.generateUUID()}
+            key={`datefilter_select_${uuid.v4()}`}
           />
         </div>
         <Label {...this.propsWithoutCSS()} id={this.selectId()} />
       </div>
     );
-  },
-
-  renderSelectedDates: function() {
-    var dates = this.props.selectedDates;
-    return dates.join(' - ');
-  },
-
-  selectId: function() {
-    return 'datefilter_select_' + this.props.id;
-  },
-
-  focusSelect: function() {
-    var selectInput = ReactDOM.findDOMNode(this.refs.select);
-    selectInput.focus();
   }
-});
+}

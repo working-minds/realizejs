@@ -6,3 +6,4 @@ export InputText from './input_text';
 
 export * from './autocomplete';
 export * from './checkbox';
+export * from './datefilter';
