@@ -7,6 +7,10 @@ import { uuid } from 'utils';
 import { mixin } from 'utils/decorators';
 
 import {
+  Form
+} from 'components';
+
+import {
   CssClassMixin,
   RestActionsMixin
 } from 'mixins';
