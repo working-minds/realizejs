@@ -1,33 +1,96 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { autobind, mixin } from 'utils/decorators';
 
-window.InputDatefilter = React.createClass({
-  mixins: [CssClassMixin],
-  propTypes: {
-    originalId: React.PropTypes.string,
-    originalName: React.PropTypes.string,
-    id: React.PropTypes.string,
-    name: React.PropTypes.string,
-    resource: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    fromFilterInput: React.PropTypes.object,
-    toFilterInput: React.PropTypes.object,
-    okButton: React.PropTypes.object
-  },
+import {
+  InputDatefilterSelect,
+  InputDatefilterBody,
+} from 'components';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.datefilter',
-      disabled: false
-    };
-  },
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-  getInitialState: function() {
-    return {
-      selectedDates: []
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputDatefilter extends Component {
+  static propTypes = {
+    originalId: PropTypes.string,
+    originalName: PropTypes.string,
+    resource: PropTypes.string,
+    fromFilterInput: PropTypes.object,
+    toFilterInput: PropTypes.object,
+    okButton: PropTypes.object,
+  };
+
+  static defaultProps = {
+    themeClassKey: 'input.datefilter',
+  };
+
+  state = {
+    selectedDates: [],
+  };
+
+  componentDidMount() {
+    const $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    const $form = $($containerNode.find('input')[0].form);
+    $form.on('reset', this.clearSelection);
+  }
+
+  componentWillUnmount() {
+    const $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    const $form = $($containerNode.find('input')[0].form);
+    $form.off('reset', this.clearSelection);
+  }
+
+  clearSelection() {
+    this.setState({
+      selectedDates: [],
+    });
+  }
+
+  showFilterBody() {
+    if (this.props.disabled) {
+      return;
     }
-  },
 
-  render: function() {
+    $(document).on('click', this.handleDocumentClick);
+    const $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    const firstFilterInput = $bodyNode.find('input[type=text]')[0];
+
+    $bodyNode.show();
+    firstFilterInput.focus();
+  }
+
+  hideFilterBody() {
+    $(document).off('click', this.handleDocumentClick);
+    const $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    $bodyNode.hide();
+  }
+
+  @autobind
+  handleDocumentClick(event) {
+    const $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    if ($containerNode.find(event.target).length === 0) {
+      this.hideFilterBody();
+    }
+  }
+
+  @autobind
+  handleSelectDate(selectedDates) {
+    this.setState({
+      selectedDates,
+    });
+
+    this.hideFilterBody();
+  }
+
+  render() {
     return (
       <div className={this.className()} ref="container">
         <InputDatefilterSelect
@@ -45,66 +108,5 @@ window.InputDatefilter = React.createClass({
         />
       </div>
     );
-  },
-
-  /* Form reset event handlers */
-
-  componentDidMount: function() {
-    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
-    var $form = $($containerNode.find('input')[0].form);
-    $form.on('reset', this.clearSelection);
-  },
-
-  componentWillUnmount: function() {
-    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
-    var $form = $($containerNode.find('input')[0].form);
-    $form.off('reset', this.clearSelection);
-  },
-
-  clearSelection: function() {
-    this.setState({
-      selectedDates: []
-    });
-  },
-
-  /* Input focus handlers */
-
-  showFilterBody: function(event) {
-    if(this.props.disabled) {
-      return;
-    }
-
-    $(document).on('click', this.handleDocumentClick);
-    var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
-    var firstFilterInput = $bodyNode.find('input[type=text]')[0];
-
-    $bodyNode.show();
-    firstFilterInput.focus();
-  },
-
-  hideFilterBody: function() {
-    $(document).off('click', this.handleDocumentClick);
-    var $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
-    $bodyNode.hide();
-  },
-
-  handleDocumentClick: function(event) {
-    var $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
-    if($containerNode.find(event.target).length === 0) {
-      this.hideFilterBody();
-    }
-  },
-
-  /* Date selection handlers */
-
-  handleSelectDate: function(selectedDates) {
-    this.setState({
-      selectedDates: selectedDates
-    });
-
-    this.hideFilterBody();
   }
-
-});
-
-
+}
