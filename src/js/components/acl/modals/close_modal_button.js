@@ -1,31 +1,36 @@
-window.CloseModalButton = React.createClass({
-  PropTypes: {
-    name: React.PropTypes.string,
-    className: React.PropTypes.string,
-    clearTheme: React.PropTypes.bool,
-    element: React.PropTypes.string,
-    modalId: React.PropTypes.string
-  },
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { autobind } from 'utils/decorators';
 
-  getDefaultProps: function() {
-    return {
-      name: 'Fechar',
-      className: 'btn waves-effect waves-light close-button grey lighten-4',
-      clearTheme: true,
-      element: 'a'
-    }
-  },
+import { Button } from 'components';
 
-  render: function() {
-    return (
-      <Button {...this.props} onClick={this.closeModal} />
-    )
-  },
+export default class CloseModalButton extends Component {
+  static propTypes = {
+    name: PropTypes.string,
+    className: PropTypes.string,
+    clearTheme: PropTypes.bool,
+    element: PropTypes.string,
+    modalId: PropTypes.string,
+  };
 
-  closeModal: function() {
-    if (!!this.props.modalId){
-     $('#'+this.props.modalId).closeModal()
+  static defaultProps = {
+    name: 'Fechar',
+    className: 'btn waves-effect waves-light close-button grey lighten-4',
+    clearTheme: true,
+    element: 'a',
+  };
+
+  @autobind
+  closeModal() {
+    if (!!this.props.modalId) {
+      $(`#${this.props.modalId}`).closeModal();
     }
   }
 
-});
+  render() {
+    return (
+      <Button {...this.props} onClick={this.closeModal} />
+    );
+  }
+}

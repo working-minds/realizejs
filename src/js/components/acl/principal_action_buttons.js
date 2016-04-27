@@ -1,50 +1,48 @@
-var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
-var ModalRendererMixin = require('realize/mixins/modal_renderer_mixin.jsx');
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
-window.PrincipalActionButtons = React.createClass({
-  mixins: [RequestHandlerMixin, ModalRendererMixin],
+import { Button } from 'components';
 
-  PropTypes: {
-    className: React.PropTypes.string,
-    handleOpenPrincipalModal: React.PropTypes.func,
-    handleRemovePrincipal: React.PropTypes.func
-  },
+import {
+  RequestHandlerMixin,
+  ModalRendererMixin,
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      className: 'principal-action-buttons',
-      handleAddPrincipal: null,
-      handleRemovePrincipal: null
-    }
-  },
+@mixin(
+  RequestHandlerMixin,
+  ModalRendererMixin,
+)
+export default class PrincipalActionButtons extends Component {
+  static propTypes = {
+    className: PropTypes.string,
+    handleOpenPrincipalModal: PropTypes.func,
+    handleRemovePrincipal: PropTypes.func,
+  }
 
-  render: function() {
-    return (
-      <div className={this.props.className}>
-        {this.renderAddPrincipalButton()}
-        {this.renderRemovePrincipalButton()}
-        <div style={{'clear': 'both'}}></div>
-      </div>
-    )
-  },
+  static defaultProps = {
+    className: 'principal-action-buttons',
+    handleAddPrincipal: null,
+    handleRemovePrincipal: null,
+  }
 
-  renderRemovePrincipalButton: function() {
-    var component = [];
+  renderRemovePrincipalButton() {
+    const component = [];
     component.push(
       <Button
-        name='Remover'
+        name="Remover"
         onClick={this.props.handleRemovePrincipal}
       />
     );
 
     return component;
-  },
+  }
 
-  renderAddPrincipalButton: function() {
-    var component = [];
+  renderAddPrincipalButton() {
+    const component = [];
     component.push(
       <Button
-        name='Adicionar'
+        name="Adicionar"
         onClick={this.props.handleOpenPrincipalModal}
       />
     );
@@ -52,4 +50,13 @@ window.PrincipalActionButtons = React.createClass({
     return component;
   }
 
-});
+  render() {
+    return (
+      <div className={this.props.className}>
+        {this.renderAddPrincipalButton()}
+        {this.renderRemovePrincipalButton()}
+        <div style={{ clear: 'both' }}></div>
+      </div>
+    );
+  }
+}
