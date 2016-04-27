@@ -1,29 +1,31 @@
-window.UpdatePermissionsButton = React.createClass({
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-  PropTypes: {
-    name: React.PropTypes.string,
-    className: React.PropTypes.string,
-    clearTheme: React.PropTypes.bool,
-    element: React.PropTypes.string,
-    handleUpdatePermissions: React.PropTypes.func
-  },
+import { Button } from 'components';
 
-  getDefaultProps: function() {
-    return {
-      name: 'Atualizar',
-      className: 'btn waves-effect waves-grey button-modal ',
-      clearTheme: true,
-      element: 'a',
-      handleUpdatePermissions: function() { return null }
-    }
-  },
-
-  render: function() {
-    return (
-      <Button {...this.props}
-        onClick={this.props.handleUpdatePermissions}
-      />
-    )
+export default class UpdatePermissionButton extends Component {
+  static propTypes = {
+    name: PropTypes.string,
+    className: PropTypes.string,
+    clearTheme: PropTypes.bool,
+    element: PropTypes.string,
+    handleUpdatePermissions: PropTypes.func,
   }
 
-});
+  static defaultProps = {
+    name: 'Atualizar',
+    className: 'btn waves-effect waves-grey button-modal ',
+    clearTheme: true,
+    element: 'a',
+    handleUpdatePermissions: () => null,
+  }
+
+  render() {
+    return (
+      <Button
+        {...this.props}
+        onClick={this.props.handleUpdatePermissions}
+      />
+    );
+  }
+}

@@ -1,36 +1,35 @@
-window.LabelPermission = React.createClass({
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
 
-  PropTypes: {
-    className: React.PropTypes.string
-  },
+export default class LabelPermission extends Component {
+  static propTypes = {
+    className: PropTypes.string,
+  };
 
-  getDefaultProps: function() {
-    return {
-      className: ''
-    }
-  },
+  static defaultProps = {
+    className: '',
+  };
 
-  render: function() {
-    return (
-      <div className={this.props.className}>
-        {this.renderLabel()}
-      </div>
-    )
-  },
+  renderLabel() {
+    const component = [];
+    const permissions = this.props.value;
 
-  renderLabel: function() {
-    var component = [];
-    var permissions= this.props.value;
-
-    if (permissions.length == 0) {
-      component.push(<div> - </div>)
+    if (permissions.length === 0) {
+      component.push(<div> - </div>);
     } else {
-      permissions.forEach(function (permission) {
-        component.push(<div>{I18n.t('permissions.'+permission)}</div>)
+      permissions.forEach((permission) => {
+        component.push(<div>{I18n.t(`permissions.${permission}`)}</div>);
       });
     }
 
     return component;
   }
 
-});
+  render() {
+    return (
+      <div className={this.props.className}>
+        {this.renderLabel()}
+      </div>
+    );
+  }
+}

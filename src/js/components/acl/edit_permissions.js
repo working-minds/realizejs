@@ -1,160 +1,139 @@
-var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
-var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import { autobind, mixin } from 'utils/decorators';
+import { uuid } from 'utils';
 
-window.EditPermissions = React.createClass({
-  mixins: [RequestHandlerMixin,UtilsMixin],
+import { Input } from 'components';
+import { RequestHandlerMixin } from 'mixins';
 
-  PropTypes: {
-    principal: React.PropTypes.object,
-    principalType: React.PropTypes.string,
-    resource: React.PropTypes.object,
-    resourceType: React.PropTypes.string,
-    title: React.PropTypes.string,
-    saveOnSelect: React.PropTypes.bool,
-    principalPermissions: React.PropTypes.object,
-    permissionsBaseUrl: React.PropTypes.permissionsBaseUrl
-  },
+@mixin(RequestHandlerMixin)
+export default class EditPermissions extends Component {
+  static propTypes = {
+    principal: PropTypes.object,
+    principalType: PropTypes.string,
+    resource: PropTypes.object,
+    resourceType: PropTypes.string,
+    title: PropTypes.string,
+    saveOnSelect: PropTypes.bool,
+    principalPermissions: PropTypes.object,
+    permissionsBaseUrl: PropTypes.permissionsBaseUrl
+  };
 
-  getDefaultProps: function() {
-    return {
-      principal: null,
-      principalType: '',
-      resource: null,
-      resourceType: null,
-      title: '',
-      saveOnSelect: false,
-      principalPermissions: [],
-      permissionsBaseUrl: '/wkm_acl_ui/permissions'
-    }
-  },
+  static defaultProps = {
+    principal: null,
+    principalType: '',
+    resource: null,
+    resourceType: null,
+    title: '',
+    saveOnSelect: false,
+    principalPermissions: null,
+    permissionsBaseUrl: '/wkm_acl_ui/permissions',
+  };
 
-  getInitialState: function() {
-    return {
-      permissions: [],
-      permissionsChecked: this.initialPrincipalPermissions()
-    }
-  },
+  state = {
+    permissions: [],
+    permissionsChecked: this.initialPrincipalPermissions(),
+  };
 
-  componentDidMount: function() {
-    this.getPermissions()
-  },
+  componentDidMount() {
+    this.getPermissions();
+  }
 
-  componentDidUpdate: function() {
-    $('.permission-manager-modal').resize();
-  },
-
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState({
-      permissionsChecked: nextProps.principalPermission
-    })
-  },
+      permissionsChecked: nextProps.principalPermission,
+    });
+  }
 
-  render: function() {
-    return (
-      <div className='row permissions-manager'>
-        {this.renderTitle()}
-        <div className='box-edit-permissions'>
-          {this.renderHiddenInputs()}
-          {this.renderPermissionGroup()}
-        </div>
-      </div>
-    )
-  },
+  componentDidUpdate() {
+    $('.permission-manager-modal').resize();
+  }
 
-  initialPrincipalPermissions: function() {
-    if (!!this.props.principalPermissions) {
-      return this.props.principalPermissions
-    } else {
-      return []
-    }
-  },
+  initialPrincipalPermissions() {
+    return !!this.props.principalPermissions ?
+      this.props.principalPermissions :
+      [];
+  }
 
-  checked: function(permission) {
-    var permissionsChecked = !!this.state.permissionsChecked ?  this.state.permissionsChecked.permissions : [];
-    var checked = false;
+  checked(permission) {
+    const permissionsChecked = !!this.state.permissionsChecked ?
+      this.state.permissionsChecked.permissions :
+      [];
+    let checked = false;
 
     if (!!permissionsChecked) {
-      for (var i = 0; i < permissionsChecked.length; i++) {
-        var permissions = permissionsChecked[i].permission;
-        var implies = permissionsChecked[i].implies;
+      for (let i = 0; i < permissionsChecked.length; i++) {
+        let permissions = permissionsChecked[i].permission;
+        const implies = permissionsChecked[i].implies;
 
         if (!$.isArray(permissions)) {
-          permissions = [permissions]
+          permissions = [permissions];
         }
 
-        if (permissions.indexOf(permission) !== -1 || implies.indexOf(permission) !== -1)
+        if (permissions.indexOf(permission) !== -1 ||
+          implies.indexOf(permission) !== -1) {
           checked = true;
+        }
       }
     }
 
     return checked;
-  },
+  }
 
-  disabled: function(permission) {
-    var permissionsChecked = !!this.state.permissionsChecked ?  this.state.permissionsChecked.permissions : [];
-    var disabled = false;
+  disabled(permission) {
+    const permissionsChecked = !!this.state.permissionsChecked ?
+      this.state.permissionsChecked.permissions :
+      [];
+    let disabled = false;
 
     if (!!permissionsChecked) {
-      for(var i = 0; i < permissionsChecked.length; i++) {
-        var permission_name = permissionsChecked[i].permission;
-        var implies = permissionsChecked[i].implies;
-        var inherited = permissionsChecked[i].inherited;
-        if ((implies.indexOf(permission) !== -1) || (permission_name == permission && inherited == true))
+      for (let i = 0; i < permissionsChecked.length; i++) {
+        const permissionName = permissionsChecked[i].permission;
+        const implies = permissionsChecked[i].implies;
+        const inherited = permissionsChecked[i].inherited;
+        if ((implies.indexOf(permission) !== -1) ||
+          (permissionName === permission && inherited === true)) {
           disabled = true;
+        }
       }
     }
 
     return disabled;
-  },
+  }
 
-  handleChange: function(permission, event) {
-    var checkbox = React.findDOMNode(this.refs['checkbox_'+permission]);
-    var checked = $($(checkbox).find('input')).is(':checked');
-    if (!!this.props.saveOnSelect) {
-      if (checked) {
-        this.grantPermission(permission)
-      } else {
-        this.revokePermission(permission)
-      }
-    } else {
-      if (checked){
-        if (!this.belongsToPermissionsChecked(permission)) {
-          this.addPermissionChecked(permission);
-        }
-      } else {
-        this.removePermissionChecked(permission)
-      }
-    }
-  },
-
-  grantPermission: function(permission) {
-    var url = this.props.permissionsBaseUrl;
-    var data = { principal_id: this.props.principal.id,
-                 principal_type: this.props.principalType,
-                 resource_id: this.props.resource.id,
-                 resourceType: this.props.resourceType,
-                 permissions: [permission]
+  grantPermission(permission) {
+    const url = this.props.permissionsBaseUrl;
+    const data = {
+      principal_id: this.props.principal.id,
+      principal_type: this.props.principalType,
+      resource_id: this.props.resource.id,
+      resourceType: this.props.resourceType,
+      permissions: [permission],
     };
 
     this.performRequest(url, data, 'POST', 'json');
-  },
+  }
 
-  revokePermission: function(permission) {
-    var url = this.props.permissionsBaseUrl + "/" + this.props.principal.id;
-    var data = { principal_id: this.props.principal.id,
-                 principal_type: this.props.principalType,
-                 resource_id: this.props.resource.id,
-                 resource_type: this.props.resourceType,
-                 permissions: [permission]
+  revokePermission(permission) {
+    const url = `${this.props.permissionsBaseUrl}/${this.props.principal.id}`;
+    const data = {
+      principal_id: this.props.principal.id,
+      principal_type: this.props.principalType,
+      resource_id: this.props.resource.id,
+      resource_type: this.props.resourceType,
+      permissions: [permission]
     };
 
     this.performRequest(url, data, 'DELETE', 'json');
-  },
+  }
 
-  getPermissions: function() {
-    var context = this;
+  getPermissions() {
+    let context = this;
+
     $.ajax({
-      url: this.props.permissionsBaseUrl + "/" +this.props.principal.id,
+      url: `${this.props.permissionsBaseUrl}/${this.props.principal.id}`,
       method: 'GET',
       dataType: 'json',
       data: {
@@ -163,92 +142,130 @@ window.EditPermissions = React.createClass({
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
       },
-      success: function(data) {
+      success: (data) => {
         this.setState({
           permissions: data.permissions
-        },function(){
+        }, () => {
           context.props.afterCreateEntry();
         });
-      }.bind(this)
+      }
     });
-  },
+  }
 
-  onSuccess: function() {
+  onSuccess() {
     this.getPermissions();
-  },
+  }
 
-  addPermissionChecked: function(permission) {
+  addPermissionChecked(permission) {
     this.props.handleAddPermissionChecked(permission);
-  },
+  }
 
-  removePermissionChecked: function(permission) {
+  removePermissionChecked(permission) {
     this.props.handleRemovePermissionChecked(permission);
-  },
+  }
 
-  belongsToPermissionsChecked: function(permission) {
-    var permissionsChecked = !!this.state.permissionsChecked ?  this.state.permissionsChecked.permissions : [];
-    var belongs = false;
+  belongsToPermissionsChecked(permission) {
+    const permissionsChecked = !!this.state.permissionsChecked ?
+      this.state.permissionsChecked.permissions :
+      [];
+    let belongs = false;
 
-    for(var i = 0; i < permissionsChecked.length; i++) {
-      if(permissionsChecked[i].permissions === permission) {
-        belongs = true
+    for (let i = 0; i < permissionsChecked.length; i++) {
+      if (permissionsChecked[i].permissions === permission) {
+        belongs = true;
       }
     }
 
     return belongs;
-  },
+  }
 
-  checkboxId: function(permission) {
-    return 'permissions_'+permission+'_'
-  },
+  checkboxId(permission) {
+    return `permissions_${permission}_`;
+  }
 
-  checkboxName: function() {
-    return 'permissions[]'
-  },
+  checkboxName() {
+    return 'permissions[]';
+  }
 
-  renderPermissionGroup: function() {
-    var component = [];
-    var permissions = this.state.permissions;
-    var resourceId = this.props.resource.id;
+  @autobind
+  handleChange(permission) {
+    return () => {
+      const checkbox = ReactDOM.findDOMNode(this.refs[`checkbox_${permission}`]);
+      const checked = $($(checkbox).find('input')).is(':checked');
+      if (!!this.props.saveOnSelect) {
+        if (checked) {
+          this.grantPermission(permission);
+        } else {
+          this.revokePermission(permission);
+        }
+      } else {
+        if (checked) {
+          if (!this.belongsToPermissionsChecked(permission)) {
+            this.addPermissionChecked(permission);
+          }
+        } else {
+          this.removePermissionChecked(permission);
+        }
+      }
+    };
+  }
+
+  renderPermissionGroup() {
+    const component = [];
+    const permissions = this.state.permissions;
 
     if (!!permissions) {
-      permissions.forEach(function (permission) {
-        component.push(<Input key={this.generateUUID()}
-                              component='checkbox'
-                              ref={'checkbox_'+permission}
-                              label={I18n.t('permissions.'+permission)}
-                              value={permission}
-                              checked={this.checked(permission)}
-                              disabled={this.disabled(permission)}
-                              onChange={this.handleChange.bind(this, permission)}
-                              id={this.checkboxId(permission)}
-                              name={this.checkboxName()}
-                              className='col s12'
-          />);
-
-      }.bind(this));
+      permissions.forEach((permission) => {
+        component.push(
+          <Input
+            key={uuid.v4()}
+            component="checkbox"
+            ref={`checkbox_${permission}`}
+            label={I18n.t(`permissions.${permission}`)}
+            value={permission}
+            checked={this.checked(permission)}
+            disabled={this.disabled(permission)}
+            onChange={this.handleChange.bind(this, permission)}
+            id={this.checkboxId(permission)}
+            name={this.checkboxName()}
+            className="col s12"
+          />
+        );
+      });
     }
-
-    return component;
-  },
-
-  renderTitle: function() {
-    var component = [];
-    if (!!this.props.title)
-      component.push(<h3>{this.props.title}</h3>);
-
-    return component;
-  },
-
-  renderHiddenInputs: function() {
-    var component = [];
-    component.push(<input key={this.generateUUID()} type="hidden" name="_method" value="put" />);
-    component.push(<input key={this.generateUUID()} type="hidden" name="resource_type" value={this.props.resourceType} />);
-    component.push(<input key={this.generateUUID()} type="hidden" name="resource_id" value={this.props.resource.id} />);
-    component.push(<input key={this.generateUUID()} type="hidden" name="principal_type" value={this.props.principalType} />);
-    component.push(<input key={this.generateUUID()} type="hidden" name="principal_id" value={this.props.principal.id} />);
 
     return component;
   }
 
-});
+  renderTitle() {
+    const component = [];
+    if (!!this.props.title) {
+      component.push(<h3>{this.props.title}</h3>);
+    }
+
+    return component;
+  }
+
+  renderHiddenInputs() {
+    const component = [];
+    component.push(<input key={uuid.v4()} type="hidden" name="_method" value="put" />);
+    component.push(<input key={uuid.v4()} type="hidden" name="resource_type" value={this.props.resourceType} />);
+    component.push(<input key={uuid.v4()} type="hidden" name="resource_id" value={this.props.resource.id} />);
+    component.push(<input key={uuid.v4()} type="hidden" name="principal_type" value={this.props.principalType} />);
+    component.push(<input key={uuid.v4()} type="hidden" name="principal_id" value={this.props.principal.id} />);
+
+    return component;
+  }
+
+  render() {
+    return (
+      <div className="row permissions-manager">
+        {this.renderTitle()}
+        <div className="box-edit-permissions">
+          {this.renderHiddenInputs()}
+          {this.renderPermissionGroup()}
+        </div>
+      </div>
+    );
+  }
+}
