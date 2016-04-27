@@ -1,17 +1,27 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import { mixin } from 'utils/decorators';
 
-window.InputNumber = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
+import {
+  InputMasked,
+  Label,
+} from 'components';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.number',
-      maskType: 'integer'
-    };
-  },
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-  render: function() {
+@mixin(
+  CssClassMixin,
+  InputComponentMixin,
+)
+export default class InputNumber extends Component {
+  static defaultProps = {
+    themeClassKey: 'input.number',
+    maskType: 'integer',
+  };
+
+  render() {
     return (
       <span>
         <InputMasked
@@ -26,4 +36,4 @@ window.InputNumber = React.createClass({
       </span>
     );
   }
-});
+}

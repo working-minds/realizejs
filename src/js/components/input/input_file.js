@@ -1,33 +1,98 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import i18n from 'i18n';
+import { autobind, mixin } from 'utils/decorators';
 
-window.InputFile = React.createClass({
-  mixins: [CssClassMixin, InputComponentMixin],
-  propTypes: {
-    wrapperClassName: React.PropTypes.string,
-    buttonClassName: React.PropTypes.string,
-    buttonName: Realize.PropTypes.localizedString,
-    buttonIcon: React.PropTypes.string,
-    filePathWrapperClassName: React.PropTypes.string,
-    filePathField: React.PropTypes.string,
-    data: React.PropTypes.object
-  },
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.file',
-      buttonName: 'inputs.file.buttonName',
-      filePathField: null,
-      data: {}
-    };
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin,
+)
+export default class InputFile extends Component {
+  static propTypes = {
+    wrapperClassName: PropTypes.string,
+    buttonClassName: PropTypes.string,
+    buttonName: PropTypes.localizedString,
+    buttonIcon: PropTypes.string,
+    filePathWrapperClassName: PropTypes.string,
+    filePathField: PropTypes.string,
+    data: PropTypes.object,
+  };
 
-  render: function() {
+  static defaultProps = {
+    themeClassKey: 'input.file',
+    buttonName: 'inputs.file.buttonName',
+    filePathField: null,
+    data: {},
+  };
+
+  componentDidMount() {
+    this.setFilePathValue();
+  }
+
+  getButtonName() {
+    if (!!this.props.buttonIcon) {
+      const component = [];
+      component.push(<i className="material-icons" key="inputFileIcon">{this.props.buttonIcon}</i>);
+
+      return component;
+    }
+
+    return i18n.t(this.props.buttonName);
+  }
+
+  getLabelName() {
+    return (this.props.label || this.props.name);
+  }
+
+  getFilePathField() {
+    let filePathField = this.props.filePathField;
+    if (!filePathField) {
+      filePathField = `${this.props.id}_file_name`;
+    }
+
+    return filePathField;
+  }
+
+  setFilePathValue() {
+    const filePathNode = ReactDOM.findDOMNode(this.refs.filePath);
+    const filePathField = this.getFilePathField();
+
+    if (!!filePathField) {
+      const filePath = this.props.data[filePathField];
+      if (!!filePath) {
+        filePathNode.value = filePath;
+      }
+    }
+  }
+
+  filePathWrapperClassName() {
+    return this.themedClassName('input.file.filePathWrapper', this.props.filePathWrapperClassName);
+  }
+
+  @autobind
+  handleChange(event) {
+    this._handleChange(event);
+
+    const fileInput = ReactDOM.findDOMNode(this.refs.input);
+    const filePathInput = ReactDOM.findDOMNode(this.refs.filePath);
+
+    $(filePathInput).val(fileInput.files[0].name);
+  }
+
+  render() {
     return (
       <div className={this.wrapperClassName()}>
         <div className={this.buttonClassName()}>
           <span>{this.getButtonName()}</span>
-          <input {...this.props}
+          <input
+            {...this.props}
             value={this.state.value}
             onChange={this.handleChange}
             disabled={this.props.disabled || this.props.readOnly}
@@ -46,67 +111,5 @@ window.InputFile = React.createClass({
         </div>
       </div>
     );
-  },
-
-  componentDidMount: function() {
-    this.setFilePathValue();
-  },
-
-  handleChange: function(event) {
-    this._handleChange(event);
-
-    var fileInput = ReactDOM.findDOMNode(this.refs.input);
-    var filePathInput = ReactDOM.findDOMNode(this.refs.filePath);
-
-    $(filePathInput).val(fileInput.files[0].name);
-  },
-
-  wrapperClassName: function() {
-    return this.themedClassName('input.file.wrapper', this.props.wrapperClassName);
-  },
-
-  filePathWrapperClassName: function() {
-    return this.themedClassName('input.file.filePathWrapper', this.props.filePathWrapperClassName);
-  },
-
-  buttonClassName: function() {
-    return this.themedClassName('input.file.button', this.props.buttonClassName);
-  },
-
-  getButtonName: function() {
-    if (!!this.props.buttonIcon) {
-      var component = [];
-      component.push(<i className="material-icons" key="inputFileIcon">{this.props.buttonIcon}</i>);
-
-      return component;
-    }
-
-    return Realize.i18n.t(this.props.buttonName);
-  },
-
-  getLabelName: function() {
-    return (this.props.label || this.props.name);
-  },
-
-  getFilePathField: function() {
-    var filePathField = this.props.filePathField;
-    if(!filePathField) {
-      filePathField = this.props.id + "_file_name";
-    }
-
-    return filePathField;
-  },
-
-  setFilePathValue: function() {
-    var filePathNode = ReactDOM.findDOMNode(this.refs.filePath);
-    var filePathField = this.getFilePathField();
-
-    if(!!filePathField) {
-      var filePath = this.props.data[filePathField];
-      if(!!filePath) {
-        filePathNode.value = filePath;
-      }
-    }
   }
-
-});
+}
