@@ -1,92 +1,70 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
-var SelectComponentMixin = require('realize/mixins/input/select_component_mixin.jsx');
-var InputSelectActionsListenerMixin = require('realize/mixins/input/input_select_actions_listener_mixin.jsx');
-var MaterializeSelectMixin = require('realize/mixins/input/materialize_select_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import i18n from 'i18n';
+import { autobind, mixin } from 'utils/decorators';
 
-window.InputSelect = React.createClass({
-  mixins: [
-    CssClassMixin,
-    InputComponentMixin,
-    SelectComponentMixin,
-    InputSelectActionsListenerMixin,
-    MaterializeSelectMixin
-  ],
+import { InputSelectOption } from 'components';
 
-  propTypes: {
-    includeBlank: React.PropTypes.bool,
-    blankText: Realize.PropTypes.localizedString
-  },
+import {
+  CssClassMixin,
+  InputComponentMixin,
+  SelectComponentMixin,
+  InputSelectActionsListenerMixin,
+  MaterializeSelectMixin
+} from 'mixins';
 
-  getDefaultProps: function() {
-    return {
-      includeBlank: true,
-      themeClassKey: 'input.select',
-      blankText: 'select'
-    };
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin,
+  SelectComponentMixin,
+  InputSelectActionsListenerMixin,
+  MaterializeSelectMixin
+)
+export default class InputSelect extends Component {
+  static propTypes = {
+    includeBlank: PropTypes.bool,
+    blankText: PropTypes.localizedString,
+  };
 
-  componentDidMount: function() {
-    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
-    var $form = $(valuesSelect.form);
+  static defaultProps = {
+    includeBlank: true,
+    themeClassKey: 'input.select',
+    blankText: 'select',
+  };
+
+  componentDidMount() {
+    const valuesSelect = ReactDOM.findDOMNode(this.refs.select);
+    const $form = $(valuesSelect.form);
     $form.on('reset', this.clearSelection);
-  },
+  }
 
-  componentWillUnmount: function() {
-    var valuesSelect = ReactDOM.findDOMNode(this.refs.select);
-    var $form = $(valuesSelect.form);
+  componentWillUnmount() {
+    const valuesSelect = ReactDOM.findDOMNode(this.refs.select);
+    const $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
-  },
+  }
 
-  clearSelection: function() {
+  clearSelection() {
     this.setState({
-      value: []
+      value: [],
     }, this.triggerDependableChanged);
-  },
+  }
 
-  render: function() {
-    return (
-      <select
-        id={this.props.id}
-        name={this.props.name}
-        value={this.selectedValue()}
-        onChange={this.handleChange}
-        disabled={this.isDisabled() || this.props.readOnly}
-        className={this.className()}
-        ref="select">
-        {this.renderOptions()}
-      </select>
-    );
-  },
-
-  renderOptions: function() {
-    var selectOptions = [];
-    var options = this.state.options;
-
-    if(this.props.includeBlank) {
-      selectOptions.push(<InputSelectOption name={Realize.i18n.t(this.props.blankText)} value="" key="empty_option" />);
-    }
-
-    for(var i = 0; i < options.length; i++) {
-      var optionProps = options[i];
-      selectOptions.push(<InputSelectOption {...optionProps} key={optionProps.name} />);
-    }
-
-    return selectOptions;
-  },
-
-  selectedValue: function() {
-    var value = this.state.value;
-    if(!this.props.multiple) {
+  selectedValue() {
+    let value = this.state.value;
+    if (!this.props.multiple) {
       value = value[0];
     }
 
     return value;
-  },
+  }
 
-  handleChange: function(event) {
-    var selectElement = ReactDOM.findDOMNode(this.refs.select);
-    var newValue = this.ensureIsArray(selectElement.value);
+  @autobind
+  handleChange(event) {
+    const selectElement = ReactDOM.findDOMNode(this.refs.select);
+    const newValue = this.ensureIsArray(selectElement.value);
     this.props.onChange(event, newValue, this);
 
     if(!event.isDefaultPrevented()) {
@@ -96,4 +74,41 @@ window.InputSelect = React.createClass({
     }
   }
 
-});
+  renderOptions() {
+    const selectOptions = [];
+    const options = this.state.options;
+
+    if (this.props.includeBlank) {
+      selectOptions.push(
+        <InputSelectOption
+          name={i18n.t(this.props.blankText)}
+          value=""
+          key="empty_option"
+        />
+      );
+    }
+
+    for (let i = 0; i < options.length; i++) {
+      const optionProps = options[i];
+      selectOptions.push(<InputSelectOption {...optionProps} key={optionProps.name} />);
+    }
+
+    return selectOptions;
+  }
+
+  render() {
+    return (
+      <select
+        id={this.props.id}
+        name={this.props.name}
+        value={this.selectedValue()}
+        onChange={this.handleChange}
+        disabled={this.isDisabled() || this.props.readOnly}
+        className={this.className()}
+        ref="select"
+      >
+        {this.renderOptions()}
+      </select>
+    );
+  }
+}

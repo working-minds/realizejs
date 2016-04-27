@@ -1,20 +1,23 @@
-var React = require('react');
-var CssClassMixin = require('../../mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('../../mixins/input/input_component_mixin.jsx');
-import mixin from 'react-mixin'
+import React, { Component } from 'react';
+import PropTypes from 'prop_types';
+import { mixin } from 'utils/decorators';
 
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-@mixin.decorate(CssClassMixin)
-@mixin.decorate(InputComponentMixin)
-export default class InputPassword extends React.Component {
-
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputPassword extends Component {
   static propTypes = {
-    type: React.PropTypes.string
+    confirms: PropTypes.string,
   };
 
   static defaultProps = {
-    type: 'text',
-    themeClassKey: 'input.text'
+    themeClassKey: 'input.text',
   };
 
   render() {
@@ -26,7 +29,8 @@ export default class InputPassword extends React.Component {
         className={this.inputClassName()}
         onChange={this._handleChange}
         onFocus={this._handleFocus}
-        type="password" ref="input" />
+        type="password" ref="input"
+      />
     );
   }
 }

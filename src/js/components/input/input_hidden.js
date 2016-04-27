@@ -1,11 +1,13 @@
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import { mixin } from 'utils/decorators';
 
-window.InputHidden = React.createClass({
-  mixins: [InputComponentMixin],
+import { InputComponentMixin } from 'mixins';
 
-  render: function() {
+@mixin(InputComponentMixin)
+export default class InputHidden extends Component {
+  render() {
     return (
       <input {...this.props} type="hidden" ref="input" />
     );
   }
-});
+}

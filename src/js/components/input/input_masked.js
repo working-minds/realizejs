@@ -1,66 +1,208 @@
-var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
-var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop_types';
+import $ from 'jquery';
+import i18n from 'i18n';
+import { autobind, mixin } from 'utils/decorators';
 
-window.InputMasked = React.createClass({
-  mixins: [
-    CssClassMixin,
-    InputComponentMixin
-  ],
+import {
+  CssClassMixin,
+  InputComponentMixin,
+} from 'mixins';
 
-  propTypes: {
-    type: React.PropTypes.string,
-    mask: React.PropTypes.string,
-    maskType: React.PropTypes.string,
-    regex: React.PropTypes.string,
-    autoUnmask: React.PropTypes.bool,
-    removeMaskOnChange: React.PropTypes.bool,
-    onComplete: React.PropTypes.func,
-    onIncomplete: React.PropTypes.func,
-    onCleared: React.PropTypes.func
-  },
+@mixin(
+  CssClassMixin,
+  InputComponentMixin
+)
+export default class InputMasked extends Component {
+  static propTypes = {
+    type: PropTypes.string,
+    mask: PropTypes.string,
+    maskType: PropTypes.string,
+    regex: PropTypes.string,
+    autoUnmask: PropTypes.bool,
+    onComplete: PropTypes.func,
+    onIncomplete: PropTypes.func,
+    onCleared: PropTypes.func,
+  };
 
-  getDefaultProps: function() {
-    return {
-      themeClassKey: 'input.text',
-      type: 'text',
-      mask: null,
-      maskType: null,
-      regex: null,
-      autoUnmask: false,
-      onComplete: function() { },
-      onIncomplete: function() { },
-      onCleared: function() { }
-    };
-  },
+  static defaultProps = {
+    themeClassKey: 'input.text',
+    type: 'text',
+    mask: null,
+    maskType: null,
+    regex: null,
+    autoUnmask: false,
+    onComplete: () => {},
+    onIncomplete: () => {},
+    onCleared: () => {},
+  };
 
-  getInitialState: function() {
-    return {
-      placeholder: this.getPlaceholder(),
-      applyMask: true
+  state = {
+    placeholder: this.getPlaceholder(),
+    applyMask: true,
+  };
+
+  componentDidMount() {
+    const appliedMask = this.applyMask();
+    this.setMaskPlaceholder(appliedMask);
+  }
+
+  componentDidUpdate() {
+    if (this.state.applyMask) {
+      this.applyMask();
     }
-  },
+  }
 
-  predefinedMasks: function() {
-    var localeMasks = Realize.i18n.t("masks");
-    var predefinedMasks = {};
+  getInputElement() {
+    return ReactDOM.findDOMNode(this.refs.input);
+  }
 
-    for(var maskName in localeMasks) {
-      if(localeMasks.hasOwnProperty(maskName)) {
-        var mask = localeMasks[maskName];
-        if(typeof mask == "string") {
-          predefinedMasks[maskName] = {
-            mask: mask
-          }
-        } else if(typeof mask == "object") {
+  setMaskPlaceholder(appliedMaskOptions) {
+    const appliedPlaceholder = appliedMaskOptions.placeholder;
+
+    if (!!appliedPlaceholder) {
+      this.setState({
+        placeholder: appliedPlaceholder,
+        applyMask: true,
+      });
+    }
+  }
+
+  parseMaskOptions() {
+    const maskOptions = $.extend({
+      showMaskOnHover: false,
+      clearIncomplete: true,
+    }, this.filterMaskOptionProps());
+
+    maskOptions.oncomplete = this.handleComplete;
+    maskOptions.onincomplete = this.handleIncomplete;
+    maskOptions.oncleared = this.props.onCleared;
+
+    return maskOptions;
+  }
+
+  filterMaskOptionProps() {
+    const maskOptionProps = {};
+    const propsToFilter = ['onComplete', 'onIncomplete', 'onCleared'];
+    for (const propName in this.props) {
+      if (this.props.hasOwnProperty(propName)) {
+        const prop = this.props[propName];
+        if (!!prop && propsToFilter.indexOf(propName) < 0) {
+          maskOptionProps[propName] = prop;
+        }
+      }
+    }
+
+    return maskOptionProps;
+  }
+
+  predefinedMasks() {
+    const localeMasks = i18n.t('masks');
+    const predefinedMasks = {};
+
+    for (const maskName in localeMasks) {
+      if (localeMasks.hasOwnProperty(maskName)) {
+        const mask = localeMasks[maskName];
+        if (typeof mask === 'string') {
+          predefinedMasks[maskName] = { mask };
+        } else if (typeof mask === 'object') {
           predefinedMasks[maskName] = mask;
         }
       }
     }
 
     return predefinedMasks;
-  },
+  }
 
-  render: function() {
+  applyMask() {
+    let appliedMask = {};
+    if (!!this.props.regex) {
+      appliedMask = this.applyRegexMask();
+    } else {
+      appliedMask = this.applyBaseMask();
+    }
+
+    return appliedMask;
+  }
+
+  applyRegexMask() {
+    const $input = $(this.getInputElement());
+    const maskOptions = this.parseMaskOptions();
+
+    $input.inputmask('Regex', maskOptions);
+    return maskOptions;
+  }
+
+  applyBaseMask() {
+    const maskType = this.props.maskType;
+    const predefinedMasks = this.predefinedMasks();
+    const predefinedMask = predefinedMasks[maskType];
+
+    let appliedMask = {};
+    if (!!predefinedMask) {
+      appliedMask = this.applyPredefinedMask(predefinedMask);
+    } else {
+      appliedMask = this.applyCustomMask();
+    }
+
+    return appliedMask;
+  }
+
+    applyPredefinedMask(predefinedMask) {
+    var $input = $(this.getInputElement());
+    var predefinedMaskOptions = $.extend({}, predefinedMask, this.parseMaskOptions());
+
+    $input.inputmask(predefinedMaskOptions);
+    return predefinedMaskOptions;
+  }
+
+  applyCustomMask() {
+    const $input = $(this.getInputElement());
+    const maskOptions = this.parseMaskOptions();
+
+    console.log(maskOptions);
+    $input.inputmask(maskOptions);
+    this.setMaskPlaceholder(maskOptions);
+    return maskOptions;
+  }
+
+  updateValue(value) {
+    this.setState({
+      value,
+      applyMask: false,
+    });
+  }
+
+  getUnmaskedValue () {
+     const $el = $(this.getInputElement())
+     return $el.inputmask('unmaskedvalue')
+  }
+
+  @autobind
+  handleComplete(event) {
+    this.props.onComplete(event);
+    this.updateValue(event.target.value);
+  }
+
+  @autobind
+  handleIncomplete(event) {
+    this.props.onIncomplete(event);
+    this.updateValue(null);
+  }
+
+  @autobind
+  handleChange(event) {
+    let maskedValue = event.target.value;
+    let value = this.props.removeMaskOnChange ? this.getUnmaskedValue() : maskedValue;
+    this.props.onChange(event, value, this);
+
+    if(!event.isDefaultPrevented()) {
+      this.updateValue(maskedValue);
+    }
+  }
+
+  render() {
     return (
       <input
         {...this.props}
@@ -69,153 +211,10 @@ window.InputMasked = React.createClass({
         className={this.inputClassName()}
         onKeyUp={this.handleChange}
         onFocus={this._handleFocus}
-        ref="input">
-
+        ref="input"
+      >
         {this.props.children}
       </input>
     );
-  },
-
-  componentDidMount: function() {
-    var appliedMask = this.applyMask();
-    this.setMaskPlaceholder(appliedMask);
-  },
-
-  componentDidUpdate: function() {
-    if(this.state.applyMask) {
-      this.applyMask();
-    }
-  },
-
-  /* input mask functions */
-
-  applyMask: function() {
-    var appliedMask = {};
-    if(!!this.props.regex) {
-      appliedMask = this.applyRegexMask();
-    } else {
-      appliedMask = this.applyBaseMask();
-    }
-
-    return appliedMask;
-  },
-
-  applyRegexMask: function() {
-    var $input = $(this.getInputElement());
-    var maskOptions = this.parseMaskOptions();
-
-    $input.inputmask('Regex', maskOptions);
-    return maskOptions;
-  },
-
-  applyBaseMask: function() {
-    var maskType = this.props.maskType;
-    var predefinedMasks = this.predefinedMasks();
-    var predefinedMask = predefinedMasks[maskType];
-
-    var appliedMask = {};
-    if(!!predefinedMask) {
-      appliedMask = this.applyPredefinedMask(predefinedMask);
-    } else {
-      appliedMask = this.applyCustomMask();
-    }
-
-    return appliedMask;
-  },
-
-  applyPredefinedMask: function(predefinedMask) {
-    var $input = $(this.getInputElement());
-    var predefinedMaskOptions = $.extend({}, predefinedMask, this.parseMaskOptions());
-
-    $input.inputmask(predefinedMaskOptions);
-    return predefinedMaskOptions;
-  },
-
-  applyCustomMask: function() {
-    var $input = $(this.getInputElement());
-    var maskOptions = this.parseMaskOptions();
-
-    console.log(maskOptions);
-    $input.inputmask(maskOptions);
-    this.setMaskPlaceholder(maskOptions);
-    return maskOptions;
-  },
-
-  getInputElement: function() {
-    return ReactDOM.findDOMNode(this.refs.input);
-  },
-
-  parseMaskOptions: function() {
-    var maskOptions = $.extend({
-      showMaskOnHover: false,
-      clearIncomplete: true
-    }, this.filterMaskOptionProps());
-
-    maskOptions.oncomplete = this.handleComplete;
-    maskOptions.onincomplete = this.handleIncomplete;
-    maskOptions.oncleared = this.props.onCleared;
-
-    return maskOptions;
-  },
-
-  filterMaskOptionProps: function() {
-    var maskOptionProps = {};
-    var propsToFilter = ['onComplete', 'onIncomplete', 'onCleared'];
-    for(var propName in this.props) {
-      if(this.props.hasOwnProperty(propName)) {
-        var prop = this.props[propName];
-        if(!!prop && propsToFilter.indexOf(propName) < 0) {
-          maskOptionProps[propName] = prop;
-        }
-      }
-    }
-
-    return maskOptionProps;
-  },
-
-  setMaskPlaceholder: function(appliedMaskOptions) {
-    var appliedPlaceholder = appliedMaskOptions.placeholder;
-
-    if(!!appliedPlaceholder) {
-      this.setState({
-        placeholder: appliedPlaceholder,
-        applyMask: true
-      });
-    }
-  },
-
-  getUnmaskedValue: function () {
-    const $el = $(this.getInputElement())
-    return $el.inputmask('unmaskedvalue')
-  },
-
-
-  /* event handlers */
-
-  handleComplete: function(event) {
-    this.props.onComplete(event);
-    this.updateValue(event.target.value);
-  },
-
-  handleIncomplete: function(event) {
-    this.props.onIncomplete(event);
-    this.updateValue(null);
-  },
-
-  handleChange: function(event) {
-    var maskedValue = event.target.value
-    var value = this.props.removeMaskOnChange ? this.getUnmaskedValue() : maskedValue
-    this.props.onChange(event, value, this);
-
-    if(!event.isDefaultPrevented()) {
-      this.updateValue(maskedValue);
-    }
-  },
-
-  updateValue: function(value) {
-    this.setState({
-      value: value,
-      applyMask: false
-    });
   }
-});
+}
