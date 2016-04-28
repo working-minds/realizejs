@@ -1,34 +1,37 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop_types';
 import { mixin } from 'utils/decorators';
 
+import InputBase from './input_base';
+
 import {
   CssClassMixin,
-  InputComponentMixin
 } from 'mixins';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin
 )
-export default class InputText extends Component {
+export default class InputText extends InputBase {
   static propTypes = {
-    type: PropTypes.string
+    ...InputBase.propTypes,
+    type: PropTypes.string,
   };
 
   static defaultProps = {
+    ...InputBase.defaultProps,
     type: 'text',
-    themeClassKey: 'input.text'
+    themeClassKey: 'input.text',
   };
 
-  render () {
+  render() {
     return (
-      <input {...this.props}
+      <input
+        {...this.props}
         value={this.state.value}
         placeholder={this.getPlaceholder()}
         className={this.inputClassName()}
-        onChange={this._handleChange}
-        onFocus={this._handleFocus}
+        onChange={this.handleChange}
+        onFocus={this.handleFocus}
         ref="input"
       />
     );

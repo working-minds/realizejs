@@ -1,4 +1,5 @@
 export Input from './input';
+export InputBase from './input_base';
 export InputColorpicker from './input_colorpicker';
 export InputDatepicker from './input_datepicker';
 export InputError from './input_error';

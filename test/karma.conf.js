@@ -81,10 +81,14 @@ module.exports = function(config) {
           {
             test: /\.json$/,
             loader: 'json'
+          },
+          {
+            test: /sinon.*\.js$/,
+            loader: "imports?define=>false"
           }
         ],
         noParse: [
-          /node_modules\/sinon\//
+          /sinon/
         ]
       },
       resolve: {
