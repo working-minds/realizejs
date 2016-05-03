@@ -67787,7 +67787,7 @@ window.InputAutocomplete = React.createClass({
     });
   },
 
-  handleSelect: function handleSelect(option) {
+  handleSelect: function handleSelect(event, option) {
     var optionIndex = this.state.value.indexOf(option.value);
 
     if (optionIndex < 0) {
@@ -67806,6 +67806,8 @@ window.InputAutocomplete = React.createClass({
     if (!!this.props.onSelect) {
       this.props.onSelect(this.props.id, this.state.value, this.state.loadData);
     }
+
+    this.props.onChange(event, this.state.value, this);
   }
 
 });
@@ -67980,7 +67982,7 @@ window.InputAutocompleteOption = React.createClass({
       showOnTop: false
     };
 
-    this.props.onSelect(option);
+    this.props.onSelect(event, option);
     event.stopPropagation();
   },
 
@@ -69466,10 +69468,10 @@ window.InputDatepicker = React.createClass({
   },
 
   handlePickadateSet: function handlePickadateSet(pickadateObject) {
-    var selectedDate = moment(pickadateObject.select).format();
+    this.state.value = moment(pickadateObject.select).format();
+    this.props.onChange(null, this.getFormattedDateValue(), this);
 
     this.setState({
-      value: selectedDate,
       inputMaskedKey: this.generateUUID()
     }, this.setPickadatePlugin);
   },

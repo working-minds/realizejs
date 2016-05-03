@@ -197,7 +197,7 @@ window.InputAutocomplete = React.createClass({
     });
   },
 
-  handleSelect: function(option) {
+  handleSelect: function(event, option) {
     var optionIndex = this.state.value.indexOf(option.value);
 
     if(optionIndex < 0) {
@@ -216,6 +216,8 @@ window.InputAutocomplete = React.createClass({
     if(!!this.props.onSelect) {
       this.props.onSelect(this.props.id, this.state.value, this.state.loadData);
     }
+
+    this.props.onChange(event, this.state.value, this);
   }
 
 });
