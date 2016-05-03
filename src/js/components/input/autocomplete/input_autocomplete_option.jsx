@@ -63,7 +63,7 @@ window.InputAutocompleteOption = React.createClass({
       showOnTop: false
     };
 
-    this.props.onSelect(option);
+    this.props.onSelect(event, option);
     event.stopPropagation();
   },
 

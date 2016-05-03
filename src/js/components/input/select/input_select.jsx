@@ -85,13 +85,13 @@ window.InputSelect = React.createClass({
   },
 
   handleChange: function(event) {
-    this.props.onChange(event);
+    var selectElement = ReactDOM.findDOMNode(this.refs.select);
+    var newValue = this.ensureIsArray(selectElement.value);
+    this.props.onChange(event, newValue, this);
 
     if(!event.isDefaultPrevented()) {
-      var selectElement = ReactDOM.findDOMNode(this.refs.select);
-
       this.setState({
-        value: this.ensureIsArray(selectElement.value)
+        value: newValue
       }, this.triggerDependableChanged);
     }
   }

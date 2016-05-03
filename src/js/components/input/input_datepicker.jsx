@@ -100,10 +100,10 @@ window.InputDatepicker = React.createClass({
   },
 
   handlePickadateSet: function(pickadateObject) {
-    var selectedDate = moment(pickadateObject.select).format();
+    this.state.value = moment(pickadateObject.select).format();
+    this.props.onChange(null, this.getFormattedDateValue(), this);
 
     this.setState({
-      value: selectedDate,
       inputMaskedKey: this.generateUUID()
     }, this.setPickadatePlugin);
   },

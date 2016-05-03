@@ -193,10 +193,11 @@ window.InputMasked = React.createClass({
   },
 
   handleChange: function(event) {
-    this.props.onChange(event);
+    var newValue = event.target.value;
+    this.props.onChange(event, newValue, this);
 
     if(!event.isDefaultPrevented()) {
-      this.updateValue(event.target.value);
+      this.updateValue(newValue);
     }
   },
 

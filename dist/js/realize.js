@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.12 (http://www.wkm.com.br)
+ * Realize v0.8.13 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -65860,7 +65860,7 @@ window.Form = React.createClass({
       return [];
     }
 
-    return React.createElement(InputGroup, _extends({}, this.propsWithoutCSS(), { formStyle: this.props.style, errors: this.state.errors }));
+    return React.createElement(InputGroup, _extends({}, this.propsWithoutCSS(), { formStyle: this.props.style, errors: this.state.errors, ref: 'inputGroup' }));
   },
 
   parseFormEncType: function parseFormEncType() {
@@ -67787,7 +67787,7 @@ window.InputAutocomplete = React.createClass({
     });
   },
 
-  handleSelect: function handleSelect(option) {
+  handleSelect: function handleSelect(event, option) {
     var optionIndex = this.state.value.indexOf(option.value);
 
     if (optionIndex < 0) {
@@ -67806,6 +67806,8 @@ window.InputAutocomplete = React.createClass({
     if (!!this.props.onSelect) {
       this.props.onSelect(this.props.id, this.state.value, this.state.loadData);
     }
+
+    this.props.onChange(event, this.state.value, this);
   }
 
 });
@@ -67980,7 +67982,7 @@ window.InputAutocompleteOption = React.createClass({
       showOnTop: false
     };
 
-    this.props.onSelect(option);
+    this.props.onSelect(event, option);
     event.stopPropagation();
   },
 
@@ -69466,10 +69468,10 @@ window.InputDatepicker = React.createClass({
   },
 
   handlePickadateSet: function handlePickadateSet(pickadateObject) {
-    var selectedDate = moment(pickadateObject.select).format();
+    this.state.value = moment(pickadateObject.select).format();
+    this.props.onChange(null, this.getFormattedDateValue(), this);
 
     this.setState({
-      value: selectedDate,
       inputMaskedKey: this.generateUUID()
     }, this.setPickadatePlugin);
   },
@@ -69887,10 +69889,11 @@ window.InputMasked = React.createClass({
   },
 
   handleChange: function handleChange(event) {
-    this.props.onChange(event);
+    var newValue = event.target.value;
+    this.props.onChange(event, newValue, this);
 
     if (!event.isDefaultPrevented()) {
-      this.updateValue(event.target.value);
+      this.updateValue(newValue);
     }
   },
 
@@ -70294,13 +70297,13 @@ window.InputSelect = React.createClass({
   },
 
   handleChange: function handleChange(event) {
-    this.props.onChange(event);
+    var selectElement = ReactDOM.findDOMNode(this.refs.select);
+    var newValue = this.ensureIsArray(selectElement.value);
+    this.props.onChange(event, newValue, this);
 
     if (!event.isDefaultPrevented()) {
-      var selectElement = ReactDOM.findDOMNode(this.refs.select);
-
       this.setState({
-        value: this.ensureIsArray(selectElement.value)
+        value: newValue
       }, this.triggerDependableChanged);
     }
   }
@@ -73971,7 +73974,8 @@ window.CheckboxComponentMixin = {
 
   getDefaultProps: function getDefaultProps() {
     return {
-      renderAsIndeterminate: false
+      renderAsIndeterminate: false,
+      value: false
     };
   },
 
@@ -74024,12 +74028,13 @@ window.CheckboxComponentMixin = {
   },
 
   _handleCheckboxChange: function _handleCheckboxChange(event) {
-    this.props.onChange(event);
+    var newCheckedValue = event.target.checked;
+    this.props.onChange(event, newCheckedValue, this);
 
     if (!event.isDefaultPrevented()) {
-      var newState = { checked: event.target.checked };
+      var newState = { checked: newCheckedValue };
       if (this.valueIsBoolean()) {
-        newState.value = event.target.checked;
+        newState.value = newCheckedValue;
       }
 
       this.setState(newState);
@@ -74059,7 +74064,6 @@ window.InputComponentMixin = {
 
   getDefaultProps: function getDefaultProps() {
     return {
-      value: null,
       disabled: false,
       readOnly: false,
       onChange: function onChange(event) {
@@ -74106,11 +74110,11 @@ window.InputComponentMixin = {
   },
 
   _handleChange: function _handleChange(event) {
-    this.props.onChange(event);
+    var newValue = event.target.value;
+    this.props.onChange(event, newValue, this);
 
     if (!event.isDefaultPrevented()) {
-      var value = event.target.value;
-      this.setState({ value: value });
+      this.setState({ value: newValue });
     }
   },
 
@@ -74266,6 +74270,7 @@ window.MaterializeSelectMixin = {
 
   handleChangeMaterialize: function handleChangeMaterialize(selectElement) {
     var $selectElement = $(selectElement);
+    var newValue = this.ensureIsArray(selectElement.value);
     var fakeEvent = {
       currentTarget: selectElement,
       target: selectElement
@@ -74275,10 +74280,10 @@ window.MaterializeSelectMixin = {
     $selectElement.parent().parent().find('> .caret').remove();
 
     this.setState({
-      value: this.ensureIsArray(selectElement.value)
+      value: newValue
     }, this.triggerDependableChanged);
 
-    this.props.onChange(fakeEvent);
+    this.props.onChange(fakeEvent, newValue, this);
   }
 };
 
