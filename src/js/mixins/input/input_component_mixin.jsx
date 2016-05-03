@@ -13,7 +13,6 @@ window.InputComponentMixin = {
 
   getDefaultProps: function() {
     return {
-      value: null,
       disabled: false,
       readOnly: false,
       onChange: function(event) { return true; },
@@ -56,11 +55,11 @@ window.InputComponentMixin = {
   },
 
   _handleChange: function(event) {
-    this.props.onChange(event);
+    var newValue = event.target.value;
+    this.props.onChange(event, newValue, this);
 
     if(!event.isDefaultPrevented()) {
-      var value = event.target.value;
-      this.setState({value: value});
+      this.setState({ value: newValue });
     }
   },
 

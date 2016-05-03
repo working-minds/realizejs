@@ -109,7 +109,7 @@ window.Form = React.createClass({
       return [];
     }
 
-    return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} />;
+    return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} ref="inputGroup" />;
   },
 
   parseFormEncType: function() {

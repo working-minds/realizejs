@@ -6,7 +6,8 @@ window.CheckboxComponentMixin = {
 
   getDefaultProps: function() {
     return {
-      renderAsIndeterminate: false
+      renderAsIndeterminate: false,
+      value: false
     };
   },
 
@@ -59,12 +60,13 @@ window.CheckboxComponentMixin = {
   },
 
   _handleCheckboxChange: function(event) {
-    this.props.onChange(event);
+    var newCheckedValue = event.target.checked;
+    this.props.onChange(event, newCheckedValue, this);
 
     if(!event.isDefaultPrevented()) {
-      var newState = { checked: event.target.checked };
+      var newState = { checked: newCheckedValue };
       if(this.valueIsBoolean()) {
-        newState.value = event.target.checked;
+        newState.value = newCheckedValue;
       }
 
       this.setState(newState);

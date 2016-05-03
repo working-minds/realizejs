@@ -20,6 +20,7 @@ window.MaterializeSelectMixin = {
 
   handleChangeMaterialize: function(selectElement) {
     var $selectElement = $(selectElement);
+    var newValue = this.ensureIsArray(selectElement.value);
     var fakeEvent = {
       currentTarget: selectElement,
       target: selectElement
@@ -29,10 +30,10 @@ window.MaterializeSelectMixin = {
     $selectElement.parent().parent().find('> .caret').remove();
 
     this.setState({
-      value: this.ensureIsArray(selectElement.value)
+      value: newValue
     }, this.triggerDependableChanged);
 
-    this.props.onChange(fakeEvent);
+    this.props.onChange(fakeEvent, newValue, this);
   }
 };
 
