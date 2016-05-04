@@ -97,6 +97,7 @@ window.PermissionManager = React.createClass({
                   onClickRow={this.handleSelectPrincipal}
                   tableRowCssClass={this.rowCssClass}
                   data={this.dataGridPrincipals()}
+                  url={this.props.principalsBaseUrl}
               />
           </div>
           {this.renderActionButtons()}

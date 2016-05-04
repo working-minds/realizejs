@@ -1,5 +1,5 @@
-var _mergeWith = require('lodash/mergewith');
-var _isArray = require('lodash/isarray');
+var _mergeWith = require('lodash/mergeWith');
+var _isArray = require('lodash/isArray');
 
 window.GridActionsMixin = {
   propTypes: {
