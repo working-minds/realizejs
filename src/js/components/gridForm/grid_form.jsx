@@ -3,7 +3,7 @@ var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
 var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
 
 var _merge = require('lodash/merge');
-var _findIndex = require('lodash/findindex');
+var _findIndex = require('lodash/findIndex');
 
 window.GridForm = React.createClass({
   mixins: [

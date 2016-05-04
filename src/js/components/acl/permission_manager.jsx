@@ -97,6 +97,7 @@ window.PermissionManager = React.createClass({
                   onClickRow={this.handleSelectPrincipal}
                   tableRowCssClass={this.rowCssClass}
                   data={this.dataGridPrincipals()}
+                  url={this.props.principalsBaseUrl}
               />
           </div>
           {this.renderActionButtons()}
@@ -319,7 +320,7 @@ window.PermissionManager = React.createClass({
         resource_type: this.props.resourceType
       },
       success: function(data) {
-        this.setState({
+        this.setState({ 
           principals: data.principals,
           selectedPrincipal: data.principals[0]
         })

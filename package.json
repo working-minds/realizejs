@@ -1,6 +1,6 @@
 {
   "name": "realize",
-  "version": "0.8.13",
+  "version": "0.8.14",
   "description": "Elementos de Frontend, utilizando ReactJS e MaterializeCSS",
   "authors": [
     "Pedro Jesus <pjesus@wkm.com.br>",
@@ -36,7 +36,7 @@
     "require-globify": "^1.3.0"
   },
   "dependencies": {
-    "lodash": "^4.6.1",
+    "lodash": "^4.11.2",
     "moment": "^2.12.0",
     "numeral": "^1.5.3",
     "react": "^0.14.7",
