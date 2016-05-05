@@ -9,7 +9,8 @@ window.AclModalsWrapper = React.createClass({
     resource: React.PropTypes.object,
     resourceType: React.PropTypes.string,
     urlProps: React.PropTypes.object,
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    reloadPageAfterSubmit: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -24,7 +25,8 @@ window.AclModalsWrapper = React.createClass({
         potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
         principalsTypeBaseUrl: '/wkm_acl_ui/principals/types',
         updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
-        principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
+        principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions',
+        reloadPageAfterSubmit: false
       }
     }
   },
@@ -53,6 +55,7 @@ window.AclModalsWrapper = React.createClass({
       principalsPermissionsBaseUrl={this.props.urlProps.principalsPermissionsBaseUrl}
       updatePermissionsBaseUrl={this.props.urlProps.updatePermissionsBaseUrl}
       handleRemovePrincipal={this.handleRemovePrincipal}
+      reloadPageAfterSubmit={this.props.reloadPageAfterSubmit}
       />);
 
     return component;
