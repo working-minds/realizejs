@@ -68777,6 +68777,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
+var ContainerMixin = require('realize/mixins/container_mixin.jsx');
 
 var _merge = require('lodash/merge');
 var _mapValues = require('lodash/mapValues');
@@ -68784,7 +68785,7 @@ var _mapValues = require('lodash/mapValues');
 window.InputGridForm = React.createClass({
   displayName: 'InputGridForm',
 
-  mixins: [CssClassMixin, InputComponentMixin],
+  mixins: [CssClassMixin, InputComponentMixin, ContainerMixin],
 
   propTypes: {
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
@@ -68902,7 +68903,11 @@ window.InputGridForm = React.createClass({
 });
 
 }).call(this,require("react"))
+<<<<<<< HEAD
 },{"lodash/mapValues":150,"lodash/merge":151,"react":508,"realize/mixins/css_class_mixin.jsx":623,"realize/mixins/input/input_component_mixin.jsx":630}],574:[function(require,module,exports){
+=======
+},{"lodash/mapValues":190,"lodash/merge":192,"react":513,"realize/mixins/container_mixin.jsx":633,"realize/mixins/css_class_mixin.jsx":634,"realize/mixins/input/input_component_mixin.jsx":641}],585:[function(require,module,exports){
+>>>>>>> Iniciando a resolução do problema de não exibição de errors
 (function (React){
 'use strict';
 
