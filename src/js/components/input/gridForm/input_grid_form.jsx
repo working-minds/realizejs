@@ -82,6 +82,7 @@ window.InputGridForm = React.createClass({
     var columnsProp = _merge({}, this.props.fields);
     columnsProp = _mapValues(columnsProp, function(column, columnKey) {
       delete column.component;
+      delete column.className;
       column.name = this.getColumnName(column, columnKey);
       return column;
     }.bind(this));

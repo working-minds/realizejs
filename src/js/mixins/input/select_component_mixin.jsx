@@ -1,3 +1,4 @@
+var utils = require('../../utils.js');
 var _map = require('lodash/map');
 
 window.SelectComponentMixin = {
@@ -131,7 +132,7 @@ window.SelectComponentMixin = {
     var options = [];
     var optionsParam = this.props.optionsParam;
     if(!!optionsParam) {
-      data = data[optionsParam];
+      data = utils.getProp(optionsParam, data);
     }
 
     for(var i = 0; i < data.length; i++) {
