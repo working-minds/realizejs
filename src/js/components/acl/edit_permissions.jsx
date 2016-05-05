@@ -1,7 +1,8 @@
 var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
 
 window.EditPermissions = React.createClass({
-  mixins: [RequestHandlerMixin],
+  mixins: [RequestHandlerMixin,UtilsMixin],
 
   PropTypes: {
     principal: React.PropTypes.object,
@@ -17,12 +18,12 @@ window.EditPermissions = React.createClass({
   getDefaultProps: function() {
     return {
       principal: null,
-      principalType: 'User',
+      principalType: '',
       resource: null,
       resourceType: null,
       title: '',
       saveOnSelect: false,
-      principalPermissions: null,
+      principalPermissions: [],
       permissionsBaseUrl: '/wkm_acl_ui/permissions'
     }
   },
@@ -129,7 +130,7 @@ window.EditPermissions = React.createClass({
   grantPermission: function(permission) {
     var url = this.props.permissionsBaseUrl;
     var data = { principal_id: this.props.principal.id,
-                 principal_type: 'User',
+                 principal_type: this.props.principalType,
                  resource_id: this.props.resource.id,
                  resourceType: this.props.resourceType,
                  permissions: [permission]
@@ -141,7 +142,7 @@ window.EditPermissions = React.createClass({
   revokePermission: function(permission) {
     var url = this.props.permissionsBaseUrl + "/" + this.props.principal.id;
     var data = { principal_id: this.props.principal.id,
-                 principal_type: 'User',
+                 principal_type: this.props.principalType,
                  resource_id: this.props.resource.id,
                  resource_type: this.props.resourceType,
                  permissions: [permission]
@@ -151,6 +152,7 @@ window.EditPermissions = React.createClass({
   },
 
   getPermissions: function() {
+    var context = this;
     $.ajax({
       url: this.props.permissionsBaseUrl + "/" +this.props.principal.id,
       method: 'GET',
@@ -164,6 +166,8 @@ window.EditPermissions = React.createClass({
       success: function(data) {
         this.setState({
           permissions: data.permissions
+        },function(){
+          context.props.afterCreateEntry();
         });
       }.bind(this)
     });
@@ -209,7 +213,7 @@ window.EditPermissions = React.createClass({
 
     if (!!permissions) {
       permissions.forEach(function (permission) {
-        component.push(<Input key={resourceId+'_'+permission+'_'+Math.random()}
+        component.push(<Input key={this.generateUUID()}
                               component='checkbox'
                               ref={'checkbox_'+permission}
                               label={I18n.t('permissions.'+permission)}
@@ -238,11 +242,11 @@ window.EditPermissions = React.createClass({
 
   renderHiddenInputs: function() {
     var component = [];
-    component.push(<input type="hidden" name="_method" value="put" />);
-    component.push(<input type="hidden" name="resource_type" value={this.props.resourceType} />);
-    component.push(<input type="hidden" name="resource_id" value={this.props.resource.id} />);
-    component.push(<input type="hidden" name="principal_type" value={this.props.principalType} />);
-    component.push(<input type="hidden" name="principal_id" value={this.props.principal.id} />);
+    component.push(<input key={this.generateUUID()} type="hidden" name="_method" value="put" />);
+    component.push(<input key={this.generateUUID()} type="hidden" name="resource_type" value={this.props.resourceType} />);
+    component.push(<input key={this.generateUUID()} type="hidden" name="resource_id" value={this.props.resource.id} />);
+    component.push(<input key={this.generateUUID()} type="hidden" name="principal_type" value={this.props.principalType} />);
+    component.push(<input key={this.generateUUID()} type="hidden" name="principal_id" value={this.props.principal.id} />);
 
     return component;
   }
