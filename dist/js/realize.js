@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.15 (http://www.wkm.com.br)
+ * Realize v0.8.16 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -66258,7 +66258,8 @@ window.AclModalsWrapper = React.createClass({
     resource: React.PropTypes.object,
     resourceType: React.PropTypes.string,
     urlProps: React.PropTypes.object,
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    reloadPageAfterSubmit: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -66273,7 +66274,8 @@ window.AclModalsWrapper = React.createClass({
         potentialPrincipalsBaseUrl: '/wkm_acl_ui/principals/potential_principals',
         principalsTypeBaseUrl: '/wkm_acl_ui/principals/types',
         updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
-        principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
+        principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions',
+        reloadPageAfterSubmit: false
       }
     };
   },
@@ -66303,7 +66305,8 @@ window.AclModalsWrapper = React.createClass({
       principalsBaseUrl: this.props.urlProps.principalsBaseUrl,
       principalsPermissionsBaseUrl: this.props.urlProps.principalsPermissionsBaseUrl,
       updatePermissionsBaseUrl: this.props.urlProps.updatePermissionsBaseUrl,
-      handleRemovePrincipal: this.handleRemovePrincipal
+      handleRemovePrincipal: this.handleRemovePrincipal,
+      reloadPageAfterSubmit: this.props.reloadPageAfterSubmit
     }));
 
     return component;
@@ -66615,7 +66618,8 @@ window.PermissionManagerModal = React.createClass({
     updatePermissionsBaseUrl: React.PropTypes.string,
     principalsBaseUrl: React.PropTypes.string,
     principalsPermissionsBaseUrl: React.PropTypes.string,
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    reloadPageAfterSubmit: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -66630,7 +66634,8 @@ window.PermissionManagerModal = React.createClass({
       modalId: 'permission-manager-modal',
       updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
       principalsBaseUrl: '/wkm_acl_ui/principals',
-      principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
+      principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions',
+      reloadPageAfterSubmit: false
     };
   },
 
@@ -66738,7 +66743,7 @@ window.PermissionManagerModal = React.createClass({
 
   onSuccess: function onSuccess() {
     $('#' + this.props.modalId).closeModal();
-    window.location.reload();
+    if (this.props.reloadPageAfterSubmit) window.location.reload();
   }
 
 });
