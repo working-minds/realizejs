@@ -1,7 +1,8 @@
 var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
+var UtilsMixin = require('realize/mixins/utils_mixin.jsx');
 
 window.PermissionManager = React.createClass({
-  mixins: [RequestHandlerMixin],
+  mixins: [RequestHandlerMixin,UtilsMixin],
 
   ////// SPECIFICATIONS //////
 
@@ -58,8 +59,10 @@ window.PermissionManager = React.createClass({
     }
   },
 
-
   //// LIFECYCLES ////
+  getSelectedPrincipal: function(){
+    return !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+  },
 
   componentDidMount: function() {
     this.loadPrincipals();
@@ -122,10 +125,13 @@ window.PermissionManager = React.createClass({
 
   renderEditPermission: function() {
     var component = [];
-    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+    var selectedPrincipal = this.getSelectedPrincipal();
     var principal_type = !!this.state.selectedPrincipal ? selectedPrincipal.principal_type : this.props.principalType;
 
     if(!!selectedPrincipal) {
+      if (!selectedPrincipal.principal_type)
+        principal_type = this.props.principalType;
+
       component.push(<h5>Permissões de {selectedPrincipal.name}:</h5>);
       component.push(
         <EditPermissions
@@ -136,6 +142,7 @@ window.PermissionManager = React.createClass({
           resourceType={this.props.resourceType}
           handleRemovePermissionChecked={this.handleRemovePermissionChecked}
           handleAddPermissionChecked={this.handleAddPermissionChecked}
+          afterCreateEntry={this.forceUpdate}
           />)
     }
 
@@ -174,7 +181,8 @@ window.PermissionManager = React.createClass({
   },
 
   handleAddPermissionChecked: function(permission) {
-    var principalId = !!this.state.selectedPrincipal ? this.state.selectedPrincipal.id : this.props.principal.id;
+    var selectedPrincipal = this.getSelectedPrincipal();
+    var principalId = selectedPrincipal.id;
 
     $.ajax({
       url: this.props.impliesPermissionBaseUrl,
@@ -182,7 +190,7 @@ window.PermissionManager = React.createClass({
       dataType: 'json',
       data: {
         principal_id: principalId,
-        principal_type: 'User',
+        principal_type: this.props.principalType,
         permission: permission,
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
@@ -195,7 +203,7 @@ window.PermissionManager = React.createClass({
 
   addPermissionChecked: function(permissions) {
     var principalsPermissions = this.state.principalsPermissions;
-    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+    var selectedPrincipal = this.getSelectedPrincipal();
 
     for (var i = 0; i < principalsPermissions.length; i++) {
       if (selectedPrincipal.id == principalsPermissions[i].principal_id) {
@@ -220,7 +228,7 @@ window.PermissionManager = React.createClass({
 
   switchPrincipalPermissions: function(principalPermission) {
     var principalsPermissions = this.state.principalsPermissions;
-    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+    var selectedPrincipal = this.getSelectedPrincipal();
 
     for (var i = 0; i < principalsPermissions.length; i++) {
       if (selectedPrincipal.id == principalsPermissions[i].principal_id) {
@@ -231,7 +239,6 @@ window.PermissionManager = React.createClass({
     principalsPermissions.push(principalPermission);
     return principalsPermissions;
   },
-
 
   ////// PRINCIPALS GRID METHODS //////
 
@@ -245,7 +252,7 @@ window.PermissionManager = React.createClass({
   principalPermission: function() {
     var principalsPermissions = this.state.principalsPermissions;
     var principalPermissions = null;
-    var selectedPrincipal = !!this.state.selectedPrincipal ? this.state.selectedPrincipal : this.props.principal;
+    var selectedPrincipal = this.getSelectedPrincipal();
 
     for (var i = 0; i < principalsPermissions.length; i++) {
       if (selectedPrincipal.id == principalsPermissions[i].principal_id) {
@@ -315,6 +322,7 @@ window.PermissionManager = React.createClass({
     $.ajax({
       url: this.props.principalsBaseUrl,
       dataType: 'json',
+      async:false,
       data: {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
@@ -322,7 +330,7 @@ window.PermissionManager = React.createClass({
       success: function(data) {
         this.setState({ 
           principals: data.principals,
-          selectedPrincipal: data.principals[0]
+          selectedPrincipal: this.getSelectedPrincipal() || data.principals[0]
         })
       }.bind(this)
     });
@@ -332,6 +340,7 @@ window.PermissionManager = React.createClass({
     $.ajax({
       url: this.props.principalsPermissionsBaseUrl,
       dataType: 'json',
+      async:false,
       data: {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
