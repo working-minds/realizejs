@@ -15,7 +15,8 @@ window.PermissionManagerModal = React.createClass({
     updatePermissionsBaseUrl: React.PropTypes.string,
     principalsBaseUrl: React.PropTypes.string,
     principalsPermissionsBaseUrl: React.PropTypes.string,
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    reloadPageAfterSubmit: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -30,7 +31,8 @@ window.PermissionManagerModal = React.createClass({
       modalId: 'permission-manager-modal',
       updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
       principalsBaseUrl: '/wkm_acl_ui/principals',
-      principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions'
+      principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions',
+      reloadPageAfterSubmit: false
     }
   },
 
@@ -118,7 +120,8 @@ window.PermissionManagerModal = React.createClass({
 
   onSuccess: function() {
     $('#'+this.props.modalId).closeModal();
-    window.location.reload();
+    if(this.props.reloadPageAfterSubmit)
+      window.location.reload();
   }
 
 });
