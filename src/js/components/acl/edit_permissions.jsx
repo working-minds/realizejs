@@ -152,6 +152,7 @@ window.EditPermissions = React.createClass({
   },
 
   getPermissions: function() {
+    var context = this;
     $.ajax({
       url: this.props.permissionsBaseUrl + "/" +this.props.principal.id,
       method: 'GET',
@@ -165,6 +166,8 @@ window.EditPermissions = React.createClass({
       success: function(data) {
         this.setState({
           permissions: data.permissions
+        },function(){
+          context.props.afterCreateEntry();
         });
       }.bind(this)
     });

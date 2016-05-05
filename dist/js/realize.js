@@ -65938,6 +65938,7 @@ window.EditPermissions = React.createClass({
   },
 
   getPermissions: function getPermissions() {
+    var context = this;
     $.ajax({
       url: this.props.permissionsBaseUrl + "/" + this.props.principal.id,
       method: 'GET',
@@ -65951,6 +65952,8 @@ window.EditPermissions = React.createClass({
       success: function (data) {
         this.setState({
           permissions: data.permissions
+        }, function () {
+          context.props.afterCreateEntry();
         });
       }.bind(this)
     });
@@ -66902,7 +66905,8 @@ window.PermissionManager = React.createClass({
         resource: this.props.resource,
         resourceType: this.props.resourceType,
         handleRemovePermissionChecked: this.handleRemovePermissionChecked,
-        handleAddPermissionChecked: this.handleAddPermissionChecked
+        handleAddPermissionChecked: this.handleAddPermissionChecked,
+        afterCreateEntry: this.forceUpdate
       }));
     }
 
@@ -67080,6 +67084,7 @@ window.PermissionManager = React.createClass({
     $.ajax({
       url: this.props.principalsBaseUrl,
       dataType: 'json',
+      async: false,
       data: {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
@@ -67087,7 +67092,7 @@ window.PermissionManager = React.createClass({
       success: function (data) {
         this.setState({
           principals: data.principals,
-          selectedPrincipal: context.getSelectedPrincipal() || data.principals[0]
+          selectedPrincipal: this.getSelectedPrincipal() || data.principals[0]
         });
       }.bind(this)
     });
@@ -67097,6 +67102,7 @@ window.PermissionManager = React.createClass({
     $.ajax({
       url: this.props.principalsPermissionsBaseUrl,
       dataType: 'json',
+      async: false,
       data: {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType
