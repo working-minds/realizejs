@@ -69729,6 +69729,7 @@ window.InputMasked = React.createClass({
     mask: React.PropTypes.string,
     maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
+    autoUnmask: React.PropTypes.bool,
     onComplete: React.PropTypes.func,
     onIncomplete: React.PropTypes.func,
     onCleared: React.PropTypes.func
@@ -69741,6 +69742,7 @@ window.InputMasked = React.createClass({
       mask: null,
       maskType: null,
       regex: null,
+      autoUnmask: false,
       onComplete: function onComplete() {},
       onIncomplete: function onIncomplete() {},
       onCleared: function onCleared() {}
@@ -69847,6 +69849,7 @@ window.InputMasked = React.createClass({
     var $input = $(this.getInputElement());
     var maskOptions = this.parseMaskOptions();
 
+    console.log(maskOptions);
     $input.inputmask(maskOptions);
     this.setMaskPlaceholder(maskOptions);
     return maskOptions;
