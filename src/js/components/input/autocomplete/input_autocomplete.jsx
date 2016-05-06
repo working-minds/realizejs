@@ -174,7 +174,7 @@ window.InputAutocomplete = React.createClass({
         
     var activeOptionRef = resultListRef.refs["option_" + this.state.active];
 
-    this.handleSelect({
+    this.handleSelect(null, {
       name: activeOptionRef.props.name,
       value: activeOptionRef.props.value,
       showOnTop: false
