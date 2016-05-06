@@ -117,7 +117,7 @@ window.InputGridFormFields = React.createClass({
     var fieldsData = inputGroupRef.serialize();
 
     this.props.onSubmit(event, fieldsData);
-    clearErrors();
+    this.clearErrors();
   },
 
   clearErrors: function() {
