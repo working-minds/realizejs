@@ -118,12 +118,14 @@ window.Input = React.createClass({
 
   renderComponentInput: function() {
     var componentInputClass = this.getInputComponentClass(this.props.component);
+    var isGrid = (componentInputClass === InputGridForm);
+
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
       originalId: this.props.id,
       originalName: this.props.name,
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
-      errors: this.getInputErrors(),
+      errors: isGrid ? this.props.errors : this.getInputErrors(),
       value: this.getInputComponentValue(),
       maxLength: this.getMaxLength(),
       ref: "inputComponent"
@@ -134,11 +136,18 @@ window.Input = React.createClass({
 
   renderLabel: function() {
     var inputValue = this.getInputComponentValue();
-    var isActive = (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
+    var isActive = this.labelIsActive(inputValue);
 
     return (
       <Label {...this.propsWithoutCSS()} id={this.getInputComponentId()} active={isActive} />
     );
+  },
+
+  labelIsActive: function(inputValue) {
+    if (this.props.component === 'checkbox')
+      return false;
+
+    return (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
   },
 
   renderInputErrors: function() {
@@ -210,7 +219,7 @@ window.Input = React.createClass({
     var acceptComponents = ['text', 'masked', 'number', 'textarea'];
 
     if (!!this.props.maxLength && (acceptComponents.indexOf(this.props.component) != -1)) {
-      return this.props.maxLength
+      return this.props.maxLength;
     }
   },
 

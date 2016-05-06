@@ -17,6 +17,12 @@ window.InputGridFormFields = React.createClass({
     onReset: React.PropTypes.func
   },
 
+  getInitialState: function() {
+    return {
+      errors: this.props.errors
+    };
+  },
+
   getDefaultProps: function() {
     return {
       themeClassKey: 'form',
@@ -56,6 +62,7 @@ window.InputGridFormFields = React.createClass({
     return (
       <InputGroup
         {...this.propsWithoutCSS()}
+        errors={this.state.errors}
         formStyle={this.props.style}
         ref="inputGroup"
       />
@@ -110,6 +117,11 @@ window.InputGridFormFields = React.createClass({
     var fieldsData = inputGroupRef.serialize();
 
     this.props.onSubmit(event, fieldsData);
+    clearErrors();
+  },
+
+  clearErrors: function() {
+    //TODO implementar uma forma de limpar os errors do form nos campos do gridform.
   },
 
   /* Reset handling functions */

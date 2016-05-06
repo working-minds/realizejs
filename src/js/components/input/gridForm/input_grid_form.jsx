@@ -35,6 +35,7 @@ window.InputGridForm = React.createClass({
           columns={this.parseColumnsProp()}
           onSuccess={this.serializeGridForm}
           onDestroySuccess={this.serializeGridForm}
+          errors={this.props.errors}
           ref="gridForm"
         />
         <InputHidden
