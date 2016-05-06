@@ -16,11 +16,13 @@ window.InputGroup = React.createClass({
     label: React.PropTypes.string,
     separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string,
-    wrapperClassName: React.PropTypes.string
+    wrapperClassName: React.PropTypes.string,
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function() {
     return {
+      themeClassKey: 'form.inputGroup',
       inputs: {},
       data: {},
       errors: {},
@@ -29,8 +31,8 @@ window.InputGroup = React.createClass({
       separator: false,
       disabled: false,
       readOnly: false,
-      themeClassKey: 'form.inputGroup',
-      wrapperClassName: 'wrapper_input_group'
+      wrapperClassName: 'wrapper_input_group',
+      inputWrapperComponent: null
     };
   },
 
@@ -60,6 +62,7 @@ window.InputGroup = React.createClass({
     var inputsProps = this.props.inputs;
     var inputComponents = [];
     var inputIndex = 0;
+    var InputWrapperComponent = this.getInputWrapperComponent();
 
     for(var inputId in inputsProps) {
       if(inputsProps.hasOwnProperty(inputId)) {
@@ -69,7 +72,7 @@ window.InputGroup = React.createClass({
         }
 
         inputComponents.push(
-          <Input
+          <InputWrapperComponent
             disabled={this.props.disabled}
             readOnly={this.props.readOnly}
             formStyle={this.props.formStyle}
@@ -109,6 +112,19 @@ window.InputGroup = React.createClass({
         <hr />
       </div>
     );
+  },
+
+  getInputWrapperComponent: function() {
+    var inputWrapperComponent = this.props.inputWrapperComponent;
+    if(typeof inputWrapperComponent == "string") {
+      return window[inputWrapperComponent];
+    }
+    else if(typeof inputWrapperComponent == "function") {
+      return inputWrapperComponent;
+    }
+    else {
+      return window.Input;
+    }
   },
 
   serialize: function() {
