@@ -1,16 +1,11 @@
 var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var InputComponentMixin = require('realize/mixins/input/input_component_mixin.jsx');
-var ContainerMixin = require('realize/mixins/container_mixin.jsx');
 
 var _merge = require('lodash/merge');
 var _mapValues = require('lodash/mapValues');
 
 window.InputGridForm = React.createClass({
-  mixins: [
-    CssClassMixin,
-    InputComponentMixin,
-    ContainerMixin
-  ],
+  mixins: [CssClassMixin, InputComponentMixin],
 
   propTypes: {
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
@@ -40,6 +35,7 @@ window.InputGridForm = React.createClass({
           columns={this.parseColumnsProp()}
           onSuccess={this.serializeGridForm}
           onDestroySuccess={this.serializeGridForm}
+          errors={this.props.errors}
           ref="gridForm"
         />
         <InputHidden
@@ -113,17 +109,6 @@ window.InputGridForm = React.createClass({
 
     var valueKeys = Object.keys(firstValueRow);
     return valueKeys.indexOf(columnName + "Display") >= 0;
-  },
-
-  propsToForward: function() {
-    return ['resource', 'data', 'readOnly', 'disabled'];
-  },
-
-  propsToForwardMapping: function() {
-    return {
-      errors: this.state.errors,
-      formStyle: this.props.style
-    };
   },
 
   /* GridForm Result serializer */
