@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.17 (http://www.wkm.com.br)
+ * Realize v0.8.19 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -67010,6 +67010,7 @@ window.GridForm = React.createClass({
       method: this.getFormMethod(),
       resource: !!this.props.clientSide ? null : this.props.form.resource,
       inputs: this.getFormInputs(),
+      errors: this.props.errors,
       submitButton: this.getFormSubmitButton(),
       otherButtons: this.getFormOtherButtons(),
       onSubmit: this.onSubmit,
@@ -67782,7 +67783,7 @@ window.InputAutocomplete = React.createClass({
 
     var activeOptionRef = resultListRef.refs["option_" + this.state.active];
 
-    this.handleSelect({
+    this.handleSelect(null, {
       name: activeOptionRef.props.name,
       value: activeOptionRef.props.value,
       showOnTop: false
@@ -68814,6 +68815,7 @@ window.InputGridForm = React.createClass({
         columns: this.parseColumnsProp(),
         onSuccess: this.serializeGridForm,
         onDestroySuccess: this.serializeGridForm,
+        errors: this.props.errors,
         ref: 'gridForm'
       })),
       React.createElement(InputHidden, _extends({}, this.propsWithoutCSS(), {
@@ -68929,6 +68931,12 @@ window.InputGridFormFields = React.createClass({
     onReset: React.PropTypes.func
   },
 
+  getInitialState: function getInitialState() {
+    return {
+      errors: this.props.errors
+    };
+  },
+
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'form',
@@ -68966,6 +68974,7 @@ window.InputGridFormFields = React.createClass({
     }
 
     return React.createElement(InputGroup, _extends({}, this.propsWithoutCSS(), {
+      errors: this.state.errors,
       formStyle: this.props.style,
       ref: 'inputGroup'
     }));
@@ -69013,6 +69022,11 @@ window.InputGridFormFields = React.createClass({
     var fieldsData = inputGroupRef.serialize();
 
     this.props.onSubmit(event, fieldsData);
+    this.clearErrors();
+  },
+
+  clearErrors: function clearErrors() {
+    //TODO implementar uma forma de limpar os errors do form nos campos do gridform.
   },
 
   /* Reset handling functions */
@@ -69151,12 +69165,14 @@ window.Input = React.createClass({
 
   renderComponentInput: function renderComponentInput() {
     var componentInputClass = this.getInputComponentClass(this.props.component);
+    var isGrid = componentInputClass === InputGridForm;
+
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
       originalId: this.props.id,
       originalName: this.props.name,
       id: this.getInputComponentId(),
       name: this.getInputComponentName(),
-      errors: this.getInputErrors(),
+      errors: isGrid ? this.props.errors : this.getInputErrors(),
       value: this.getInputComponentValue(),
       maxLength: this.getMaxLength(),
       ref: "inputComponent"
@@ -69167,9 +69183,15 @@ window.Input = React.createClass({
 
   renderLabel: function renderLabel() {
     var inputValue = this.getInputComponentValue();
-    var isActive = inputValue !== null && inputValue !== undefined && String(inputValue).length > 0;
+    var isActive = this.labelIsActive(inputValue);
 
     return React.createElement(Label, _extends({}, this.propsWithoutCSS(), { id: this.getInputComponentId(), active: isActive }));
+  },
+
+  labelIsActive: function labelIsActive(inputValue) {
+    if (this.props.component === 'checkbox') return false;
+
+    return inputValue !== null && inputValue !== undefined && String(inputValue).length > 0;
   },
 
   renderInputErrors: function renderInputErrors() {

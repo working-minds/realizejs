@@ -120,6 +120,7 @@ window.GridForm = React.createClass({
       method: this.getFormMethod(),
       resource: !!this.props.clientSide ? null : this.props.form.resource,
       inputs: this.getFormInputs(),
+      errors: this.props.errors,
       submitButton: this.getFormSubmitButton(),
       otherButtons: this.getFormOtherButtons(),
       onSubmit: this.onSubmit,
