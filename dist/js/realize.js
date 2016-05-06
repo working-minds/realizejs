@@ -65797,6 +65797,7 @@ window.Form = React.createClass({
     isLoading: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string]),
     submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     onSubmit: React.PropTypes.func,
@@ -65820,6 +65821,7 @@ window.Form = React.createClass({
       isLoading: false,
       disabled: false,
       readOnly: false,
+      inputWrapperComponent: null,
       submitButton: {
         name: 'actions.send',
         icon: 'send'
@@ -66107,11 +66109,13 @@ window.InputGroup = React.createClass({
     label: React.PropTypes.string,
     separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string,
-    wrapperClassName: React.PropTypes.string
+    wrapperClassName: React.PropTypes.string,
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
+      themeClassKey: 'form.inputGroup',
       inputs: {},
       data: {},
       errors: {},
@@ -66120,8 +66124,8 @@ window.InputGroup = React.createClass({
       separator: false,
       disabled: false,
       readOnly: false,
-      themeClassKey: 'form.inputGroup',
-      wrapperClassName: 'wrapper_input_group'
+      wrapperClassName: 'wrapper_input_group',
+      inputWrapperComponent: null
     };
   },
 
@@ -66153,6 +66157,7 @@ window.InputGroup = React.createClass({
     var inputsProps = this.props.inputs;
     var inputComponents = [];
     var inputIndex = 0;
+    var InputWrapperComponent = this.getInputWrapperComponent();
 
     for (var inputId in inputsProps) {
       if (inputsProps.hasOwnProperty(inputId)) {
@@ -66161,7 +66166,7 @@ window.InputGroup = React.createClass({
           inputProps.id = inputId;
         }
 
-        inputComponents.push(React.createElement(Input, _extends({
+        inputComponents.push(React.createElement(InputWrapperComponent, _extends({
           disabled: this.props.disabled,
           readOnly: this.props.readOnly,
           formStyle: this.props.formStyle
@@ -66204,6 +66209,17 @@ window.InputGroup = React.createClass({
       { className: className },
       React.createElement('hr', null)
     );
+  },
+
+  getInputWrapperComponent: function getInputWrapperComponent() {
+    var inputWrapperComponent = this.props.inputWrapperComponent;
+    if (typeof inputWrapperComponent == "string") {
+      return window[inputWrapperComponent];
+    } else if (typeof inputWrapperComponent == "function") {
+      return inputWrapperComponent;
+    } else {
+      return window.Input;
+    }
   },
 
   serialize: function serialize() {
