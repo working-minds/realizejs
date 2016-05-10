@@ -66169,7 +66169,8 @@ window.InputGroup = React.createClass({
         inputComponents.push(React.createElement(InputWrapperComponent, _extends({
           disabled: this.props.disabled,
           readOnly: this.props.readOnly,
-          formStyle: this.props.formStyle
+          formStyle: this.props.formStyle,
+          inputWrapperComponent: this.props.inputWrapperComponent
         }, inputProps, {
           data: this.props.data,
           errors: this.props.errors,
@@ -68807,7 +68808,8 @@ window.InputGridForm = React.createClass({
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
-    clientSide: React.PropTypes.bool
+    clientSide: React.PropTypes.bool,
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -68816,7 +68818,8 @@ window.InputGridForm = React.createClass({
       className: '',
       fields: {},
       form: {},
-      clientSide: true
+      clientSide: true,
+      inputWrapperComponent: null
     };
   },
 
@@ -68858,7 +68861,8 @@ window.InputGridForm = React.createClass({
 
   getDefaultFormProps: function getDefaultFormProps() {
     return {
-      formStyle: 'filter'
+      formStyle: 'filter',
+      inputWrapperComponent: this.props.inputWrapperComponent
     };
   },
 

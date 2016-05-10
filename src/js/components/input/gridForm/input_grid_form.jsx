@@ -11,7 +11,8 @@ window.InputGridForm = React.createClass({
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
-    clientSide: React.PropTypes.bool
+    clientSide: React.PropTypes.bool,
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function() {
@@ -20,7 +21,8 @@ window.InputGridForm = React.createClass({
       className: '',
       fields: {},
       form: {},
-      clientSide: true
+      clientSide: true,
+      inputWrapperComponent: null
     };
   },
 
@@ -64,7 +66,8 @@ window.InputGridForm = React.createClass({
 
   getDefaultFormProps: function() {
     return {
-      formStyle: 'filter'
+      formStyle: 'filter',
+      inputWrapperComponent: this.props.inputWrapperComponent
     };
   },
 
