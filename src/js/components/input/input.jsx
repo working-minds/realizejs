@@ -7,7 +7,7 @@ window.Input = React.createClass({
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    value: React.PropTypes.node,
+    value: React.PropTypes.any,
     component: React.PropTypes.string,
     formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,

@@ -12,7 +12,7 @@ window.InputGridForm = React.createClass({
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
     clientSide: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function() {
