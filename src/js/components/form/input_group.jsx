@@ -17,7 +17,7 @@ window.InputGroup = React.createClass({
     separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string,
     wrapperClassName: React.PropTypes.string,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function() {
