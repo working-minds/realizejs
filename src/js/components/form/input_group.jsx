@@ -76,6 +76,7 @@ window.InputGroup = React.createClass({
             disabled={this.props.disabled}
             readOnly={this.props.readOnly}
             formStyle={this.props.formStyle}
+            inputWrapperComponent={this.props.inputWrapperComponent}
             {...inputProps}
             data={this.props.data}
             errors={this.props.errors}
