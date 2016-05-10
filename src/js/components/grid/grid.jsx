@@ -3,6 +3,8 @@ var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
 var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
 var GridActionsMixin = require('realize/mixins/grid/grid_actions_mixin.jsx');
 
+var utils = require('../../utils.js');
+
 window.Grid = React.createClass({
   mixins: [
     CssClassMixin,
@@ -291,10 +293,13 @@ window.Grid = React.createClass({
   },
 
   handleLoad: function(data) {
+    var dataRows = utils.getProp(this.props.dataRowsParam, data);
+    var count = utils.getProp(this.props.countParam, data);
+
     this.setState({
       gridIsLoading: false,
-      dataRows: data[this.props.dataRowsParam],
-      count: data[this.props.countParam]
+      dataRows: dataRows,
+      count: count
     }, function() {
       this.props.onLoadSuccess(data);
     }.bind(this));

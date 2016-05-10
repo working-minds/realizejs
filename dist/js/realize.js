@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.20 (http://www.wkm.com.br)
+ * Realize v0.8.22 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -65797,7 +65797,7 @@ window.Form = React.createClass({
     isLoading: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string]),
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string]),
     submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     onSubmit: React.PropTypes.func,
@@ -66110,7 +66110,7 @@ window.InputGroup = React.createClass({
     separator: React.PropTypes.bool,
     formStyle: React.PropTypes.string,
     wrapperClassName: React.PropTypes.string,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -66248,6 +66248,8 @@ var CssClassMixin = require('realize/mixins/css_class_mixin.jsx');
 var RequestHandlerMixin = require('realize/mixins/request_handler_mixin.jsx');
 var RestActionsMixin = require('realize/mixins/rest_actions_mixin.jsx');
 var GridActionsMixin = require('realize/mixins/grid/grid_actions_mixin.jsx');
+
+var utils = require('../../utils.js');
 
 window.Grid = React.createClass({
   displayName: 'Grid',
@@ -66524,10 +66526,13 @@ window.Grid = React.createClass({
   },
 
   handleLoad: function handleLoad(data) {
+    var dataRows = utils.getProp(this.props.dataRowsParam, data);
+    var count = utils.getProp(this.props.countParam, data);
+
     this.setState({
       gridIsLoading: false,
-      dataRows: data[this.props.dataRowsParam],
-      count: data[this.props.countParam]
+      dataRows: dataRows,
+      count: count
     }, function () {
       this.props.onLoadSuccess(data);
     }.bind(this));
@@ -66631,7 +66636,7 @@ window.Grid = React.createClass({
 });
 
 }).call(this,require("react"),require("react-dom"),require("realize/realize.js"))
-},{"react":508,"react-dom":346,"realize/mixins/css_class_mixin.jsx":623,"realize/mixins/grid/grid_actions_mixin.jsx":628,"realize/mixins/request_handler_mixin.jsx":636,"realize/mixins/rest_actions_mixin.jsx":637,"realize/realize.js":643}],552:[function(require,module,exports){
+},{"../../utils.js":651,"react":508,"react-dom":346,"realize/mixins/css_class_mixin.jsx":623,"realize/mixins/grid/grid_actions_mixin.jsx":628,"realize/mixins/request_handler_mixin.jsx":636,"realize/mixins/rest_actions_mixin.jsx":637,"realize/realize.js":643}],552:[function(require,module,exports){
 (function (React,ReactDOM){
 'use strict';
 
@@ -68809,7 +68814,7 @@ window.InputGridForm = React.createClass({
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
     clientSide: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string])
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string])
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -69074,7 +69079,7 @@ window.Input = React.createClass({
     id: React.PropTypes.string,
     name: React.PropTypes.string,
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    value: React.PropTypes.node,
+    value: React.PropTypes.any,
     component: React.PropTypes.string,
     formStyle: React.PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: React.PropTypes.object,

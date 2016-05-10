@@ -26,7 +26,7 @@ window.Form = React.createClass({
     isLoading: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.element, React.PropTypes.string]),
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string]),
     submitButton: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.bool]),
     otherButtons: React.PropTypes.array,
     onSubmit: React.PropTypes.func,
