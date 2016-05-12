@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.22 (http://www.wkm.com.br)
+ * Realize v0.8.24 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -69419,7 +69419,7 @@ window.GridForm = React.createClass({
     updateButton: React.PropTypes.object,
     cancelButton: React.PropTypes.object,
     isLoading: React.PropTypes.bool,
-    selectable: React.PropTypes.bool,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     eagerLoad: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
     formComponent: React.PropTypes.func,
@@ -69453,7 +69453,7 @@ window.GridForm = React.createClass({
         name: 'actions.cancel',
         style: 'cancel'
       },
-      selectable: true,
+      selectable: 'multiple',
       eagerLoad: true,
       readOnly: false,
       formComponent: Form,
@@ -69719,7 +69719,7 @@ window.GridForm = React.createClass({
       _merge(gridProps, {
         url: '',
         pagination: false,
-        selectable: false,
+        selectable: 'none',
         eagerLoad: false,
         key: this.generateUUID(),
         dataRowIdField: this.props.clientSideIdField,
