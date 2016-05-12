@@ -7,7 +7,7 @@ window.TableRow = React.createClass({
     columns: React.PropTypes.object,
     data: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
-    selectable: React.PropTypes.bool,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     selected: React.PropTypes.bool,
     actionButtons: React.PropTypes.array,
     rowSelectableFilter: React.PropTypes.func,
@@ -22,7 +22,7 @@ window.TableRow = React.createClass({
       columns: {},
       data: {},
       dataRowIdField: 'id',
-      selectable: true,
+      selectable: 'multiple',
       selected: false,
       actionButtons: [],
       themeClassKey: 'table.row',
@@ -64,7 +64,7 @@ window.TableRow = React.createClass({
   },
 
   renderSelectCell: function() {
-    if(!this.props.selectable) {
+    if(this.props.selectable === 'none') {
       return <td></td>;
     }
 
@@ -75,13 +75,17 @@ window.TableRow = React.createClass({
 
     return (
       <TableSelectCell
-        onSelectToggle={this.props.onSelectToggle}
+        onSelectToggle={this.handleSelectToggle}
         dataRowIds={[this.getDataRowId()]}
         rowId={String(this.getDataRowId())}
         selected={this.props.selected}
         key="select"
       />
     );
+  },
+
+  handleSelectToggle: function(e, dataRowsIds, selected) {
+    this.props.onSelectToggle(e, dataRowsIds, selected, this.props.data);
   },
 
   renderCells: function() {

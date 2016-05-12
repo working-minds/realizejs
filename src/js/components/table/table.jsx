@@ -7,7 +7,7 @@ window.Table = React.createClass({
     columns: React.PropTypes.object,
     dataRowIdField: React.PropTypes.string,
     selectedRowIdsParam: React.PropTypes.string,
-    selectable: React.PropTypes.bool,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     sortConfigs: React.PropTypes.object,
     sortData: React.PropTypes.object,
     dataRows: React.PropTypes.array,
@@ -36,7 +36,7 @@ window.Table = React.createClass({
       columns: {},
       dataRowIdField: 'id',
       selectedRowIdsParam: 'rowIds',
-      selectable: false,
+      selectable: 'multiple',
       sortConfigs: {},
       sortData: {},
       dataRows: [],
@@ -120,7 +120,7 @@ window.Table = React.createClass({
 
   renderActions: function() {
     var collectionButtons = this.props.actionButtons.collection || [];
-    if (!this.props.selectable && collectionButtons.length == 0) {
+    if (this.props.selectable === 'none' && collectionButtons.length == 0) {
       return '';
     }
 
@@ -142,7 +142,7 @@ window.Table = React.createClass({
   },
 
   renderHeaderSelectCell: function() {
-    if(!this.props.selectable) {
+    if(this.props.selectable === 'none' || this.props.selectable === 'one') {
       return <th></th>;
     }
 
@@ -226,7 +226,7 @@ window.Table = React.createClass({
       columnsCount++;
     }
 
-    if(this.props.selectable) {
+    if(this.props.selectable === 'multiple') {
       columnsCount++;
     }
 
@@ -250,15 +250,15 @@ window.Table = React.createClass({
     }.bind(this));
   },
 
-  toggleDataRows: function(event, dataRowIds, selected) {
+  toggleDataRows: function(event, dataRowsId, selected, selectedData) {
     var selectedRowIds = [];
     if(selected) {
-      selectedRowIds = this.addSelectedDataRows(dataRowIds);
+      selectedRowIds = this.getSelectedDataRows(dataRowsId);
     } else {
-      selectedRowIds = this.removeSelectedDataRows(dataRowIds);
+      selectedRowIds = this.removeSelectedDataRows(dataRowsId);
     }
 
-    this.props.onSelect(event, selectedRowIds);
+    this.props.onSelect(event, selectedRowIds, selectedData);
     if(!event.isDefaultPrevented()) {
       this.setState({
         selectedRowIds: selectedRowIds,
@@ -267,13 +267,19 @@ window.Table = React.createClass({
     }
   },
 
-  addSelectedDataRows: function(dataRowIds) {
+  getSelectedDataRows: function(dataRowId) {
+    if (this.props.selectable === 'one')
+      return dataRowId;
+
+    return this.addSelectedDataRow(dataRowId);
+  },
+
+  addSelectedDataRow: function(dataRowsId) {
     var selectedRowIds = this.state.selectedRowIds.slice();
-    $.each(dataRowIds, function(i, dataRowId) {
-      if($.inArray(dataRowId, selectedRowIds) < 0) {
-        selectedRowIds.push(dataRowId);
-      }
-    });
+
+    dataRowsId
+      .filter(dataRowId => selectedRowIds.indexOf(dataRowId) < 0)
+      .forEach(dataRowId => selectedRowIds.push(dataRowId));
 
     return selectedRowIds;
   },
