@@ -29,7 +29,7 @@ window.Grid = React.createClass({
     selectedRowIdsParam: React.PropTypes.string,
     dataRowIdField: React.PropTypes.string,
     isLoading: React.PropTypes.bool,
-    selectable: React.PropTypes.bool,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     tableClassName: React.PropTypes.string,
     onLoadSuccess: React.PropTypes.func,
     onLoadError: React.PropTypes.func,
@@ -48,7 +48,7 @@ window.Grid = React.createClass({
   },
 
   getDefaultProps: function() {
-      return {
+    return {
       themeClassKey: 'grid',
       eagerLoad: false,
       paginationConfigs: {},
@@ -61,7 +61,7 @@ window.Grid = React.createClass({
       selectedRowIdsParam: 'rowIds',
       dataRowIdField: 'id',
       isLoading: false,
-      selectable: true,
+      selectable: 'multiple',
       rowSelectableFilter: null,
       customTableHeader: null,
       forceShowSelectAllButton: false,
@@ -85,6 +85,7 @@ window.Grid = React.createClass({
   getInitialState: function() {
     return {
       dataRows: this.props.data.dataRows,
+      selectedData: {},
       selectedRowIds: [],
       allSelected: false,
       count: this.props.data.count,
@@ -360,16 +361,23 @@ window.Grid = React.createClass({
 
   /* Selection handlers */
 
-  selectDataRows: function(event, selectedRowIds) {
+  selectDataRows: function(event, selectedRowIds, selectedData) {
     this.props.onSelectDataRow(event, selectedRowIds);
     if(!event.isDefaultPrevented()) {
       event.preventDefault();
 
-      this.setState({
-        selectedRowIds: selectedRowIds,
-        allSelected: false
-      });
+      var nextState = this.getSelectDataRowsState(selectedRowIds, selectedData);
+      this.setState(nextState);
     }
+  },
+
+  getSelectDataRowsState: function(selectedRowIds, selectedData) {
+    var nextState = {selectedRowIds: selectedRowIds, allSelected: false};
+
+    if (!!selectedData && this.props.selectable === 'one')
+      nextState.selectedData = selectedData;
+
+    return nextState;
   },
 
   removeSelection: function(event) {
