@@ -77,11 +77,11 @@ window.InputGroup = React.createClass({
             readOnly={this.props.readOnly}
             formStyle={this.props.formStyle}
             inputWrapperComponent={this.props.inputWrapperComponent}
+            key={"input_" + inputIndex}
             {...inputProps}
             data={this.props.data}
             errors={this.props.errors}
             resource={this.props.resource}
-            key={"input_" + inputIndex}
             ref={"input_" + inputIndex}
           />
         );
