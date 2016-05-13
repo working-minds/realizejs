@@ -5,6 +5,7 @@ window.TableActions = React.createClass({
 
   propTypes: {
     dataRows: React.PropTypes.array,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     selectedRowIds: React.PropTypes.array,
     selectedRowIdsParam: React.PropTypes.string,
     actionButtons: React.PropTypes.array,
@@ -20,6 +21,7 @@ window.TableActions = React.createClass({
     return {
       themeClassKey: 'table.actions',
       actionButtons: [],
+      selectable: 'multiple',
       selectedRowIds: [],
       allSelected: false,
       rowSelectableFilter: null,
