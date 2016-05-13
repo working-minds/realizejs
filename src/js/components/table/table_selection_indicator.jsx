@@ -9,6 +9,7 @@ window.TableSelectionIndicator = React.createClass({
     actionButtons: React.PropTypes.array,
     message: React.PropTypes.object,
     removeSelectionButtonName: Realize.PropTypes.localizedString,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     selectAllButtonName: Realize.PropTypes.localizedString,
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
@@ -29,6 +30,7 @@ window.TableSelectionIndicator = React.createClass({
         singular: 'table.selection.select.singular'
       },
       removeSelectionButtonName: 'table.selection.clear',
+      selectable: 'multiple',
       selectAllButtonName: 'table.selection.selectAll',
       allSelected: false,
       rowSelectableFilter: null,
@@ -60,7 +62,7 @@ window.TableSelectionIndicator = React.createClass({
 
   renderActions: function() {
     var count = this.getSelectionCount();
-    if(count === 0) {
+    if(count === 0 || this.props.selectable !== 'multiple') {
       return '';
     }
 
