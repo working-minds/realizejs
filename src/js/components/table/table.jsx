@@ -129,6 +129,7 @@ window.Table = React.createClass({
         dataRows={this.state.dataRows}
         selectedRowIds={this.state.selectedRowIds}
         selectedRowIdsParam={this.props.selectedRowIdsParam}
+        selectable={this.props.selectable}
         allSelected={this.state.allSelected}
         allSelectedData={this.props.allSelectedData}
         count={this.props.count}

@@ -42,6 +42,7 @@ window.Grid = React.createClass({
     clearThemeTable: React.PropTypes.bool,
     pagination: React.PropTypes.bool,
     perPageOptions: React.PropTypes.array,
+    onFilterSubmit:  React.PropTypes.func,
     onSelectDataRow: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
     onSelectAllRows: React.PropTypes.func
@@ -72,6 +73,7 @@ window.Grid = React.createClass({
       pagination: true,
       onLoadSuccess: function(data) {},
       onLoadError: function(xhr, status, error) {},
+      onFilterSubmit: function(event, postData) {},
       onSelectDataRow: function(event, selectedRowIds) {},
       onRemoveSelection: function(event) {},
       onSelectAllRows: function(event) {},
@@ -259,13 +261,17 @@ window.Grid = React.createClass({
   },
 
   onFilterSubmit: function(event, postData) {
-    event.preventDefault();
+    this.props.onFilterSubmit(event, postData);
 
-    this.state.selectedRowIds = [];
-    this.state.allSelected = false;
-    this.state.filterData = postData;
-    this.state.page = 1;
-    this.loadData();
+    if(!event.isDefaultPrevented()) {
+      event.preventDefault();
+
+      this.state.selectedRowIds = [];
+      this.state.allSelected = false;
+      this.state.filterData = postData;
+      this.state.page = 1;
+      this.loadData();
+    }
   },
 
   onSort: function(sortData) {

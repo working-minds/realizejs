@@ -12,7 +12,9 @@ window.InputGridForm = React.createClass({
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
     clientSide: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string])
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string]),
+    onSuccess: React.PropTypes.func,
+    onDestroySuccess: React.PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -22,7 +24,9 @@ window.InputGridForm = React.createClass({
       fields: {},
       form: {},
       clientSide: true,
-      inputWrapperComponent: null
+      inputWrapperComponent: null,
+      onSuccess: function() {},
+      onDestroySuccess: function() {}
     };
   },
 
@@ -35,8 +39,8 @@ window.InputGridForm = React.createClass({
           formComponent={InputGridFormFields}
           form={this.parseFormProp()}
           columns={this.parseColumnsProp()}
-          onSuccess={this.serializeGridForm}
-          onDestroySuccess={this.serializeGridForm}
+          onSuccess={this.handleOnSuccess}
+          onDestroySuccess={this.handleOnDestroySuccess}
           errors={this.props.errors}
           ref="gridForm"
         />
@@ -113,6 +117,22 @@ window.InputGridForm = React.createClass({
 
     var valueKeys = Object.keys(firstValueRow);
     return valueKeys.indexOf(columnName + "Display") >= 0;
+  },
+
+  /* Event handling functions */
+
+  handleOnSuccess: function() {
+    let gridFormValue = this.refs.gridForm.serialize();
+
+    this.props.onSuccess(gridFormValue);
+    this.serializeGridForm();
+  },
+
+  handleOnDestroySuccess: function() {
+    let gridFormValue = this.refs.gridForm.serialize();
+
+    this.props.onDestroySuccess(gridFormValue);
+    this.serializeGridForm();
   },
 
   /* GridForm Result serializer */

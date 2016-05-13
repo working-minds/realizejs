@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.25 (http://www.wkm.com.br)
+ * Realize v0.8.26 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -66285,6 +66285,7 @@ window.Grid = React.createClass({
     clearThemeTable: React.PropTypes.bool,
     pagination: React.PropTypes.bool,
     perPageOptions: React.PropTypes.array,
+    onFilterSubmit: React.PropTypes.func,
     onSelectDataRow: React.PropTypes.func,
     onRemoveSelection: React.PropTypes.func,
     onSelectAllRows: React.PropTypes.func
@@ -66315,6 +66316,7 @@ window.Grid = React.createClass({
       pagination: true,
       onLoadSuccess: function onLoadSuccess(data) {},
       onLoadError: function onLoadError(xhr, status, error) {},
+      onFilterSubmit: function onFilterSubmit(event, postData) {},
       onSelectDataRow: function onSelectDataRow(event, selectedRowIds) {},
       onRemoveSelection: function onRemoveSelection(event) {},
       onSelectAllRows: function onSelectAllRows(event) {},
@@ -66492,13 +66494,17 @@ window.Grid = React.createClass({
   },
 
   onFilterSubmit: function onFilterSubmit(event, postData) {
-    event.preventDefault();
+    this.props.onFilterSubmit(event, postData);
 
-    this.state.selectedRowIds = [];
-    this.state.allSelected = false;
-    this.state.filterData = postData;
-    this.state.page = 1;
-    this.loadData();
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
+
+      this.state.selectedRowIds = [];
+      this.state.allSelected = false;
+      this.state.filterData = postData;
+      this.state.page = 1;
+      this.loadData();
+    }
   },
 
   onSort: function onSort(sortData) {
@@ -68821,7 +68827,9 @@ window.InputGridForm = React.createClass({
     fields: React.PropTypes.object,
     form: React.PropTypes.object,
     clientSide: React.PropTypes.bool,
-    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string])
+    inputWrapperComponent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string]),
+    onSuccess: React.PropTypes.func,
+    onDestroySuccess: React.PropTypes.func
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -68831,7 +68839,9 @@ window.InputGridForm = React.createClass({
       fields: {},
       form: {},
       clientSide: true,
-      inputWrapperComponent: null
+      inputWrapperComponent: null,
+      onSuccess: function onSuccess() {},
+      onDestroySuccess: function onDestroySuccess() {}
     };
   },
 
@@ -68844,8 +68854,8 @@ window.InputGridForm = React.createClass({
         formComponent: InputGridFormFields,
         form: this.parseFormProp(),
         columns: this.parseColumnsProp(),
-        onSuccess: this.serializeGridForm,
-        onDestroySuccess: this.serializeGridForm,
+        onSuccess: this.handleOnSuccess,
+        onDestroySuccess: this.handleOnDestroySuccess,
         errors: this.props.errors,
         ref: 'gridForm'
       })),
@@ -68920,6 +68930,22 @@ window.InputGridForm = React.createClass({
 
     var valueKeys = Object.keys(firstValueRow);
     return valueKeys.indexOf(columnName + "Display") >= 0;
+  },
+
+  /* Event handling functions */
+
+  handleOnSuccess: function handleOnSuccess() {
+    var gridFormValue = this.refs.gridForm.serialize();
+
+    this.props.onSuccess(gridFormValue);
+    this.serializeGridForm();
+  },
+
+  handleOnDestroySuccess: function handleOnDestroySuccess() {
+    var gridFormValue = this.refs.gridForm.serialize();
+
+    this.props.onDestroySuccess(gridFormValue);
+    this.serializeGridForm();
   },
 
   /* GridForm Result serializer */
@@ -69486,7 +69512,7 @@ window.InputDatepicker = React.createClass({
         key: this.state.inputMaskedKey,
         ref: 'input'
       })),
-      React.createElement(Label, this.propsWithoutCSS()),
+      React.createElement(Label, _extends({}, this.propsWithoutCSS(), { active: this.labelIsActive() })),
       React.createElement(Button, {
         disabled: this.props.disabled || this.props.readOnly,
         icon: { type: "calendar" },
@@ -69509,6 +69535,12 @@ window.InputDatepicker = React.createClass({
     }
 
     return this.state.value;
+  },
+
+  labelIsActive: function labelIsActive() {
+    var inputValue = this.state.value;
+
+    return inputValue != null && String(inputValue).length > 0;
   },
 
   /* Pickadate handlers */
@@ -71812,6 +71844,7 @@ window.Table = React.createClass({
       dataRows: this.state.dataRows,
       selectedRowIds: this.state.selectedRowIds,
       selectedRowIdsParam: this.props.selectedRowIdsParam,
+      selectable: this.props.selectable,
       allSelected: this.state.allSelected,
       allSelectedData: this.props.allSelectedData,
       count: this.props.count,
@@ -72163,6 +72196,7 @@ window.TableActions = React.createClass({
 
   propTypes: {
     dataRows: React.PropTypes.array,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     selectedRowIds: React.PropTypes.array,
     selectedRowIdsParam: React.PropTypes.string,
     actionButtons: React.PropTypes.array,
@@ -72178,6 +72212,7 @@ window.TableActions = React.createClass({
     return {
       themeClassKey: 'table.actions',
       actionButtons: [],
+      selectable: 'multiple',
       selectedRowIds: [],
       allSelected: false,
       rowSelectableFilter: null,
@@ -72881,6 +72916,7 @@ window.TableSelectionIndicator = React.createClass({
     actionButtons: React.PropTypes.array,
     message: React.PropTypes.object,
     removeSelectionButtonName: Realize.PropTypes.localizedString,
+    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
     selectAllButtonName: Realize.PropTypes.localizedString,
     allSelected: React.PropTypes.bool,
     count: React.PropTypes.number,
@@ -72901,6 +72937,7 @@ window.TableSelectionIndicator = React.createClass({
         singular: 'table.selection.select.singular'
       },
       removeSelectionButtonName: 'table.selection.clear',
+      selectable: 'multiple',
       selectAllButtonName: 'table.selection.selectAll',
       allSelected: false,
       rowSelectableFilter: null,
@@ -72938,7 +72975,7 @@ window.TableSelectionIndicator = React.createClass({
 
   renderActions: function renderActions() {
     var count = this.getSelectionCount();
-    if (count === 0) {
+    if (count === 0 || this.props.selectable !== 'multiple') {
       return '';
     }
 
