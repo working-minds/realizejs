@@ -71988,7 +71988,7 @@ window.InputDatepicker = React.createClass({
         key: this.state.inputMaskedKey,
         ref: 'input'
       })),
-      React.createElement(Label, this.propsWithoutCSS()),
+      React.createElement(Label, _extends({}, this.propsWithoutCSS(), { active: this.labelIsActive() })),
       React.createElement(Button, {
         disabled: this.props.disabled || this.props.readOnly,
         icon: { type: "calendar" },
@@ -72011,6 +72011,12 @@ window.InputDatepicker = React.createClass({
     }
 
     return this.state.value;
+  },
+
+  labelIsActive: function labelIsActive() {
+    var inputValue = this.state.value;
+
+    return inputValue != null && String(inputValue).length > 0;
   },
 
   /* Pickadate handlers */

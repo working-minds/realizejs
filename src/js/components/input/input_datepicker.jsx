@@ -43,7 +43,7 @@ window.InputDatepicker = React.createClass({
           ref="input"
         />
 
-        <Label {...this.propsWithoutCSS()} />
+        <Label {...this.propsWithoutCSS()} active={this.labelIsActive()} />
         <Button
           disabled={this.props.disabled || this.props.readOnly}
           icon={{type: "calendar"}}
@@ -67,6 +67,12 @@ window.InputDatepicker = React.createClass({
     }
 
     return this.state.value;
+  },
+
+  labelIsActive: function() {
+    let inputValue = this.state.value;
+
+    return (inputValue != null && String(inputValue).length > 0);
   },
 
   /* Pickadate handlers */
