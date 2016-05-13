@@ -257,6 +257,7 @@ window.Table = React.createClass({
       selectedRowIds = this.getSelectedDataRows(dataRowsId);
     } else {
       selectedRowIds = this.removeSelectedDataRows(dataRowsId);
+      selectedData = {};
     }
 
     this.props.onSelect(event, selectedRowIds, selectedData);
