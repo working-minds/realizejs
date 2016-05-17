@@ -45,7 +45,7 @@ window.NotificationsList = React.createClass({
         <li className={liClass} key={"notification_item_" + i} >
           <a onClick={this.handleClick.bind(this, event, notification.id)}>
             <span>{notification.message}</span>
-            <div className='created_at-notification'>Criado em: {moment(notification.created_at).format("DD/MM/YYYY HH:mm")}</div>
+            <div className='created_at-notification'>Criado em: {moment.utc(notification.created_at).format("DD/MM/YYYY HH:mm")}</div>
           </a>
         </li>
       );

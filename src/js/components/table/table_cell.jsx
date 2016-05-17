@@ -107,7 +107,7 @@ window.TableCell = React.createClass({
   },
 
   dateValue: function(value) {
-    var dateValue = moment(value, moment.ISO_8601);
+    var dateValue = moment.utc(value, moment.ISO_8601);
     if(dateValue.isValid()) {
       return dateValue.format(this.getFormatString());
     }
@@ -116,7 +116,7 @@ window.TableCell = React.createClass({
   },
 
   datetimeValue: function(value) {
-    var dateTimeValue = moment(value, moment.ISO_8601);
+    var dateTimeValue = moment.utc(value, moment.ISO_8601);
     if(dateTimeValue.isValid()) {
       return dateTimeValue.format(this.getFormatString());
     }
