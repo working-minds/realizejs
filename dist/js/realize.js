@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.26 (http://www.wkm.com.br)
+ * Realize v0.8.27 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -67782,6 +67782,10 @@ window.InputAutocomplete = React.createClass({
   },
 
   handleSearchNavigation: function handleSearchNavigation(event) {
+    if (!!this.props.onKeyDown) {
+      this.props.onKeyDown(event);
+      return;
+    }
     var keyCode = event.keyCode;
 
     if (keyCode == 38) {
@@ -69529,7 +69533,7 @@ window.InputDatepicker = React.createClass({
   },
 
   getFormattedDateValue: function getFormattedDateValue() {
-    var date = moment(this.state.value, moment.ISO_8601);
+    var date = moment.utc(this.state.value, moment.ISO_8601);
     if (date.isValid()) {
       return date.format(this.getDateFormat());
     }
@@ -69574,7 +69578,7 @@ window.InputDatepicker = React.createClass({
   },
 
   handlePickadateSet: function handlePickadateSet(pickadateObject) {
-    this.state.value = moment(pickadateObject.select).format();
+    this.state.value = moment.utc(pickadateObject.select).format();
     this.props.onChange(null, this.getFormattedDateValue(), this);
 
     this.setState({
@@ -71354,7 +71358,7 @@ window.NotificationsList = React.createClass({
             'div',
             { className: 'created_at-notification' },
             'Criado em: ',
-            moment(notification.created_at).format("DD/MM/YYYY HH:mm")
+            moment.utc(notification.created_at).format("DD/MM/YYYY HH:mm")
           )
         )
       ));
@@ -71858,7 +71862,7 @@ window.Table = React.createClass({
 
   renderHeaderSelectCell: function renderHeaderSelectCell() {
     if (this.props.selectable === 'none' || this.props.selectable === 'one') {
-      return React.createElement('th', null);
+      return React.createElement('th', { className: "table-select" });
     }
 
     return React.createElement(TableSelectCell, {
@@ -72367,7 +72371,7 @@ window.TableCell = React.createClass({
   },
 
   dateValue: function dateValue(value) {
-    var dateValue = moment(value, moment.ISO_8601);
+    var dateValue = moment.utc(value, moment.ISO_8601);
     if (dateValue.isValid()) {
       return dateValue.format(this.getFormatString());
     }
@@ -72376,7 +72380,7 @@ window.TableCell = React.createClass({
   },
 
   datetimeValue: function datetimeValue(value) {
-    var dateTimeValue = moment(value, moment.ISO_8601);
+    var dateTimeValue = moment.utc(value, moment.ISO_8601);
     if (dateTimeValue.isValid()) {
       return dateTimeValue.format(this.getFormatString());
     }
@@ -72590,12 +72594,12 @@ window.TableRow = React.createClass({
 
   renderSelectCell: function renderSelectCell() {
     if (this.props.selectable === 'none') {
-      return React.createElement('td', null);
+      return React.createElement('td', { className: "table-select" });
     }
 
     var rowSelectableFilter = this.props.rowSelectableFilter;
     if (typeof rowSelectableFilter === "function" && !rowSelectableFilter(this.props.data)) {
-      return React.createElement('td', null);
+      return React.createElement('td', { className: "table-select" });
     }
 
     return React.createElement(TableSelectCell, {
@@ -72877,6 +72881,7 @@ window.TableSelectCell = React.createClass({
   getDefaultProps: function getDefaultProps() {
     return {
       themeClassKey: 'table.select',
+      className: 'table-select',
       rowId: '',
       cellElement: 'td',
       dataRowIds: [],
