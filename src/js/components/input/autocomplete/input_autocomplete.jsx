@@ -137,6 +137,10 @@ window.InputAutocomplete = React.createClass({
   },
 
   handleSearchNavigation: function(event) {
+    if(!!this.props.onKeyDown){
+      this.props.onKeyDown(event);
+      return;
+    }
     var keyCode = event.keyCode;
 
     if(keyCode == 38) {

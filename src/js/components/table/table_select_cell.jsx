@@ -15,6 +15,7 @@ window.TableSelectCell = React.createClass({
   getDefaultProps: function() {
     return {
       themeClassKey: 'table.select',
+      className: 'table-select',
       rowId: '',
       cellElement: 'td',
       dataRowIds: [],
