@@ -61,7 +61,7 @@ window.InputDatepicker = React.createClass({
   },
 
   getFormattedDateValue: function() {
-    var date = moment(this.state.value, moment.ISO_8601);
+    var date = moment.utc(this.state.value, moment.ISO_8601);
     if(date.isValid()) {
       return date.format(this.getDateFormat());
     }
@@ -106,7 +106,7 @@ window.InputDatepicker = React.createClass({
   },
 
   handlePickadateSet: function(pickadateObject) {
-    this.state.value = moment(pickadateObject.select).format();
+    this.state.value = moment.utc(pickadateObject.select).format();
     this.props.onChange(null, this.getFormattedDateValue(), this);
 
     this.setState({
