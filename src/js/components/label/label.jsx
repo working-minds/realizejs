@@ -7,7 +7,8 @@ window.Label = React.createClass({
     name: React.PropTypes.string,
     label: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
     active: React.PropTypes.bool,
-    onClick: React.PropTypes.func
+    onClick: React.PropTypes.func,
+    required: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -15,7 +16,8 @@ window.Label = React.createClass({
       active: false,
       name: '',
       label: '',
-      themeClassKey: 'label'
+      themeClassKey: 'label',
+      required: false
     };
   },
 
@@ -45,10 +47,13 @@ window.Label = React.createClass({
     if(typeof(labelProp) == "boolean" && !labelProp) {
       return <span />;
     }
+    var text = (labelProp || this.props.name)
+    if(this.props.required)
+      text += ' *'
 
     return (
       <label htmlFor={this.props.id} onClick={this.props.onClick} className={this.className()}>
-        {(labelProp || this.props.name)}
+        {text}
       </label>
     );
   }

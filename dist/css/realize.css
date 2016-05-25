@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.27 (http://www.wkm.com.br)
+ * Realize v0.8.28 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 button .preloader-wrapper.small {
@@ -17,7 +17,7 @@ button .preloader-wrapper.small {
 }
 
 .button--floating.button--icon {
-  padding: 0;
+  padding: 0;  
 }
 
 .button-group .button {
