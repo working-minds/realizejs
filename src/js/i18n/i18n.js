@@ -1,11 +1,21 @@
-var utils = require('../utils.js');
+import utils from '../utils';
+import lodash from 'lodash'
 
-var i18n = {
+import ptBR from './locales/pt-BR';
+import en from './locales/en';
+
+import moment from 'moment';
+import 'moment/locale/pt-br';
+
+import numeral from 'numeral'
+import numeralPtBR from 'numeral/languages/pt-br'
+
+const i18n = {
   locales: {},
   currentLocale: 'en',
 
   registerLocale: function(newLocaleObj, locale) {
-    if(!$.isPlainObject(newLocaleObj)) {
+    if(!lodash.isPlainObject(newLocaleObj)) {
       throw 'Invalid Locale Object.'
     }
 
@@ -14,11 +24,14 @@ var i18n = {
     }
 
     var currentLocaleObj = this.locales[locale] || {};
-    this.locales[locale] = $.extend(true, {}, currentLocaleObj, newLocaleObj);
+    this.locales[locale] = lodash.merge(currentLocaleObj, newLocaleObj);
   },
 
   setLocale: function(locale) {
     this.currentLocale = locale;
+    // TODO normalize the locale key names - neither lib follows the standards
+    numeral.language(locale.toLowerCase());
+    moment.locale(locale.toLowerCase());
   },
 
   translate: function(key, throwsException) {
@@ -54,4 +67,11 @@ var i18n = {
   }
 };
 
-module.exports = i18n;
+i18n.registerLocale(en, 'en');
+i18n.registerLocale(ptBR, 'pt-BR');
+// both numeral and moment load english by default
+numeral.language('pt-br', numeralPtBR);
+
+i18n.setLocale(i18n.currentLocale);
+
+export default i18n;

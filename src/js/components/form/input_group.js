@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import filter from 'lodash/filter';
 import merge from 'lodash/merge';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import { Input } from 'components';
-import { CssClassMixin } from 'mixins';
+import { Input } from '../../components';
+import { CssClassMixin } from '../../mixins';
 
 @mixin(CssClassMixin)
 export default class InputGroup extends Component {

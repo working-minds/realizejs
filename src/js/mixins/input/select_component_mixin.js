@@ -1,6 +1,6 @@
-import utils from '../../utils.js';
+import utils from '../../utils';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import map from 'lodash/map';
 
 export default {

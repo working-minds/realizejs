@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { uuid } from 'utils';
-import { mixin } from 'utils/decorators';
+import { uuid } from '../../utils';
+import { mixin } from '../../utils/decorators';
 
 import {
   Container,
   Form,
   Input
-} from 'components';
+} from '../../components';
 
-import { CssClassMixin } from 'mixins';
+import { CssClassMixin } from '../../mixins';
 
 @mixin(CssClassMixin)
 export default class BulkEditForm extends Component {

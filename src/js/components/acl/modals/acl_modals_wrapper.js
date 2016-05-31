@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { autobind, mixin } from 'utils/decorators';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import {
   PermissionManagerModal,
   AddPrincipalsModal,
-} from 'components';
-import { RequestHandlerMixin } from 'mixins';
+} from '../../../components';
+import { RequestHandlerMixin } from '../../../mixins';
 
 @mixin(RequestHandlerMixin)
 export default class AclModalsWrapper extends Component {

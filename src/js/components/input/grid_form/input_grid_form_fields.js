@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../../utils/decorators';
 
 import {
   Button,
   InputGroup,
-} from 'components';
+} from '../../../components';
 
-import { CssClassMixin } from 'mixins';
+import { CssClassMixin } from '../../../mixins';
 
 @mixin(CssClassMixin)
 export default class InputGridFormFields extends Component {

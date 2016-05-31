@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 
 export default class Spinner extends Component {
   static propTypes = {

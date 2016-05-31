@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import i18n from 'i18n';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../../prop_types';
+import i18n from '../../../i18n';
+import { mixin } from '../../../utils/decorators';
 
 import {
   Icon,
   InputText,
   InputAutocompleteList,
-} from 'components';
+} from '../../../components';
 
-import { CssClassMixin } from 'mixins';
+import { CssClassMixin } from '../../../mixins';
 
 @mixin(CssClassMixin)
 export default class InputAutocompleteResult extends Component {

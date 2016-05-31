@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import capitalize from 'lodash/capitalize';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import { CssClassMixin } from 'mixins';
-import { Label } from 'components';
-import * as InputComponents from 'components/input';
+import { CssClassMixin } from '../../mixins';
+import { Label } from '../../components';
+import * as InputComponents from '../../components/input';
 
 @mixin(CssClassMixin)
 export default class Input extends React.Component {

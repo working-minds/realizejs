@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
 
-import {} from 'components';
+import {} from '../../../components';
 
 export default class InputAutocompleteValues extends Component {
   static propTypes = {

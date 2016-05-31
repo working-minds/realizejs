@@ -1,5 +1,5 @@
 import Reflux from 'reflux';
-import FormActions from 'actions/form_actions';
+import FormActions from '../actions/form_actions';
 
 export default Reflux.createStore({
   listenables: [FormActions],

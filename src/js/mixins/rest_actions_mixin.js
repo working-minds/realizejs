@@ -1,7 +1,7 @@
-import PropTypes from 'prop_types';
+import PropTypes from '../prop_types';
 import merge from 'lodash/merge';
-import i18n from 'i18n';
-import config from 'config';
+import Realize from '../realize'
+import i18n from '../i18n';
 
 export default {
   propTypes: {
@@ -19,7 +19,7 @@ export default {
   },
 
   getRestActionUrl (action, id) {
-    var actionUrls = merge(config.restUrls, this.props.actionUrls);
+    var actionUrls = merge(Realize.config.restUrls, this.props.actionUrls);
     var actionUrl = actionUrls[action];
     var actionBaseUrl = this.getActionBaseUrl();
     var actionQueryString = this.getActionQueryString();
@@ -33,7 +33,7 @@ export default {
   },
 
   getRestActionMethod (action) {
-    var actionMethods = merge(config.restMethods, this.props.actionMethods);
+    var actionMethods = merge(Realize.config.restMethods, this.props.actionMethods);
     return actionMethods[action];
   },
 

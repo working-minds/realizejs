@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { uuid } from 'utils';
-import { mixin } from 'utils/decorators';
+import { uuid } from '../../../utils';
+import { mixin } from '../../../utils/decorators';
 
 import {
   InputText,
   Label,
-} from 'components';
+} from '../../../components';
 
 import {
   CssClassMixin,
   InputComponentMixin,
-} from 'mixins';
+} from '../../../mixins';
 
 @mixin(
   CssClassMixin,

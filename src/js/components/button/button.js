@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import i18n from 'i18n/i18n';
+import PropTypes from '../../prop_types';
+import i18n from '../../i18n/i18n';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import CssClassMixin from 'mixins/css_class_mixin';
-import RequestHandlerMixin from 'mixins/request_handler_mixin';
+import CssClassMixin from '../../mixins/css_class_mixin';
+import RequestHandlerMixin from '../../mixins/request_handler_mixin';
 
 @mixin(
   CssClassMixin,

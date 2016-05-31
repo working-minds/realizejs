@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import CssClassMixin from 'mixins/css_class_mixin';
+import CssClassMixin from '../../mixins/css_class_mixin';
 
 @mixin(CssClassMixin)
 export default class Header extends Component {

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import { CssClassMixin, RequestHandlerMixin } from 'mixins';
+import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
 import TableRowActionButton from './table_row_action_button';
 
 @mixin(

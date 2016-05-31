@@ -1,5 +1,5 @@
 import React from 'react'
-import Realize from '../realize.js'
+import themes from '../theme'
 import $ from 'jquery'
 
 window.CssClassMixin = {

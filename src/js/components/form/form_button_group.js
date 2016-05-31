@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import isEmpty from 'lodash/isEmpty';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import { Button } from 'components';
-import { CssClassMixin } from 'mixins';
+import { Button } from '../../components';
+import { CssClassMixin } from '../../mixins';
 
 @mixin(CssClassMixin)
 export default class FormButtonGroup extends Component {

@@ -1,24 +1,26 @@
 import path from 'path';
 import webpack from 'webpack';
+import nodeExternals from 'webpack-node-externals'
 
 export default {
   debug: true,
-  devtool: 'inline-source-map',
+  /* devtool: 'source-map', */
   target: 'web',
 
   entry: {
-    main: path.resolve(__dirname, 'src/js/main.browser.js')
+    app: path.resolve(__dirname, 'src/js/index.js')
   },
 
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'realize.browser.js'
+    filename: 'realize.js'
   },
+
+  externals: [nodeExternals()],
 
   resolve: {
     extensions: ['', '.js', '.jsx'],
     root: [
-      path.resolve(__dirname, 'src/js'),
       path.resolve(__dirname, 'node_modules')
     ]
   },

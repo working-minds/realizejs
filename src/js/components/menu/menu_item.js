@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 
-import Button from 'components/button/button';
+import Button from '../../components/button/button';
 
 export default class MenuItem extends Component {
   static propTypes = {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 
 import {
   Modal,
@@ -9,12 +9,12 @@ import {
   ModalFooter,
   Form,
   FormButtonGroup
-} from 'components';
+} from '../../components';
 
 import {
   CssClassMixin,
   ContainerMixin
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

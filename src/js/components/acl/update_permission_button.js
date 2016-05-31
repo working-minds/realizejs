@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 
-import { Button } from 'components';
+import { Button } from '../../components';
 
 export default class UpdatePermissionButton extends Component {
   static propTypes = {

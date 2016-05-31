@@ -1,5 +1,5 @@
-import PropTypes from 'prop_types';
-import i18n from 'i18n/i18n';
+import PropTypes from '../prop_types';
+import i18n from '../i18n/i18n';
 
 export default {
   propTypes: {

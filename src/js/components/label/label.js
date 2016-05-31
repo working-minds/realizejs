@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop_types';
-import {mixin} from 'utils/decorators';
+import React, { Component } from 'react';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 
-import CssClassMixin from 'mixins/css_class_mixin';
+import CssClassMixin from '../../mixins/css_class_mixin';
 
 @mixin(CssClassMixin)
 export default class Label extends Component {

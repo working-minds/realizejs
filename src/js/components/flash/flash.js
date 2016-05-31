@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-import CssClassMixin from 'mixins/css_class_mixin';
+import CssClassMixin from '../../mixins/css_class_mixin';
 
 import FlashContent from './flash_content';
 import FlashDismmiss from './flash_dismiss';

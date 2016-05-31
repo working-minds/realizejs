@@ -1,6 +1,4 @@
-import themes from '../theme';
-
-themes.registerTheme({
+export default {
   grid: {
     cssClass: 'grid row',
 
@@ -365,4 +363,4 @@ themes.registerTheme({
     edit: 'mode_edit',
     destroy: 'delete'
   }
-}, 'materialize');
+};

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../../prop_types';
+import { mixin } from '../../../utils/decorators';
 
 import {
   CssClassMixin,
   InputComponentMixin,
   SelectComponentMixin
-} from 'mixins';
+} from '../../../mixins';
 
-import { InputCheckbox, Label } from 'components';
+import { InputCheckbox, Label } from '../../../components';
 
 @mixin(
   CssClassMixin,

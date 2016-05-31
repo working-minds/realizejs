@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
 import {
   InputGroup,
   FormButtonGroup
-} from 'components';
+} from '../../components';
 
 import {
   CssClassMixin,
   ContainerMixin,
   FormErrorHandlerMixin,
   FormSuccessHandlerMixin
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

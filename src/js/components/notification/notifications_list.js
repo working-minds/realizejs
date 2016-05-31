@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
+import i18n from '../../i18n/i18n';
 import moment from 'moment';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
 import {
   RequestHandlerMixin,
   ModalRendererMixin
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   RequestHandlerMixin,
@@ -57,14 +58,14 @@ export default class NotificationsList extends Component {
       component.push(
         <div className='box-see-all' key="notification_see_all">
           <div className='divider'></div>
-          <span><a>{I18n.t('labels.not-notifications')}</a></span>
+          <span><a>{i18n.t('buttons.noNotifications')}</a></span>
         </div>
       );
     } else {
       component.push(
         <div className='box-see-all' key="notification_see_all">
           <div className='divider'></div>
-          <span><a href='/notifications'>{I18n.t('buttons.see-all')}</a></span>
+          <span><a href='/notifications'>{i18n.t('buttons.seeAll')}</a></span>
         </div>
       );
     }

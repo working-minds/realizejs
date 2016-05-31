@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { autobind, mixin } from 'utils/decorators';
+import PropTypes from '../../../prop_types';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import {
   InputCheckbox,
   Label,
-} from 'components';
+} from '../../../components';
 
 import {
   CssClassMixin,
-} from 'mixins';
+} from '../../../mixins';
 
 @mixin(CssClassMixin)
 export default class InputAutocompleteOption extends Component {

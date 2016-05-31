@@ -1,21 +1,22 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
-import utils from '../../utils.js';
+import { mixin } from '../../utils/decorators';
+import Realize from '../../realize'
+import utils from '../../utils';
 
 import {
   CssClassMixin,
   RequestHandlerMixin,
   RestActionsMixin,
   GridActionsMixin
-} from 'mixins';
+} from '../../mixins';
 
 import {
   GridFilter,
   GridTable,
   GridPagination
-} from 'components';
+} from '../../components';
 
 @mixin(
   CssClassMixin,

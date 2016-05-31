@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { autobind } from 'utils/decorators';
+import { autobind } from '../../../utils/decorators';
 
-import { Button } from 'components';
+import { Button } from '../../../components';
 
 export default class CloseModalButton extends Component {
   static propTypes = {

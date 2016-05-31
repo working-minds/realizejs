@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 
-import { CssClassMixin } from 'mixins';
-import { Icon } from 'components';
+import { CssClassMixin } from '../../mixins';
+import { Icon } from '../../components';
 
 @mixin(CssClassMixin)
 export default class PaginationItem extends Component {

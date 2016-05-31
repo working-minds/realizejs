@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { autobind, mixin } from 'utils/decorators';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import {
   InputDatefilterSelect,
   InputDatefilterBody,
-} from 'components';
+} from '../../../components';
 
 import {
   CssClassMixin,
   InputComponentMixin,
-} from 'mixins';
+} from '../../../mixins';
 
 @mixin(
   CssClassMixin,

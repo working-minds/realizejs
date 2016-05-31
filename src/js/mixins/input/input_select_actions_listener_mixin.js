@@ -1,5 +1,5 @@
-import { i18n } from 'realize';
-import InputSelectStore from 'stores/input_select_store';
+import i18n  from '../../i18n';
+import InputSelectStore from '../../stores/input_select_store';
 
 export default {
   componentDidMount: function() {

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import i18n from 'i18n';
-import { autobind, mixin } from 'utils/decorators';
+import i18n from '../../../i18n';
+import { autobind, mixin } from '../../../utils/decorators';
 
-import { InputSelectOption } from 'components';
+import { InputSelectOption } from '../../../components';
 
 import {
   CssClassMixin,
@@ -13,7 +13,7 @@ import {
   SelectComponentMixin,
   InputSelectActionsListenerMixin,
   MaterializeSelectMixin
-} from 'mixins';
+} from '../../../mixins';
 
 @mixin(
   CssClassMixin,

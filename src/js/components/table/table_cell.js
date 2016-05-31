@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import moment from 'moment';
-import numeral from 'numeralWithLocale';
-import i18n from 'i18n/i18n';
+import numeral from 'numeral';
+import i18n from '../../i18n/i18n';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import CssClassMixin from 'mixins/css_class_mixin';
+import CssClassMixin from '../../mixins/css_class_mixin';
 
 @mixin(CssClassMixin)
 export default class TableCell extends Component {
@@ -27,11 +27,6 @@ export default class TableCell extends Component {
     formatString: null,
     component: null
   };
-
-  componentWillMoun () {
-    let currentLanguage = i18n.currentLocale.toLowerCase();
-    numeral.language(currentLanguage);
-  }
 
   renderValue () {
     let format = this.props.format;
