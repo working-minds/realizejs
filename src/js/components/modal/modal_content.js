@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 
-import { CssClassMixin } from 'mixins';
+import { CssClassMixin } from '../../mixins';
 
 @mixin(CssClassMixin)
 export default class ModalContent extends Component {

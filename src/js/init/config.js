@@ -1,4 +1,5 @@
-export const config = {
+
+export default {
   restUrls: {
     index: ':url',
     show: ':url/:id',
@@ -39,7 +40,3 @@ export const config = {
     }
   }
 }
-
-export const setConfig = function(newConfig) {
-  $.extend(true, exports.config, newConfig);
-};

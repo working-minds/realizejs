@@ -1,9 +1,10 @@
 import { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { themes, i18n } from 'realize';
-import { autobind } from 'utils/decorators';
+import themes from '../../theme'
+import i18n from '../../i18n';
+import { autobind } from '../../utils/decorators';
 
 export default class InputBase extends Component {
   static propTypes = {
@@ -82,7 +83,7 @@ export default class InputBase extends Component {
   @autobind
   handleReset() {
     console.log(this.isMounted());
-    
+
     if (this.isMounted() && !this.inputNodeIsCheckbox()) {
       this.setState({
         value: null,

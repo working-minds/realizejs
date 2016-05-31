@@ -1,13 +1,14 @@
 {
-  "name": "realize",
-  "version": "0.8.27",
+  "name": "realizejs-build",
+  "private": true,
+  "version": "0.9.0",
   "description": "A rich set of UI components based on Material Design",
   "authors": [
     "Pedro Jesus <pjesus@wkm.com.br>",
     "Lucas Toledo <ltoledo@wkm.com.br>",
-    "Hudson Gomes <hgomes@wkm.com.br>",
+    "Hudson Gomes",
     "Rafael Ferrari <rferrari@wkm.com.br>",
-    "Ariel Lindgren"
+    "Ariel Lindgren <ariel@wkm.com.br>"
   ],
   "main": "./dist/realize.node.js",
   "license": "MIT",
@@ -49,6 +50,7 @@
     "phantomjs-prebuilt": "^2.1.7",
     "react-addons-test-utils": "^0.14.7",
     "react-tools": "^0.13.3",
+    "rimraf": "^2.5.2",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
     "webpack": "^1.13.0",
@@ -72,19 +74,20 @@
     "react-color": "^1.3.7",
     "react-dom": "^0.14.7",
     "reflux": "^0.3.0",
-    "string": "^3.3.0",
     "traits-decorator": "^1.0.1"
   },
   "scripts": {
-    "build:browser": "webpack --config webpack.browser.config.babel.js",
-    "build:node": "webpack --config webpack.node.config.babel.js",
-    "watch:browser": "webpack --config webpack.browser.config.babel.js --watch",
-    "watch:node": "webpack --config webpack.node.config.babel.js --watch",
-    "webpack": "webpack --config webpack.config.babel.js",
-    "watch": "webpack --config webpack.config.babel.js --watch",
+    "build": "npm run build:node",
+    "build:node": "babel ./src/js --out-dir ./build",
+    "build:webpack": "webpack --config webpack.config.babel.js",
+
+    "clean:build": "rimraf build",
+
+    "webpack:watch": "webpack --config webpack.config.babel.js --watch",
+
     "test": "npm run test:karma -- --single-run",
     "test:watch": "npm run test:karma -- --auto-watch",
-    "test:karma": "karma start test/karma.conf.js",
-    "build": "webpack --config webpack.config.babel.js"
+    "test:karma": "karma start test/karma.conf.js"
+
   }
 }

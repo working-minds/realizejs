@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import merge from 'lodash/merge';
 import findIndex from 'lodash/findIndex';
-import { uuid } from 'utils';
-import { mixin } from 'utils/decorators';
+import { uuid } from '../../utils';
+import { mixin } from '../../utils/decorators';
 
 import {
   Form
-} from 'components';
+} from '../../components';
 
 import {
   CssClassMixin,
   RestActionsMixin
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { autobind, mixin } from 'utils/decorators';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import {
   InputAutocompleteSelect,
   InputAutocompleteResult,
   InputAutocompleteValues,
-} from 'components/input/autocomplete';
+} from '../../../components/input/autocomplete';
 
 import {
   CssClassMixin,
   InputComponentMixin,
   SelectComponentMixin,
   InputSelectActionsListenerMixin,
-} from 'mixins';
+} from '../../../mixins';
 
 @mixin(
   CssClassMixin,

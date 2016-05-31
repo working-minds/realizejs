@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { autobind, mixin } from 'utils/decorators';
-import { uuid } from 'utils';
+import { autobind, mixin } from '../../utils/decorators';
+import { uuid } from '../../utils';
 
-import { Input } from 'components';
-import { RequestHandlerMixin } from 'mixins';
+import { Input } from '../../components/input';
+import { RequestHandlerMixin } from '../../mixins';
 
 @mixin(RequestHandlerMixin)
 export default class EditPermissions extends Component {

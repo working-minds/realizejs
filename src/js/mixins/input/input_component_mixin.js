@@ -1,7 +1,9 @@
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { themes, i18n } from 'realize';
+import i18n from '../../i18n'
+import themes from '../../theme'
+
 
 export default {
   propTypes: {

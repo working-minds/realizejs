@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { config, i18n, themes } from 'realize'
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
 
-import { CssClassMixin } from 'mixins';
+import Realize from '../../realize'
+import i18n from '../../i18n'
+import themes from '../../theme'
+import { mixin } from '../../utils/decorators';
+
+import { CssClassMixin } from '../../mixins';
 
 import TableActions from './table_actions';
 import TableSelectCell from './table_select_cell';
@@ -89,7 +92,7 @@ export default class Table extends Component {
   }
 
   componentDidMount () {
-    this.sortConfigs = $.extend({}, config.grid.sort, this.props.sortConfigs);
+    this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
 
     if(!!this.props.customTableHeader) {
       let $thead = $(ReactDOM.findDOMNode(this.refs.thead));

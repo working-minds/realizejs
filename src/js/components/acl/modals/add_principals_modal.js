@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { autobind, mixin } from 'utils/decorators';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import {
   Modal,
@@ -11,9 +11,9 @@ import {
   CloseModalButton,
   Button,
   Grid,
-} from 'components';
+} from '../../../components';
 
-import { RequestHandlerMixin } from 'mixins';
+import { RequestHandlerMixin } from '../../../mixins';
 
 @mixin(RequestHandlerMixin)
 export default class AddPrincipalsModal extends Component {

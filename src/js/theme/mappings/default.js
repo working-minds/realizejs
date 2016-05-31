@@ -1,6 +1,4 @@
-import themes from '../theme';
-
-themes.registerTheme({
+export default {
   grid: {
     cssClass: 'grid',
 
@@ -80,4 +78,4 @@ themes.registerTheme({
       cssClass: ''
     }
   }
-}, 'default');
+};

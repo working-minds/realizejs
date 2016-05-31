@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../../utils/decorators';
 
 import {
   GridForm,
   InputGridFormFields,
   InputHidden,
-} from 'components';
+} from '../../../components';
 
 import {
   CssClassMixin,
   InputComponentMixin,
-} from 'mixins';
+} from '../../../mixins';
 
 @mixin(
   CssClassMixin,

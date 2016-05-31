@@ -1,7 +1,8 @@
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 
-import FormStore from 'stores/form_store';
+import FormStore from '../../stores/form_store';
+import capitalize from 'lodash/capitalize'
 
 export default {
   propTypes: {
@@ -40,7 +41,7 @@ export default {
 
   executePropListener: function(formState) {
     var formAction = formState.action;
-    var propListenerName = "onForm" + S(formAction).capitalize().s;
+    var propListenerName = "onForm" + capitalize(formAction);
     var propListener = this.props[propListenerName];
 
     if(typeof propListener == "function") {
@@ -52,7 +53,7 @@ export default {
 
   executeComponentListener: function(formState) {
     var formAction = formState.action;
-    var componentListenerName = "handleForm" + S(formAction).capitalize().s;
+    var componentListenerName = "handleForm" + capitalize(formAction);
     var componentListener = this[componentListenerName];
 
     if(typeof componentListener == "function") {

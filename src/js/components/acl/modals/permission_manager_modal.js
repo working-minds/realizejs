@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { autobind, mixin } from 'utils/decorators';
+import { autobind, mixin } from '../../../utils/decorators';
 import difference from 'lodash/difference';
 
 import {
@@ -12,9 +12,9 @@ import {
   PermissionManager,
   CloseModalButton,
   UpdatePermissionsButton,
-} from 'components';
+} from '../../../components';
 
-import { RequestHandlerMixin } from 'mixins';
+import { RequestHandlerMixin } from '../../../mixins';
 
 @mixin(RequestHandlerMixin)
 export default class PermissionManagerModal extends Component {

@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
 import {
   InputMasked,
   Label,
-} from 'components';
+} from '../../components';
 
 import {
   CssClassMixin,
   InputComponentMixin,
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

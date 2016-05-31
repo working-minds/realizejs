@@ -1,7 +1,7 @@
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 
-import { Flash } from 'components';
+import { Flash } from '../../components';
 
 export default {
   propTypes: {

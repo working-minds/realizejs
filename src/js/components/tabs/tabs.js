@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { config, i18n, themes } from 'realize';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
 import {
   CssClassMixin,
   ContainerMixin
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

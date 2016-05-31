@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../../utils/decorators';
 
-import { InputAutocompleteOption } from 'components';
-import { CssClassMixin } from 'mixins';
+import { InputAutocompleteOption } from '../../../components';
+import { CssClassMixin } from '../../../mixins';
 
 @mixin(CssClassMixin)
 export default class InputAutocompleteList extends Component {

@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 
 import ColorPicker from 'react-color';
 
 import {
   Label,
   InputHidden
-} from 'components';
+} from '../../components';
 
 import {
   CssClassMixin,
   InputComponentMixin
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

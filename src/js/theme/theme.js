@@ -1,13 +1,16 @@
-import $ from 'jquery';
+import lodash from 'lodash';
 import utils from '../utils';
 
-export default {
+import themeDefault from './mappings/default';
+import themeMaterialize from './mappings/materialize';
+
+const themes = {
   themes: {},
   defaultTheme: 'default',
   currentTheme: 'materialize',
 
   registerTheme (newThemeObj, theme) {
-    if(!$.isPlainObject(newThemeObj)) {
+    if(!lodash.isPlainObject(newThemeObj)) {
       throw 'Invalid Theme Object.'
     }
 
@@ -16,7 +19,7 @@ export default {
     }
 
     var currentThemeObj = this.themes[theme] || {};
-    this.themes[theme] = $.extend({}, currentThemeObj, newThemeObj);
+    this.themes[theme] = lodash.merge({}, currentThemeObj, newThemeObj);
   },
 
   getCurrent () {
@@ -49,3 +52,8 @@ export default {
     return themeClass.trim();
   }
 }
+
+themes.registerTheme(themeDefault, 'default');
+themes.registerTheme(themeMaterialize, 'materialize');
+
+export default themes;

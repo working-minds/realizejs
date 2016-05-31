@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 
-import { Button } from 'components';
+import { Button } from '../../components';
 
 import {
   RequestHandlerMixin,
   ModalRendererMixin,
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   RequestHandlerMixin,

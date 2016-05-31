@@ -1,22 +1,20 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Reflux from 'reflux';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import {
-  ModalHeader,
-  ModalContent,
-  ModalFooter
-} from 'components/modal';
+import ModalHeader from './modal_header'
+import ModalContent from './modal_content'
+import ModalFooter from './modal_footer'
 
 import {
   CssClassMixin,
   ContainerMixin
-} from 'mixins';
+} from '../../mixins';
 
-import { ModalStore } from 'stores';
+import { ModalStore } from '../../stores';
 
 @mixin(
   Reflux.connect(ModalStore, 'modalStore'),

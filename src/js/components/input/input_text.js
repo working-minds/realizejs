@@ -1,12 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop_types';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import { mixin } from '../../utils/decorators';
 
 import InputBase from './input_base';
 
 import {
   CssClassMixin,
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

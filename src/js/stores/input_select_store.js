@@ -1,5 +1,5 @@
 import Reflux from 'reflux';
-import InputSelectActions from 'actions/input_select_actions';
+import InputSelectActions from '../actions/input_select_actions';
 
 export default Reflux.createStore({
   listenables: [InputSelectActions],

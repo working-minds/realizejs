@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 
-import Menu from 'components/menu/menu';
+import Menu from '../../components/menu/menu';
 
 export default class HeaderMenu extends Component {
   static propTypes = {

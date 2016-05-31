@@ -1,5 +1,6 @@
 import Reflux from 'reflux';
-import ModalActions from 'actions/modal_actions';
+import ModalActions from '../actions/modal_actions';
+import $ from 'jquery'
 
 export default Reflux.createStore({
   listenables: [ModalActions],

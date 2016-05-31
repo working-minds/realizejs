@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../../prop_types';
 import $ from 'jquery';
-import i18n from 'i18n';
-import { autobind, mixin } from 'utils/decorators';
+import i18n from '../../../i18n';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import {
   Button,
   Input,
-} from 'components';
+} from '../../../components';
 
-import { CssClassMixin } from 'mixins';
+import { CssClassMixin } from '../../../mixins';
 
 @mixin(CssClassMixin)
 export default class InputDatefilterBody extends Component {

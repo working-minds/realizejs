@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import moment from 'momentWithLocale';
-import { uuid } from 'utils';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import i18n from '../../i18n/i18n';
+import moment from 'moment';
+import { uuid } from '../../utils';
+import { mixin } from '../../utils/decorators';
 
 import {
   CssClassMixin,
   InputComponentMixin
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,
@@ -30,8 +31,6 @@ export default class InputDatepicker extends Component {
   };
 
   componentDidMount () {
-    var currentLocale = Realize.i18n.currentLocale.toLowerCase();
-    moment.locale(currentLocale);
     this.setPickadatePlugin();
   }
 

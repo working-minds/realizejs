@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import i18n from 'i18n';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import i18n from '../../i18n';
+import { mixin } from '../../utils/decorators';
 
 import {
   InputHidden,
   Label,
-} from 'components';
+} from '../../components';
 
 import {
   CssClassMixin,
   InputComponentMixin,
   CheckboxComponentMixin,
-} from 'mixins';
+} from '../../mixins';
 
 @mixin(
   CssClassMixin,

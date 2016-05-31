@@ -1,4 +1,4 @@
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 
 export default {

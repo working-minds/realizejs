@@ -1,4 +1,4 @@
-Realize.i18n.registerLocale({
+export default {
   true: 'Yes',
   false: 'No',
   ok: 'Ok',
@@ -96,6 +96,13 @@ Realize.i18n.registerLocale({
     inputSelect: {
       invalidOption: "Invalid format for select option. (Expected format: {name:\"\", value:\"\"})"
     }
+  },
+
+  notifications: {
+    buttons: {
+     noNotifications: "No notifications",
+     seeAll:  "See all"
+    }
   }
 
-}, 'en');
+}

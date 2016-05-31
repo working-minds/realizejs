@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from 'utils/decorators';
+import { mixin } from '../../utils/decorators';
 
-import CssClassMixin from 'mixins/css_class_mixin';
+import CssClassMixin from '../../mixins/css_class_mixin';
 
-import Menu from 'components/menu/menu';
+import Menu from '../../components/menu/menu';
 
 @mixin(CssClassMixin)
 export default class SideNav extends Component {

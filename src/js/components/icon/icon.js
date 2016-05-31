@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop_types';
-import themes from 'theme/theme';
-import { mixin } from 'utils/decorators';
+import PropTypes from '../../prop_types';
+import themes from '../../theme/theme';
+import { mixin } from '../../utils/decorators';
 
-import CssClassMixin from 'mixins/css_class_mixin';
-import TooltipMixin from 'mixins/tooltip_mixin';
+import CssClassMixin from '../../mixins/css_class_mixin';
+import TooltipMixin from '../../mixins/tooltip_mixin';
 
 @mixin(
   CssClassMixin,

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop_types';
+import PropTypes from '../../prop_types';
 import $ from 'jquery';
 
-import { NotificationNumber, NotificationList } from 'components/notification';
+import { NotificationNumber, NotificationList } from '../../components/notification';
 
 export default class HeaderNotifications extends Component {
   static propTypes = {
