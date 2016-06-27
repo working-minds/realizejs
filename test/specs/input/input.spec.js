@@ -6,14 +6,8 @@ import {Input} from 'components'
 import {assert} from 'chai';
 import {shallow} from 'enzyme';
 
-describe('Relize', () => {
+describe('Input', () => {
   it('exists', () => {
-    assert.ok(Realize);
-  });
-  it('has a config', () => {
-    assert.ok(Realize.config);
-  });
-  it('has a Input', () => {
     assert.ok(Input);
   });
   it('renders a input field', () => {
@@ -23,4 +17,3 @@ describe('Relize', () => {
     assert.equal(content.find('InputText').get(0).props.value, "me2");
   })
 });
-
