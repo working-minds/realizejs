@@ -1,3 +1,4 @@
+import Realize from '../../realize'
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import capitalize from 'lodash/capitalize';
@@ -101,7 +102,7 @@ export default class Input extends React.Component {
 
   renderComponentInput () {
     var componentInputClass = this.getInputComponentClass(this.props.component);
-    var isGrid = (componentInputClass === InputGridForm);
+    var isGrid = (componentInputClass === InputComponents.InputGridForm);
 
     var componentInputProps = React.__spread(this.propsWithoutCSS(), {
       originalId: this.props.id,
