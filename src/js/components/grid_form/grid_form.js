@@ -5,6 +5,7 @@ import merge from 'lodash/merge';
 import findIndex from 'lodash/findIndex';
 import { uuid } from '../../utils';
 import { mixin } from '../../utils/decorators';
+import {Grid} from '../grid';
 
 import {
   Form

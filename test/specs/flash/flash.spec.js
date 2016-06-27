@@ -1,0 +1,22 @@
+import React from 'react'
+import $ from 'jquery'
+import ReactDOM from 'react-dom'
+import Realize from 'realize'
+import {Flash} from 'components/flash'
+import {assert} from 'chai';
+import {shallow} from 'enzyme';
+
+describe('Flash', () => {
+  it('exists', () => {
+    assert.ok(Flash);
+  });
+  it('renders a flash', () => {
+    const content = shallow(
+      <Flash
+              message='Mensagem do Tipo info'
+              type='info'
+      />
+    );
+    assert.equal(content.find('FlashContent').props().message, "Mensagem do Tipo info");
+  })
+});
