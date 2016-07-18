@@ -1,7 +1,6 @@
 ### Base Development Environment ###
 .idea
 node_modules
-dist
 bower_components
 tmp
 .sass-cache

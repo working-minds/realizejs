@@ -1,4 +1,4 @@
-import utils from '../utils';
+import {getProp} from '../utils';
 import lodash from 'lodash'
 
 import ptBR from './locales/pt-BR';
@@ -50,7 +50,7 @@ const i18n = {
     var currentLocale = this.currentLocale;
     var localeObj = this.locales[currentLocale];
 
-    var translation = utils.getProp(key, localeObj);
+    var translation = getProp(key, localeObj);
     if(!translation) {
       if(throwsException) {
         throw 'Key not found in locale object';
