@@ -8,9 +8,9 @@ var _prop_types = require('../../prop_types');
 
 var _prop_types2 = _interopRequireDefault(_prop_types);
 
-var _mergewith = require('lodash/mergewith');
+var _mergeWith = require('lodash/mergeWith');
 
-var _mergewith2 = _interopRequireDefault(_mergewith);
+var _mergeWith2 = _interopRequireDefault(_mergeWith);
 
 var _isArray = require('lodash/isArray');
 
@@ -57,7 +57,7 @@ exports.default = {
 
 
   getActionButtons: function getActionButtons() {
-    return (0, _mergewith2.default)(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
+    return (0, _mergeWith2.default)(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
   },
 
   mergeActionButtons: function mergeActionButtons(defaultObject, propsObject) {
