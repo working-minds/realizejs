@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _utils = require('../utils');
 
-var _utils2 = _interopRequireDefault(_utils);
-
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -76,7 +74,7 @@ var i18n = {
     var currentLocale = this.currentLocale;
     var localeObj = this.locales[currentLocale];
 
-    var translation = _utils2.default.getProp(key, localeObj);
+    var translation = (0, _utils.getProp)(key, localeObj);
     if (!translation) {
       if (throwsException) {
         throw 'Key not found in locale object';
