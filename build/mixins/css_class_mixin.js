@@ -12,13 +12,17 @@ var _jquery = require('jquery');
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _prop_types = require('../prop_types');
+
+var _prop_types2 = _interopRequireDefault(_prop_types);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 window.CssClassMixin = {
   propTypes: {
-    clearTheme: PropTypes.bool,
-    className: PropTypes.string,
-    themeClassKey: PropTypes.string
+    clearTheme: _prop_types2.default.bool,
+    className: _prop_types2.default.string,
+    themeClassKey: _prop_types2.default.string
   },
 
   getDefaultProps: function getDefaultProps() {
