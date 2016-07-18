@@ -10,7 +10,7 @@
     "Rafael Ferrari <rferrari@wkm.com.br>",
     "Ariel Lindgren <ariel@wkm.com.br>"
   ],
-  "main": "./dist/realize.node.js",
+  "main": "./build/index.js",
   "license": "MIT",
   "homepage": "http://www.wkm.com.br",
   "repository": {
