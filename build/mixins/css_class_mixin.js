@@ -1,5 +1,9 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -18,7 +22,7 @@ var _prop_types2 = _interopRequireDefault(_prop_types);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-window.CssClassMixin = {
+exports.default = {
   propTypes: {
     clearTheme: _prop_types2.default.bool,
     className: _prop_types2.default.string,
@@ -30,7 +34,6 @@ window.CssClassMixin = {
       clearTheme: false
     };
   },
-
   themedClassName: function themedClassName(themeClassKey, className) {
     var themedClassName = '';
 
@@ -44,14 +47,12 @@ window.CssClassMixin = {
 
     return themedClassName;
   },
-
   className: function className() {
     var themeClassKey = this.getThemeClassKey();
     var className = this.props.className;
 
     return this.themedClassName(themeClassKey, className);
   },
-
   getThemeClassKey: function getThemeClassKey() {
     var themeClassKey = this.props.themeClassKey;
     if (!!this.state && !!this.state.themeClassKey) {
@@ -60,7 +61,6 @@ window.CssClassMixin = {
 
     return themeClassKey;
   },
-
   propsWithoutCSS: function propsWithoutCSS() {
     var cssProps = ['className', 'themeClassKey'];
     var props = _jquery2.default.extend({}, this.props);
