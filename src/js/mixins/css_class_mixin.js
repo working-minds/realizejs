@@ -1,6 +1,7 @@
 import React from 'react'
 import themes from '../theme'
 import $ from 'jquery'
+import PropTypes from '../prop_types';
 
 window.CssClassMixin = {
   propTypes: {
