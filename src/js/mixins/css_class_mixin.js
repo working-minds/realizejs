@@ -3,21 +3,21 @@ import themes from '../theme'
 import $ from 'jquery'
 import PropTypes from '../prop_types';
 
-window.CssClassMixin = {
+export default {
   propTypes: {
     clearTheme: PropTypes.bool,
     className: PropTypes.string,
     themeClassKey: PropTypes.string
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       clearTheme: false
     };
   },
 
-  themedClassName: function(themeClassKey, className) {
-    var themedClassName = '';
+  themedClassName(themeClassKey, className) {
+    let themedClassName = '';
 
     if(!this.props.clearTheme && !!themeClassKey) {
       themedClassName += themes.getCssClass(themeClassKey);
@@ -30,15 +30,15 @@ window.CssClassMixin = {
     return themedClassName;
   },
 
-  className: function() {
-    var themeClassKey = this.getThemeClassKey();
-    var className = this.props.className;
+  className() {
+    const themeClassKey = this.getThemeClassKey();
+    const className = this.props.className;
 
     return this.themedClassName(themeClassKey, className);
   },
 
-  getThemeClassKey: function() {
-    var themeClassKey = this.props.themeClassKey;
+  getThemeClassKey() {
+    let themeClassKey = this.props.themeClassKey;
     if(!!this.state && !!this.state.themeClassKey) {
       themeClassKey = this.state.themeClassKey;
     }
@@ -46,9 +46,9 @@ window.CssClassMixin = {
     return themeClassKey;
   },
 
-  propsWithoutCSS: function() {
-    var cssProps = ['className', 'themeClassKey'];
-    var props = $.extend({}, this.props);
+  propsWithoutCSS() {
+    const cssProps = ['className', 'themeClassKey'];
+    const props = $.extend({}, this.props);
     $.each(cssProps, function(i, cssProp) {
       delete props[cssProp];
     }.bind(this));
