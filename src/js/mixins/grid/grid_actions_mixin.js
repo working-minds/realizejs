@@ -1,5 +1,5 @@
 import PropTypes from '../../prop_types';
-import mergeWith from 'lodash/mergewith';
+import mergeWith from 'lodash/mergeWith';
 import isArray from 'lodash/isArray';
 import $ from 'jquery';
 
