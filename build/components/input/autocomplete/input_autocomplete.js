@@ -311,8 +311,7 @@ var InputAutocomplete = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _m
   maxOptionsParam: _prop_types2.default.string,
   searchParam: _prop_types2.default.string,
   actionButtons: _prop_types2.default.array,
-  onSearchValueChange: _prop_types2.default.func,
-  value: _prop_types2.default.array
+  onSearchValueChange: _prop_types2.default.func
 }, _class3.defaultProps = {
   maxOptions: 99,
   maxOptionsParam: 'limit',
