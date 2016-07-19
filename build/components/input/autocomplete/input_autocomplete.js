@@ -86,7 +86,8 @@ var InputAutocomplete = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _m
 
     return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(InputAutocomplete)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
       active: 0,
-      searchValue: ''
+      searchValue: '',
+      value: []
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
@@ -310,7 +311,8 @@ var InputAutocomplete = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _m
   maxOptionsParam: _prop_types2.default.string,
   searchParam: _prop_types2.default.string,
   actionButtons: _prop_types2.default.array,
-  onSearchValueChange: _prop_types2.default.func
+  onSearchValueChange: _prop_types2.default.func,
+  value: _prop_types2.default.array
 }, _class3.defaultProps = {
   maxOptions: 99,
   maxOptionsParam: 'limit',
