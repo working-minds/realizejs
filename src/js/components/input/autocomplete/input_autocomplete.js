@@ -30,6 +30,7 @@ export default class InputAutocomplete extends Component {
     searchParam: PropTypes.string,
     actionButtons: PropTypes.array,
     onSearchValueChange: PropTypes.func,
+    value: PropTypes.array,
   };
 
   static defaultProps = {
@@ -43,6 +44,7 @@ export default class InputAutocomplete extends Component {
   state = {
     active: 0,
     searchValue: '',
+    value: [],
   };
 
   componentWillMount() {
