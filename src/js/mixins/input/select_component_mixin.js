@@ -68,7 +68,8 @@ export default {
       }
     }
 
-    if(this.state.value.length > 0) {
+    const value = this.ensureIsArray(this.state.value);
+    if(value.length > 0) {
       this.triggerDependableChanged();
     }
   },
@@ -89,9 +90,11 @@ export default {
   },
 
   selectedOptions () {
-    var selectedOptions = [];
+    const value = this.ensureIsArray(this.state.value);
+    let selectedOptions = [];
+
     $.each(this.state.optionsCache, function(i, option) {
-      if(this.state.value.indexOf(option.value) >= 0) {
+      if(value.indexOf(option.value) >= 0) {
         selectedOptions.push(option);
       }
     }.bind(this));
@@ -222,7 +225,7 @@ export default {
 
   triggerDependableChanged: function() {
     var $valuesElement = $(ReactDOM.findDOMNode(this.refs.select));
-    var optionValues = this.state.value;
+    var optionValues = this.ensureIsArray(this.state.value);
 
     $valuesElement.trigger('dependable_changed', [optionValues]);
   },
