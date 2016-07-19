@@ -32,9 +32,10 @@ exports.default = {
       return '';
     }
 
+    var resourceKey = void 0;
     try {
-      var _resourceKey = 'resources.' + resource + '.fields.' + name;
-      return _i18n2.default.t(_resourceKey, true);
+      resourceKey = 'resources.' + resource + '.fields.' + name;
+      return _i18n2.default.t(resourceKey, true);
     } catch (err) {
       resourceKey = 'resources.defaults.fields.' + name;
       try {
