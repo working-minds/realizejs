@@ -19,6 +19,8 @@ var _prop_types2 = _interopRequireDefault(_prop_types);
 
 var _decorators = require('../../../utils/decorators');
 
+var _utils = require('../../../utils');
+
 var _components = require('../../../components');
 
 var _mixins = require('../../../mixins');
@@ -103,11 +105,6 @@ var InputAutocompleteOption = (_dec = (0, _decorators.mixin)(_mixins.CssClassMix
       event.preventDefault();
     }
   }, {
-    key: 'parseOptionId',
-    value: function parseOptionId() {
-      return 'autocomplete_option_' + this.props.id + '_' + this.props.value;
-    }
-  }, {
     key: 'handleSelect',
     value: function handleSelect(event) {
       var option = {
@@ -139,7 +136,7 @@ var InputAutocompleteOption = (_dec = (0, _decorators.mixin)(_mixins.CssClassMix
           checked: this.props.selected,
           onChange: this.disableEvent,
           onClick: this.disableEvent,
-          key: this.generateUUID()
+          key: _utils.uuid.v4()
         }),
         _react2.default.createElement(_components.Label, { id: this.parseOptionId(), name: this.props.name })
       );

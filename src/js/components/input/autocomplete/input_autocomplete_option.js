@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from '../../../prop_types';
 import { autobind, mixin } from '../../../utils/decorators';
+import { uuid } from '../../../utils'
 
 import {
   InputCheckbox,
@@ -54,10 +55,6 @@ export default class InputAutocompleteOption extends Component {
     event.preventDefault();
   }
 
-  parseOptionId() {
-    return `autocomplete_option_${this.props.id}_${this.props.value}`;
-  }
-
   @autobind
   handleSelect(event) {
     const option = {
@@ -87,7 +84,7 @@ export default class InputAutocompleteOption extends Component {
           checked={this.props.selected}
           onChange={this.disableEvent}
           onClick={this.disableEvent}
-          key={this.generateUUID()}
+          key={uuid.v4()}
         />
         <Label id={this.parseOptionId()} name={this.props.name} />
       </li>
