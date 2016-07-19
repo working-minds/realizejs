@@ -57,7 +57,7 @@ exports.default = {
 
 
   getActionButtons: function getActionButtons() {
-    return (0, _mergeWith2.default)(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
+    return (0, _mergeWith2.default)(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons.bind(this));
   },
 
   mergeActionButtons: function mergeActionButtons(defaultObject, propsObject) {
