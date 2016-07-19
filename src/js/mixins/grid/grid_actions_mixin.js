@@ -38,7 +38,7 @@ export default {
   },
 
   getActionButtons: function() {
-    return mergeWith(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons);
+    return mergeWith(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons.bind(this));
   },
 
   mergeActionButtons (defaultObject, propsObject) {
