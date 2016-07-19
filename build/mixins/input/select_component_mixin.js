@@ -133,7 +133,7 @@ exports.default = {
         success: context.handleLoad.bind(this),
         error: context.handleLoadError.bind(this)
       });
-    }, timeout);
+    }, timeout).bind(this);
 
     this.state.lastXhrRequestTime = requestTime;
   },
