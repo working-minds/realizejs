@@ -15,10 +15,10 @@ export default {
       return '';
     }
 
+    let resourceKey;
     try {
-      let resourceKey = 'resources.' + resource + '.fields.' + name;
+      resourceKey = 'resources.' + resource + '.fields.' + name;
       return i18n.t(resourceKey, true);
-
     } catch(err) {
       resourceKey = 'resources.defaults.fields.' + name;
       try {
