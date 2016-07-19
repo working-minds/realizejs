@@ -1,4 +1,4 @@
-import utils from '../../utils';
+import {getProp} from '../../utils';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import map from 'lodash/map';
@@ -134,7 +134,7 @@ export default {
     var options = [];
     var optionsParam = this.props.optionsParam;
     if(!!optionsParam) {
-      data = utils.getProp(optionsParam, data);
+      data = getProp(optionsParam, data);
     }
 
     for(var i = 0; i < data.length; i++) {

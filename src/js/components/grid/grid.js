@@ -3,7 +3,7 @@ import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import { mixin } from '../../utils/decorators';
 import Realize from '../../realize'
-import utils from '../../utils';
+import {getProp} from '../../utils';
 
 import {
   CssClassMixin,
@@ -303,8 +303,8 @@ export default class Grid extends Component {
   }
 
   handleLoad = (data) => {
-    let dataRows = utils.getProp(this.props.dataRowsParam, data);
-    let count = utils.getProp(this.props.countParam, data);
+    let dataRows = getProp(this.props.dataRowsParam, data);
+    let count = getProp(this.props.countParam, data);
 
     this.setState({
       gridIsLoading: false,

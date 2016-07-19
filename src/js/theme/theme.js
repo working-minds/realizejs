@@ -1,5 +1,5 @@
 import lodash from 'lodash';
-import utils from '../utils';
+import {getProp} from '../utils';
 
 import themeDefault from './mappings/default';
 import themeMaterialize from './mappings/materialize';
@@ -35,7 +35,7 @@ const themes = {
     }
 
     var currentTheme = this.getCurrent();
-    return utils.getProp(key, currentTheme);
+    return getProp(key, currentTheme);
   },
 
   getCssClass (keys) {
