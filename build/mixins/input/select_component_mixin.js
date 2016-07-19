@@ -130,8 +130,8 @@ exports.default = {
         method: 'GET',
         dataType: 'json',
         data: context.state.loadParams,
-        success: context.handleLoad,
-        error: context.handleLoadError
+        success: context.handleLoad.bind(this),
+        error: context.handleLoadError.bind(this)
       });
     }, timeout);
 
