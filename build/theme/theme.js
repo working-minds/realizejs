@@ -10,8 +10,6 @@ var _lodash2 = _interopRequireDefault(_lodash);
 
 var _utils = require('../utils');
 
-var _utils2 = _interopRequireDefault(_utils);
-
 var _default = require('./mappings/default');
 
 var _default2 = _interopRequireDefault(_default);
@@ -51,7 +49,7 @@ var themes = {
     }
 
     var currentTheme = this.getCurrent();
-    return _utils2.default.getProp(key, currentTheme);
+    return (0, _utils.getProp)(key, currentTheme);
   },
   getCssClass: function getCssClass(keys) {
     var keysArr = keys.split(' ');

@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _utils = require('../../utils');
 
-var _utils2 = _interopRequireDefault(_utils);
-
 var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
@@ -140,7 +138,7 @@ exports.default = {
     var options = [];
     var optionsParam = this.props.optionsParam;
     if (!!optionsParam) {
-      data = _utils2.default.getProp(optionsParam, data);
+      data = (0, _utils.getProp)(optionsParam, data);
     }
 
     for (var i = 0; i < data.length; i++) {
