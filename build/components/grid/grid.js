@@ -31,8 +31,6 @@ var _realize2 = _interopRequireDefault(_realize);
 
 var _utils = require('../../utils');
 
-var _utils2 = _interopRequireDefault(_utils);
-
 var _mixins = require('../../mixins');
 
 var _components = require('../../components');
@@ -94,8 +92,8 @@ var Grid = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.Request
     };
 
     _this.handleLoad = function (data) {
-      var dataRows = _utils2.default.getProp(_this.props.dataRowsParam, data);
-      var count = _utils2.default.getProp(_this.props.countParam, data);
+      var dataRows = (0, _utils.getProp)(_this.props.dataRowsParam, data);
+      var count = (0, _utils.getProp)(_this.props.countParam, data);
 
       _this.setState({
         gridIsLoading: false,
