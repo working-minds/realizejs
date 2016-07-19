@@ -56,6 +56,11 @@ export default class InputAutocompleteOption extends Component {
   }
 
   @autobind
+  parseOptionId() {
+    return 'autocomplete_option_' + this.props.id + '_' + this.props.value;
+  }
+
+  @autobind
   handleSelect(event) {
     const option = {
       name: this.props.name,

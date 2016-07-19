@@ -105,6 +105,11 @@ var InputAutocompleteOption = (_dec = (0, _decorators.mixin)(_mixins.CssClassMix
       event.preventDefault();
     }
   }, {
+    key: 'parseOptionId',
+    value: function parseOptionId() {
+      return 'autocomplete_option_' + this.props.id + '_' + this.props.value;
+    }
+  }, {
     key: 'handleSelect',
     value: function handleSelect(event) {
       var option = {
@@ -161,5 +166,5 @@ var InputAutocompleteOption = (_dec = (0, _decorators.mixin)(_mixins.CssClassMix
   onOptionMouseEnter: function onOptionMouseEnter() {
     return true;
   }
-}, _temp2), (_applyDecoratedDescriptor(_class2.prototype, 'handleSelect', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class2.prototype, 'handleSelect'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'handleMouseEnter', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class2.prototype, 'handleMouseEnter'), _class2.prototype)), _class2)) || _class);
+}, _temp2), (_applyDecoratedDescriptor(_class2.prototype, 'parseOptionId', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class2.prototype, 'parseOptionId'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'handleSelect', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class2.prototype, 'handleSelect'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'handleMouseEnter', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class2.prototype, 'handleMouseEnter'), _class2.prototype)), _class2)) || _class);
 exports.default = InputAutocompleteOption;
