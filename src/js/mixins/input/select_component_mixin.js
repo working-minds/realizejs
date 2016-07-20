@@ -1,4 +1,5 @@
 import {getProp} from '../../utils';
+import { autobind } from '../../utils/decorators';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import map from 'lodash/map';
@@ -194,10 +195,12 @@ export default {
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
+  @autobind
   onDependableChange (event, dependableValue) {
     this.loadDependentOptions(dependableValue, false);
   },
 
+  @autobind
   loadDependentOptions (dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
