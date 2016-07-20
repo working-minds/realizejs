@@ -150,7 +150,7 @@ var InputFile = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.In
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: this.wrapperClassName() },
+        { className: this.filePathWrapperClassName() },
         _react2.default.createElement(
           'div',
           { className: this.buttonClassName() },
