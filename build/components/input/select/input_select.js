@@ -108,7 +108,7 @@ var InputSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.
     key: 'selectedValue',
     value: function selectedValue() {
       var value = this.state.value;
-      console.log(value);
+      console.log(value[0]);
       if (!this.props.multiple) {
         value = value[0];
       }
