@@ -88,8 +88,8 @@ export default class InputFile extends Component {
 
   render() {
     return (
-      <div className={this.filePathWrapperClassName()}>
-        <div className={this.buttonClassName()}>
+      <div className={this.wrapperClassName}>
+        <div className={this.buttonClassName}>
           <span>{this.getButtonName()}</span>
           <input
             {...this.props}
