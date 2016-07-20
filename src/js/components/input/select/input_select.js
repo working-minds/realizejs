@@ -54,6 +54,7 @@ export default class InputSelect extends Component {
 
   selectedValue() {
     let value = this.state.value;
+    Console.log(value)
     if (!this.props.multiple) {
       value = value[0];
     }
