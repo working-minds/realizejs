@@ -111,7 +111,7 @@ var InputSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.
       var aux = value;
       console.log(aux);
       if (!this.props.multiple) {
-        value = value[1][0];
+        value = value;
       }
 
       return value;
