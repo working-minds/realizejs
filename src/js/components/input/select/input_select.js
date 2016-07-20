@@ -54,8 +54,6 @@ export default class InputSelect extends Component {
 
   selectedValue() {
     var value = this.state.value;
-    var aux = value;
-    console.log(aux);
     if (!this.props.multiple) {
       value = value;
     }
