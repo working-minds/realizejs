@@ -8998,7 +8998,7 @@
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { className: this.wrapperClassName() },
+	        { className: this.wrapperClassName },
 	        _react2.default.createElement(
 	          'div',
 	          { className: this.buttonClassName() },
