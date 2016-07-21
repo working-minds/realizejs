@@ -102,7 +102,7 @@ var InputAutocompleteSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMix
           _react2.default.createElement(_components.InputText, {
             id: this.selectId(),
             value: this.renderSelectedOptions(),
-            disabled: this.props.disabled,
+            disabled: this.props.disabled.bind(this),
             placeholder: this.props.placeholder,
             onFocus: this.props.onFocus.bind(this),
             errors: this.props.errors,
