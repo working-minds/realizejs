@@ -194,8 +194,9 @@ export default {
     dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
-  //@autobind
-  loadDependentOptions: function (dependableValue, keepValue) {
+  
+  @autobind
+  loadDependentOptions (dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
     }
