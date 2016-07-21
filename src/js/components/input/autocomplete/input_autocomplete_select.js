@@ -58,9 +58,9 @@ export default class InputAutocompleteSelect extends Component {
           <InputText
             id={this.selectId()}
             value={this.renderSelectedOptions()}
-            disabled={this.props.disabled.bind(this)}
+            disabled={this.props.disabled}
             placeholder={this.props.placeholder}
-            onFocus={this.props.onFocus.bind(this)}
+            onFocus={this.props.onFocus}
             errors={this.props.errors}
             ref="select"
             key={`autocomplete_select_${uuid.v4()}`}
