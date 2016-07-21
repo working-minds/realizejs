@@ -186,16 +186,17 @@ export default {
   listenToDependableChange () {
     var dependableId = this.props.dependsOn.dependableId;
     dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
-    $('body').delegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
+    this._boundedOnDependableChange = this.onDependableChange.bind(this);
+    $('body').delegate('#' + dependableId, 'dependable_changed', this._boundedOnDependableChange);
   },
 
   unbindDependableChangeListener () {
     var dependableId = this.props.dependsOn.dependableId;
     dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
-    $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
+    $('body').undelegate('#' + dependableId, 'dependable_changed', this._boundedOnDependableChange);
   },
 
-  //@autobind
+  @autobind
   loadDependentOptions (dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
@@ -215,7 +216,7 @@ export default {
     this.state.loadParams[paramName] = dependableValue;
     this.loadOptions();
   },
-  //@autobind
+  @autobind
   onDependableChange(event, dependableValue) {
     this.loadDependentOptions (dependableValue, false);
   },
