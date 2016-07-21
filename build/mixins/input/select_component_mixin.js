@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _desc, _value, _obj;
-
 var _utils = require('../../utils');
 
 var _decorators = require('../../utils/decorators');
@@ -24,36 +22,7 @@ var _map2 = _interopRequireDefault(_map);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-exports.default = (_obj = {
+exports.default = {
   propTypes: {
     options: _prop_types2.default.array,
     dependsOn: _prop_types2.default.object,
@@ -226,9 +195,14 @@ exports.default = (_obj = {
     dependableId = dependableId.replace(/(:|\.|\[|]|,)/g, "\\$1");
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
+
+
+  //@autobind
   onDependableChange: function onDependableChange(event, dependableValue) {
     this.loadDependentOptions(dependableValue, false);
   },
+
+  //@autobind
   loadDependentOptions: function loadDependentOptions(dependableValue, keepValue) {
     if (!dependableValue) {
       dependableValue = this.getDependableNode().val();
@@ -248,6 +222,7 @@ exports.default = (_obj = {
     this.state.loadParams[paramName] = dependableValue;
     this.loadOptions();
   },
+
   getDependableNode: function getDependableNode() {
     var dependsOnObj = this.props.dependsOn;
     return $(document.getElementById(dependsOnObj.dependableId));
@@ -293,4 +268,4 @@ exports.default = (_obj = {
 
     return serializedInput;
   }
-}, (_applyDecoratedDescriptor(_obj, 'onDependableChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'onDependableChange'), _obj), _applyDecoratedDescriptor(_obj, 'loadDependentOptions', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'loadDependentOptions'), _obj)), _obj);
+};
