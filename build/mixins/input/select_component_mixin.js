@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _desc, _value, _obj;
+var _desc, _value, _obj, _init;
 
 var _utils = require('../../utils');
 
@@ -226,6 +226,7 @@ exports.default = (_obj = {
     dependableId = dependableId.replace(/(:|\.|\[|]|,)/g, "\\$1");
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
+
   loadDependentOptions: function loadDependentOptions(dependableValue, keepValue) {
     if (!dependableValue) {
       dependableValue = this.getDependableNode().val();
@@ -245,6 +246,7 @@ exports.default = (_obj = {
     this.state.loadParams[paramName] = dependableValue;
     this.loadOptions();
   },
+
   onDependableChange: function onDependableChange(event, dependableValue) {
     this.loadDependentOptions(dependableValue, false);
   },
@@ -293,4 +295,11 @@ exports.default = (_obj = {
 
     return serializedInput;
   }
-}, (_applyDecoratedDescriptor(_obj, 'loadDependentOptions', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'loadDependentOptions'), _obj), _applyDecoratedDescriptor(_obj, 'onDependableChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'onDependableChange'), _obj)), _obj);
+}, (_applyDecoratedDescriptor(_obj, 'loadDependentOptions', [_decorators.autobind], (_init = Object.getOwnPropertyDescriptor(_obj, 'loadDependentOptions'), _init = _init ? _init.value : undefined, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  initializer: function initializer() {
+    return _init;
+  }
+}), _obj), _applyDecoratedDescriptor(_obj, 'onDependableChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'onDependableChange'), _obj)), _obj);
