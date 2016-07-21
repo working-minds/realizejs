@@ -195,12 +195,12 @@ export default {
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
-  //@autobind
+  @autobind
   onDependableChange(event, dependableValue) {
     this.loadDependentOptions (dependableValue, false);
   },
 
-  //@autobind
+  @autobind
   loadDependentOptions(dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
