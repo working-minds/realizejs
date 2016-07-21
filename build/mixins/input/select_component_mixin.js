@@ -196,12 +196,6 @@ exports.default = {
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
-
-  //@autobind
-  onDependableChange: function onDependableChange(event, dependableValue) {
-    this.loadDependentOptions(dependableValue, false);
-  },
-
   //@autobind
   loadDependentOptions: function loadDependentOptions(dependableValue, keepValue) {
     if (!dependableValue) {
@@ -221,6 +215,10 @@ exports.default = {
     var paramName = dependsOnObj.param || dependsOnObj.dependableId;
     this.state.loadParams[paramName] = dependableValue;
     this.loadOptions();
+  },
+  //@autobind
+  onDependableChange: function onDependableChange(event, dependableValue) {
+    this.loadDependentOptions(dependableValue, false);
   },
 
   getDependableNode: function getDependableNode() {

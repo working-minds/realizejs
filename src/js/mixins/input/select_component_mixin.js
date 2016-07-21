@@ -194,12 +194,6 @@ export default {
     dependableId = dependableId.replace( /(:|\.|\[|]|,)/g, "\\$1" );
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
-
-  //@autobind
-  onDependableChange: function (event, dependableValue) {
-    this.loadDependentOptions (dependableValue, false);
-  },
-
   //@autobind
   loadDependentOptions: function (dependableValue, keepValue) {
     if(!dependableValue) {
@@ -219,6 +213,10 @@ export default {
     var paramName = dependsOnObj.param || dependsOnObj.dependableId;
     this.state.loadParams[paramName] = dependableValue;
     this.loadOptions();
+  },
+  //@autobind
+  onDependableChange: function (event, dependableValue) {
+    this.loadDependentOptions (dependableValue, false);
   },
 
   getDependableNode () {
