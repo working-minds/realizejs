@@ -196,7 +196,7 @@ export default {
   },
 
   @autobind
-  loadDependentOptions (dependableValue, keepValue) {
+  loadDependentOptions: function (dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
     }
