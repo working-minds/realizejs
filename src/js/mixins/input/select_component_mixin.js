@@ -218,7 +218,7 @@ export default {
 
   @autobind
   onDependableChange (event, dependableValue) {
-    this.loadDependentOptions(dependableValue, false);
+    this.loadDependentOptions (dependableValue, false);
   },
 
   getDependableNode () {
