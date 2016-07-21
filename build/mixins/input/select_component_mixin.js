@@ -226,6 +226,9 @@ exports.default = (_obj = {
     dependableId = dependableId.replace(/(:|\.|\[|]|,)/g, "\\$1");
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
+
+
+  //@autobind
   onDependableChange: function onDependableChange(event, dependableValue) {
     this.loadDependentOptions(dependableValue, false);
   },
@@ -293,4 +296,4 @@ exports.default = (_obj = {
 
     return serializedInput;
   }
-}, (_applyDecoratedDescriptor(_obj, 'onDependableChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'onDependableChange'), _obj), _applyDecoratedDescriptor(_obj, 'loadDependentOptions', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'loadDependentOptions'), _obj)), _obj);
+}, (_applyDecoratedDescriptor(_obj, 'loadDependentOptions', [_decorators.autobind], Object.getOwnPropertyDescriptor(_obj, 'loadDependentOptions'), _obj)), _obj);
