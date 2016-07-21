@@ -217,6 +217,7 @@ exports.default = {
     this.state.loadParams[paramName] = dependableValue;
     this.loadOptions();
   },
+
   //@autobind
   onDependableChange: function onDependableChange(event, dependableValue) {
     this.loadDependentOptions(dependableValue, false);
