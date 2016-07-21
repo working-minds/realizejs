@@ -195,8 +195,8 @@ export default {
     $('body').undelegate('#' + dependableId, 'dependable_changed', this.onDependableChange);
   },
 
-  @autobind
-  loadDependentOptions (dependableValue, keepValue) {
+  //@autobind
+  loadDependentOptions: function (dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
     }
