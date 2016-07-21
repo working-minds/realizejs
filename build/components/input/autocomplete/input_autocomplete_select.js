@@ -104,7 +104,7 @@ var InputAutocompleteSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMix
             value: this.renderSelectedOptions(),
             disabled: this.props.disabled,
             placeholder: this.props.placeholder,
-            onFocus: this.props.onFocus,
+            onFocus: this.props.onFocus.bind(this),
             errors: this.props.errors,
             ref: 'select',
             key: 'autocomplete_select_' + _utils.uuid.v4()
