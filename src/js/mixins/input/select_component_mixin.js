@@ -196,11 +196,6 @@ export default {
   },
 
   @autobind
-  onDependableChange (event, dependableValue) {
-    this.loadDependentOptions(dependableValue, false);
-  },
-
-  @autobind
   loadDependentOptions (dependableValue, keepValue) {
     if(!dependableValue) {
       dependableValue = this.getDependableNode().val();
@@ -219,6 +214,11 @@ export default {
     var paramName = dependsOnObj.param || dependsOnObj.dependableId;
     this.state.loadParams[paramName] = dependableValue;
     this.loadOptions();
+  },
+
+  @autobind
+  onDependableChange (event, dependableValue) {
+    this.loadDependentOptions(dependableValue, false);
   },
 
   getDependableNode () {
