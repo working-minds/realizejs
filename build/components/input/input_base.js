@@ -86,6 +86,13 @@ var InputBase = (_class = (_temp2 = _class2 = function (_Component) {
 
     return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(InputBase)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
       value: _this.props.value
+    }, _this.handleFocus = function (event) {
+      _this.props.onFocus(event);
+
+      if (_this.props.readOnly) {
+        var inputNode = event.currentTarget;
+        inputNode.blur();
+      }
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
@@ -165,16 +172,9 @@ var InputBase = (_class = (_temp2 = _class2 = function (_Component) {
         this.setState({ value: value });
       }
     }
-  }, {
-    key: 'handleFocus',
-    value: function handleFocus(event) {
-      this.props.onFocus(event);
 
-      if (this.props.readOnly) {
-        var inputNode = event.currentTarget;
-        inputNode.blur();
-      }
-    }
+    //  @autobind
+
   }, {
     key: 'render',
     value: function render() {
@@ -204,5 +204,5 @@ var InputBase = (_class = (_temp2 = _class2 = function (_Component) {
     return true;
   },
   errors: []
-}, _temp2), (_applyDecoratedDescriptor(_class.prototype, 'handleReset', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleReset'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'handleChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleChange'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'handleFocus', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleFocus'), _class.prototype)), _class);
+}, _temp2), (_applyDecoratedDescriptor(_class.prototype, 'handleReset', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleReset'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'handleChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleChange'), _class.prototype)), _class);
 exports.default = InputBase;
