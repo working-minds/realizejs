@@ -101,7 +101,7 @@ export default class InputBase extends Component {
     }
   }
 
-  //@autobind
+  @autobind
   handleFocus = (event) => {
     this.props.onFocus(event);
 
