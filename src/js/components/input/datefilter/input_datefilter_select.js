@@ -6,7 +6,7 @@ import { mixin } from '../../../utils/decorators';
 
 import InputBase from '../input_base';
 import InputText from '../input_text';
-import Label from '../../label';
+import { Label }  from '../../label';
 import {
   CssClassMixin
 } from '../../../mixins';

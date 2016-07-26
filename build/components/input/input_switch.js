@@ -31,8 +31,6 @@ var _input_base2 = _interopRequireDefault(_input_base);
 
 var _label = require('../label');
 
-var _label2 = _interopRequireDefault(_label);
-
 var _mixins = require('../../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -68,7 +66,7 @@ var InputSwitch = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.
         return null;
       }
 
-      return _react2.default.createElement(_label2.default, { name: this.props.label, active: true });
+      return _react2.default.createElement(_label.Label, { name: this.props.label, active: true });
     }
   }, {
     key: 'renderInputHidden',

@@ -4,7 +4,7 @@ import i18n from '../../i18n';
 import { mixin } from '../../utils/decorators';
 
 import InputHidden from './input_base';
-import Label from '../label';
+import { Label } from '../label';
 import InputBase from './input_base';
 import {
   CssClassMixin,
