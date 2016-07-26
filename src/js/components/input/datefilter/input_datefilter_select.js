@@ -4,21 +4,15 @@ import PropTypes from '../../../prop_types';
 import { uuid } from '../../../utils';
 import { mixin } from '../../../utils/decorators';
 
+import InputBase from '../input_base';
+import InputText from '../input_text';
+import Label from '../../label';
 import {
-  InputText,
-  Label,
-} from '../../../components';
-
-import {
-  CssClassMixin,
-  InputComponentMixin,
+  CssClassMixin
 } from '../../../mixins';
 
-@mixin(
-  CssClassMixin,
-  InputComponentMixin
-)
-export default class InputDatefilterSelect extends Component {
+@mixin(CssClassMixin)
+export default class InputDatefilterSelect extends InputBase {
   static propTypes = {
     selectedDates: PropTypes.array,
     onBlur: PropTypes.func,

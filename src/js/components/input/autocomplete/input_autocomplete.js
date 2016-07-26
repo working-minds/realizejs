@@ -9,21 +9,19 @@ import {
   InputAutocompleteResult,
   InputAutocompleteValues,
 } from '../../../components/input/autocomplete';
-
+import InputBase from '../input_base';
 import {
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin,
   InputSelectActionsListenerMixin,
 } from '../../../mixins';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin,
   InputSelectActionsListenerMixin
 )
-export default class InputAutocomplete extends Component {
+export default class InputAutocomplete extends InputBase {
   static propTypes = {
     maxOptions: PropTypes.number,
     maxOptionsParam: PropTypes.string,

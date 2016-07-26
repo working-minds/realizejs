@@ -4,21 +4,15 @@ import PropTypes from '../../../prop_types';
 import $ from 'jquery';
 import { autobind, mixin } from '../../../utils/decorators';
 
-import {
-  InputDatefilterSelect,
-  InputDatefilterBody,
-} from '../../../components';
-
+import InputBase from '../input_base';
+import InputDatefilterSelect from './input_datefilter_select';
+import InputDatefilterBody from './input_datefilter_body';
 import {
   CssClassMixin,
-  InputComponentMixin,
 } from '../../../mixins';
 
-@mixin(
-  CssClassMixin,
-  InputComponentMixin
-)
-export default class InputDatefilter extends Component {
+@mixin(CssClassMixin)
+export default class InputDatefilter extends InputBase {
   static propTypes = {
     originalId: PropTypes.string,
     originalName: PropTypes.string,

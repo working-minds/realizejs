@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
 import { mixin } from '../../utils/decorators';
 
+import InputMasked from './input_masked';
+import Label from '../label';
+import InputBase from './input_base';
 import {
-  InputMasked,
-  Label,
-} from '../../components';
-
-import {
-  CssClassMixin,
-  InputComponentMixin,
+  CssClassMixin
 } from '../../mixins';
 
-@mixin(
-  CssClassMixin,
-  InputComponentMixin,
-)
-export default class InputNumber extends Component {
+@mixin(CssClassMixin)
+export default class InputNumber extends InputBase {
   static defaultProps = {
     themeClassKey: 'input.number',
     maskType: 'integer',

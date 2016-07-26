@@ -3,23 +3,19 @@ import PropTypes from '../../prop_types';
 import i18n from '../../i18n';
 import { mixin } from '../../utils/decorators';
 
-import {
-  InputHidden,
-  Label,
-} from '../../components';
-
+import InputHidden from './input_base';
+import Label from '../label';
+import InputBase from './input_base';
 import {
   CssClassMixin,
-  InputComponentMixin,
   CheckboxComponentMixin,
 } from '../../mixins';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin,
   CheckboxComponentMixin,
 )
-export default class InputSwitch extends Component {
+export default class InputSwitch extends InputBase {
   static propTypes = {
     label: PropTypes.string,
     offLabel: PropTypes.localizedString,

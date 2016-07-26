@@ -23,6 +23,10 @@ var _decorators = require('../../../utils/decorators');
 
 var _components = require('../../../components');
 
+var _input_base = require('../input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
+
 var _mixins = require('../../../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -33,8 +37,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputRadioGroup = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin, _mixins.SelectComponentMixin), _dec(_class = (_temp2 = _class2 = function (_Component) {
-  _inherits(InputRadioGroup, _Component);
+var InputRadioGroup = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.SelectComponentMixin), _dec(_class = (_temp2 = _class2 = function (_InputBase) {
+  _inherits(InputRadioGroup, _InputBase);
 
   function InputRadioGroup() {
     var _Object$getPrototypeO;
@@ -98,7 +102,7 @@ var InputRadioGroup = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mix
   }]);
 
   return InputRadioGroup;
-}(_react.Component), _class2.propTypes = {
+}(_input_base2.default), _class2.propTypes = {
   align: _prop_types2.default.oneOf(['vertical', 'horizontal']),
   currentValue: _prop_types2.default.string,
   withGap: _prop_types2.default.bool

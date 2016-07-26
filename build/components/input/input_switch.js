@@ -25,7 +25,13 @@ var _i18n2 = _interopRequireDefault(_i18n);
 
 var _decorators = require('../../utils/decorators');
 
-var _components = require('../../components');
+var _input_base = require('./input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
+
+var _label = require('../label');
+
+var _label2 = _interopRequireDefault(_label);
 
 var _mixins = require('../../mixins');
 
@@ -37,8 +43,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputSwitch = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin, _mixins.CheckboxComponentMixin), _dec(_class = (_temp = _class2 = function (_Component) {
-  _inherits(InputSwitch, _Component);
+var InputSwitch = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.CheckboxComponentMixin), _dec(_class = (_temp = _class2 = function (_InputBase) {
+  _inherits(InputSwitch, _InputBase);
 
   function InputSwitch() {
     _classCallCheck(this, InputSwitch);
@@ -62,13 +68,13 @@ var InputSwitch = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.
         return null;
       }
 
-      return _react2.default.createElement(_components.Label, { name: this.props.label, active: true });
+      return _react2.default.createElement(_label2.default, { name: this.props.label, active: true });
     }
   }, {
     key: 'renderInputHidden',
     value: function renderInputHidden() {
       if (this.valueIsBoolean()) {
-        return _react2.default.createElement(_components.InputHidden, _extends({}, this.props, { value: this.state.value }));
+        return _react2.default.createElement(_input_base2.default, _extends({}, this.props, { value: this.state.value }));
       }
 
       return null;
@@ -106,7 +112,7 @@ var InputSwitch = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.
   }]);
 
   return InputSwitch;
-}(_react.Component), _class2.propTypes = {
+}(_input_base2.default), _class2.propTypes = {
   label: _prop_types2.default.string,
   offLabel: _prop_types2.default.localizedString,
   onLabel: _prop_types2.default.localizedString

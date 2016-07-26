@@ -4,21 +4,16 @@ import { mixin } from '../../utils/decorators';
 
 import ColorPicker from 'react-color';
 
-import {
-  Label,
-  InputHidden
-} from '../../components';
+import Label from '../label';
+import InputHidden from './input_hidden';
+import InputBase from './input_base';
 
 import {
   CssClassMixin,
-  InputComponentMixin
 } from '../../mixins';
 
-@mixin(
-  CssClassMixin,
-  InputComponentMixin
-)
-export default class InputColorpicker extends Component {
+@mixin(CssClassMixin)
+export default class InputColorpicker extends InputBase {
   static propTypes = {
     type: React.PropTypes.string
   }

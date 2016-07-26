@@ -33,6 +33,10 @@ var _i18n2 = _interopRequireDefault(_i18n);
 
 var _decorators = require('../../utils/decorators');
 
+var _input_base = require('./input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
+
 var _mixins = require('../../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -72,8 +76,8 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var InputFile = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin), _dec(_class = (_class2 = (_temp = _class3 = function (_Component) {
-  _inherits(InputFile, _Component);
+var InputFile = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_class2 = (_temp = _class3 = function (_InputBase) {
+  _inherits(InputFile, _InputBase);
 
   function InputFile() {
     _classCallCheck(this, InputFile);
@@ -183,7 +187,7 @@ var InputFile = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.In
   }]);
 
   return InputFile;
-}(_react.Component), _class3.propTypes = {
+}(_input_base2.default), _class3.propTypes = {
   wrapperClassName: _prop_types2.default.string,
   buttonClassName: _prop_types2.default.string,
   buttonName: _prop_types2.default.localizedString,

@@ -25,7 +25,17 @@ var _reactColor = require('react-color');
 
 var _reactColor2 = _interopRequireDefault(_reactColor);
 
-var _components = require('../../components');
+var _label = require('../label');
+
+var _label2 = _interopRequireDefault(_label);
+
+var _input_hidden = require('./input_hidden');
+
+var _input_hidden2 = _interopRequireDefault(_input_hidden);
+
+var _input_base = require('./input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
 
 var _mixins = require('../../mixins');
 
@@ -37,8 +47,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputColorpicker = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin), _dec(_class = (_temp2 = _class2 = function (_Component) {
-  _inherits(InputColorpicker, _Component);
+var InputColorpicker = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_temp2 = _class2 = function (_InputBase) {
+  _inherits(InputColorpicker, _InputBase);
 
   function InputColorpicker() {
     var _Object$getPrototypeO;
@@ -81,7 +91,7 @@ var InputColorpicker = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mi
           type: 'text',
           ref: 'input'
         }),
-        _react2.default.createElement(_components.Label, _extends({}, this.propsWithoutCSS(), { id: 'colorpicker_input', active: true })),
+        _react2.default.createElement(_label2.default, _extends({}, this.propsWithoutCSS(), { id: 'colorpicker_input', active: true })),
         _react2.default.createElement('div', {
           className: this.themedClassName(this.props.displayThemeClassKey),
           style: this.displayBackgroundStyle(),
@@ -92,7 +102,7 @@ var InputColorpicker = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mi
           display: this.state.displayColorPicker,
           onChangeComplete: this.onColorSelect
         })),
-        _react2.default.createElement(_components.InputHidden, _extends({}, this.propsWithoutCSS(), {
+        _react2.default.createElement(_input_hidden2.default, _extends({}, this.propsWithoutCSS(), {
           value: this.state.value
         }))
       );
@@ -124,7 +134,7 @@ var InputColorpicker = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mi
   }]);
 
   return InputColorpicker;
-}(_react.Component), _class2.propTypes = {
+}(_input_base2.default), _class2.propTypes = {
   type: _react2.default.PropTypes.string
 }, _class2.defaultProps = {
   wrapperThemeClassKey: 'input.colorpicker.wrapper',

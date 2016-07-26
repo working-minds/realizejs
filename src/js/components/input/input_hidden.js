@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { mixin } from '../../utils/decorators';
 
-import { InputComponentMixin } from '../../mixins';
+import { InputDatefilterBody } from '../../mixins';
 
-@mixin(InputComponentMixin)
+@mixin(InputBase)
 export default class InputHidden extends Component {
   render() {
     return (

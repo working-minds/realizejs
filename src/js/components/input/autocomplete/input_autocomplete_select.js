@@ -5,21 +5,16 @@ import $ from 'jquery';
 import { uuid } from '../../../utils';
 import { mixin } from '../../../utils/decorators';
 
-import {
-  InputText,
-  Label,
-} from '../../../components';
+import InputBase from '../input_base';
+import InputText from '../input_text';
+import Label from '../../label';
 
 import {
   CssClassMixin,
-  InputComponentMixin,
 } from '../../../mixins';
 
-@mixin(
-  CssClassMixin,
-  InputComponentMixin
-)
-export default class InputAutocompleteSelect extends Component {
+@mixin(CssClassMixin)
+export default class InputAutocompleteSelect extends InputBase {
   static propTypes = {
     selectedOptions: PropTypes.array,
   };

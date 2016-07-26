@@ -27,7 +27,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputHidden = (_dec = (0, _decorators.mixin)(_mixins.InputComponentMixin), _dec(_class = function (_Component) {
+var InputHidden = (_dec = (0, _decorators.mixin)(InputBase), _dec(_class = function (_Component) {
   _inherits(InputHidden, _Component);
 
   function InputHidden() {
