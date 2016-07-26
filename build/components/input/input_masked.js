@@ -270,7 +270,7 @@ var InputMasked = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.
           placeholder: this.state.placeholder,
           className: this.inputClassName(),
           onKeyUp: this.handleChange,
-          onFocus: this._handleFocus,
+          onFocus: this.handleFocus,
           ref: 'input'
         }),
         this.props.children

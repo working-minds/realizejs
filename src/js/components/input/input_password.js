@@ -27,8 +27,8 @@ export default class InputPassword extends Component {
         value={this.state.value}
         placeholder={this.getPlaceholder()}
         className={this.inputClassName()}
-        onChange={this._handleChange}
-        onFocus={this._handleFocus}
+        onChange={this.handleChange}
+        onFocus={this.handleFocus}
         type="password" ref="input"
       />
     );

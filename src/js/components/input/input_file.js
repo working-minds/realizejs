@@ -75,7 +75,7 @@ export default class InputFile extends InputBase {
 
   @autobind
   handleChange(event) {
-    this._handleChange(event);
+    this.handleChange(event);
 
     const fileInput = ReactDOM.findDOMNode(this.refs.input);
     const filePathInput = ReactDOM.findDOMNode(this.refs.filePath);
@@ -101,7 +101,7 @@ export default class InputFile extends InputBase {
           <input
             className={this.inputClassName()}
             placeholder={this.getLabelName()}
-            onFocus={this._handleFocus}
+            onFocus={this.handleFocus}
             type="text"
             ref="filePath"
           />

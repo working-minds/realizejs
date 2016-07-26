@@ -54,8 +54,8 @@ var InputNumber = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_c
         null,
         _react2.default.createElement(_input_masked2.default, _extends({}, this.props, {
           className: this.className(),
-          onChange: this._handleChange,
-          onFocus: this._handleFocus,
+          onChange: this.handleChange,
+          onFocus: this.handleFocus,
           type: 'text',
           ref: 'input'
         })),

@@ -21,8 +21,8 @@ export default class InputNumber extends InputBase {
         <InputMasked
           {...this.props}
           className={this.className()}
-          onChange={this._handleChange}
-          onFocus={this._handleFocus}
+          onChange={this.handleChange}
+          onFocus={this.handleFocus}
           type="text"
           ref="input"
         />

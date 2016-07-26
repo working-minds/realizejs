@@ -53,7 +53,7 @@ export default class InputRadioGroup extends InputBase {
           <input
             {...optionProps}
             name={this.props.name}
-            onChange={this._handleChange}
+            onChange={this.handleChange}
           />
           <Label id={optionProps.id} label={optionProps.name} />
         </p>
