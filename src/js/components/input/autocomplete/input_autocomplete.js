@@ -77,6 +77,7 @@ export default class InputAutocomplete extends InputBase {
     });
   }
 
+  @autobind
   showResult(event) {
     if (this.state.disabled || this.props.readOnly) {
       const selectInput = event.currentTarget;
@@ -93,6 +94,7 @@ export default class InputAutocomplete extends InputBase {
     searchInput.focus();
   }
 
+  @autobind
   searchOptions(event) {
     const $searchInput = $(event.currentTarget);
     const searchValue = $searchInput.val();
@@ -137,6 +139,7 @@ export default class InputAutocomplete extends InputBase {
     });
   }
 
+  @autobind
   clearSelection() {
     this.setState({
       value: [],
