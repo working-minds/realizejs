@@ -29,7 +29,7 @@ var _mapValues2 = _interopRequireDefault(_mapValues);
 
 var _decorators = require('../../../utils/decorators');
 
-var _grid_form = require('../../../grid_form');
+var _grid_form = require('../../grid_form');
 
 var _grid_form2 = _interopRequireDefault(_grid_form);
 

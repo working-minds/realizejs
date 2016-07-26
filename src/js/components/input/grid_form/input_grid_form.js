@@ -4,7 +4,7 @@ import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
 import { mixin } from '../../../utils/decorators';
 
-import GridForm from '../../../grid_form';
+import GridForm from '../../grid_form';
 import InputGridFormFields from './input_grid_form_fields';
 import InputHidden from '../input_hidden';
 import InputBase from '../input_base';
