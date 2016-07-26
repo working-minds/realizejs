@@ -9,7 +9,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _class, _class2, _temp;
+var _dec, _class, _desc, _value, _class2, _class3, _temp;
 
 var _react = require('react');
 
@@ -47,7 +47,36 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputDatefilterSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_temp = _class2 = function (_InputBase) {
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var InputDatefilterSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_class2 = (_temp = _class3 = function (_InputBase) {
   _inherits(InputDatefilterSelect, _InputBase);
 
   function InputDatefilterSelect() {
@@ -104,12 +133,12 @@ var InputDatefilterSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin
   }]);
 
   return InputDatefilterSelect;
-}(_input_base2.default), _class2.propTypes = {
+}(_input_base2.default), _class3.propTypes = {
   selectedDates: _prop_types2.default.array,
   onBlur: _prop_types2.default.func
-}, _class2.defaultProps = {
+}, _class3.defaultProps = {
   selectedDates: [],
   themeClassKey: 'input.datefilter.select',
   placeholder: 'select'
-}, _temp)) || _class);
+}, _temp), (_applyDecoratedDescriptor(_class2.prototype, 'focusSelect', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class2.prototype, 'focusSelect'), _class2.prototype)), _class2)) || _class);
 exports.default = InputDatefilterSelect;

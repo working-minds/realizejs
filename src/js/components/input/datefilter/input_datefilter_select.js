@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../../prop_types';
 import { uuid } from '../../../utils';
-import { mixin } from '../../../utils/decorators';
+import { mixin, autobind } from '../../../utils/decorators';
 
 import InputBase from '../input_base';
 import InputText from '../input_text';
@@ -24,6 +24,7 @@ export default class InputDatefilterSelect extends InputBase {
     placeholder: 'select',
   };
 
+  @autobind
   focusSelect() {
     const selectInput = ReactDOM.findDOMNode(this.refs.select);
     selectInput.focus();
