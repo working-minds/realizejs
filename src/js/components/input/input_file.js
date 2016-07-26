@@ -5,16 +5,13 @@ import $ from 'jquery';
 import i18n from '../../i18n';
 import { autobind, mixin } from '../../utils/decorators';
 
+import InputBase from './input_base';
 import {
-  CssClassMixin,
-  InputComponentMixin,
+  CssClassMixin
 } from '../../mixins';
 
-@mixin(
-  CssClassMixin,
-  InputComponentMixin,
-)
-export default class InputFile extends Component {
+@mixin(CssClassMixin)
+export default class InputFile extends InputBase {
   static propTypes = {
     wrapperClassName: PropTypes.string,
     buttonClassName: PropTypes.string,

@@ -27,7 +27,17 @@ var _utils = require('../../../utils');
 
 var _decorators = require('../../../utils/decorators');
 
-var _components = require('../../../components');
+var _input_base = require('../input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
+
+var _input_text = require('../input_text');
+
+var _input_text2 = _interopRequireDefault(_input_text);
+
+var _label = require('../../label');
+
+var _label2 = _interopRequireDefault(_label);
 
 var _mixins = require('../../../mixins');
 
@@ -39,8 +49,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputDatefilterSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin), _dec(_class = (_temp = _class2 = function (_Component) {
-  _inherits(InputDatefilterSelect, _Component);
+var InputDatefilterSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_temp = _class2 = function (_InputBase) {
+  _inherits(InputDatefilterSelect, _InputBase);
 
   function InputDatefilterSelect() {
     _classCallCheck(this, InputDatefilterSelect);
@@ -79,7 +89,7 @@ var InputDatefilterSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin
             { className: 'caret', onClick: this.focusSelect },
             '▼'
           ),
-          _react2.default.createElement(_components.InputText, {
+          _react2.default.createElement(_input_text2.default, {
             id: this.selectId(),
             value: this.renderSelectedDates(),
             disabled: this.props.disabled,
@@ -90,13 +100,13 @@ var InputDatefilterSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin
             key: 'datefilter_select_' + _utils.uuid.v4()
           })
         ),
-        _react2.default.createElement(_components.Label, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
+        _react2.default.createElement(_label2.default, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
       );
     }
   }]);
 
   return InputDatefilterSelect;
-}(_react.Component), _class2.propTypes = {
+}(_input_base2.default), _class2.propTypes = {
   selectedDates: _prop_types2.default.array,
   onBlur: _prop_types2.default.func
 }, _class2.defaultProps = {

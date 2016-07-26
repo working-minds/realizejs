@@ -29,7 +29,21 @@ var _mapValues2 = _interopRequireDefault(_mapValues);
 
 var _decorators = require('../../../utils/decorators');
 
-var _components = require('../../../components');
+var _grid_form = require('../../../grid_form');
+
+var _grid_form2 = _interopRequireDefault(_grid_form);
+
+var _input_grid_form_fields = require('./input_grid_form_fields');
+
+var _input_grid_form_fields2 = _interopRequireDefault(_input_grid_form_fields);
+
+var _input_hidden = require('../input_hidden');
+
+var _input_hidden2 = _interopRequireDefault(_input_hidden);
+
+var _input_base = require('../input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
 
 var _mixins = require('../../../mixins');
 
@@ -41,8 +55,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputGridForm = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin), _dec(_class = (_temp = _class2 = function (_Component) {
-  _inherits(InputGridForm, _Component);
+var InputGridForm = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_temp = _class2 = function (_InputBase) {
+  _inherits(InputGridForm, _InputBase);
 
   function InputGridForm() {
     _classCallCheck(this, InputGridForm);
@@ -172,8 +186,8 @@ var InputGridForm = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixin
         'div',
         { className: this.className() },
         this.renderLabel(),
-        _react2.default.createElement(_components.GridForm, _extends({}, this.propsWithoutCSS(), {
-          formComponent: _components.InputGridFormFields,
+        _react2.default.createElement(_grid_form2.default, _extends({}, this.propsWithoutCSS(), {
+          formComponent: _input_grid_form_fields2.default,
           form: this.parseFormProp(),
           columns: this.parseColumnsProp(),
           onSuccess: this.handleOnSuccess,
@@ -181,7 +195,7 @@ var InputGridForm = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixin
           errors: this.props.errors,
           ref: 'gridForm'
         })),
-        _react2.default.createElement(_components.InputHidden, _extends({}, this.propsWithoutCSS(), {
+        _react2.default.createElement(_input_hidden2.default, _extends({}, this.propsWithoutCSS(), {
           value: this.getSerializedValue(),
           ref: 'input'
         }))
@@ -190,7 +204,7 @@ var InputGridForm = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixin
   }]);
 
   return InputGridForm;
-}(_react.Component), _class2.propTypes = {
+}(_input_base2.default), _class2.propTypes = {
   label: _prop_types2.default.oneOfType([_prop_types2.default.string, _prop_types2.default.bool]),
   fields: _prop_types2.default.object,
   form: _prop_types2.default.object,

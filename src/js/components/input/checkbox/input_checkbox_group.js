@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from '../../../prop_types';
 import { mixin } from '../../../utils/decorators';
-
+import InputBase from '../input_base';
 import {
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin
 } from '../../../mixins';
 
@@ -12,10 +11,9 @@ import { InputCheckbox, Label } from '../../../components';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin
 )
-export default class InputCheckboxGroup extends Component {
+export default class InputCheckboxGroup extends InputBase {
   static propTypes = {
     align: React.PropTypes.oneOf(['vertical', 'horizontal']),
     currentValues: React.PropTypes.string

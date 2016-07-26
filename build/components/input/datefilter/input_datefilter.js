@@ -29,7 +29,17 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _decorators = require('../../../utils/decorators');
 
-var _components = require('../../../components');
+var _input_base = require('../input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
+
+var _input_datefilter_select = require('./input_datefilter_select');
+
+var _input_datefilter_select2 = _interopRequireDefault(_input_datefilter_select);
+
+var _input_datefilter_body = require('./input_datefilter_body');
+
+var _input_datefilter_body2 = _interopRequireDefault(_input_datefilter_body);
 
 var _mixins = require('../../../mixins');
 
@@ -70,8 +80,8 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var InputDatefilter = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin), _dec(_class = (_class2 = (_temp2 = _class3 = function (_Component) {
-  _inherits(InputDatefilter, _Component);
+var InputDatefilter = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_class2 = (_temp2 = _class3 = function (_InputBase) {
+  _inherits(InputDatefilter, _InputBase);
 
   function InputDatefilter() {
     var _Object$getPrototypeO;
@@ -154,11 +164,11 @@ var InputDatefilter = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mix
       return _react2.default.createElement(
         'div',
         { className: this.className(), ref: 'container' },
-        _react2.default.createElement(_components.InputDatefilterSelect, _extends({}, this.propsWithoutCSS(), {
+        _react2.default.createElement(_input_datefilter_select2.default, _extends({}, this.propsWithoutCSS(), {
           selectedDates: this.state.selectedDates,
           onFocus: this.showFilterBody
         })),
-        _react2.default.createElement(_components.InputDatefilterBody, _extends({}, this.propsWithoutCSS(), {
+        _react2.default.createElement(_input_datefilter_body2.default, _extends({}, this.propsWithoutCSS(), {
           id: this.props.originalId,
           name: this.props.originalName,
           onSelectDate: this.handleSelectDate,
@@ -169,7 +179,7 @@ var InputDatefilter = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mix
   }]);
 
   return InputDatefilter;
-}(_react.Component), _class3.propTypes = {
+}(_input_base2.default), _class3.propTypes = {
   originalId: _prop_types2.default.string,
   originalName: _prop_types2.default.string,
   resource: _prop_types2.default.string,

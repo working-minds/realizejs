@@ -21,6 +21,10 @@ var _prop_types2 = _interopRequireDefault(_prop_types);
 
 var _decorators = require('../../../utils/decorators');
 
+var _input_base = require('../input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
+
 var _mixins = require('../../../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -31,8 +35,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputCheckbox = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin, _mixins.CheckboxComponentMixin), _dec(_class = (_temp = _class2 = function (_Component) {
-  _inherits(InputCheckbox, _Component);
+var InputCheckbox = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.CheckboxComponentMixin), _dec(_class = (_temp = _class2 = function (_InputBase) {
+  _inherits(InputCheckbox, _InputBase);
 
   function InputCheckbox() {
     _classCallCheck(this, InputCheckbox);
@@ -54,7 +58,7 @@ var InputCheckbox = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixin
   }]);
 
   return InputCheckbox;
-}(_react.Component), _class2.propTypes = {}, _class2.defaultProps = {
+}(_input_base2.default), _class2.propTypes = {}, _class2.defaultProps = {
   themeClassKey: 'input.checkbox'
 }, _temp)) || _class);
 exports.default = InputCheckbox;

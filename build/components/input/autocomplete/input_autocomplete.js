@@ -31,6 +31,10 @@ var _decorators = require('../../../utils/decorators');
 
 var _autocomplete = require('../../../components/input/autocomplete');
 
+var _input_base = require('../input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
+
 var _mixins = require('../../../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -70,8 +74,8 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var InputAutocomplete = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin, _mixins.SelectComponentMixin, _mixins.InputSelectActionsListenerMixin), _dec(_class = (_class2 = (_temp2 = _class3 = function (_Component) {
-  _inherits(InputAutocomplete, _Component);
+var InputAutocomplete = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.SelectComponentMixin, _mixins.InputSelectActionsListenerMixin), _dec(_class = (_class2 = (_temp2 = _class3 = function (_InputBase) {
+  _inherits(InputAutocomplete, _InputBase);
 
   function InputAutocomplete() {
     var _Object$getPrototypeO;
@@ -306,7 +310,7 @@ var InputAutocomplete = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _m
   }]);
 
   return InputAutocomplete;
-}(_react.Component), _class3.propTypes = {
+}(_input_base2.default), _class3.propTypes = {
   maxOptions: _prop_types2.default.number,
   maxOptionsParam: _prop_types2.default.string,
   searchParam: _prop_types2.default.string,

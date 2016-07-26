@@ -6,15 +6,11 @@ import { uuid } from '../../utils';
 import { mixin } from '../../utils/decorators';
 
 import {
-  CssClassMixin,
-  InputComponentMixin
+  CssClassMixin
 } from '../../mixins';
-
-@mixin(
-  CssClassMixin,
-  InputComponentMixin
-)
-export default class InputDatepicker extends Component {
+import InputBase from './input_base';
+@mixin(CssClassMixin)
+export default class InputDatepicker extends InputBase {
   static propTypes = {
     mask: PropTypes.string
   };

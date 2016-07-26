@@ -3,19 +3,17 @@ import PropTypes from '../../../prop_types';
 import { mixin } from '../../../utils/decorators';
 
 import { Label } from '../../../components';
-
+import InputBase from '../input_base';
 import {
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin,
 } from '../../../mixins';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin,
 )
-export default class InputRadioGroup extends Component {
+export default class InputRadioGroup extends InputBase {
   static propTypes = {
     align: PropTypes.oneOf(['vertical', 'horizontal']),
     currentValue: PropTypes.string,

@@ -4,22 +4,16 @@ import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
 import { mixin } from '../../../utils/decorators';
 
-import {
-  GridForm,
-  InputGridFormFields,
-  InputHidden,
-} from '../../../components';
-
+import GridForm from '../../../grid_form';
+import InputGridFormFields from './input_grid_form_fields';
+import InputHidden from '../input_hidden';
+import InputBase from '../input_base';
 import {
   CssClassMixin,
-  InputComponentMixin,
 } from '../../../mixins';
 
-@mixin(
-  CssClassMixin,
-  InputComponentMixin
-)
-export default class InputGridForm extends Component {
+@mixin(CssClassMixin)
+export default class InputGridForm extends InputBase {
   static propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
     fields: PropTypes.object,

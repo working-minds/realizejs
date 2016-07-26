@@ -17,7 +17,17 @@ var _react2 = _interopRequireDefault(_react);
 
 var _decorators = require('../../utils/decorators');
 
-var _components = require('../../components');
+var _input_masked = require('./input_masked');
+
+var _input_masked2 = _interopRequireDefault(_input_masked);
+
+var _label = require('../label');
+
+var _label2 = _interopRequireDefault(_label);
+
+var _input_base = require('./input_base');
+
+var _input_base2 = _interopRequireDefault(_input_base);
 
 var _mixins = require('../../mixins');
 
@@ -29,8 +39,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InputNumber = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.InputComponentMixin), _dec(_class = (_temp = _class2 = function (_Component) {
-  _inherits(InputNumber, _Component);
+var InputNumber = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_class = (_temp = _class2 = function (_InputBase) {
+  _inherits(InputNumber, _InputBase);
 
   function InputNumber() {
     _classCallCheck(this, InputNumber);
@@ -44,20 +54,20 @@ var InputNumber = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mixins.
       return _react2.default.createElement(
         'span',
         null,
-        _react2.default.createElement(_components.InputMasked, _extends({}, this.props, {
+        _react2.default.createElement(_input_masked2.default, _extends({}, this.props, {
           className: this.className(),
           onChange: this._handleChange,
           onFocus: this._handleFocus,
           type: 'text',
           ref: 'input'
         })),
-        _react2.default.createElement(_components.Label, this.propsWithoutCSS())
+        _react2.default.createElement(_label2.default, this.propsWithoutCSS())
       );
     }
   }]);
 
   return InputNumber;
-}(_react.Component), _class2.defaultProps = {
+}(_input_base2.default), _class2.defaultProps = {
   themeClassKey: 'input.number',
   maskType: 'integer'
 }, _temp)) || _class);
