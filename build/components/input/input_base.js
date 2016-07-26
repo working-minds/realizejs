@@ -7,7 +7,7 @@ exports.default = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _desc, _value, _class, _class2, _temp2;
+var _desc, _value, _class, _descriptor, _class2, _temp2;
 
 var _react = require('react');
 
@@ -35,11 +35,25 @@ var _decorators = require('../../utils/decorators');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _initDefineProp(target, property, descriptor, context) {
+  if (!descriptor) return;
+  Object.defineProperty(target, property, {
+    enumerable: descriptor.enumerable,
+    configurable: descriptor.configurable,
+    writable: descriptor.writable,
+    value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+  });
+}
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _initializerWarningHelper(descriptor, context) {
+  throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+}
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
   var desc = {};
@@ -86,14 +100,7 @@ var InputBase = (_class = (_temp2 = _class2 = function (_Component) {
 
     return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(InputBase)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
       value: _this.props.value
-    }, _this.handleFocus = function (event) {
-      _this.props.onFocus(event);
-
-      if (_this.props.readOnly) {
-        var inputNode = event.currentTarget;
-        inputNode.blur();
-      }
-    }, _temp), _possibleConstructorReturn(_this, _ret);
+    }, _initDefineProp(_this, 'handleFocus', _descriptor, _this), _temp), _possibleConstructorReturn(_this, _ret);
   }
 
   _createClass(InputBase, [{
@@ -172,9 +179,6 @@ var InputBase = (_class = (_temp2 = _class2 = function (_Component) {
         this.setState({ value: value });
       }
     }
-
-    //@autobind
-
   }, {
     key: 'render',
     value: function render() {
@@ -204,5 +208,19 @@ var InputBase = (_class = (_temp2 = _class2 = function (_Component) {
     return true;
   },
   errors: []
-}, _temp2), (_applyDecoratedDescriptor(_class.prototype, 'handleReset', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleReset'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'handleChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleChange'), _class.prototype)), _class);
+}, _temp2), (_applyDecoratedDescriptor(_class.prototype, 'handleReset', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleReset'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'handleChange', [_decorators.autobind], Object.getOwnPropertyDescriptor(_class.prototype, 'handleChange'), _class.prototype), _descriptor = _applyDecoratedDescriptor(_class.prototype, 'handleFocus', [_decorators.autobind], {
+  enumerable: true,
+  initializer: function initializer() {
+    var _this2 = this;
+
+    return function (event) {
+      _this2.props.onFocus(event);
+
+      if (_this2.props.readOnly) {
+        var inputNode = event.currentTarget;
+        inputNode.blur();
+      }
+    };
+  }
+})), _class);
 exports.default = InputBase;
