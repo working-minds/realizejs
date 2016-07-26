@@ -142,7 +142,7 @@ var InputFile = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_cla
   }, {
     key: 'handleChange',
     value: function handleChange(event) {
-      this._handleChange(event);
+      this.handleChange(event);
 
       var fileInput = _reactDom2.default.findDOMNode(this.refs.input);
       var filePathInput = _reactDom2.default.findDOMNode(this.refs.filePath);
@@ -177,7 +177,7 @@ var InputFile = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_cla
           _react2.default.createElement('input', {
             className: this.inputClassName(),
             placeholder: this.getLabelName(),
-            onFocus: this._handleFocus,
+            onFocus: this.handleFocus,
             type: 'text',
             ref: 'filePath'
           })

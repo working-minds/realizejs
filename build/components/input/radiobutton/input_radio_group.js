@@ -80,7 +80,7 @@ var InputRadioGroup = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin, _mix
           { key: 'p_input_' + i, id: 'input_' + optionProps.value },
           _react2.default.createElement('input', _extends({}, optionProps, {
             name: this.props.name,
-            onChange: this._handleChange
+            onChange: this.handleChange
           })),
           _react2.default.createElement(_components.Label, { id: optionProps.id, label: optionProps.name })
         ));

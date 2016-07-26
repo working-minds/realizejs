@@ -78,7 +78,7 @@ var InputDatepicker = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _de
         _react2.default.createElement(InputMasked, _extends({}, this.props, {
           value: this.getFormattedDateValue(),
           className: this.className(),
-          onChange: this._handleChange,
+          onChange: this.handleChange,
           onIncomplete: this.handleMaskIncomplete,
           key: this.state.inputMaskedKey,
           ref: 'input'

@@ -210,7 +210,7 @@ export default class InputMasked extends Component {
         placeholder={this.state.placeholder}
         className={this.inputClassName()}
         onKeyUp={this.handleChange}
-        onFocus={this._handleFocus}
+        onFocus={this.handleFocus}
         ref="input"
       >
         {this.props.children}
