@@ -27,8 +27,6 @@ var _reactColor2 = _interopRequireDefault(_reactColor);
 
 var _label = require('../label');
 
-var _label2 = _interopRequireDefault(_label);
-
 var _input_hidden = require('./input_hidden');
 
 var _input_hidden2 = _interopRequireDefault(_input_hidden);
@@ -91,7 +89,7 @@ var InputColorpicker = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _d
           type: 'text',
           ref: 'input'
         }),
-        _react2.default.createElement(_label2.default, _extends({}, this.propsWithoutCSS(), { id: 'colorpicker_input', active: true })),
+        _react2.default.createElement(_label.Label, _extends({}, this.propsWithoutCSS(), { id: 'colorpicker_input', active: true })),
         _react2.default.createElement('div', {
           className: this.themedClassName(this.props.displayThemeClassKey),
           style: this.displayBackgroundStyle(),

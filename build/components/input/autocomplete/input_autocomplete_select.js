@@ -41,8 +41,6 @@ var _input_text2 = _interopRequireDefault(_input_text);
 
 var _label = require('../../label');
 
-var _label2 = _interopRequireDefault(_label);
-
 var _mixins = require('../../../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -120,7 +118,7 @@ var InputAutocompleteSelect = (_dec = (0, _decorators.mixin)(_mixins.CssClassMix
             key: 'autocomplete_select_' + _utils.uuid.v4()
           })
         ),
-        _react2.default.createElement(_label2.default, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
+        _react2.default.createElement(_label.Label, _extends({}, this.propsWithoutCSS(), { id: this.selectId() }))
       );
     }
   }]);

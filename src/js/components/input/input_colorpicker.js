@@ -4,7 +4,7 @@ import { mixin } from '../../utils/decorators';
 
 import ColorPicker from 'react-color';
 
-import Label from '../label';
+import { Label }  from '../label';
 import InputHidden from './input_hidden';
 import InputBase from './input_base';
 

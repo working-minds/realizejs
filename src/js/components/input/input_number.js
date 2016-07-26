@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { mixin } from '../../utils/decorators';
 
 import InputMasked from './input_masked';
-import Label from '../label';
+import { Label } from '../label';
 import InputBase from './input_base';
 import {
   CssClassMixin

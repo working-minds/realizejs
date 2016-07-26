@@ -23,8 +23,6 @@ var _input_masked2 = _interopRequireDefault(_input_masked);
 
 var _label = require('../label');
 
-var _label2 = _interopRequireDefault(_label);
-
 var _input_base = require('./input_base');
 
 var _input_base2 = _interopRequireDefault(_input_base);
@@ -61,7 +59,7 @@ var InputNumber = (_dec = (0, _decorators.mixin)(_mixins.CssClassMixin), _dec(_c
           type: 'text',
           ref: 'input'
         })),
-        _react2.default.createElement(_label2.default, this.propsWithoutCSS())
+        _react2.default.createElement(_label.Label, this.propsWithoutCSS())
       );
     }
   }]);
