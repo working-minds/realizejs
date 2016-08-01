@@ -1,7 +1,9 @@
-/.idea
-/bower_components
-/tmp
-/.sass-cache
 
-/node_modules/*
-!/node_modules/realize
+bower_components
+node_modules
+tmp
+
+.sass-cache
+.DS_Cache
+
+.idea
