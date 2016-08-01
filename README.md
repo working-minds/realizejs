@@ -1,20 +1,5 @@
-Setup do projeto:
+![alt tag](https://working-minds.github.io/realizejs/assets/img/content/realizejs.png)
 
-Instalação do Bower:
+### Current version: 0.8.28 beta
 
-  $ npm install -g bower
-
-Instalação dos pacotes node
-
-  $ npm install
-
-Instalação dos pacotes Bower
-
-  $ bower install
-
-Tarefa Grunt para realizar o build
-
-  $ grunt build
-
-
-
+Read the documentation on how to get started on [Realize.js](https://working-minds.github.io/realizejs/en)
