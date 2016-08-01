@@ -23,8 +23,8 @@
   ],
 
   "main": [
-    "dist/css/realize.min.css",
-    "dist/js/realize.min.js"
+    "dist/css/realize.css",
+    "dist/js/realize.js"
   ],
 
   "dependencies": {
