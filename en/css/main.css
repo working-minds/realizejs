@@ -8122,11 +8122,11 @@ nav .brand-logo img {
   padding: 0px; }
 
 .brazil-flag {
-  background-image: url("/assets/img/flag-sprite.png");
+  background-image: url("/realizejs/assets/img/flag-sprite.png");
   background-size: 48px; }
 
 .en-flag {
-  background-image: url("/assets/img/flag-sprite.png");
+  background-image: url("/realizejs/assets/img/flag-sprite.png");
   background-size: 48px;
   background-position: 24px 0px; }
 
