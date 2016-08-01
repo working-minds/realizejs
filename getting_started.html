@@ -250,7 +250,7 @@
         </li>
     </ul>
 </li>
-<li class="no-padding">
+<!-- li class="no-padding">
     <ul class="collapsible collapsible-accordion">
         <li class="bold">
             
@@ -417,7 +417,7 @@
             </div>
         </li>
     </ul>
-</li>
+</li -->
 
     </li>
   </ul>
@@ -476,7 +476,7 @@
 <p>Antes de você começar a usar o Realize.js para criar <strong>aplicações incríveis</strong>, recomendamos algumas coisas:</p>
 </div>
 <div class="sect2"><h3 id="se-familiarize-um-pouco-com-o-react-js" class="  section scrollspy">Se familiarize um pouco com o React.js</h3><div class="paragraph">
-<p>O Realize.js utiliza é construido sobre o framework <a href="http://sss">React.js</a> desenvolvido pelo Facebook, o que nos proporciona uma enorme flexibilidade e controle quando falamos de front-end.</p>
+<p>O Realize.js utiliza é construido sobre o framework <a href="https://facebook.github.io/react/">React.js</a> desenvolvido pelo Facebook, o que nos proporciona uma enorme flexibilidade e controle quando falamos de front-end.</p>
 </div>
 <div class="paragraph">
 <p>A maior vantagem que vemos no uso do React é que podemos encapsular todo o comportamento e apresentação de um componente "de tela" em um único local e de forma organizada, podendo focar no que realmente é importante.</p>
@@ -485,7 +485,7 @@
 <p>A documentação do React é bem extensa e cobre praticamente tudo que você precisa saber para começar a criar aplicações rapidamente e embora você <strong>não precise ser um expert</strong> em React para utilizar o Realize.js, um conhecimento dos conceitos básicos irá lhe ajudar muito!</p>
 </div></div>
 <div class="sect2"><h3 id="escolha-seu-gestor-de-pacotes" class="  section scrollspy">Escolha seu gestor de pacotes</h3><div class="paragraph">
-<p>Você pode obter o Realize.js pelo <a href="http://bower.io">Bower</a> ou como um <a href="https://www.npmjs.com/package/realize-js">pacote node</a>, que você pode usar em conjunto com o Webpack ou Browserify, por exemplo.</p>
+<p>Você pode obter o Realize.js pelo <a href="http://bower.io">Bower</a> ou como um <a href="https://www.npmjs.com/package/realizejs">npm package</a>, que você pode usar em conjunto com o Webpack ou Browserify, por exemplo.</p>
 </div>
 <div class="sect3"><h4 id="bower-grunt" class="  section scrollspy">Bower + Grunt</h4><div class="paragraph">
 <p>Assumimos que você possui o Bower, o Grunt e suas dependências instalados. Caso não tenha, siga os guias em:</p>
@@ -533,7 +533,7 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ bower install realize-js --save</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ bower install realizejs --save</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -561,7 +561,7 @@
     "tests"
   ],
   "dependencies": {
-    "realize-js": "~0.9.0"
+    "realizejs": "~0.8.28"
   }
 }</code></pre>
 </div>
@@ -570,7 +570,7 @@
 <p>Ao final deste processo, você estará com todas as dependências necessárias instaladas na sua aplicação. Agora basta criar uma tarefa do Grunt para consolidar todos esses recursos.</p>
 </div>
 <div class="paragraph">
-<p>Para tal, vamos começar declarando exports no arquivo <span class="code-ref">bower.json</span>:</p>
+<p>Para tal, vamos começar declarando <strong>exports</strong> no arquivo <span class="code-ref">bower.json</span>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -594,7 +594,7 @@
     "tests"
   ],
   "dependencies": {
-    "wkm-react-frontend": "~0.9.0"
+    "realizejs": "~0.8.28"
   },
 
   "exportsOverride": {  <b class="conum">(1)</b>
@@ -655,17 +655,60 @@
 </ol>
 </div>
 <div class="paragraph">
+<p>Crie também um arquivo chamado <span class="code-ref">Gruntfile.js</span> com o seguinte conteúdo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">var path = require('path');
+
+module.exports = function(grunt) {
+
+  grunt.initConfig({
+    bower: {
+      install: {
+        options: {
+          targetDir: './vendor/assets', <b class="conum">(1)</b>
+          install: true,
+          verbose: true,
+          cleanTargetDir: false,
+          cleanBowerDir: false,
+
+          layout: function(type, component, source) {
+            var renamedType = type;
+            console.log(renamedType);
+            if (type == 'js') renamedType = 'javascripts';
+            else if (type == 'css') renamedType = 'stylesheets';
+
+
+            return path.join(renamedType, component);
+          }
+        }
+      }
+    }
+  });
+  grunt.loadNpmTasks('grunt-bower-task');
+  grunt.registerTask('default', ['bower:install']);
+};</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Informe aqui a pasta de destino para onde os recursos deverão ser copiados. No exemplo, usamos a pasta <span class="code-ref">vendor/assets</span>, no padrão do Rails.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Para mais informações sobre tasks do Grunt, acesse o site do Grunt mencionado acima.</p>
+</div>
+<div class="paragraph">
 <p>Agora execute no shell:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ npm install grunt --save-dev
-# ... output do node ...
-$ npm install grunt-bower-task --save-dev
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ npm install grunt grunt-bower-task  --save-dev
 # ... output do node ... <b class="conum">(1)</b>
-$ bower install <b class="conum">(2)</b>
-# ... output do bower
-$ grunt <b class="conum">(3)</b></code></pre>
+$ grunt <b class="conum">(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -674,12 +717,12 @@ $ grunt <b class="conum">(3)</b></code></pre>
 <p>Nesse ponto, todas as dependencias do Grunt estarão instaladas</p>
 </li>
 <li>
-<p>Instala todas os pacotes descritos em <span class="code-ref">bower.json</span></p>
-</li>
-<li>
 <p>Executa a cópia dos arquivos exportados em <span class="code-ref">exportsOverride</span> do <span class="code-ref">bower.json</span></p>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>Ao término, todos os arquivos estarão disponíveis na pasta especificada em <span class="code-ref">targetDir</span>, no exemplo acima, <span class="code-ref">./vendor/assets</span>.</p>
 </div></div></div></div></div>
 <div class="sect1"><h2 id="guias" class="  section scrollspy">Guias</h2><div class="sectionbody"><div class="paragraph">
 <p>Disponibilizaremos em breve alguns guias no nosso site para você começar a implementar suas aplicações com o Realize.js bem rápido caso você utilize <a href="http://rubyonrails.org">Ruby on Rails</a> ou <a href="http://spring.io/">Spring</a>, mas você pode utilizá-lo <strong>com qualquer back-end que desejar</strong>.</p>

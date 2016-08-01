@@ -250,7 +250,7 @@
         </li>
     </ul>
 </li>
-<li class="no-padding">
+<!-- li class="no-padding">
     <ul class="collapsible collapsible-accordion">
         <li class="bold">
             
@@ -417,7 +417,7 @@
             </div>
         </li>
     </ul>
-</li>
+</li -->
 
     </li>
   </ul>
@@ -476,7 +476,7 @@
 <p>Before you start using Realize.js to create <strong>amazing applications</strong>, we recommend a few things:</p>
 </div>
 <div class="sect2"><h3 id="familiarize-yourself-a-little-with-react-js" class="  section scrollspy">Familiarize yourself a little with React.js</h3><div class="paragraph">
-<p>The Realize.js uses is built on the framework <a href="http://sss">React.js</a> developed by Facebook, which gives us tremendous flexibility and control when it comes to front-end.</p>
+<p>The Realize.js uses is built on the framework <a href="https://facebook.github.io/react/">React.js</a> developed by Facebook, which gives us tremendous flexibility and control when it comes to front-end.</p>
 </div>
 <div class="paragraph">
 <p>The biggest advantage we see in the use of the React can we encapsulate all behavior and presentation of a component "screen" in one place and in an organized manner and can focus on what&#8217;s really important.</p>
@@ -485,7 +485,7 @@
 <p>The React documentation is quite extensive and covers just about everything you need to know to start creating applications quickly and although you <strong>do not need to be an expert</strong> in React to use Realize.js a knowledge of the basics will help you a lot!</p>
 </div></div>
 <div class="sect2"><h3 id="choose-your-package-manager" class="  section scrollspy">Choose your package manager</h3><div class="paragraph">
-<p>You can get the Realize.js by <a href="http://bower.io">Bower</a> or as a <a href="https://www.npmjs.com/package/realize-js">pacote node</a>, you can use together with Webpack or Browserify, for example.</p>
+<p>You can get the Realize.js by <a href="http://bower.io">Bower</a> or as a <a href="https://www.npmjs.com/package/realizejs">npm package</a>, you can use together with Webpack or Browserify, for example.</p>
 </div>
 <div class="sect3"><h4 id="bower-grunt" class="  section scrollspy">Bower + Grunt</h4><div class="paragraph">
 <p>We assume that you have the Bower, Grunt and its dependencies installed. If not, follow the guides on:</p>
@@ -533,7 +533,7 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ bower install realize-js --save</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ bower install realizejs --save</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -561,7 +561,7 @@
     "tests"
   ],
   "dependencies": {
-    "realize-js": "~0.9.0"
+    "realizejs": "~0.8.28"
   }
 }</code></pre>
 </div>
@@ -594,7 +594,7 @@
     "tests"
   ],
   "dependencies": {
-    "wkm-react-frontend": "~0.9.0"
+    "realizejs": "~0.8.28"
   },
 
   "exportsOverride": {  <b class="conum">(1)</b>
@@ -655,16 +655,61 @@
 </ol>
 </div>
 <div class="paragraph">
+<p>We also need to create a file named <span class="code-ref">Gruntfile.js</span> with the following content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">var path = require('path');
+
+module.exports = function(grunt) {
+
+  grunt.initConfig({
+    bower: {
+      install: {
+        options: {
+          targetDir: './vendor/assets', <b class="conum">(1)</b>
+          install: true,
+          verbose: true,
+          cleanTargetDir: false,
+          cleanBowerDir: false,
+
+          layout: function(type, component, source) {
+            var renamedType = type;
+            console.log(renamedType);
+            if (type == 'js') renamedType = 'javascripts';
+            else if (type == 'css') renamedType = 'stylesheets';
+
+
+            return path.join(renamedType, component);
+          }
+        }
+      }
+    }
+  });
+  grunt.loadNpmTasks('grunt-bower-task');
+  grunt.registerTask('default', ['bower:install']);
+};</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Set here the target folder where the assets will be copied to. In the example we are using the <span class="code-ref">vendor/assets</span> folder, used on most Rails applications.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For more information on Grunt tasks, go to the Grunt website mentioned above.</p>
+</div>
+<div class="paragraph">
 <p>Now run the shell:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ npm install grunt --save-dev
-# ... output do node ...
-$ npm install grunt-bower-task --save-dev
-# ... output do node ... <b class="conum">(1)</b>
-$ bower install <b class="conum">(2)</b>
-# ... output do bower
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ npm install grunt grunt-bower-task  --save-dev
+# ... node output ...
+$ npm install --save-dev
+# ... node ... <b class="conum">(1)</b>
 $ grunt <b class="conum">(3)</b></code></pre>
 </div>
 </div>
@@ -674,10 +719,7 @@ $ grunt <b class="conum">(3)</b></code></pre>
 <p>At that point, all the dependencies of the Grunt will be installed</p>
 </li>
 <li>
-<p>Installs all the packages described in <span class="code-ref">bower.json</span></p>
-</li>
-<li>
-<p>Executes copying files exported <span class="code-ref">exportsOverride</span> the <span class="code-ref">bower.json</span></p>
+<p>Copy the exported files specified in <span class="code-ref">exportsOverride</span> on the <span class="code-ref">bower.json</span> file to the target folder.</p>
 </li>
 </ol>
 </div></div></div></div></div>
