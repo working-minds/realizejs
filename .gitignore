@@ -1,0 +1,10 @@
+Gemfile
+Gemfile.lock
+bower_components
+node_modules
+tmp
+
+.sass-cache
+.DS_Cache
+
+.idea

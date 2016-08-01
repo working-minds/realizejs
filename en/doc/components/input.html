@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Input</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <script src="/assets/js/vendor/jquery/jquery-2.2.4.min.js"></script>
+  <script src="/assets/js/vendor/jquery/jquery.inputmask.bundle.js"></script>
+  <script src="/assets/js/vendor/jquery/jquery.serialize-object.min.js"></script>
+  <script src="/assets/js/vendor/materialize/materialize.js"></script>
+  <script src="/assets/js/vendor/modernizr/modernizr-2.8.3.min.js"></script>
+  <script src="/assets/js/vendor/string/string.js"></script>
+  <script src="/assets/js/vendor/realize/realize.js"></script>
+  <script src="/assets/js/vendor/realize/playground.min.js"></script>
+  <script src="https://cdn.rawgit.com/rafaelfbs/xhr-mock/2.0.2-beta/dist/xhr-mock.browser.js"></script>
+  <script src="/assets/js/functions/main.js"></script>
+
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="/en/css/main.css">
+  <link rel="icon" type="image/png" href="/assets/img/icon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/assets/img/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/assets/img/icon-96x96.png" sizes="96x96">
+
+</head>
+
+
+  <body>
+		<div class="global internal">
+
+      <header>
+  <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0%)">
+    <li><a href="/en/" class="brand-logo hide-on-med-and-down"><img src="/assets/img/layout/realizemin.png" alt=""></a></li>
+    <li class="bold active">
+    <li class="bold"><a href="/en/about.html" class="waves-effect">About</a></li>
+<li class="bold"><a href="/en/getting_started.html" class="waves-effect">Getting Started</a></li>
+
+<li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+        <li class="bold">
+            
+            <a class="collapsible-header waves-effect components-collapsible active">Components</a>
+            <div class="collapsible-body">
+                <ul>
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/button.html" class="">Button</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/button_group.html" class="">Button Group</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/container.html" class="">Container</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/flash.html" class="">Flash</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/form.html" class="">Form</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/grid.html" class="">Grid</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/grid_form.html" class="">Grid Form</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header.html" class="">Header</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header_button.html" class="">Header Button</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header_menu.html" class="">Header Menu</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header_section.html" class="">Header Section</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class="active"><a href="/en/doc/components/input.html" class="active">Input</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_datepicker.html" class="">Input Datepicker</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_error.html" class="">Input Error</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_file.html" class="">Input file</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_group.html" class="">Input Group</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_hidden.html" class="">Input Hidden</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_masked.html" class="">Input Masked</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_number.html" class="">Input Number</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_password.html" class="">Input Password</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_select.html" class="">Input Select</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_switch.html" class="">Input Switch</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_text.html" class="">Input Text</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_textarea.html" class="">Input Textarea</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/menu.html" class="">Menu</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/modal.html" class="">Modal</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/modal_form.html" class="">Modal Form</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/notification_list.html" class="">Notification List</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/sidenav.html" class="">Sidenav</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/table.html" class="">Table</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/tabs.html" class="">Tabs</a></li>
+                        
+                    
+                        
+                    
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li>
+<li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+        <li class="bold">
+            
+            <a class="collapsible-header waves-effect components-collapsible ">Mixins</a>
+            <div class="collapsible-body">
+                <ul>
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/checkbox_component_mixin.html" class="">Checkbox Component</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/container_mixin.html" class="">Container</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/css_class_mixin.html" class="">Css Class</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_actions_listener_mixin.html" class="">Form Actions Listener</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_container_mixin.html" class="">Form Container</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_error_handler_mixin.html" class="">Form Error Handler</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_success_mixin.html" class="">Form Success</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/grid_actions_mixin.html" class="">Grid Actions</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/input_component_mixin.html" class="">Input Component</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/input_select_actions_listener_mixin.html" class="">Input Select Actions Listener</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/localized_resource_field_mixin.html" class="">Localized Resource Field</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/materialize_select_mixin.html" class="">Materialize Select</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/modal_render_mixin.html" class="">Modal Render</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/request_handler_mixin.html" class="">Request Handler</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/rest_actions_mixin.html" class="">Rest Actions</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/select_component_mixin.html" class="">Select Component</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/tooltip_mixin.html" class="">Tooltip</a></li>
+                        
+                    
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li>
+
+    </li>
+  </ul>
+  <div class="navbar-fixed hide-on-large-only">
+    <nav>
+      <div class="container-fluid">
+        <a href="#" data-activates="nav-mobile" class="button-collapse top-nav hide-on-large-only"><i class="material-icons">menu</i></a>
+
+        <div class="nav-wrapper">
+          <a href="/en/" class="brand-logo"><img src="/assets/img/layout/realizemin.png" alt=""></a>
+          <ul class="right">
+            <li><a href="https://github.com/working-minds" target="_blank"><span class="icon icon--github "><svg viewBox="0 0 16 16"><path d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span></a>
+</li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="fundo-roxo">
+  <div class="container">
+    <ul class="flag-list right">
+      <li><a href="https://github.com/working-minds" target="_blank"><span class="icon icon--github internal"><svg viewBox="0 0 16 16"><path d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span></a>
+</li>
+
+      
+        
+        <li><a href="/doc/components/input.html" class="brazil-flag active-flag"></a></li>
+        <li><a class="en-flag"></a></li>
+      
+    </ul>
+    <div class="row">
+      <div class="col l12">
+        
+        
+        <h1 class="heading">Input</h1>
+        
+        <p class="caption">Component to form <i>inputs</i>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</header>
+
+
+      <div class="page-content">
+        <div class="container content">
+          <div class="row">
+            <div class="col s12 m9 l10">
+              
+                <div id="playground"></div>
+<script type="text" id="demo_input.html">
+ ReactDOM.render(<div>
+    <Input
+            id='product'
+            name='Product'
+            component= 'masked'
+            maskType= 'currency'
+            value= '1.85'
+    />
+    <Input
+            label= 'Text Component'
+            component='text'
+    />
+    <Input
+            label= 'Text Area'
+            component= 'textarea'
+    />
+    <Input
+            label= 'Number Field'
+            component= 'number'
+    />
+    <Input
+            label= 'Password'
+            component= 'password'
+    />
+    <Input
+            label= 'Date'
+            component= 'datepicker'
+    />
+    <Input
+            label= 'The switch'
+            component= 'switch'
+    />
+    <Input
+            label= 'Upload File'
+            component= 'file'
+    />
+</div>, mountNode)
+
+</script>
+<script>
+  ReactDOM.render(React.createElement(RealizePlayground.default,{
+    code: document.getElementById('demo_input.html').text
+  }), document.getElementById("playground"))
+</script>
+
+              
+              <div class="asciidoctor">
+                <div id="preamble">
+<div class="sectionbody">
+<div id="toc" class="toc-wrapper pin-top"><div style="height: 1px;"><ul class="sectlevel1 table-of-contents"><li><a href="#props">Props</a><li><a href="#id-span-class-prop-type-prop-type-string-string-span-span-class-prop-required-mandatory-span">id <span class="prop-type prop-type-string">String</span> <span class="prop-required">mandatory</span></a></li><li><a href="#name-span-class-prop-type-prop-type-string-string-span">name <span class="prop-type prop-type-string">String</span></a></li><li><a href="#label-span-class-prop-type-prop-type-string-string-span">label <span class="prop-type prop-type-string">String</span></a></li><li><a href="#value-span-class-prop-type-prop-type-any-any-span">value <span class="prop-type prop-type-any">Any</span></a></li><li><a href="#component-span-class-prop-type-prop-type-string-string-span">component <span class="prop-type prop-type-string">String</span></a></li><li><a href="#formstyle-span-class-prop-type-prop-type-string-string-span">formStyle <span class="prop-type prop-type-string">String</span></a></li><li><a href="#data-span-class-prop-type-prop-type-object-object-span">data <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#errors-span-class-prop-type-prop-type-object-object-span">errors <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#resource-span-class-prop-type-prop-type-string-string-span">resource <span class="prop-type prop-type-string">String</span></a></li><li><a href="#scope-span-class-prop-type-prop-type-string-string-span">scope <span class="prop-type prop-type-string">String</span></a></li><li><a href="#themeclasskey-span-class-prop-type-prop-type-string-string-span">themeClassKey <span class="prop-type prop-type-string">String</span></a></li></li></ul></div></div>
+</div>
+</div>
+<div class="sect2"><h3 id="props" class="  section scrollspy">Props</h3><div class="sect2"><h3 id="id-span-class-prop-type-prop-type-string-string-span-span-class-prop-required-mandatory-span" class="  section scrollspy">id <span class="prop-type prop-type-string">String</span> <span class="prop-required">mandatory</span></h3><div class="paragraph">
+<p><em>Input</em> <em>id</em> atribute.</p>
+</div></div>
+<div class="sect2"><h3 id="name-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">name <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p><em>Input</em> <em>name</em> atribute.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: props.id</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="label-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">label <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Texto da tag <em>label</em> associada a este <em>input</em>.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: ''</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="value-span-class-prop-type-prop-type-any-any-span" class="  section scrollspy">value <span class="prop-type prop-type-any">Any</span></h3><div class="paragraph">
+<p>Initial value of the input.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: undefined</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="component-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">component <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Input component name. By default, <em>inputs</em> accept text type values.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: "text"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The defined types are:</p>
+</div>
+<div class="dlist value-list">
+<dl>
+<dt class="hdlist1"><code>"text"</code></dt>
+<dd>
+<p><em>Input</em> for text type fields. See the component <a href="./input_text.html">InputText</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A text input',
+  component: 'test',
+  value: 'A text value'
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"autocomplete"</code></dt>
+<dd>
+<p><em>Input</em> to type text fields with support <em>autocomplete</em>. See the component <a href="./input_autocomplete.html">InputAutocomplete</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'An autocomplete input',
+  component: 'autocomplete',
+  options: [{
+            id: 0,
+            name: 'word 1'},
+          {
+            id: 1,
+            name: 'word 2'},
+          {
+            id: 2,
+            name: 'word 3'
+          }
+        ]
+  }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"textarea"</code></dt>
+<dd>
+<p><em>Input</em> for inputting multi-line text. See the component <a href="./input_textarea.html">InputTextarea</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A textarea input',
+  component: 'textarea',
+  value: 'A text value in textarea'
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"number"</code></dt>
+<dd>
+<p><em>Input</em> to the type number fields. See the component <a href="./input_number.html">InputNumber</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A number input',
+  component: 'number',
+  value: 12345
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"masked"</code></dt>
+<dd>
+<p><em>Input</em> to set a predefined format using masks. See the component <a href="./input_masked.html">InputMasked</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A masked input',
+  component: 'masked',
+  maskType: 'currency',
+  value: 1.85
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"password"</code></dt>
+<dd>
+<p><em>Input</em> for fields password type. See the component <a href="./input_password.html">InputPassword</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A password input',
+  component: 'password',
+  value: '123abc456'
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"datepicker"</code></dt>
+<dd>
+<p><em>Input</em> for entering dates using a calendar. See the component <a href="./input_datepicker.html">InputDatepicker</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A datepicker input',
+  component: 'datepicker',
+  value: '20151210'
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"file"</code></dt>
+<dd>
+<p><em>Input</em> for selecting and uploading files. See the component <a href="./input_file.html">InputFile</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A datepicker input',
+  component: 'file'
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"hidden"</code></dt>
+<dd>
+<p><em>Input</em> invisible. See the component <a href="./input_hidden.html">InputHidden</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  component: 'hidden'
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"switch"</code></dt>
+<dd>
+<p><em>Input</em> for fields of type boolean. See the component <a href="./input_switch.html">InputSwitch</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">props: {
+  label: 'A switch input',
+  component: 'switch',
+  value: true
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="formstyle-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">formStyle <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Style <em>grid</em> of <em>inputs</em> specified in the theme settings. If not specified, it uses the style defined in the form.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: "default"</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="data-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">data <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Object mapping the value of this input, in the form <i>{input_id: value}</i>.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="errors-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">errors <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Object that defines the fields with validation errors.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="resource-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">resource <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Key assigned to the object specified in the resource settings i18n and l10n.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: ''</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="scope-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">scope <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>The scope type <em>input</em> . Can be <span class="prop-value"><b><i>"resource"</b></i></span> or <span class="prop-value"><b><i>"global"</b></i></span>. If <span class="prop-value"><b><i>"resource"</b></i></span>, insert the name of <span class="prop-value"><b><i>"resource"</b></i></span> as the prefix propref_s}id</b></span>'s input .</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: "resource"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">id: 'name'
+resource: 'product'
+scope: 'resource'
+// id do input será product_name</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="themeclasskey-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">themeClassKey <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Key assigned to the object specified in the theme settings.</p>
+</div>
+<div class="listingblock prop-def">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: "form.inputGroup"</code></pre>
+</div>
+</div></div></div>
+
+              </div>
+            </div>
+            <div class='col hide-on-small-only m3 l2' id="side-toc">
+              <script>
+$(document).ready(function() {
+  $(".toc-wrapper").appendTo("#side-toc")
+  $('.scrollspy').scrollSpy();
+});
+</script>
+
+            </div>
+          </div>
+        </div>
+      </div>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/default.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script>
+      <footer>
+    <p class="center-align">Created and maintained by staff <a href="http://workingminds.com.br"><img src="/assets/img/content/workingminds.png" alt=""></a></p>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-81705825-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    </div>
+  </body>
+
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Grid</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <script src="/assets/js/vendor/jquery/jquery-2.2.4.min.js"></script>
+  <script src="/assets/js/vendor/jquery/jquery.inputmask.bundle.js"></script>
+  <script src="/assets/js/vendor/jquery/jquery.serialize-object.min.js"></script>
+  <script src="/assets/js/vendor/materialize/materialize.js"></script>
+  <script src="/assets/js/vendor/modernizr/modernizr-2.8.3.min.js"></script>
+  <script src="/assets/js/vendor/string/string.js"></script>
+  <script src="/assets/js/vendor/realize/realize.js"></script>
+  <script src="/assets/js/vendor/realize/playground.min.js"></script>
+  <script src="https://cdn.rawgit.com/rafaelfbs/xhr-mock/2.0.2-beta/dist/xhr-mock.browser.js"></script>
+  <script src="/assets/js/functions/main.js"></script>
+
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="/en/css/main.css">
+  <link rel="icon" type="image/png" href="/assets/img/icon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/assets/img/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/assets/img/icon-96x96.png" sizes="96x96">
+
+</head>
+
+
+  <body>
+		<div class="global internal">
+
+      <header>
+  <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0%)">
+    <li><a href="/en/" class="brand-logo hide-on-med-and-down"><img src="/assets/img/layout/realizemin.png" alt=""></a></li>
+    <li class="bold active">
+    <li class="bold"><a href="/en/about.html" class="waves-effect">About</a></li>
+<li class="bold"><a href="/en/getting_started.html" class="waves-effect">Getting Started</a></li>
+
+<li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+        <li class="bold">
+            
+            <a class="collapsible-header waves-effect components-collapsible active">Components</a>
+            <div class="collapsible-body">
+                <ul>
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/button.html" class="">Button</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/button_group.html" class="">Button Group</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/container.html" class="">Container</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/flash.html" class="">Flash</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/form.html" class="">Form</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class="active"><a href="/en/doc/components/grid.html" class="active">Grid</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/grid_form.html" class="">Grid Form</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header.html" class="">Header</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header_button.html" class="">Header Button</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header_menu.html" class="">Header Menu</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/header_section.html" class="">Header Section</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input.html" class="">Input</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_datepicker.html" class="">Input Datepicker</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_error.html" class="">Input Error</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_file.html" class="">Input file</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_group.html" class="">Input Group</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_hidden.html" class="">Input Hidden</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_masked.html" class="">Input Masked</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_number.html" class="">Input Number</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_password.html" class="">Input Password</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_select.html" class="">Input Select</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_switch.html" class="">Input Switch</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_text.html" class="">Input Text</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/input_textarea.html" class="">Input Textarea</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/menu.html" class="">Menu</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/modal.html" class="">Modal</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/modal_form.html" class="">Modal Form</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/notification_list.html" class="">Notification List</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/sidenav.html" class="">Sidenav</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/table.html" class="">Table</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/components/tabs.html" class="">Tabs</a></li>
+                        
+                    
+                        
+                    
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li>
+<li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+        <li class="bold">
+            
+            <a class="collapsible-header waves-effect components-collapsible ">Mixins</a>
+            <div class="collapsible-body">
+                <ul>
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/checkbox_component_mixin.html" class="">Checkbox Component</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/container_mixin.html" class="">Container</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/css_class_mixin.html" class="">Css Class</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_actions_listener_mixin.html" class="">Form Actions Listener</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_container_mixin.html" class="">Form Container</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_error_handler_mixin.html" class="">Form Error Handler</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/form_success_mixin.html" class="">Form Success</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/grid_actions_mixin.html" class="">Grid Actions</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/input_component_mixin.html" class="">Input Component</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/input_select_actions_listener_mixin.html" class="">Input Select Actions Listener</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/localized_resource_field_mixin.html" class="">Localized Resource Field</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/materialize_select_mixin.html" class="">Materialize Select</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/modal_render_mixin.html" class="">Modal Render</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/request_handler_mixin.html" class="">Request Handler</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/rest_actions_mixin.html" class="">Rest Actions</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/select_component_mixin.html" class="">Select Component</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/en/doc/mixins/tooltip_mixin.html" class="">Tooltip</a></li>
+                        
+                    
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li>
+
+    </li>
+  </ul>
+  <div class="navbar-fixed hide-on-large-only">
+    <nav>
+      <div class="container-fluid">
+        <a href="#" data-activates="nav-mobile" class="button-collapse top-nav hide-on-large-only"><i class="material-icons">menu</i></a>
+
+        <div class="nav-wrapper">
+          <a href="/en/" class="brand-logo"><img src="/assets/img/layout/realizemin.png" alt=""></a>
+          <ul class="right">
+            <li><a href="https://github.com/working-minds" target="_blank"><span class="icon icon--github "><svg viewBox="0 0 16 16"><path d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span></a>
+</li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="fundo-roxo">
+  <div class="container">
+    <ul class="flag-list right">
+      <li><a href="https://github.com/working-minds" target="_blank"><span class="icon icon--github internal"><svg viewBox="0 0 16 16"><path d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span></a>
+</li>
+
+      
+        
+        <li><a href="/doc/components/grid.html" class="brazil-flag active-flag"></a></li>
+        <li><a class="en-flag"></a></li>
+      
+    </ul>
+    <div class="row">
+      <div class="col l12">
+        
+        
+        <h1 class="heading">Grid</h1>
+        
+        <p class="caption">Component grid for presenting tabular data with support for filtering and sorting, fully configurable and customizable. Supports list of items or charging request to the server via Ajax, actions by item or collection of items, internationalization and localization of column names and themes using materialize.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</header>
+
+
+      <div class="page-content">
+        <div class="container content">
+          <div class="row">
+            <div class="col s12 m9 l10">
+              
+                <div id="playground"></div>
+<script type="text" id="demo_grid.html">
+ ReactDOM.render(<div>
+    <Grid
+            url='/items'
+            eagerLoad
+    />
+</div>, mountNode)
+</script>
+<script>
+  ReactDOM.render(React.createElement(RealizePlayground.default,{
+    code: document.getElementById('demo_grid.html').text
+  }), document.getElementById("playground"))
+</script>
+
+              
+              <div class="asciidoctor">
+                <div id="preamble">
+<div class="sectionbody">
+<div id="toc" class="toc-wrapper pin-top"><div style="height: 1px;"><ul class="sectlevel1 table-of-contents"><li><a href="#props">Props</a><li><a href="#url-span-class-prop-type-prop-type-string-string-span-span-class-prop-required-mandatory-span">url <span class="prop-type prop-type-string">String</span> <span class="prop-required">mandatory</span></a></li><li><a href="#columns-span-class-prop-type-prop-type-object-object-span-span-class-prop-required-mandatory-span">columns <span class="prop-type prop-type-object">Object</span> <span class="prop-required">mandatory</span></a></li><li><a href="#data-span-class-prop-type-prop-type-object-object-span">data <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#eagerload-span-class-prop-type-prop-type-boolean-boolean-span">eagerLoad <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#resource-span-class-prop-type-prop-type-string-string-span">resource <span class="prop-type prop-type-string">String</span></a></li><li><a href="#filter-span-class-prop-type-prop-type-object-object-span">filter <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#pagination-span-class-prop-type-prop-type-boolean-boolean-span">pagination <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#paginationontop-span-class-prop-type-prop-type-boolean-boolean-span">paginationOnTop <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#paginationconfigs-span-class-prop-type-prop-type-object-object-span">paginationConfigs <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#sortconfigs-span-class-prop-type-prop-type-object-object-span">sortConfigs <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#sortdata-span-class-prop-type-prop-type-object-object-span">sortData <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#datarowsparam-span-class-prop-type-prop-type-string-string-span">dataRowsParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#countparam-span-class-prop-type-prop-type-string-string-span">countParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#selectedrowidsparam-span-class-prop-type-prop-type-string-string-span">selectedRowIdsParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#actionbuttons-span-class-prop-type-prop-type-object-object-span">actionButtons <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#isloading-span-class-prop-type-prop-type-boolean-boolean-span">isLoading <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#selectable-span-class-prop-type-prop-type-boolean-boolean-span">selectable <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#clearthemetable-span-class-prop-type-prop-type-boolean-boolean-span">clearThemeTable <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#tableclassname-span-class-prop-type-prop-type-string-string-span">tableClassName <span class="prop-type prop-type-string">String</span></a></li><li><a href="#tablerowcssclass-span-class-prop-type-prop-type-function-function-span">tableRowCssClass <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#customtableheader-span-class-prop-type-prop-type-string-string-span">customTableHeader <span class="prop-type prop-type-string">String</span></a></li><li><a href="#rowselectablefilter-span-class-prop-type-prop-type-function-function-span">rowSelectableFilter <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#forceshowselectallbutton-span-class-prop-type-prop-type-boolean-boolean-span">forceShowSelectAllButton <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#onloadsuccess-span-class-prop-type-prop-type-function-function-span">onLoadSuccess <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#onloaderror-span-class-prop-type-prop-type-function-function-span">onLoadError <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#onclickrow-span-class-prop-type-prop-type-function-function-span">onClickRow <span class="prop-type prop-type-function">Function</span></a></li></li></ul></div></div>
+</div>
+</div>
+<div class="sect2"><h3 id="props" class="  section scrollspy">Props</h3><div class="sect2"><h3 id="url-span-class-prop-type-prop-type-string-string-span-span-class-prop-required-mandatory-span" class="  section scrollspy">url <span class="prop-type prop-type-string">String</span> <span class="prop-required">mandatory</span></h3><div class="paragraph">
+<p>URL address that serves the data for the table.</p>
+</div></div>
+<div class="sect2"><h3 id="columns-span-class-prop-type-prop-type-object-object-span-span-class-prop-required-mandatory-span" class="  section scrollspy">columns <span class="prop-type prop-type-object">Object</span> <span class="prop-required">mandatory</span></h3><div class="paragraph">
+<p>Object table column settings, where the key specifies the <em>id</em> of the <em>input</em> and the value are the proposed component <a href="./table_header.html">TableHeader</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">columns: {
+  title: {
+    name:  'title',
+    label: 'Título',
+    format: 'text',
+    sortable: true,
+    sortDirection: 'asc',
+    sortFieldName: 'name',
+    onSort: function (sortData) {
+      return true;
+    }
+  }
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="data-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">data <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Object containing the list of data to initialize the table and the total amount of items. If <span class="prop-name"><b>eagerLoad</b></span> is <span class="prop-value"><b><i>true</b></i></span>, the data is requested to the server and <span class="prop-name"><b>data</b></span> is ignored.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">data: {
+  dataRows: [
+    ['linha_1_coluna_1', 'linha_1_coluna_2', ...],
+    ['linha_2_coluna_1', 'linha_2_coluna_2', ...],
+  ],
+  count: 10
+  }
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">dataRows <span class="prop-type prop-type-array">Array</span></dt>
+<dd>
+<p>Table data list. See <span class="prop-name"><b>dataRowsParam</b></span> to map the name of the parameter received from the server.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: []</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">count <span class="prop-type prop-type-number">Number</span></dt>
+<dd>
+<p>Total number of items on the server, used for paging reference.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 0</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="eagerload-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">eagerLoad <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<p>If <span class="prop-value"><b><i>true</b></i></span>, the component requests the data to the server at boot time. Otherwise, it initializes the values ​​from <span class="prop-name"><b>data</b></span>.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: true</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="resource-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">resource <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Resource object name i18n and l10n.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">// No arquivo de recursos
+Realize.i18n.registerLocale({
+  resources: {
+    defaults: {
+      fields: {
+        created_at: 'Criado em',
+        active: 'Ativo'
+      }
+    },
+    product: {
+      fields: {
+        name: 'Nome',
+        price: 'Preço',
+        manufacturer_name: 'Fabricante',
+        barcode: 'Código de Barras',
+        group_name: 'Grupo',
+        subgroup_name: 'Subgrupo'
+      }
+    }
+  }
+}, 'pt-BR');
+
+// Nas props do componente
+resource: 'product',
+columns: {
+  name:  {...},
+  price: {...},
+  ...
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="filter-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">filter <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Configuration object of the filter table. See the documentation <a href="./grid_filter.html">GridFilter</a> for the complete definition of the filter props.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">filter: {
+  resource: 'q',
+  inputs: {
+    name:  { label: 'Nome'  },
+    price: { label: 'Preço' },
+    ...
+  },
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="pagination-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">pagination <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<p>If <span class="prop-value"><b><i>false</b></i></span>, disables paging of data.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="paginationontop-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">paginationOnTop <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<p>If <span class="prop-value"><b><i>false</b></i></span>, it disables the scroll bar at the top.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: true</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="paginationconfigs-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">paginationConfigs <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Configuration object of the scroll bar. See the documentation <a href="./grid_pagination.html">GridPagination</a> for the complete definition of props <span class="prop-name"><b>paginationConfigs</b></span>.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">paginationConfigs: {
+  param: 'p',
+  perPage: 10,
+  window: 4
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">param <span class="prop-type prop-type-string">String</span></dt>
+<dd>
+<p>pagination parameter name accessed by the server.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'p'</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="sortconfigs-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">sortConfigs <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Configuration object of ordering the columns of the tables.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">sortConfigs: {
+  param: 's',
+  valueFormat: '%{field} %{direction}'
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">param <span class="prop-type prop-type-string">String</span></dt>
+<dd>
+<p>Hash parameter name sorting accessed in <em>backend</em>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 's'</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">valueFormat <span class="prop-type prop-type-string">String</span></dt>
+<dd>
+<p>Ordering string format sent as a sort parameter to the server. You can use the variables <code>%{field}</code> and <code>%{direction}</code>  to replace the id field and the current direction of the field, respectively.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: '%{field} %{direction}'</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="sortdata-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">sortData <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Object pattern table sorting definition.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">sortData: {
+  field: 'name',
+  direction: 'asc'
+}</code></pre>
+</div>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="datarowsparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">dataRowsParam <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Data Object Parameter name received in response from the server that contains the lines of the table.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'data'</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="countparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">countParam <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Data Object Parameter name received in response from the server that contains the total number of items.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'count'</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="selectedrowidsparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">selectedRowIdsParam <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Parameter name for sending the <em>ids</em> of the selected lines.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'rowIds'</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="actionbuttons-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">actionButtons <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<p>Object definition of the line of action and table buttons. See <a href="../mixins/grid_actions_mixin.html">GridActionsMixin</a>.</p>
+</div></div>
+<div class="sect2"><h3 id="isloading-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">isLoading <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<p>If <span class="prop-value"><b><i>false</b></i></span>, reports that the component is still being loaded.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="selectable-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">selectable <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<p>If <span class="prop-value"><b><i>false</b></i></span>, disables the selection of rows in the table.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="clearthemetable-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">clearThemeTable <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<p>If <span class="prop-value"><b><i>true</b></i></span>, it disables theme used in the table.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="tableclassname-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">tableClassName <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>Class css table element.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: undefined</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="tablerowcssclass-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">tableRowCssClass <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
+<p>Function for the line css class configuration.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function (rowData) {
+  // estilizar linhas pares e ímpares
+  return rowData.id % 2 == 0 ? 'par' : 'impar';
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="customtableheader-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">customTableHeader <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<p>String with HTML fragment to insert custom header.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="rowselectablefilter-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">rowSelectableFilter <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
+<p>Function to filter lines activated to select.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function rowSelectableFilter(rowData) {
+  // selecionar somente linhas pares
+  return rowData.id % 2 == 0;
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="forceshowselectallbutton-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">forceShowSelectAllButton <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<p>If <span class="prop-value"><b><i>true</b></i></span> and <span class="prop-name"><b>rowSelectableFilter</b></span> is set, action presentation strength to select all items.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="onloadsuccess-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onLoadSuccess <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
+<p>Function <em>callback</em> executed when loading data successfully.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onLoadSuccess() {
+  // lógica ao carregar dados.
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="onloaderror-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onLoadError <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
+<p>Function <em>callback</em> run on an error in loading the data.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onLoadError(xhr, status, error) {
+  // logica em caso de erro.
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="onclickrow-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onClickRow <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
+<p>Function <em>callback</em> executed when clicking on a table row.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onClickRow(event, rowData) {
+  // lógica executada ao clicar em uma linha.
+}</code></pre>
+</div>
+</div></div></div>
+
+              </div>
+            </div>
+            <div class='col hide-on-small-only m3 l2' id="side-toc">
+              <script>
+$(document).ready(function() {
+  $(".toc-wrapper").appendTo("#side-toc")
+  $('.scrollspy').scrollSpy();
+});
+</script>
+
+            </div>
+          </div>
+        </div>
+      </div>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/default.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script>
+      <footer>
+    <p class="center-align">Created and maintained by staff <a href="http://workingminds.com.br"><img src="/assets/img/content/workingminds.png" alt=""></a></p>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-81705825-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    </div>
+  </body>
+
+</html>

@@ -1,0 +1,40 @@
+<script>
+    var items = [
+        {id: 1, name: 'Coffee', price: 1.5},
+        {id: 2, name: 'Milk', price: 2},
+        {id: 3, name: 'Sugar', price: 1},
+        {id: 4, name: 'Whey', price: 10},
+        {id: 5, name: 'Beer', price: 4.10},
+        {id: 6, name: 'Voodca', price: 20},
+        {id: 7, name: 'Cookie', price: 2.5},
+        {id: 8, name: 'Water', price: 2},
+        {id: 9, name: 'Wine', price: 12},
+        {id: 10, name: 'Fruit', price: 13.5},
+        {id: 11, name: 'Peanut Butter', price: 1.5},
+        {id: 12, name: 'Soy Milk', price: 3.5},
+        {id: 13, name: 'Sugar', price: 1},
+        {id: 14, name: 'Honey', price: 5.5},
+        {id: 15, name: 'Black Beer', price: 4.50},
+        {id: 16, name: 'Cereal', price: 13.5},
+        {id: 17, name: 'Nutella', price: 10.5},
+        {id: 18, name: 'Bread', price: 3.6},
+        {id: 19, name: 'Butter', price: 3.5},
+        {id: 20, name: 'Pie', price: 10.5}
+    ];
+    function getItems (page, max){
+        page = page || 1;
+        max = max || 10;
+        return items.slice(max*(page-1), max*page);
+    }
+    XhrMock.setup();
+    XhrMock.get('/items', function(req, res) {
+        var aux = getItems(req.query().p, req.query().per_page);
+        return res
+                .status(200)
+                .body(JSON.stringify({
+                    data: aux,
+                    count: items.length
+                }));
+    });
+</script>
+
