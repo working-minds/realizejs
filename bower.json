@@ -2,12 +2,13 @@
   "name": "realize",
   "version": "0.8.28",
   "authors": [
+    "Ariel Lindgren <ariel@wkm.com.br>",
     "Pedro Jesus <pjesus@wkm.com.br>",
     "Lucas Toledo <ltoledo@wkm.com.br>",
     "Rafael Ferrari <rferrari@wkm.com.br>",
-    "Hudson Gomes <hgomes@wkm.com.br>"
+    "Hudson Gomes"
   ],
-  "description": "Elementos de Frontend, utilizando ReactJS e MaterializeCSS",
+  "description": "A rich set of UI components based on Material Design using React.js",
   "moduleType": [
     "es6"
   ],
