@@ -11,6 +11,10 @@ window.InputNumber = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    Materialize.updateTextFields()
+  },
+
   render: function() {
     return (
       <span>
