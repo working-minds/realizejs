@@ -84676,7 +84676,7 @@ window.InputDatepicker = React.createClass({
     return {
       themeClassKey: 'input.datepicker',
       mask: null,
-      format: null,
+      dateFormat: null,
       maskType: 'date'
     };
   },
@@ -84718,7 +84718,11 @@ window.InputDatepicker = React.createClass({
   },
 
   getDateFormat: function getDateFormat() {
-    return this.props.format || Realize.i18n.t('date.formats.date');
+    // TODO: remover deprecation warning na major version
+    if (this.props.format && console && console.warn) {
+      console.warn('Prop "format" of component "InputDatepicker" is deprecated. Use "dateFormat" instead.');
+    }
+    return this.props.dateFormat || Realize.i18n.t('date.formats.date');
   },
 
   getFormattedDateValue: function getFormattedDateValue() {
