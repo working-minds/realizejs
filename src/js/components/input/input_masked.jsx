@@ -13,6 +13,7 @@ window.InputMasked = React.createClass({
     maskType: React.PropTypes.string,
     regex: React.PropTypes.string,
     autoUnmask: React.PropTypes.bool,
+    removeMaskOnChange: React.PropTypes.bool,
     onComplete: React.PropTypes.func,
     onIncomplete: React.PropTypes.func,
     onCleared: React.PropTypes.func
@@ -183,6 +184,12 @@ window.InputMasked = React.createClass({
     }
   },
 
+  getUnmaskedValue: function () {
+    const $el = $(this.getInputElement())
+    return $el.inputmask('unmaskedvalue')
+  },
+
+
   /* event handlers */
 
   handleComplete: function(event) {
@@ -196,11 +203,12 @@ window.InputMasked = React.createClass({
   },
 
   handleChange: function(event) {
-    var newValue = event.target.value;
-    this.props.onChange(event, newValue, this);
+    var maskedValue = this.getValue()
+    var value = this.props.removeMaskOnChange ? this.getUnmaskedValue() : maskedValue
+    this.props.onChange(event, value, this);
 
     if(!event.isDefaultPrevented()) {
-      this.updateValue(newValue);
+      this.updateValue(maskedValue);
     }
   },
 
