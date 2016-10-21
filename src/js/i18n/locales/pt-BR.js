@@ -56,7 +56,11 @@ Realize.i18n.registerLocale({
       alias: "decimal",
       groupSeparator: ".",
       radixPoint: ",",
-      removeMaskOnSubmit: true
+      removeMaskOnSubmit: true,
+      autoGroup: true,
+      digitsOptional: false,
+      placeholder: "0",
+      clearMaskOnLostFocus: false
     },
     currency: {
       alias: "currency",
