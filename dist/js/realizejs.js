@@ -85240,6 +85240,10 @@ window.InputNumber = React.createClass({
     };
   },
 
+  componentDidMount: function componentDidMount() {
+    Materialize.updateTextFields();
+  },
+
   render: function render() {
     return React.createElement(
       'span',
