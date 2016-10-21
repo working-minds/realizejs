@@ -125,7 +125,7 @@ window.InputMasked = React.createClass({
 
   applyPredefinedMask: function(predefinedMask) {
     var $input = $(this.getInputElement());
-    var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
+    var predefinedMaskOptions = $.extend({}, predefinedMask, this.parseMaskOptions());
 
     $input.inputmask(predefinedMaskOptions);
     return predefinedMaskOptions;
@@ -203,7 +203,7 @@ window.InputMasked = React.createClass({
   },
 
   handleChange: function(event) {
-    var maskedValue = this.getValue()
+    var maskedValue = event.target.value
     var value = this.props.removeMaskOnChange ? this.getUnmaskedValue() : maskedValue
     this.props.onChange(event, value, this);
 

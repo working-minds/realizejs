@@ -85124,7 +85124,7 @@ window.InputMasked = React.createClass({
 
   applyPredefinedMask: function applyPredefinedMask(predefinedMask) {
     var $input = $(this.getInputElement());
-    var predefinedMaskOptions = $.extend({}, this.parseMaskOptions(), predefinedMask);
+    var predefinedMaskOptions = $.extend({}, predefinedMask, this.parseMaskOptions());
 
     $input.inputmask(predefinedMaskOptions);
     return predefinedMaskOptions;
@@ -85201,7 +85201,7 @@ window.InputMasked = React.createClass({
   },
 
   handleChange: function handleChange(event) {
-    var maskedValue = this.getValue();
+    var maskedValue = event.target.value;
     var value = this.props.removeMaskOnChange ? this.getUnmaskedValue() : maskedValue;
     this.props.onChange(event, value, this);
 
@@ -88554,7 +88554,12 @@ Realize.i18n.registerLocale({
       alias: "decimal",
       groupSeparator: ".",
       radixPoint: ",",
-      removeMaskOnSubmit: true
+      removeMaskOnSubmit: true,
+      autoGroup: true,
+      digits: 2,
+      digitsOptional: false,
+      placeholder: "0",
+      clearMaskOnLostFocus: false
     },
     currency: {
       alias: "currency",
@@ -88661,7 +88666,11 @@ Realize.i18n.registerLocale({
       alias: "decimal",
       groupSeparator: ".",
       radixPoint: ",",
-      removeMaskOnSubmit: true
+      removeMaskOnSubmit: true,
+      autoGroup: true,
+      digitsOptional: false,
+      placeholder: "0",
+      clearMaskOnLostFocus: false
     },
     currency: {
       alias: "currency",
