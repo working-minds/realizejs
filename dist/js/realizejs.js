@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.32 (http://www.wkm.com.br)
+ * Realize v0.8.33 (http://www.wkm.com.br)
  * Copyright 2015-2016 
  */
 
@@ -69540,6 +69540,11 @@ window.InputDatepicker = React.createClass({
     var date = moment.utc(this.state.value, moment.ISO_8601);
     if (date.isValid()) {
       return date.format(this.getDateFormat());
+    } else {
+      date = moment.utc(this.state.value);
+      if (date.isValid()) {
+        return date.format(this.getDateFormat());
+      }
     }
 
     return this.state.value;

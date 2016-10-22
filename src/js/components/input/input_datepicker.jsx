@@ -68,6 +68,11 @@ window.InputDatepicker = React.createClass({
     var date = moment.utc(this.state.value, moment.ISO_8601);
     if(date.isValid()) {
       return date.format(this.getDateFormat());
+    } else {
+      date = moment.utc(this.state.value);
+      if(date.isValid()) {
+        return date.format(this.getDateFormat());
+      }
     }
 
     return this.state.value;
