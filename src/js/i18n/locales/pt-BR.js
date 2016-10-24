@@ -58,6 +58,7 @@ Realize.i18n.registerLocale({
       radixPoint: ",",
       removeMaskOnSubmit: true,
       autoGroup: true,
+      digits: 2,
       digitsOptional: false,
       placeholder: "0",
       clearMaskOnLostFocus: false
