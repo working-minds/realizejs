@@ -1,4 +1,6 @@
 import lodash from 'lodash';
+import $ from 'jquery';
+
 import {getProp} from '../utils';
 
 import themeDefault from './mappings/default';

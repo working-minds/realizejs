@@ -1,5 +1,6 @@
 import {getProp} from '../../utils';
 import { autobind } from '../../utils/decorators';
+import $ from 'jquery';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import map from 'lodash/map';
