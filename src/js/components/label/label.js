@@ -23,24 +23,24 @@ export default class Label extends Component {
     required: false
   };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            themeClassKey: this.getLabelThemeClassKey(this.props)
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      themeClassKey: this.getLabelThemeClassKey(this.props)
+    };
+  }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            themeClassKey: this.getLabelThemeClassKey(nextProps)
-        });
-    }
+  componentWillReceiveProps (nextProps) {
+    this.setState({
+      themeClassKey: this.getLabelThemeClassKey(nextProps)
+    });
+  }
 
-    getLabelThemeClassKey(props) {
-        let themeClassKey = props.themeClassKey;
-        if (props.active) {
-            themeClassKey += ' label.active';
-        }
+  getLabelThemeClassKey (props) {
+    let themeClassKey = props.themeClassKey;
+    if(props.active) {
+      themeClassKey += ' label.active';
+    }
 
         return themeClassKey;
     };
