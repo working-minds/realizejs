@@ -3,6 +3,7 @@ import PropTypes from '../../prop_types';
 import i18n from '../../i18n/i18n';
 import $ from 'jquery';
 import { mixin } from '../../utils/decorators';
+import { Icon } from '../icon';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 import RequestHandlerMixin from '../../mixins/request_handler_mixin';
@@ -46,34 +47,34 @@ export default class Button extends Component {
     method: null
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       themeClassKey: this.getButtonThemeClassKey() + this.getStyleThemeClassKey()
     }
   }
 
-  getButtonThemeClassKey () {
+  getButtonThemeClassKey() {
     let themeClassKey = this.props.themeClassKey;
 
-    if(!this.props.name || this.props.name.length === 0) {
+    if (!this.props.name || this.props.name.length === 0) {
       themeClassKey += ' button.iconOnly';
     }
 
     return themeClassKey;
   }
 
-  getStyleThemeClassKey () {
-    if(!this.props.style) {
+  getStyleThemeClassKey() {
+    if (!this.props.style) {
       return '';
     }
 
     return ' button.' + this.props.style;
   }
 
-  render () {
+  render() {
     let content = '';
-    if(this.props.isLoading) {
+    if (this.props.isLoading) {
       content = this.renderLoadingIndicator();
     } else {
       content = this.renderContent();
@@ -97,7 +98,7 @@ export default class Button extends Component {
     );
   }
 
-  getClassName (){
+  getClassName() {
     let className = this.className();
     if (this.props.disabled && this.props.element === 'a')
       className = 'button btn-flat disable-action-button';
@@ -105,39 +106,39 @@ export default class Button extends Component {
     return className;
   }
 
-  getHref () {
+  getHref() {
     if (this.props.disabled && this.props.element === 'a')
       return 'javascript:void(0)';
     return this.props.href;
   }
 
-  getMethod () {
-    if(!!this.props.method) {
+  getMethod() {
+    if (!!this.props.method) {
       return this.props.method;
     }
 
     return null
   }
 
-  getConfirmsWith () {
-    if(!!this.props.confirmsWith) {
+  getConfirmsWith() {
+    if (!!this.props.confirmsWith) {
       return i18n.t(this.props.confirmsWith);
     }
 
     return null
   }
 
-  renderContent () {
+  renderContent() {
     return [i18n.t(this.props.name), this.renderIcon()];
   }
 
-  renderIcon () {
-    if(!this.props.icon) {
+  renderIcon() {
+    if (!this.props.icon) {
       return '';
     }
 
     let iconProps = null;
-    if($.isPlainObject(this.props.icon)) {
+    if ($.isPlainObject(this.props.icon)) {
       iconProps = this.props.icon;
     } else {
       iconProps = { type: this.props.icon };
@@ -146,24 +147,24 @@ export default class Button extends Component {
     return <Icon className={this.getIconClassName()} {...iconProps} key="icon" />;
   }
 
-  renderLoadingIndicator () {
-      return i18n.t(this.props.disableWith);
+  renderLoadingIndicator() {
+    return i18n.t(this.props.disableWith);
   }
 
   handleClick = (event) => {
     let buttonOnClick = this.props.onClick;
     let buttonAction = this.props.actionUrl;
 
-    if($.isFunction(buttonOnClick)) {
+    if ($.isFunction(buttonOnClick)) {
       this.props.onClick(event);
-    } else if(!!buttonAction) {
+    } else if (!!buttonAction) {
       let actionData = this.props.actionData;
       this.performRequest(buttonAction, actionData, (this.getMethod() || 'POST'));
     }
   }
 
-  getIconClassName () {
-    if(!this.props.name || this.props.name.length === 0) {
+  getIconClassName() {
+    if (!this.props.name || this.props.name.length === 0) {
       return '';
     } else {
       return 'right';
