@@ -86,7 +86,6 @@ export default class Button extends Component {
           className: this.getClassName(),
           type: this.props.type,
           hidden: this.props.hidden,
-          visible: this.props.visible,
           disabled: this.props.disabled || this.props.isLoading,
           href: this.getHref(),
           onClick: this.handleClick,

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import i18n from '../../i18n/i18n';
 import moment from 'moment';

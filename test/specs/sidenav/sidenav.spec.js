@@ -1,6 +1,5 @@
 import React from 'react'
 import $ from 'jquery'
-import ReactDOM from 'react-dom'
 import Realize from 'realize'
 import {SideNav} from 'components/sidenav'
 import {Menu} from 'components/menu'

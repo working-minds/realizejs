@@ -126,7 +126,7 @@ export default class InputGroup extends Component {
       return inputWrapperComponent;
     }
     else {
-      return window.Input;
+      return Input;
     }
   }
 

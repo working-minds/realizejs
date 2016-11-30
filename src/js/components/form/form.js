@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
+import { FormActions } from '../../actions';
 import $ from 'jquery';
 import { mixin } from '../../utils/decorators';
 
@@ -66,37 +68,36 @@ export default class Form extends Component {
       icon: 'send'
     },
     otherButtons: [],
-    onSubmit: function(event, postData) {},
-    onReset: function(event) {}
+    onSubmit: function (event, postData) { },
+    onReset: function (event) { }
   };
 
   state = {
     isLoading: null
   };
 
-  renderMethodTag () {
+  renderMethodTag() {
     return <input name="_method" type="hidden" value={this.props.method} />;
   }
 
-  renderInputs () {
-    if(!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
+  renderInputs() {
+    if (!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
       return [];
     }
 
-    return <InputGroup {...this.propsWithoutCSS()} formStyle={this.props.style} errors={this.state.errors} ref="inputGroup" />;
+    return <InputGroup {...this.propsWithoutCSS() } formStyle={this.props.style} errors={this.state.errors} ref="inputGroup" />;
   }
 
-  render () {
+  render() {
     return (
       <form action={this.props.action}
-        method={(this.props.method == 'PUT' && !this.props.ajaxSubmit)? 'POST' : this.props.method}
+        method={(this.props.method == 'PUT' && !this.props.ajaxSubmit) ? 'POST' : this.props.method}
         encType={this.parseFormEncType()}
         id={this.props.id}
         onSubmit={this.handleSubmit}
         onReset={this.handleReset}
         className={this.className()}
         hidden={this.props.hidden}
-        visible={this.props.visible}
         ref="form">
 
         {this.renderFlashErrors()}
@@ -105,31 +106,31 @@ export default class Form extends Component {
         {this.renderMethodTag()}
         {this.renderChildren()}
 
-        <FormButtonGroup {...this.propsWithoutCSS()} isLoading={this.isLoading()} />
+        <FormButtonGroup {...this.propsWithoutCSS() } isLoading={this.isLoading()} />
       </form>
     );
   }
 
-  propsToForward () {
+  propsToForward() {
     return ['resource', 'data', 'readOnly', 'disabled'];
   }
 
-  parseFormEncType () {
-    if(!!this.props.multipart) {
+  parseFormEncType() {
+    if (!!this.props.multipart) {
       return "multipart/form-data";
     } else {
       return "application/x-www-form-urlencoded";
     }
   }
 
-  propsToForwardMapping () {
+  propsToForwardMapping() {
     return {
       errors: this.state.errors,
       formStyle: this.props.style
     };
   }
 
-  serialize () {
+  serialize() {
     var form = ReactDOM.findDOMNode(this.refs.form);
     return $(form).serializeObject();
   }
@@ -140,21 +141,21 @@ export default class Form extends Component {
     this.props.onSubmit(event, postData);
     FormActions.submit(this.props.id, event, postData);
 
-    if(!event.isDefaultPrevented()) {
-      this.setState({isLoading: true, errors: [], showSuccessFlash: false});
+    if (!event.isDefaultPrevented()) {
+      this.setState({ isLoading: true, errors: [], showSuccessFlash: false });
       this.submit(postData);
     }
   }
 
-  submit (postData) {
-    if(!!this.props.ajaxSubmit) {
+  submit(postData) {
+    if (!!this.props.ajaxSubmit) {
       this.ajaxSubmit(postData);
     } else {
       this.formSubmit();
     }
   }
 
-  ajaxSubmit (postData) {
+  ajaxSubmit(postData) {
     var submitOptions = {
       url: this.props.action,
       method: this.props.method,
@@ -163,19 +164,19 @@ export default class Form extends Component {
       error: this.handleError
     };
 
-    if(!!this.props.dataType) {
+    if (!!this.props.dataType) {
       submitOptions.dataType = this.props.dataType;
     }
 
-    if(!!this.props.contentType) {
+    if (!!this.props.contentType) {
       submitOptions.contentType = this.props.contentType;
 
-      if(submitOptions.contentType == "application/json") {
+      if (submitOptions.contentType == "application/json") {
         submitOptions.data = JSON.stringify(postData);
       }
     }
 
-    if(this.props.multipart){
+    if (this.props.multipart) {
       var fd = new FormData(ReactDOM.findDOMNode(this.refs.form));
       var multipartOptions = {
         data: fd,
@@ -183,13 +184,13 @@ export default class Form extends Component {
         processData: false,
         contentType: false
       };
-      submitOptions = $.extend({},submitOptions,multipartOptions);
+      submitOptions = $.extend({}, submitOptions, multipartOptions);
     }
 
     $.ajax(submitOptions);
   }
 
-  formSubmit () {
+  formSubmit() {
     var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.submit();
   }
@@ -199,18 +200,18 @@ export default class Form extends Component {
     FormActions.reset(this.props.id, event);
   }
 
-  reset () {
+  reset() {
     var formNode = ReactDOM.findDOMNode(this.refs.form);
     formNode.reset();
   }
 
-  haveNativeReset () {
+  haveNativeReset() {
     return true;
   }
 
-  isLoading () {
+  isLoading() {
     var isLoading = this.state.isLoading;
-    if(isLoading === null) {
+    if (isLoading === null) {
       isLoading = this.props.isLoading;
     }
 

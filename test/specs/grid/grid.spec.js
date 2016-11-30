@@ -1,6 +1,5 @@
 import React from 'react'
 import $ from 'jquery'
-import ReactDOM from 'react-dom'
 import Realize from 'realize'
 import {Grid} from 'components/grid'
 import {assert} from 'chai';

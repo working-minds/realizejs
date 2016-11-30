@@ -1,6 +1,5 @@
 import React from 'react'
 import $ from 'jquery'
-import ReactDOM from 'react-dom'
 import Realize from 'realize'
 import {Modal} from 'components/modal'
 import {assert} from 'chai';

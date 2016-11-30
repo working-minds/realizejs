@@ -29,8 +29,7 @@ export default class Icon extends Component {
   render () {
     return (
       <i className={this.getTooltipClassName()}
-        {...this.tooltipAttributes()}
-        {...this.propsWithoutCSS()}>
+        {...this.tooltipAttributes()}>
         {this.iconType()}
       </i>
     );

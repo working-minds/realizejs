@@ -1,6 +1,5 @@
 import React from 'react'
 import $ from 'jquery'
-import ReactDOM from 'react-dom'
 import Realize from 'realize'
 import {HeaderButton} from 'components/header'
 import {assert} from 'chai';

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import { mixin } from '../../utils/decorators';
