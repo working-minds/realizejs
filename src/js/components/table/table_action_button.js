@@ -39,7 +39,7 @@ export default class TableActionButton extends Component {
       return component;
     }
 
-    let buttonProps = React.__spread({}, this.props, {
+    let buttonProps = Object.assign({}, this.props, {
       isLoading: this.state.isLoading,
       disabled: this.isDisabled(),
       method: this.actionButtonMethod(),

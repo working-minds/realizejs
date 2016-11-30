@@ -76,6 +76,14 @@ export default class Form extends Component {
     isLoading: null
   };
 
+  constructor(){
+    super();
+
+    this.clearErrors = this.clearErrors.bind(this);
+    this.handleError = this.handleError.bind(this);
+    this.handleValidationError = this.handleValidationError.bind(this);
+  }
+
   renderMethodTag() {
     return <input name="_method" type="hidden" value={this.props.method} />;
   }

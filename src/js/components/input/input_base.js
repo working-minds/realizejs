@@ -20,7 +20,7 @@ export default class InputBase extends Component {
   };
 
   static defaultProps = {
-    value: null,
+    value: '',
     disabled: false,
     readOnly: false,
     onChange: () => true,

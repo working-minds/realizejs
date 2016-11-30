@@ -104,7 +104,7 @@ export default class Input extends React.Component {
     var componentInputClass = this.getInputComponentClass(this.props.component);
     var isGrid = (componentInputClass === InputComponents.InputGridForm);
 
-    var componentInputProps = React.__spread(this.propsWithoutCSS(), {
+    var componentInputProps = Object.assign(this.propsWithoutCSS(), {
       originalId: this.props.id,
       originalName: this.props.name,
       id: this.getInputComponentId(),
