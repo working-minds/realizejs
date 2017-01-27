@@ -190,6 +190,10 @@ window.InputAutocomplete = React.createClass({
       value: []
     }, this.triggerDependableChanged);
 
+    if(!this.props.multiple) {
+      this.hideResult();
+    }
+
     if(!!this.props.onSelect) {
       this.props.onSelect(this.props.id, [], []);
     }
@@ -216,6 +220,10 @@ window.InputAutocomplete = React.createClass({
 
     this.forceUpdate();
     this.triggerDependableChanged();
+
+    if(!this.props.multiple) {
+      this.hideResult();
+    }
 
     if(!!this.props.onSelect) {
       this.props.onSelect(this.props.id, this.state.value, this.state.loadData);

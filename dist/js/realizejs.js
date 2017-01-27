@@ -1,6 +1,6 @@
 /*!
  * Realize v0.8.33 (http://www.wkm.com.br)
- * Copyright 2015-2016 
+ * Copyright 2015-2017 
  */
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -66563,10 +66563,11 @@ window.Grid = React.createClass({
   },
 
   buildPaginationPostData: function buildPaginationPostData() {
+    var paginationConfigs = this.paginationConfigs();
     var paginationPostData = {};
 
-    var paginationParam = this.paginationConfigs().param;
-    var paginationParamPerPage = 'per_page';
+    var paginationParam = paginationConfigs.param;
+    var paginationParamPerPage = paginationConfigs.perPageParam;
 
     paginationPostData[paginationParam] = this.state.page;
     paginationPostData[paginationParamPerPage] = this.state.perPage;
@@ -67834,6 +67835,10 @@ window.InputAutocomplete = React.createClass({
       value: []
     }, this.triggerDependableChanged);
 
+    if (!this.props.multiple) {
+      this.hideResult();
+    }
+
     if (!!this.props.onSelect) {
       this.props.onSelect(this.props.id, [], []);
     }
@@ -67860,6 +67865,10 @@ window.InputAutocomplete = React.createClass({
 
     this.forceUpdate();
     this.triggerDependableChanged();
+
+    if (!this.props.multiple) {
+      this.hideResult();
+    }
 
     if (!!this.props.onSelect) {
       this.props.onSelect(this.props.id, this.state.value, this.state.loadData);

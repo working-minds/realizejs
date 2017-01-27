@@ -330,10 +330,11 @@ window.Grid = React.createClass({
   },
 
   buildPaginationPostData: function() {
+    const paginationConfigs = this.paginationConfigs();
     var paginationPostData = {};
 
-    var paginationParam = this.paginationConfigs().param;
-    var paginationParamPerPage = 'per_page';
+    var paginationParam = paginationConfigs.param;
+    var paginationParamPerPage = paginationConfigs.perPageParam;
 
     paginationPostData[paginationParam] = this.state.page;
     paginationPostData[paginationParamPerPage] = this.state.perPage;
