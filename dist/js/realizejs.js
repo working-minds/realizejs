@@ -1,5 +1,5 @@
 /*!
- * Realize v0.8.34 (http://www.wkm.com.br)
+ * Realize v0.8.35 (http://www.wkm.com.br)
  * Copyright 2015-2017 
  */
 
@@ -84794,7 +84794,8 @@ window.InputAutocomplete = React.createClass({
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
     searchParam: React.PropTypes.string,
-    actionButtons: React.PropTypes.array
+    actionButtons: React.PropTypes.array,
+    clientSideSearch: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -84803,7 +84804,8 @@ window.InputAutocomplete = React.createClass({
       maxOptionsParam: 'limit',
       searchParam: 'query',
       themeClassKey: 'input.autocomplete',
-      actionButtons: []
+      actionButtons: [],
+      clientSideSearch: false
     };
   },
 
@@ -84842,7 +84844,7 @@ window.InputAutocomplete = React.createClass({
       React.createElement(InputAutocompleteResult, {
         id: this.props.id,
         selectedOptions: this.selectedOptions(),
-        options: this.state.options,
+        options: this.getResultOptions(),
         active: this.state.active,
         searchValue: this.state.searchValue,
         actionButtons: this.props.actionButtons,
@@ -84904,10 +84906,16 @@ window.InputAutocomplete = React.createClass({
     searchInput.focus();
   },
 
-  searchOptions: function searchOptions(event) {
-    var $searchInput = $(event.currentTarget);
+  searchOptions: function searchOptions(event, searchValue) {
+    this.props.clientSideSearch ? this.executeClientSideOptionsSearch(searchValue) : this.executeServerSideOptionsSearch(searchValue);
+  },
 
-    this.state.searchValue = $searchInput.val();
+  executeClientSideOptionsSearch: function executeClientSideOptionsSearch(searchValue) {
+    this.setState({ searchValue: searchValue });
+  },
+
+  executeServerSideOptionsSearch: function executeServerSideOptionsSearch(searchValue) {
+    this.state.searchValue = searchValue;
     this.state.loadParams[this.props.searchParam] = this.state.searchValue;
     this.loadOptions();
   },
@@ -85005,8 +85013,13 @@ window.InputAutocomplete = React.createClass({
     }
 
     this.props.onChange(event, this.state.value, this);
-  }
+  },
 
+  getResultOptions: function getResultOptions() {
+    return this.state.options.filter(function (option) {
+      return !this.props.clientSideSearch || !!option.name && !!option.name.match(new RegExp(this.state.searchValue, 'i'));
+    }.bind(this));
+  }
 });
 
 }).call(this,require("react"),require("react-dom"))

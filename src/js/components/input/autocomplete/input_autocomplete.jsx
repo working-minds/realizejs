@@ -15,7 +15,8 @@ window.InputAutocomplete = React.createClass({
     maxOptions: React.PropTypes.number,
     maxOptionsParam: React.PropTypes.string,
     searchParam: React.PropTypes.string,
-    actionButtons: React.PropTypes.array
+    actionButtons: React.PropTypes.array,
+    clientSideSearch: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -24,7 +25,8 @@ window.InputAutocomplete = React.createClass({
       maxOptionsParam: 'limit',
       searchParam: 'query',
       themeClassKey: 'input.autocomplete',
-      actionButtons: []
+      actionButtons: [],
+      clientSideSearch: false
     };
   },
 
@@ -64,7 +66,7 @@ window.InputAutocomplete = React.createClass({
         <InputAutocompleteResult
           id={this.props.id}
           selectedOptions={this.selectedOptions()}
-          options={this.state.options}
+          options={this.getResultOptions()}
           active={this.state.active}
           searchValue={this.state.searchValue}
           actionButtons={this.props.actionButtons}
@@ -128,10 +130,18 @@ window.InputAutocomplete = React.createClass({
     searchInput.focus();
   },
 
-  searchOptions: function(event) {
-    var $searchInput = $(event.currentTarget);
+  searchOptions: function(event, searchValue) {
+    this.props.clientSideSearch
+      ? this.executeClientSideOptionsSearch(searchValue)
+      : this.executeServerSideOptionsSearch(searchValue);
+  },
 
-    this.state.searchValue = $searchInput.val();
+  executeClientSideOptionsSearch: function(searchValue) {
+    this.setState({ searchValue: searchValue });
+  },
+
+  executeServerSideOptionsSearch: function(searchValue) {
+    this.state.searchValue = searchValue;
     this.state.loadParams[this.props.searchParam] = this.state.searchValue;
     this.loadOptions();
   },
@@ -230,6 +240,11 @@ window.InputAutocomplete = React.createClass({
     }
 
     this.props.onChange(event, this.state.value, this);
-  }
+  },
 
+  getResultOptions: function() {
+    return this.state.options.filter(function(option) {
+      return !this.props.clientSideSearch || (!!option.name && !!option.name.match(new RegExp(this.state.searchValue, 'i')));
+    }.bind(this));
+  }
 });
