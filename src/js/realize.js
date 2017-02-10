@@ -1,17 +1,12 @@
-import config from './init/config';
-import themes from './theme/theme.js';
-import i18n from './i18n/i18n';
+import realizeConfig from './init/config';
+import realizeThemes from './theme/theme.js';
+import realizeI18n from './i18n/i18n';
 
 import merge from 'lodash/merge';
 
-export const Realize = {
-  config,
-  themes,
-  i18n,
-
-  setConfig (newConfig) {
-    merge(this.config, newConfig);
-  }
+export const config = realizeConfig;
+export const themes = realizeThemes;
+export const i18n = realizeI18n;
+export const setConfig = (newConfig) => {
+  merge(config, newConfig);
 };
-
-export default Realize;

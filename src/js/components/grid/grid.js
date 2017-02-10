@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import { mixin } from '../../utils/decorators';
-import Realize from '../../realize'
-import {getProp} from '../../utils';
+import Realize from '../../realize';
+import { getProp } from '../../utils';
 
 import {
   CssClassMixin,

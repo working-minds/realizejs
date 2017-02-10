@@ -1,8 +1,8 @@
-import { PropTypes } from 'react';
+import React from 'react';
 import i18n from './i18n/i18n';
 
 export default {
-  ...PropTypes,
+  ...React.PropTypes,
   localizedString: function(props, propName, componentName) {
     var value = props[propName];
     if (value === null || value === undefined || (typeof value === "string" && value.length === 0)) {
