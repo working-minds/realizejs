@@ -4,7 +4,7 @@ import Realize from 'realize'
 import {assert} from 'chai';
 import {shallow} from 'enzyme';
 
-describe('Relize', () => {
+describe('Realize', () => {
   it('exists', () => {
     assert.ok(Realize);
   });

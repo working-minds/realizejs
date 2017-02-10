@@ -1,13 +1,15 @@
-
+const webpackConfig = require('./webpack.config.karma.js');
 
 // Karma configuration
 module.exports = function(config) {
   config.set({
-    
+
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
+
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '../',
+
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['PhantomJS'],
@@ -27,23 +29,19 @@ module.exports = function(config) {
       'karma-webpack',
       'karma-mocha-reporter'
     ],
+
     // list of files / patterns to load in the browser
     files: [
-      {
-        pattern: 'test/tests.webpack.js',
-        watched: false,
-        served: true,
-        included: true
-      }
+      'test/specs/index.js'
     ],
 
     // list of files to exclude
-    exclude: [
-    ],
+    exclude: [],
+
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/tests.webpack.js': ['webpack', 'sourcemap']
+      'test/specs/index.js': ['webpack', 'sourcemap']
     },
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -66,48 +64,7 @@ module.exports = function(config) {
     // how many browser should be started simultaneous
     concurrency: Infinity,
   
-    webpack: {
-      devtool: 'inline-source-map',
-      module: {
-        loaders: [
-          {
-            test: /\.js[x]?$/,
-            loader: 'babel',
-            exclude: /node_modules/,
-            query: {
-              cacheDirectory: true
-            }
-          },
-          {
-            test: /\.json$/,
-            loader: 'json'
-          },
-          {
-            test: /sinon.*\.js$/,
-            loader: "imports?define=>false"
-          }
-        ],
-        noParse: [
-          /sinon/
-        ]
-      },
-      resolve: {
-        alias: {
-          sinon: 'sinon/pkg/sinon.js'
-        },
-        extensions: ['', '.js', '.jsx', '.json'],
-        modulesDirectories: [
-          'node_modules',
-          'src/js'
-        ]
-      },
-      externals: {
-        'jsdom': 'window',
-        'react/lib/ExecutionEnvironment': true,
-        'react/lib/ReactContext': 'window',
-        'text-encoding': 'window'
-      }
-    },
+    webpack: webpackConfig,
     webpackServer: {
       noInfo: true
     }
