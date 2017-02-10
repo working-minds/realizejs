@@ -28,7 +28,8 @@ export default class InputAutocomplete extends InputBase {
     searchParam: PropTypes.string,
     actionButtons: PropTypes.array,
     onSearchValueChange: PropTypes.func,
-  };
+    clientSideSearch: PropTypes.bool
+};
 
   static defaultProps = {
     maxOptions: 99,
@@ -36,6 +37,7 @@ export default class InputAutocomplete extends InputBase {
     searchParam: 'query',
     themeClassKey: 'input.autocomplete',
     actionButtons: [],
+    clientSideSearch: false
   };
 
   state = {
@@ -95,17 +97,24 @@ export default class InputAutocomplete extends InputBase {
   }
 
   @autobind
-  searchOptions(event) {
-    const $searchInput = $(event.currentTarget);
-    const searchValue = $searchInput.val();
-
-    this.state.searchValue = searchValue;
-    this.state.loadParams[this.props.searchParam] = searchValue;
-    this.loadOptions();
+  searchOptions(event, searchValue) {
+    this.props.clientSideSearch
+      ? this.executeClientSideOptionsSearch(searchValue)
+      : this.executeServerSideOptionsSearch(searchValue);
 
     if (typeof this.props.onSearchValueChange === 'function') {
       this.props.onSearchValueChange(searchValue);
     }
+  }
+
+  executeClientSideOptionsSearch(searchValue) {
+    this.setState({ searchValue: searchValue });
+  }
+
+  executeServerSideOptionsSearch(searchValue) {
+    this.state.searchValue = searchValue;
+    this.state.loadParams[this.props.searchParam] = searchValue;
+    this.loadOptions();
   }
 
   moveActiveUp() {
@@ -139,11 +148,21 @@ export default class InputAutocomplete extends InputBase {
     });
   }
 
+  getResultOptions() {
+    return this.state.options.filter(function(option) {
+      return !this.props.clientSideSearch || (!!option.name && !!option.name.match(new RegExp(this.state.searchValue, 'i')));
+    }.bind(this));
+  }
+
   @autobind
   clearSelection() {
     this.setState({
       value: [],
     }, this.triggerDependableChanged);
+
+    if(!this.props.multiple) {
+      this.hideResult();
+    }
 
     if (!!this.props.onSelect) {
       this.props.onSelect(this.props.id, [], []);
@@ -207,6 +226,10 @@ export default class InputAutocomplete extends InputBase {
     this.forceUpdate();
     this.triggerDependableChanged();
 
+    if(!this.props.multiple) {
+      this.hideResult();
+    }
+
     if (!!this.props.onSelect) {
       this.props.onSelect(this.props.id, this.state.value, this.state.loadData);
     }
@@ -227,7 +250,7 @@ export default class InputAutocomplete extends InputBase {
         <InputAutocompleteResult
           id={this.props.id}
           selectedOptions={this.selectedOptions()}
-          options={this.state.options}
+          options={this.getResultOptions()}
           active={this.state.active}
           searchValue={this.state.searchValue}
           actionButtons={this.props.actionButtons}

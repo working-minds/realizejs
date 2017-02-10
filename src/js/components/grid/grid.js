@@ -334,10 +334,11 @@ export default class Grid extends Component {
   }
 
   buildPaginationPostData () {
-    var paginationPostData = {};
+    const paginationConfigs = this.paginationConfigs();
+    const paginationPostData = {};
 
-    var paginationParam = this.paginationConfigs().param;
-    var paginationParamPerPage = 'per_page';
+    const paginationParam = paginationConfigs.param;
+    const paginationParamPerPage = paginationConfigs.perPageParam;
 
     paginationPostData[paginationParam] = this.state.page;
     paginationPostData[paginationParamPerPage] = this.state.perPage;
