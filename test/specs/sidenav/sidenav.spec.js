@@ -8,13 +8,13 @@ import {shallow, mount} from 'enzyme';
 
 describe('Sidenav', () => {
   it('exists', () => {
-    assert.ok(SideNav);
+    assert(SideNav);
   });
   it('renders with the default props', () => {
     const content = shallow(
       <SideNav />
     );
-    assert.ok(content.find('SideNav'));
+    assert(content.find('SideNav'));
   });
   it('renders with Menu', () => {
     const content = shallow(

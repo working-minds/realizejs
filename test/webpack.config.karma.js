@@ -1,13 +1,17 @@
 const path = require('path');
 
-const BIN_CONTEXT = path.join(__dirname, 'dist');
+const BIN_CONTEXT = path.join(__dirname, '../dist');
+const SRC_CONTEXT = path.join(__dirname, '../src/js');
+const NODE_MODULES_CONTEXT = path.join(__dirname, '../node_modules');
 
 module.exports = {
   devtool: 'inline-source-map',
 
   resolve: {
-    modules: ['node_modules', 'src'],
+    modules: [NODE_MODULES_CONTEXT, SRC_CONTEXT],
     extensions: ['.js', '.jsx', '.json'],
+    mainFields: ['browser', 'main'],
+    mainFiles: ['index'],
     alias: {
       sinon: 'sinon/pkg/sinon.js'
     },
@@ -15,7 +19,8 @@ module.exports = {
 
   output: {
     path: path.resolve(BIN_CONTEXT, 'build', 'tests'),
-    filename: 'realizejs_tests.js'
+    filename: 'realizejs_tests.js',
+    libraryTarget: 'window'
   },
 
   module: {
@@ -23,7 +28,6 @@ module.exports = {
       {
         test: /\.js[x]?$/,
         loader: 'babel-loader',
-        exclude: 'node_modules',
         options: {
           cacheDirectory: true
         }
@@ -36,13 +40,16 @@ module.exports = {
         test: /sinon.*\.js$/,
         loader: "imports-loader?define=>false"
       }
+    ],
+    noParse: [
+      /sinon/
     ]
   },
 
   externals: {
-    'jsdom': 'window',
-    'react/lib/ExecutionEnvironment': true,
-    'react/lib/ReactContext': 'window',
-    'text-encoding': 'window'
+    'jsdom': 'jsdom',
+    'react/lib/ExecutionEnvironment': 'ExecutionEnvironment',
+    'react/lib/ReactContext': 'ReactContext',
+    'text-encoding': 'TextEncoding'
   }
 };

@@ -8,7 +8,7 @@ import {shallow} from 'enzyme';
 
 describe('Grid', () => {
   it('exists', () => {
-    assert.ok(Grid);
+    assert(Grid);
   });
   it('renders with the default props', () => {
     const content = shallow(
@@ -16,6 +16,7 @@ describe('Grid', () => {
         url=''
       />
     );
-    assert.ok(Grid);
+
+    assert(content);
   });
 });

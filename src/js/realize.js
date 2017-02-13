@@ -10,3 +10,10 @@ export const i18n = realizeI18n;
 export const setConfig = (newConfig) => {
   merge(config, newConfig);
 };
+
+export default {
+  config: realizeConfig,
+  themes: realizeThemes,
+  i18n: realizeI18n,
+  setConfig: setConfig
+};

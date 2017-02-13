@@ -32,6 +32,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      './node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js',
       'test/specs/index.js'
     ],
 
@@ -43,6 +44,7 @@ module.exports = function(config) {
     preprocessors: {
       'test/specs/index.js': ['webpack', 'sourcemap']
     },
+
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
@@ -50,8 +52,10 @@ module.exports = function(config) {
 
     // web server port
     port: 9876,
+
     // enable / disable colors in the output (reporters and logs)
     colors: true,
+
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
@@ -65,6 +69,7 @@ module.exports = function(config) {
     concurrency: Infinity,
   
     webpack: webpackConfig,
+
     webpackServer: {
       noInfo: true
     }

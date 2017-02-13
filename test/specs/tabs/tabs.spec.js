@@ -1,11 +1,10 @@
-import React from 'react'
-import Realize from 'realize'
-import {Tabs} from 'components'
-import {expect} from 'chai';
-import {shallow} from 'enzyme';
+import React from 'react';
+import { Tabs } from 'components';
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 
-describe('<TabButton/>', () => {
+describe('<Tabs/>', () => {
   it('exists', () => {
-    expect(Tabs).to.exist;
+    assert(Tabs);
   })
 });

@@ -7,12 +7,12 @@ import {shallow} from 'enzyme';
 
 describe('NotificationsList', () => {
   it('exists', () => {
-    assert.ok(NotificationsList);
+    assert(NotificationsList);
   });
   it('renders with the default props', () => {
     const content = shallow(
       <NotificationsList />
     );
-    assert.ok(content.find('NotificationsList'));
+    assert(content.find('NotificationsList'));
   });
 });

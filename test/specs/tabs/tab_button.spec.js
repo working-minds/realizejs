@@ -1,32 +1,31 @@
 import React from 'react'
-import Realize from 'realize'
-import {TabButton} from 'components'
-import {expect} from 'chai';
-import {shallow} from 'enzyme';
+import { TabButton } from 'components'
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 
 describe('<TabButton/>', () => {
   it('exists', () => {
-    expect(TabButton).to.exist;
-  })
+    assert(TabButton);
+  });
 
   it('accepts an id prop', () => {
     const myId = 'my-id';
     const wrapper = shallow(<TabButton id={myId} />);
 
-    expect(wrapper.find('a').props().href).to.be.equal(`#${myId}`);
+    assert.equal(wrapper.find('a').props().href, `#${myId}`);
   });
 
   it('accepts a title prop', () => {
-    const myTitle = 'my-title'
+    const myTitle = 'my-title';
     const wrapper = shallow(<TabButton title={myTitle} />);
 
-    expect(wrapper.find('a').children().text()).to.be.equal(myTitle);
-  })
+    assert.equal(wrapper.find('a').children().text(), myTitle);
+  });
 
   it('accepts an active prop', () => {
     const active = true;
     const wrapper = shallow(<TabButton active={active} />);
 
-    expect(wrapper.find('a').hasClass('active')).to.be.true;
-  })
+    assert.equal(wrapper.find('a').hasClass('active'), true);
+  });
 });

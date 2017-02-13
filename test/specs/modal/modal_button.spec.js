@@ -8,7 +8,7 @@ import {shallow} from 'enzyme';
 
 describe('< Modal Button/>', () => {
   it('exists', () => {
-    assert.ok(ModalButton);
+    assert(ModalButton);
   });
   it('renders with Button', () => {
     const content = shallow(
@@ -17,6 +17,6 @@ describe('< Modal Button/>', () => {
           modalId='custom-modal'
       />
     );
-    assert.ok(ModalButton);
+    assert(ModalButton);
   });
 });

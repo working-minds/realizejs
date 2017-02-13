@@ -8,6 +8,6 @@ import {shallow} from 'enzyme';
 
 describe('< Modal Footer/>', () => {
   it('exists', () => {
-    assert.ok(ModalFooter);
+    assert(ModalFooter);
   });
 });

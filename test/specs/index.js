@@ -1,2 +1,2 @@
-const testsContext = require.context('.', true, /\.spec\.(js|jsx)$/);
+const testsContext = require.context('.', true, /\.spec\.jsx?$/);
 testsContext.keys().forEach(testsContext);

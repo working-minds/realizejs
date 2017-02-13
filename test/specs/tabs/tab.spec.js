@@ -1,19 +1,18 @@
-import React from 'react'
-import Realize from 'realize'
-import {Tab} from 'components'
-import {expect} from 'chai';
-import {shallow} from 'enzyme';
+import React from 'react';
+import { Tab } from 'components';
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 
 describe('<Tab/>', () => {
   it('exists', () => {
-    expect(Tab).to.exist;
-  })
+    assert(Tab);
+  });
 
   it('accepts an id', () => {
     const myId = 'my-id';
     const wrapper = shallow(<Tab id={myId} />);
 
-    expect(wrapper.prop('id')).to.be.equal(myId);
+    assert.equal(wrapper.prop('id'), myId);
   });
 
   it('renders children', () => {
@@ -26,6 +25,6 @@ describe('<Tab/>', () => {
       </Tab>
     );
 
-    expect(wrapper.find(`.${myClass}`)).to.exist;
+    assert(wrapper.find(`.${myClass}`));
   })
 });

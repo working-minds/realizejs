@@ -1,4 +1,4 @@
-import {getProp} from '../utils';
+import { getProp } from '../utils';
 import lodash from 'lodash'
 
 import ptBR from './locales/pt-BR';
@@ -7,8 +7,8 @@ import en from './locales/en';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
-import numeral from 'numeral'
-import numeralPtBR from 'numeral/languages/pt-br'
+import numeral from 'numeral';
+import numeralPtBR from 'numeral/locales/pt-br';
 
 const i18n = {
   locales: {},
@@ -30,7 +30,7 @@ const i18n = {
   setLocale: function(locale) {
     this.currentLocale = locale;
     // TODO normalize the locale key names - neither lib follows the standards
-    numeral.language(locale.toLowerCase());
+    numeral.locale(locale.toLowerCase());
     moment.locale(locale.toLowerCase());
   },
 
@@ -70,7 +70,7 @@ const i18n = {
 i18n.registerLocale(en, 'en');
 i18n.registerLocale(ptBR, 'pt-BR');
 // both numeral and moment load english by default
-numeral.language('pt-br', numeralPtBR);
+numeral.locale('pt-br', numeralPtBR);
 
 i18n.setLocale(i18n.currentLocale);
 

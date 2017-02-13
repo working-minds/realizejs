@@ -8,13 +8,13 @@ import {shallow} from 'enzyme';
 
 describe('Header', () => {
   it('exists', () => {
-    assert.ok(Header);
+    assert(Header);
   });
   it('renders with the default props', () => {
     const content = shallow(
       <Header
       />
     );
-    assert.ok(Header);
+    assert(Header);
   });
 });

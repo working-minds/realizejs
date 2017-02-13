@@ -7,13 +7,13 @@ import {shallow} from 'enzyme';
 
 describe('Form', () => {
   it('exists', () => {
-    assert.ok(Form);
+    assert(Form);
   });
   it('renders with the default props', () => {
     const content = shallow(
       <Form />
     );
-    assert.ok(content.find('Form'));
+    assert(content.find('Form'));
   });
   it('renders with isLoading', () => {
     const content = shallow(
@@ -21,7 +21,7 @@ describe('Form', () => {
             isLoading
       />
     );
-    assert.ok(content.find('isLoading'));
+    assert(content.find('isLoading'));
   });
   it('renders with otherButtons', () => {
     const content = shallow(
@@ -36,7 +36,7 @@ describe('Form', () => {
            ]}
        />
     );
-    assert.ok(content.find('otherButtons'));
+    assert(content.find('otherButtons'));
   });
   it('renders with onSubmit', () => {
     const content = shallow(
@@ -46,6 +46,6 @@ describe('Form', () => {
          }}
        />
     );
-    assert.ok(content.find('onSubmit'));
+    assert(content.find('onSubmit'));
   });
 });

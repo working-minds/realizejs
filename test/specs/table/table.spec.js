@@ -7,6 +7,6 @@ import {shallow, mount} from 'enzyme';
 
 describe('Table', () => {
   it('exists', () => {
-    assert.ok(Table);
+    assert(Table);
   });
 });

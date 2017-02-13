@@ -8,14 +8,14 @@ import {shallow, mount} from 'enzyme';
 
 describe('Menu', () => {
   it('exists', () => {
-    assert.ok(Menu);
+    assert(Menu);
   });
   it('renders with the default props', () => {
     const content = shallow(
       <Menu>
       </Menu>
     );
-    assert.ok(content.find('Menu'));
+    assert(content.find('Menu'));
   });
   it('renders with MenuItem', () => {
     const items = [{

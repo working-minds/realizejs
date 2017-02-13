@@ -8,14 +8,14 @@ import {shallow} from 'enzyme';
 
 describe('<HeaderButton/>', () => {
   it('exists', () => {
-    assert.ok(HeaderButton);
+    assert(HeaderButton);
   });
   it('renders with the default props', () => {
     const content = shallow(
       <HeaderButton
       />
     );
-    assert.ok(HeaderButton);
+    assert(HeaderButton);
   });
   it('renders with Home icon', () => {
     const content = shallow(
@@ -26,6 +26,6 @@ describe('<HeaderButton/>', () => {
            icon='home'
       />
     );
-    assert.ok(HeaderButton);
+    assert(HeaderButton);
   });
 });

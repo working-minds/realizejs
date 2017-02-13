@@ -8,7 +8,7 @@ import {shallow} from 'enzyme';
 
 describe('GridForm', () => {
   it('exists', () => {
-    assert.ok(GridForm);
+    assert(GridForm);
   });
   it('renders with the default props', () => {
     const content = shallow(
@@ -16,6 +16,6 @@ describe('GridForm', () => {
         url=''
       />
     );
-    assert.ok(GridForm);
+    assert(GridForm);
   });
 });

@@ -1,12 +1,12 @@
 import React from 'react'
 import { InputText } from 'components'
-import { expect } from 'chai';
+import { assert } from 'chai';
 import { shallow, mount } from 'enzyme';
 import sinon from 'sinon';
 
 describe('<InputText/>', () => {
   it('exists', () => {
-    expect(InputText).to.exists;
+    assert(InputText);
   });
 
   // it('handles the change event', () => {
