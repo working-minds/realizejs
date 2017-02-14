@@ -16,17 +16,47 @@ module.exports = {
     filename: 'realizejs.js',
     chunkFilename: '[id].realizejs.js',
     library: 'Realize',
-    libraryTarget: 'window',
+    libraryTarget: 'umd',
   },
 
   externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-    lodash: '_',
+    jquery: {
+      commonjs: 'jquery',
+      commonjs2: 'jquery',
+      amd: 'jquery',
+      window: '$',
+      root: '$',
+    },
+    lodash: {
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      amd: 'lodash',
+      window: '_',
+      root: '_',
+    },
+    'materialize-css': {
+      commonjs: 'materialize-css',
+      commonjs2: 'materialize-css',
+      amd: 'materialize-css',
+      window: 'Materialize',
+      root: 'Materialize',
+    },
     moment: 'moment',
     numeral: 'numeral',
-    jquery: '$',
-    'materialize-css': 'Materialize',
+    react: {
+      commonjs: 'react',
+      commonjs2: 'react',
+      amd: 'react',
+      window: 'React',
+      root: 'React',
+    },
+    'react-dom': {
+      commonjs: 'react-dom',
+      commonjs2: 'react-dom',
+      amd: 'react-dom',
+      window: 'ReactDOM',
+      root: 'ReactDOM',
+    },
   },
 
   resolve: {
