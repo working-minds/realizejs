@@ -1,8 +1,9 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const BIN_CONTEXT = path.join(__dirname, '../dist');
 const SRC_CONTEXT = path.join(__dirname, '../src/js');
-const NODE_MODULES_CONTEXT = path.join(__dirname, '../node_modules');
+const NODE_MODULES_CONTEXT = 'node_modules';
 
 module.exports = {
   devtool: 'inline-source-map',
@@ -28,6 +29,7 @@ module.exports = {
       {
         test: /\.js[x]?$/,
         loader: 'babel-loader',
+        exclude: /node_modules/,
         options: {
           cacheDirectory: true
         }
