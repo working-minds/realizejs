@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import PropTypes from '../../prop_types';
 import { mixin } from '../../utils/decorators';
 
@@ -21,7 +22,7 @@ export default class TableRow extends Component {
     onSelectToggle: PropTypes.func,
     onClickRow: PropTypes.func,
     rowHref: PropTypes.string,
-    tableRowCssClass: PropTypes.func
+    tableRowCssClass: PropTypes.func,
   };
 
   static defaultProps = {
@@ -36,22 +37,78 @@ export default class TableRow extends Component {
     onClickRow: null,
     rowHref: null,
     tableRowCssClass: null,
-    onSelectToggle: function(event, dataRows, selected) {}
+    onSelectToggle() {},
   };
 
-  renderSelectCell () {
-    if(this.props.selectable === 'none') {
-      return <td className= {"table-select"}></td>;
+  constructor(props) {
+    super(props);
+
+    this.handleSelectToggle = this.handleSelectToggle.bind(this);
+    this.handleRowClick = this.handleRowClick.bind(this);
+  }
+
+  handleSelectToggle(e, dataRowsIds, selected) {
+    this.props.onSelectToggle(e, dataRowsIds, selected, this.props.data);
+  }
+
+  getClassName() {
+    let className = this.className();
+
+    if (!!this.props.onClickRow || !!this.props.rowHref) {
+      className = `${className} clickable-row`;
     }
 
-    let rowSelectableFilter = this.props.rowSelectableFilter;
-    if(typeof rowSelectableFilter === "function" && !rowSelectableFilter(this.props.data)) {
-      return <td className= {"table-select"}></td>;
+    if (!!this.props.tableRowCssClass) {
+      const cssClass = this.props.tableRowCssClass(this.props.data);
+      if (!!cssClass) {
+        className = `${className} ${cssClass}`;
+      }
+    }
+
+    return className;
+  }
+
+  handleRowClick(event) {
+    if (event.isPropagationStopped()) {
+      return;
+    }
+
+    const { onClickRow, rowHref } = this.props;
+
+    if (!!onClickRow && typeof onClickRow === 'function') {
+      onClickRow(event, this.props.data);
+    } else if (!!rowHref && typeof rowHref === 'string') {
+      this.goToRowHref(event);
+    }
+  }
+
+  goToRowHref() {
+    const { rowHref } = this.props;
+    const dataRowId = this.props.data[this.props.dataRowIdField];
+
+    window.location.href = rowHref.replace(/:id/, dataRowId);
+  }
+
+  getDataRowId() {
+    return this.props.data[this.props.dataRowIdField];
+  }
+
+  /* Renderers */
+
+  renderSelectCell() {
+    const { rowSelectableFilter, data, selectable } = this.props;
+
+    if (selectable === 'none') {
+      return <td className={"table-select"} />;
+    }
+
+    if (typeof rowSelectableFilter === 'function' && !rowSelectableFilter(data)) {
+      return <td className={"table-select"} />;
     }
 
     return (
       <TableSelectCell
-        onSelectToggle={this.handleSelectToggle.bind(this)}
+        onSelectToggle={this.handleSelectToggle}
         dataRowIds={[this.getDataRowId()]}
         rowId={String(this.getDataRowId())}
         selected={this.props.selected}
@@ -60,16 +117,12 @@ export default class TableRow extends Component {
     );
   }
 
-  handleSelectToggle(e, dataRowsIds, selected) {
-    this.props.onSelectToggle(e, dataRowsIds, selected, this.props.data);
-  }
+  renderCells() {
+    const { columns } = this.props;
+    const cellComponents = [];
 
-  renderCells () {
-    let columns = this.props.columns;
-    let cellComponents = [];
-
-    $.each(columns, function(columnKey, columnProps) {
-      let columnName = columnProps.name || columnKey;
+    $.each(columns, (columnKey, columnProps) => {
+      const columnName = columnProps.name || columnKey;
       cellComponents.push(
         <TableCell
           {...columnProps}
@@ -78,69 +131,26 @@ export default class TableRow extends Component {
           key={columnName}
         />
       );
-    }.bind(this));
+    });
 
     return cellComponents;
   }
 
-  renderActionsCell () {
-    if(!$.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
-      return <td></td>;
+  renderActionsCell() {
+    if (!Array.isArray(this.props.actionButtons) || this.props.actionButtons.length === 0) {
+      return <td />;
     }
 
     return <TableRowActions {...this.propsWithoutCSS()} ref="actions" />;
   }
 
-  render () {
+  render() {
     return (
-      <tr className={this.getClassName()} ref="row" onClick={this.rowClick}>
+      <tr className={this.getClassName()} ref="row" onClick={this.handleRowClick}>
         {this.renderSelectCell()}
         {this.renderCells()}
         {this.renderActionsCell()}
       </tr>
     );
-  }
-
-  getClassName () {
-    let className = this.className();
-
-    if(!!this.props.onClickRow || !!this.props.rowHref) {
-      className = className + ' clickable-row'
-    }
-
-    if(!!this.props.tableRowCssClass) {
-      var cssClass = this.props.tableRowCssClass(this.props.data);
-      if (!!cssClass) {
-        className = className + ' ' + cssClass;
-      }
-    }
-
-    return className;
-  }
-
-  rowClick = (event) => {
-    if(event.isPropagationStopped()) {
-      return;
-    }
-
-    let onClickRow = this.props.onClickRow;
-    let rowHref = this.props.rowHref;
-
-    if(!!onClickRow && typeof onClickRow === "function") {
-      onClickRow(event, this.props.data);
-    } else if(!!rowHref && typeof rowHref === "string") {
-      this.goToRowHref(event);
-    }
-  }
-
-  goToRowHref = (event) => {
-    let rowHref = this.props.rowHref;
-    let dataRowId = this.props.data[this.props.dataRowIdField];
-
-    window.location.href = rowHref.replace(/:id/, dataRowId);
-  }
-
-  getDataRowId () {
-    return this.props.data[this.props.dataRowIdField];
   }
 }

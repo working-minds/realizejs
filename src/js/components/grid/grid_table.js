@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from '../../prop_types';
 import { mixin } from '../../utils/decorators';
 
 import { CssClassMixin } from '../../mixins';
@@ -9,13 +8,17 @@ import { Table } from '../../components';
 export default class GridTable extends Component {
   static propTypes = {};
   static defaultProps = {
-    themeClassKey: 'grid.table'
+    themeClassKey: 'grid.table',
   };
 
-  render () {
-    return(
+  render() {
+    return (
       <div className={this.className()}>
-        <Table {...this.propsWithoutCSS()} className={this.props.tableClassName} clearTheme={this.props.clearThemeTable} />
+        <Table
+          {...this.propsWithoutCSS()}
+          className={this.props.tableClassName}
+          clearTheme={this.props.clearThemeTable}
+        />
       </div>
     );
   }

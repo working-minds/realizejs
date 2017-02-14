@@ -20,7 +20,7 @@ export default class TableActionButton extends Component {
     disabled: PropTypes.bool,
     selectionContext: PropTypes.oneOf(['none', 'atLeastOne']),
     conditionToShowActionButton: PropTypes.func,
-    component: PropTypes.element,
+    component: PropTypes.func,
     params: PropTypes.object,
   };
 

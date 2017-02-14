@@ -103,9 +103,9 @@ export default class Table extends Component {
   }
 
   renderActions() {
-    let collectionButtons = this.props.actionButtons.collection || [];
-    if (this.props.selectable === 'none' && collectionButtons.length == 0) {
-      return '';
+    const collectionButtons = this.props.actionButtons.collection || [];
+    if (this.props.selectable === 'none' && collectionButtons.length === 0) {
+      return <span />;
     }
 
     return (
@@ -119,7 +119,7 @@ export default class Table extends Component {
         count={this.props.count}
         onRemoveSelection={this.removeSelection}
         onSelectAll={this.selectAllRows}
-        actionButtons={this.props.actionButtons.collection || []}
+        actionButtons={collectionButtons}
         rowSelectableFilter={this.props.rowSelectableFilter}
         forceShowSelectAllButton={this.props.forceShowSelectAllButton}
       />
