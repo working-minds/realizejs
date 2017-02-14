@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table } from 'components/table';
-import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 describe('<Table/>', () => {
   it('exists', () => {
@@ -9,7 +8,7 @@ describe('<Table/>', () => {
   });
 
   it('renders with the default props', () => {
-    const renderedTable = mount(<Table />);
+    const renderedTable = shallow(<Table />);
     assert(renderedTable.find('Table'));
   });
 });

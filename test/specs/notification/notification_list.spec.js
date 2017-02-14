@@ -1,9 +1,6 @@
-import React from 'react'
-import $ from 'jquery'
-import Realize from 'realize'
-import {NotificationsList} from 'components/notification'
-import {assert} from 'chai';
-import {shallow} from 'enzyme';
+import React from 'react';
+import { NotificationsList } from 'components/notification'
+import { shallow } from 'enzyme';
 
 describe('NotificationsList', () => {
   it('exists', () => {

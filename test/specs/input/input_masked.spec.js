@@ -1,7 +1,5 @@
-import React from 'react'
-import {InputMasked} from 'components/input'
-import {assert} from 'chai';
-import {shallow} from 'enzyme';
+import { InputMasked } from 'components/input'
+import { assert } from 'chai';
 
 
 describe('<InputMasked/>', () => {

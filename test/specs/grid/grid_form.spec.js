@@ -1,9 +1,9 @@
 import React from 'react'
 import $ from 'jquery'
 import Realize from 'realize'
-import {GridForm} from 'components/grid_form'
-import {assert} from 'chai';
-import {shallow} from 'enzyme';
+import { GridForm } from 'components/grid_form'
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 
 
 describe('GridForm', () => {

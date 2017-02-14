@@ -6,10 +6,13 @@ import moment from 'moment';
 import { uuid } from '../../utils';
 import { mixin } from '../../utils/decorators';
 
-import {
-  CssClassMixin
-} from '../../mixins';
 import InputBase from './input_base';
+import InputMasked from './input_masked';
+import { Label } from '../label';
+import { Button } from '../button';
+
+import { CssClassMixin } from '../../mixins';
+
 @mixin(CssClassMixin)
 export default class InputDatepicker extends InputBase {
   static propTypes = {
@@ -90,17 +93,15 @@ export default class InputDatepicker extends InputBase {
   }
   
   setPickadatePlugin () {
-    var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
-    $inputNode.pickadate({
+    const $inputNode = $(ReactDOM.findDOMNode(this.refs.input)).pickadate({
       editable: true,
       selectMonths: true,
       selectYears: true,
       format: this.getDateFormat().toLowerCase(),
       onSet: this.handlePickadateSet
     });
-    
-    var picker = $inputNode.pickadate('picker');
-    picker.on('close', this.props.onChange);
+
+    $inputNode.pickadate('on', 'close', this.props.onChange);
   }
   
   handleCalendarClick ( event ) {

@@ -1,10 +1,7 @@
 import React from 'react'
-import $ from 'jquery'
-import Realize from 'realize'
-import {SideNav} from 'components/sidenav'
-import {Menu} from 'components/menu'
-import {assert} from 'chai';
-import {shallow, mount} from 'enzyme';
+import { SideNav } from 'components/sidenav';
+import { Menu } from 'components/menu';
+import { shallow } from 'enzyme';
 
 describe('Sidenav', () => {
   it('exists', () => {

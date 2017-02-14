@@ -1,9 +1,9 @@
 import React from 'react'
 import $ from 'jquery'
 import Realize from 'realize'
-import {Form} from 'components/form'
-import {assert} from 'chai';
-import {shallow} from 'enzyme';
+import { Form } from 'components/form'
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 
 describe('Form', () => {
   it('exists', () => {

@@ -8,7 +8,6 @@ module.exports = {
   devtool: 'source-map',
 
   entry: [
-    'babel-polyfill',
     path.resolve(SRC_CONTEXT, 'index.js'),
   ],
 

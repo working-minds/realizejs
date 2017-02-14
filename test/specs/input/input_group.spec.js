@@ -1,9 +1,5 @@
-import React from 'react'
-import $ from 'jquery'
-import Realize from 'realize'
-import {InputGroup} from 'components/input'
-import {assert} from 'chai';
-import {shallow} from 'enzyme';
+import { InputGroup } from 'components/input'
+import { assert } from 'chai';
 
 
 describe('<InputGroup/>', () => {

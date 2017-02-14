@@ -1,10 +1,5 @@
-import React from 'react'
-import $ from 'jquery'
-import Realize from 'realize'
-import {ModalContent} from 'components/modal'
-import {assert} from 'chai';
-import {shallow} from 'enzyme';
-
+import { ModalContent } from 'components/modal';
+import { assert } from 'chai';
 
 describe('< Modal Content/>', () => {
   it('exists', () => {

@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import merge from 'lodash/merge';
-import findIndex from 'lodash/findIndex';
 import { uuid } from '../../utils';
 import { mixin } from '../../utils/decorators';
-import {Grid} from '../grid';
-
-import {
-  Form
-} from '../../components';
+import { Grid } from '../grid';
+import { Form } from '../form';
 
 import {
   CssClassMixin,
@@ -96,7 +92,7 @@ export default class GridForm extends Component {
 
   renderForm () {
     if(this.props.readOnly) {
-      return;
+      return <span/>;
     }
 
     var formProps = merge({style: 'filter'}, this.props.form, {

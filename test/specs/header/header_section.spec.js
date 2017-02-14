@@ -1,9 +1,9 @@
 import React from 'react'
 import $ from 'jquery'
 import Realize from 'realize'
-import {HeaderSection} from 'components/header'
-import {assert} from 'chai';
-import {shallow} from 'enzyme';
+import { HeaderSection } from 'components/header'
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 
 
 describe('<HeaderSection/>', () => {
