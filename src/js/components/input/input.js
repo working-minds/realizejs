@@ -131,8 +131,7 @@ export default class Input extends React.Component {
   }
 
   labelIsActive(inputValue) {
-    if (this.props.component === 'checkbox')
-      return false;
+    if (this.props.component === 'checkbox') return false;
 
     return (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
   }
@@ -142,26 +141,26 @@ export default class Input extends React.Component {
   }
 
   render() {
-    const renderFunction = 'render' + capitalize(this.props.component) + 'Input';
+    const renderFunction = `render${capitalize(this.props.component)}Input`;
     const renderLabel = this.props.renderLabel;
 
     if (this.hasOwnProperty(renderFunction)) {
       return this[renderFunction]();
     } else if (!renderLabel) {
       return this.renderInputWithoutLabel();
-    } else {
-      return this.renderInput();
     }
+
+    return this.renderInput();
   }
 
   inputClassName() {
     const className = this.props.className;
-    const formStyle = Realize.themes.getCssClass('input.grid.' + this.props.formStyle);
-    return this.className() + (className ? ' ' + formStyle : '');
+    const formStyle = Realize.themes.getCssClass(`input.grid.${this.props.formStyle}`);
+    return this.className() + (!className ? ` ${formStyle}` : '');
   }
 
   getInputContainerId() {
-    return 'input__' + this.props.id;
+    return `input__${this.props.id}`;
   }
 
   getInputComponentClass(component) {

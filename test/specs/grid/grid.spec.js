@@ -3,10 +3,12 @@ import { Grid } from 'components/grid';
 import { mount } from 'enzyme';
 
 describe('Grid', () => {
+  const dummyUrl = '';
   const loadDataSpy = sinon.spy(Grid.prototype, 'loadData');
 
-  it('exists', () => {
-    assert(Grid);
+  it('is a component', () => {
+    expect(Grid).to.be.ok;
+    expect(Grid.prototype).to.be.instanceof(React.Component);
   });
 
   it('renders with the default props', () => {
