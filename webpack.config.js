@@ -33,7 +33,7 @@ module.exports = {
   resolve: {
     modules: ['node_modules', 'src'],
     descriptionFiles: ['package.json'],
-    mainFields: ['main', 'browser'],
+    mainFields: ['browser', 'main'],
     mainFiles: ['index'],
   },
 
@@ -52,7 +52,7 @@ module.exports = {
       {
         test: /\.js[x]?$/,
         loader: 'babel-loader',
-        include: SRC_CONTEXT,
+        exclude: /node_modules/,
       },
     ],
   },

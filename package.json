@@ -85,10 +85,9 @@
     "traits-decorator": "^1.0.1"
   },
   "scripts": {
-    "build": "npm run build:webpack:production",
+    "build": "npm run build:webpack",
     "build:node": "babel ./src/js --out-dir ./dist",
     "build:webpack": "webpack --config webpack.config.js",
-    "build:webpack:production": "npm run build:webpack -- -p",
     "watch:webpack": "npm run build:webpack -- --watch",
     "clean:build": "rimraf build",
     "test": "npm run test:karma -- --single-run",
