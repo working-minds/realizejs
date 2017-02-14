@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import { mixin } from '../../utils/decorators';
@@ -83,12 +82,12 @@ export default class Grid extends Component {
     paginationOnTop: true,
     clearThemeTable: false,
     pagination: true,
-    onLoadSuccess(data) {},
-    onLoadError(xhr, status, error) {},
-    onFilterSubmit(event, postData) {},
-    onSelectDataRow(event, selectedRowIds) {},
-    onRemoveSelection(event) {},
-    onSelectAllRows(event) {},
+    onLoadSuccess() {},
+    onLoadError() {},
+    onFilterSubmit() {},
+    onSelectDataRow() {},
+    onRemoveSelection() {},
+    onSelectAllRows() {},
     data: {
       dataRows: [],
       count: 0,
@@ -109,21 +108,250 @@ export default class Grid extends Component {
       sortData: this.props.sortData,
       gridIsLoading: this.props.isLoading,
     };
+
+    this.handlePagination = this.handlePagination.bind(this);
+    this.handleChangePerPage = this.handleChangePerPage.bind(this);
+    this.handleFilterSubmit = this.handleFilterSubmit.bind(this);
+    this.handleSort = this.handleSort.bind(this);
+    this.handleLoad = this.handleLoad.bind(this);
+    this.handleLoadError = this.handleLoadError.bind(this);
+    this.handleSelectDataRows = this.handleSelectDataRows.bind(this);
+    this.handleRemoveSelection = this.handleRemoveSelection.bind(this);
+    this.handleSelectAllRows = this.handleSelectAllRows.bind(this);
   }
+
+  /* Lifecycle */
 
   componentDidMount() {
-    this.setState({
-      filterData: this.getInitialFilterData(),
-    }, function () {
-      if (!!this.props.eagerLoad) {
-        this.loadData();
-      }
-    }.bind(this));
+    if (this.props.eagerLoad) {
+      this.loadData();
+    }
   }
 
+  backToInitialState() {
+    this.setState({
+      selectedRowIds: [],
+      allSelected: false,
+      page: 1,
+      filterData: {},
+    }, () => {
+      this.loadData();
+    });
+  }
+
+  /* Configs */
+
+  initialPerPage() {
+    return this.paginationConfigs().perPage;
+  }
+
+  paginationConfigs() {
+    return Object.assign({}, Realize.config.grid.pagination, this.props.paginationConfigs);
+  }
+
+  sortConfigs() {
+    return Object.assign({}, Realize.config.grid.sort, this.props.sortConfigs);
+  }
+
+  /* Data load handlers */
+
+  loadData() {
+    this.setState({ gridIsLoading: true });
+    const postData = this.buildPostData();
+    const filterProps = this.props.filter;
+    const filterMethod = filterProps.method || 'GET';
+    const filterDataType = filterProps.dataType || 'json';
+
+    $.ajax({
+      url: this.getRestActionUrl('index'),
+      method: filterMethod,
+      dataType: filterDataType,
+      data: postData,
+      success: this.handleLoad,
+      error: this.handleLoadError,
+    });
+  }
+
+  handleLoad(data) {
+    const dataRows = getProp(this.props.dataRowsParam, data);
+    const count = getProp(this.props.countParam, data);
+
+    this.setState({
+      gridIsLoading: false,
+      dataRows,
+      count,
+    }, () => {
+      this.props.onLoadSuccess(data);
+    });
+  }
+
+  handleLoadError(xhr, status, error) {
+    this.props.onLoadError(xhr, status, error);
+    this.setState({ gridIsLoading: false });
+
+    console.log(`Grid Load Error: ${error}`);
+  }
+
+  buildPostData() {
+    const postData = Object.assign({},
+      this.state.filterData,
+      this.buildPaginationPostData()
+    );
+
+    if (typeof this.state.sortData === 'object' && !!this.state.sortData.field) {
+      Object.assign(postData, this.buildSortPostData());
+    }
+
+    return postData;
+  }
+
+  buildPaginationPostData() {
+    const paginationConfigs = this.paginationConfigs();
+    const paginationPostData = {};
+
+    const paginationParam = paginationConfigs.param;
+    const paginationParamPerPage = paginationConfigs.perPageParam;
+
+    paginationPostData[paginationParam] = this.state.page;
+    paginationPostData[paginationParamPerPage] = this.state.perPage;
+
+    return paginationPostData;
+  }
+
+  buildSortPostData() {
+    const sortConfigs = this.sortConfigs();
+    const sortParam = sortConfigs.param;
+    const sortDirectionParam = sortConfigs.directionParam;
+    const sortPostData = {};
+    sortPostData[sortParam] = this.parseSortPostDataValue(sortConfigs);
+    sortPostData[sortDirectionParam] = this.state.sortData.direction;
+
+    return sortPostData;
+  }
+
+  parseSortPostDataValue(sortConfigs) {
+    const sortValueFormat = sortConfigs.fieldValueFormat;
+    const field = this.state.sortData.field;
+    const direction = this.state.sortData.direction;
+
+    return !sortValueFormat
+      ? field
+      : sortValueFormat.replace(/%\{field}/, field).replace(/%\{direction}/, direction);
+  }
+
+  /* props parsers */
+
+  buildGridClassName() {
+    let className = this.className();
+    if (this.state.gridIsLoading) {
+      className += ' loading';
+    }
+
+    return className;
+  }
+
+  /* Serializing */
+
+  serialize() {
+    return this.state.dataRows;
+  }
+
+  /* Event handlers */
+
+  handlePagination(page) {
+    this.state.page = page;
+    if (this.state.allSelected) {
+      this.state.selectedRowIds = [];
+    }
+
+    this.state.allSelected = false;
+    this.loadData();
+  }
+
+  handleChangePerPage(perPage) {
+    this.state.perPage = perPage;
+    this.paginationConfigs().perPage = perPage;
+
+    if (this.state.allSelected) {
+      this.state.selectedRowIds = [];
+    }
+
+    this.state.allSelected = false;
+    this.loadData();
+  }
+
+  handleFilterSubmit(event, postData) {
+    this.props.onFilterSubmit(event, postData);
+
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
+
+      this.state.selectedRowIds = [];
+      this.state.allSelected = false;
+      this.state.filterData = postData;
+      this.state.page = 1;
+      this.loadData();
+    }
+  }
+
+  handleSort(sortData) {
+    this.state.sortData = sortData;
+    this.state.page = 1;
+    this.loadData();
+  }
+
+  /* Selection event handlers */
+
+  handleSelectDataRows(event, selectedRowIds, selectedData) {
+    this.props.onSelectDataRow(event, selectedRowIds);
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
+
+      this.setState(this.getSelectDataRowsState(selectedRowIds, selectedData));
+    }
+  }
+
+  getSelectDataRowsState(selectedRowIds, selectedData) {
+    const nextState = { selectedRowIds, allSelected: false };
+
+    if (!!selectedData && this.props.selectable === 'one') {
+      nextState.selectedData = selectedData;
+    }
+
+    return nextState;
+  }
+
+  handleRemoveSelection(event) {
+    this.props.onRemoveSelection(event);
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
+
+      this.setState({
+        selectedRowIds: [],
+        allSelected: false,
+      });
+    }
+  }
+
+  handleSelectAllRows(event) {
+    this.props.onSelectAllRows(event);
+    if (!event.isDefaultPrevented()) {
+      event.preventDefault();
+
+      this.setState({
+        allSelected: true,
+      });
+    }
+  }
+
+  /* Renderers */
+
   renderPaginationOnTop() {
-    if (!!this.props.paginationOnTop)
+    if (this.props.paginationOnTop) {
       return this.renderPagination();
+    }
+
+    return <span />;
   }
 
   renderFilter() {
@@ -136,7 +364,7 @@ export default class Grid extends Component {
         action={this.props.url}
         {...this.props.filter}
         isLoading={this.state.gridIsLoading}
-        onSubmit={this.onFilterSubmit}
+        onSubmit={this.handleFilterSubmit}
         ref="filter"
       />
     );
@@ -159,10 +387,10 @@ export default class Grid extends Component {
         count={this.state.count}
         actionButtons={this.getActionButtons()}
         tableClassName={this.props.tableClassName}
-        onSort={this.onSort}
-        onSelect={this.selectDataRows}
-        onRemoveSelection={this.removeSelection}
-        onSelectAll={this.selectAllRows}
+        onSort={this.handleSort}
+        onSelect={this.handleSelectDataRows}
+        onRemoveSelection={this.handleRemoveSelection}
+        onSelectAll={this.handleSelectAllRows}
         rowSelectableFilter={this.props.rowSelectableFilter}
         customTableHeader={this.props.customTableHeader}
         forceShowSelectAllButton={this.props.forceShowSelectAllButton}
@@ -183,17 +411,19 @@ export default class Grid extends Component {
           perPage={this.state.perPage}
           page={this.state.page}
           count={this.state.count}
-          onPagination={this.onPagination}
-          onChangePerPage={this.onChangePerPage}
+          onPagination={this.handlePagination}
+          onChangePerPage={this.handleChangePerPage}
           pageRowsCount={this.state.dataRows.length}
         />
       );
     }
+
+    return <span />;
   }
 
   render() {
     return (
-      <div className={this.gridClassName()} ref="grid">
+      <div className={this.buildGridClassName()} ref="grid">
         {this.renderFilter()}
 
         {this.renderPaginationOnTop()}
@@ -201,220 +431,5 @@ export default class Grid extends Component {
         {this.renderPagination()}
       </div>
     );
-  }
-
-  backToInitialState() {
-    this.setState({
-      selectedRowIds: [],
-      allSelected: false,
-      page: 1,
-    });
-
-    this.setState({
-      filterData: this.getInitialFilterData(),
-    }, function () {
-      this.loadData();
-    }.bind(this));
-  }
-
-  initialPerPage() {
-    return this.paginationConfigs().perPage;
-  }
-
-  gridClassName() {
-    let className = this.className();
-    if (this.state.gridIsLoading) {
-      className += ' loading';
-    }
-
-    return className;
-  }
-
-  paginationConfigs() {
-    return $.extend({}, Realize.config.grid.pagination, this.props.paginationConfigs);
-  }
-
-  sortConfigs() {
-    return $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
-  }
-
-  getInitialFilterData() {
-    let gridFilterNode = ReactDOM.findDOMNode(this.refs.filter);
-    let filterForm = $(gridFilterNode).find('form');
-
-    return filterForm.serializeObject();
-  }
-
-  onPagination = (page) => {
-    this.state.page = page;
-    if (this.state.allSelected) {
-      this.state.selectedRowIds = [];
-    }
-
-    this.state.allSelected = false;
-    this.loadData();
-  }
-
-  onChangePerPage = (perPage) => {
-    this.state.perPage = perPage;
-    this.paginationConfigs().perPage = perPage;
-
-    if (this.state.allSelected)
-      this.state.selectedRowIds = [];
-
-    this.state.allSelected = false;
-    this.loadData();
-  }
-
-  onFilterSubmit = (event, postData) => {
-    this.props.onFilterSubmit(event, postData);
-
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
-
-      this.state.selectedRowIds = [];
-      this.state.allSelected = false;
-      this.state.filterData = postData;
-      this.state.page = 1;
-      this.loadData();
-    }
-  }
-
-  onSort = (sortData) => {
-    this.state.sortData = sortData;
-    this.state.page = 1;
-    this.loadData();
-  }
-
-  loadData() {
-    this.setState({ gridIsLoading: true });
-    let postData = this.buildPostData();
-    let filterProps = this.props.filter;
-    let filterMethod = filterProps.method || 'GET';
-    let filterDataType = filterProps.dataType || 'json';
-
-    $.ajax({
-      url: this.getRestActionUrl('index'),
-      method: filterMethod,
-      dataType: filterDataType,
-      data: postData,
-      success: this.handleLoad,
-      error: this.handleLoadError,
-    });
-  }
-
-  handleLoad = (data) => {
-    let dataRows = getProp(this.props.dataRowsParam, data);
-    let count = getProp(this.props.countParam, data);
-
-    this.setState({
-      gridIsLoading: false,
-      dataRows,
-      count,
-    }, function () {
-      this.props.onLoadSuccess(data);
-    }.bind(this));
-  }
-
-  handleLoadError = (xhr, status, error) => {
-    this.props.onLoadError(xhr, status, error);
-    this.setState({ gridIsLoading: false });
-    console.log('Grid Load Error:' + error);
-  }
-
-  buildPostData() {
-    var postData = $.extend({}, this.state.filterData);
-
-    $.extend(postData, this.buildPaginationPostData());
-    if (!$.isEmptyObject(this.state.sortData)) {
-      $.extend(postData, this.buildSortPostData());
-    }
-
-    return postData;
-  }
-
-  buildPaginationPostData() {
-    const paginationConfigs = this.paginationConfigs();
-    const paginationPostData = {};
-
-    const paginationParam = paginationConfigs.param;
-    const paginationParamPerPage = paginationConfigs.perPageParam;
-
-    paginationPostData[paginationParam] = this.state.page;
-    paginationPostData[paginationParamPerPage] = this.state.perPage;
-
-    return paginationPostData;
-  }
-
-  buildSortPostData() {
-    var sortConfigs = this.sortConfigs();
-
-    var sortParam = sortConfigs.param;
-    var sortDirectionParam = sortConfigs.directionParam;
-    var sortPostData = {};
-    sortPostData[sortParam] = this.parseSortPostDataValue();
-    sortPostData[sortDirectionParam] = this.state.sortData.direction;
-
-    return sortPostData;
-  }
-
-  parseSortPostDataValue() {
-    var sortValueFormat = this.sortConfigs().fieldValueFormat;
-    var field = this.state.sortData.field;
-    var direction = this.state.sortData.direction;
-
-    if (!sortValueFormat) {
-      return field;
-    }
-
-    return sortValueFormat.replace(/%\{field}/, field).replace(/%\{direction}/, direction);
-  }
-
-  /* Selection handlers */
-
-  selectDataRows = (event, selectedRowIds, selectedData) => {
-    this.props.onSelectDataRow(event, selectedRowIds);
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
-
-      var nextState = this.getSelectDataRowsState(selectedRowIds, selectedData);
-      this.setState(nextState);
-    }
-  }
-
-  getSelectDataRowsState = (selectedRowIds, selectedData) => {
-    let nextState = { selectedRowIds, allSelected: false };
-
-    if (!!selectedData && this.props.selectable === 'one')
-      nextState.selectedData = selectedData;
-
-    return nextState;
-  }
-
-  removeSelection = (event) => {
-    this.props.onRemoveSelection(event);
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
-
-      this.setState({
-        selectedRowIds: [],
-        allSelected: false,
-      });
-    }
-  }
-
-  selectAllRows = (event) => {
-    this.props.onSelectAllRows(event);
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
-
-      this.setState({
-        allSelected: true,
-      });
-    }
-  }
-
-  serialize() {
-    return this.state.dataRows;
   }
 }

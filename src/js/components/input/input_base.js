@@ -28,6 +28,13 @@ export default class InputBase extends Component {
     errors: [],
   };
 
+  constructor(props) {
+    super(props);
+    this.handleReset = this.handleReset.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
+  }
+
   state = {
     value: this.props.value,
   };
@@ -80,10 +87,7 @@ export default class InputBase extends Component {
     return (!!inputNode && inputNode.type === 'checkbox');
   }
 
-  @autobind
   handleReset() {
-    console.log(this.isMounted());
-
     if (this.isMounted() && !this.inputNodeIsCheckbox()) {
       this.setState({
         value: null,
@@ -91,7 +95,6 @@ export default class InputBase extends Component {
     }
   }
 
-  @autobind
   handleChange(event) {
     this.props.onChange(event);
 
@@ -101,7 +104,6 @@ export default class InputBase extends Component {
     }
   }
 
-  @autobind
   handleFocus(event) {
     this.props.onFocus(event);
 

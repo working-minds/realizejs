@@ -7,15 +7,15 @@ import { CssClassMixin } from '../../mixins';
 @mixin(CssClassMixin)
 export default class InputError extends Component {
   static propTypes = {
-    errors: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array])
+    errors: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
   };
 
   static defaultProps = {
     errors: [],
-    themeClassKey: 'input.error.hint'
+    themeClassKey: 'input.error.hint',
   };
 
-  render () {
+  render() {
     return (
       <span className={this.className()}>
         {this.errorMessages()}
@@ -23,16 +23,17 @@ export default class InputError extends Component {
     );
   }
 
-  errorMessages () {
+  errorMessages() {
     let errors = this.props.errors;
     let errorMessage = '';
-    if(!$.isArray(errors)) {
+
+    if (!Array.isArray(errors)) {
       errors = [errors];
     }
 
-    for(let i = 0; i < errors.length; i++) {
-      let error = errors[i];
-      errorMessage += error + ' / ';
+    for (let i = 0; i < errors.length; i++) {
+      const error = errors[i];
+      errorMessage += `${error} / `;
     }
 
     return errorMessage.replace(/[\/\s]*$/, '');

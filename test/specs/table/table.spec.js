@@ -1,12 +1,15 @@
-import React from 'react'
-import $ from 'jquery'
-import Realize from 'realize'
-import {Table} from 'components/table'
-import {assert} from 'chai';
-import {shallow, mount} from 'enzyme';
+import React from 'react';
+import { Table } from 'components/table';
+import { assert } from 'chai';
+import { shallow, mount } from 'enzyme';
 
-describe('Table', () => {
+describe('<Table/>', () => {
   it('exists', () => {
     assert(Table);
+  });
+
+  it('renders with the default props', () => {
+    const renderedTable = mount(<Table />);
+    assert(renderedTable.find('Table'));
   });
 });

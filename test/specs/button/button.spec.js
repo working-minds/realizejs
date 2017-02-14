@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'components';
 import { assert } from 'chai';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 describe('Button', () => {
   it('exists', () => {
@@ -16,7 +16,7 @@ describe('Button', () => {
   });
 
   it('renders a button with a link', () => {
-    const content = shallow(
+    const content = mount(
       <Button
         name='Go to Google!'
         element='a'

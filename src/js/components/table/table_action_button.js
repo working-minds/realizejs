@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
+import Button from '../button/button';
 import PropTypes from '../../prop_types';
 import { mixin } from '../../utils/decorators';
 
@@ -7,6 +9,7 @@ import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
 @mixin(CssClassMixin, RequestHandlerMixin)
 export default class TableActionButton extends Component {
   static propTypes = {
+    name: PropTypes.string,
     selectedRowIds: PropTypes.array,
     selectedRowIdsParam: PropTypes.string,
     allSelected: PropTypes.bool,
@@ -17,44 +20,45 @@ export default class TableActionButton extends Component {
     disabled: PropTypes.bool,
     selectionContext: PropTypes.oneOf(['none', 'atLeastOne']),
     conditionToShowActionButton: PropTypes.func,
-    component: PropTypes.string,
-    params: PropTypes.object
+    component: PropTypes.element,
+    params: PropTypes.object,
   };
 
   static defaultProps = {
+    name: null,
     selectedRowIds: [],
     allSelected: false,
     method: null,
     conditionParams: null,
     disabled: false,
     selectionContext: 'none',
-    component: 'Button',
+    component: Button,
     params: null,
-    conditionToShowActionButton: function(data) { return true }
+    conditionToShowActionButton() { return true; },
   };
 
-  renderButton () {
-    let component = [];
-    if(!this.props.conditionToShowActionButton(this.props.conditionParams)) {
+  renderButton() {
+    const component = [];
+    if (!this.props.conditionToShowActionButton(this.props.conditionParams)) {
       return component;
     }
 
-    let buttonProps = Object.assign({}, this.props, {
+    const buttonProps = Object.assign({}, this.props, {
       isLoading: this.state.isLoading,
       disabled: this.isDisabled(),
       method: this.actionButtonMethod(),
       href: this.actionButtonHref(),
       onClick: this.actionButtonClick,
-      key: this.props.name
+      key: this.props.name,
     });
 
-    let buttonComponent = React.createElement(eval(this.props.component), buttonProps);
+    const buttonComponent = React.createElement(this.props.component, buttonProps);
     component.push(buttonComponent);
 
     return component;
   }
 
-  render () {
+  render() {
     return (
       <span>
         {this.renderButton()}
@@ -62,8 +66,8 @@ export default class TableActionButton extends Component {
     );
   }
 
-  isDisabled () {
-    if(!!this.props.disabled || !!this.state.isLoading) {
+  isDisabled() {
+    if (!!this.props.disabled || !!this.state.isLoading) {
       return true;
     }
 
@@ -71,24 +75,24 @@ export default class TableActionButton extends Component {
     if (selectionContext === 'none') {
       return false;
     } else if (selectionContext === 'atLeastOne') {
-      return (this.props.selectedRowIds.length === 0) ;
+      return (this.props.selectedRowIds.length === 0);
     }
 
     return false;
   }
 
-  actionButtonMethod () {
+  actionButtonMethod() {
     let buttonHref = this.props.href;
-    if(!buttonHref) {
+    if (!buttonHref) {
       return null;
     }
 
     return this.props.method;
   }
 
-  actionButtonHref () {
+  actionButtonHref() {
     let buttonHref = this.props.href;
-    if(!buttonHref) {
+    if (!buttonHref) {
       return '#!';
     }
 
@@ -96,8 +100,8 @@ export default class TableActionButton extends Component {
     buttonHref = (buttonHref + '?' + $.param(selectedData));
 
     if (!!this.props.params) {
-      for(let property in this.props.params) {
-        buttonHref = buttonHref + '&' + property + '=' + this.props.params[property]
+      for (let property in this.props.params) {
+        buttonHref = buttonHref + '&' + property + '=' + this.props.params[property];
       }
     }
 
@@ -105,7 +109,7 @@ export default class TableActionButton extends Component {
   }
 
   actionButtonClick = (event) => {
-    if(this.isDisabled()) {
+    if (this.isDisabled()) {
       return;
     }
 
@@ -113,16 +117,16 @@ export default class TableActionButton extends Component {
     let buttonAction = this.props.actionUrl;
     let selectedData = this.getSelectedData();
 
-    if($.isFunction(buttonOnClick)) {
+    if ($.isFunction(buttonOnClick)) {
       buttonOnClick(event, selectedData);
-    } else if(!!buttonAction) {
+    } else if (!!buttonAction) {
       this.performRequest(buttonAction, selectedData, this.props.method);
     }
   }
 
-  getSelectedData () {
+  getSelectedData() {
     let selectedData = {};
-    if(this.props.allSelected && !!this.props.allSelectedData && !$.isEmptyObject(this.props.allSelectedData)) {
+    if (this.props.allSelected && !!this.props.allSelectedData && !$.isEmptyObject(this.props.allSelectedData)) {
       selectedData = this.props.allSelectedData;
     } else {
       selectedData[this.props.selectedRowIdsParam] = this.props.selectedRowIds;

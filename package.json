@@ -15,7 +15,8 @@
     "type": "git",
     "url": "https://github.com/working-minds/realizejs.git"
   },
-  "main": "dist/index.js",
+  "main": "src/index.js",
+  "browser": "dist/build/realizejs.js",
   "engines": {
     "node": ">= 0.10.0"
   },

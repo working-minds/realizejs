@@ -4,6 +4,7 @@ import { mixin } from '../../utils/decorators';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 import TableActionButton from './table_action_button';
+import TableSelectionIndicator from './table_selection_indicator';
 
 @mixin(CssClassMixin)
 export default class TableActions extends Component {
@@ -18,7 +19,7 @@ export default class TableActions extends Component {
     onRemoveSelection: PropTypes.func,
     onSelectAll: PropTypes.func,
     rowSelectableFilter: PropTypes.func,
-    forceShowSelectAllButton: PropTypes.bool
+    forceShowSelectAllButton: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -29,23 +30,23 @@ export default class TableActions extends Component {
     allSelected: false,
     rowSelectableFilter: null,
     forceShowSelectAllButton: false,
-    onRemoveSelection: function(event) {},
-    onSelectAll: function(event) {}
+    onRemoveSelection() {},
+    onSelectAll() {},
   };
 
-  renderButtons () {
-    let actionButtons = [];
-    let actionButtonsProps = this.props.actionButtons;
+  renderButtons() {
+    const actionButtons = [];
+    const actionButtonsProps = this.props.actionButtons;
 
-    for(var i = 0; i < actionButtonsProps.length; i++) {
-      var actionButtonProps = actionButtonsProps[i];
+    for (let i = 0; i < actionButtonsProps.length; i++) {
+      const actionButtonProps = actionButtonsProps[i];
       actionButtons.push(
         <TableActionButton
           {...actionButtonProps}
           {...this.propsWithoutCSS()}
           element={"a"}
           themeClassKey={"button.flat"}
-          key={"action_" + i}
+          key={`action_${i}`}
         />
       );
     }
@@ -53,7 +54,7 @@ export default class TableActions extends Component {
     return actionButtons;
   }
 
-  render () {
+  render() {
     return (
       <div className={this.className()}>
         <div>

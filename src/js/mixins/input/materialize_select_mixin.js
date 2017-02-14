@@ -1,41 +1,41 @@
 import ReactDOM from 'react-dom';
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
-  componentDidMount: function() {
+  componentDidMount() {
     this.applyMaterialize(true);
   },
 
-  componentDidUpdate: function(previousProps, previousState) {
-    if(this.state.options != previousState.options) {
+  componentDidUpdate(previousProps, previousState) {
+    if (this.state.options !== previousState.options) {
       this.applyMaterialize();
     }
   },
 
-  applyMaterialize: function(onMount) {
-    var selectElement = ReactDOM.findDOMNode(this.refs.select);
+  applyMaterialize(onMount) {
+    const selectElement = ReactDOM.findDOMNode(this.refs.select);
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
 
-    if(!onMount) {
+    if (!onMount) {
       this.handleChangeMaterialize(selectElement);
     }
   },
 
-  handleChangeMaterialize: function(selectElement) {
-    var $selectElement = $(selectElement);
-    var newValue = this.ensureIsArray(selectElement.value);
-    var fakeEvent = {
+  handleChangeMaterialize(selectElement) {
+    const $selectElement = $(selectElement);
+    const newValue = this.ensureIsArray(selectElement.value);
+    const fakeEvent = {
       currentTarget: selectElement,
-      target: selectElement
+      target: selectElement,
     };
 
-    //Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
+    // Implementação que resolve o seguinte bug do Materialize: https://github.com/Dogfalo/materialize/issues/1570
     $selectElement.parent().parent().find('> .caret').remove();
 
     this.setState({
-      value: newValue
+      value: newValue,
     }, this.triggerDependableChanged);
 
     this.props.onChange(fakeEvent, newValue, this);
-  }
-}
+  },
+};

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import $ from 'jquery';
 import PropTypes from '../../prop_types';
 
-import Realize from '../../realize'
-import i18n from '../../i18n'
-import themes from '../../theme'
+import Realize from '../../realize';
+import i18n from '../../i18n';
+import themes from '../../theme';
 import { mixin } from '../../utils/decorators';
 
 import { CssClassMixin } from '../../mixins';
@@ -39,7 +40,7 @@ export default class Table extends Component {
     forceShowSelectAllButton: PropTypes.bool,
     onClickRow: PropTypes.func,
     rowHref: PropTypes.string,
-    tableRowCssClass: PropTypes.func
+    tableRowCssClass: PropTypes.func,
   };
 
   static defaultProps = {
@@ -58,44 +59,44 @@ export default class Table extends Component {
     emptyMessage: 'table.emptyResult',
     actionButtons: {
       member: [],
-      collection: []
+      collection: [],
     },
-    onSort: function(sortData) {},
-    onSelect: function(event, selectedRowIds) {},
-    onRemoveSelection: function(event) {},
-    onSelectAll: function(event) {},
+    onSort(sortData) {},
+    onSelect(event, selectedRowIds) {},
+    onRemoveSelection(event) {},
+    onSelectAll(event) {},
     rowSelectableFilter: null,
     forceShowSelectAllButton: false,
     onClickRow: null,
     rowHref: null,
-    tableRowCssClass: null
+    tableRowCssClass: null,
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       selectedRowIds: this.props.selectedRowIds || [],
-      allSelected: this.props.allSelected
+      allSelected: this.props.allSelected,
     };
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     let selectedRowIds = nextProps.selectedRowIds;
     let allSelected = nextProps.allSelected;
 
-    if(!!selectedRowIds && $.isArray(selectedRowIds)) {
-      this.setState({selectedRowIds: selectedRowIds});
+    if (!!selectedRowIds && $.isArray(selectedRowIds)) {
+      this.setState({ selectedRowIds });
     }
 
-    if(allSelected !== null && allSelected !== undefined) {
-      this.setState({allSelected: allSelected});
+    if (allSelected !== null && allSelected !== undefined) {
+      this.setState({ allSelected });
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
 
-    if(!!this.props.customTableHeader) {
+    if (!!this.props.customTableHeader) {
       let $thead = $(ReactDOM.findDOMNode(this.refs.thead));
       $thead.prepend(this.props.customTableHeader);
     }
@@ -125,9 +126,9 @@ export default class Table extends Component {
     );
   }
 
-  renderHeaderSelectCell () {
-    if(this.props.selectable === 'none' || this.props.selectable === 'one') {
-      return <th className= {"table-select"}></th>;
+  renderHeaderSelectCell() {
+    if (this.props.selectable === 'none' || this.props.selectable === 'one') {
+      return <th className={"table-select"}></th>;
     }
 
     return (
@@ -142,19 +143,19 @@ export default class Table extends Component {
     );
   }
 
-  renderTableHeaders () {
+  renderTableHeaders() {
     let columns = this.props.columns;
     let headerComponents = [];
 
-    for(var columnName in columns) {
-      if(columns.hasOwnProperty(columnName)) {
+    for (var columnName in columns) {
+      if (columns.hasOwnProperty(columnName)) {
         let columnProps = columns[columnName];
         headerComponents.push(
           <TableHeader {...columnProps} {...this.sortConfigs}
             name={columnName}
             key={columnName}
             sortDirection={this.sortDirectionForColumn(columnName, columnProps)}
-            ref={"header_" + columnName}
+            ref={'header_' + columnName}
             resource={this.props.resource}
             onSort={this.props.onSort}
             clearTheme={this.props.clearTheme}
@@ -166,11 +167,11 @@ export default class Table extends Component {
     return headerComponents;
   }
 
-  renderTableRows () {
+  renderTableRows() {
     let rowComponents = [];
     let dataRows = this.props.dataRows;
 
-    for(var i = 0; i < dataRows.length; i++) {
+    for (var i = 0; i < dataRows.length; i++) {
       let dataRow = dataRows[i];
       rowComponents.push(
         <TableRow
@@ -180,7 +181,7 @@ export default class Table extends Component {
           data={dataRow}
           dataRowIdField={this.props.dataRowIdField}
           actionButtons={this.props.actionButtons.member || []}
-          key={"table_row_" + i}
+          key={'table_row_' + i}
           rowSelectableFilter={this.props.rowSelectableFilter}
           onClickRow={this.props.onClickRow}
           rowHref={this.props.rowHref}
@@ -192,13 +193,13 @@ export default class Table extends Component {
     return rowComponents;
   }
 
-  renderEmptyMessage () {
+  renderEmptyMessage() {
     let columnsCount = 1;
-    for(let key in this.props.columns) {
+    for (let key in this.props.columns) {
       columnsCount++;
     }
 
-    if(this.props.selectable === 'multiple') {
+    if (this.props.selectable === 'multiple') {
       columnsCount++;
     }
 
@@ -211,8 +212,8 @@ export default class Table extends Component {
     );
   }
 
-  render () {
-    return(
+  render() {
+    return (
       <div className={this.wrapperClassName()}>
         {this.renderActions()}
         <table className={this.className()}>
@@ -230,21 +231,21 @@ export default class Table extends Component {
     );
   }
 
-  wrapperClassName () {
+  wrapperClassName() {
     let wrapperClassName = '';
-    if(!this.props.clearTheme) {
+    if (!this.props.clearTheme) {
       wrapperClassName = themes.getCssClass('table.wrapper');
     }
 
     return wrapperClassName;
   }
 
-  sortDirectionForColumn (columnName, columnProps) {
+  sortDirectionForColumn(columnName, columnProps) {
     let sortFieldName = columnProps.sortFieldName;
     let sortField = sortFieldName || columnName;
 
     let sortData = this.props.sortData;
-    if(!!sortData.field && sortData.field == sortField) {
+    if (!!sortData.field && sortData.field == sortField) {
       return sortData.direction;
     }
 
@@ -252,19 +253,15 @@ export default class Table extends Component {
   }
 
   getDataRowIds() {
-    let rowSelectableFilter = this.props.rowSelectableFilter;
-    let selectableDataRows = $.grep(this.props.dataRows, function(dataRow) {
-      return !rowSelectableFilter || !!rowSelectableFilter(dataRow);
-    });
-
-    return $.map(selectableDataRows, function(dataRow) {
-      return dataRow[this.props.dataRowIdField];
-    }.bind(this));
+    const { rowSelectableFilter } = this.props;
+    return this.props.dataRows
+      .filter((dataRow) => !rowSelectableFilter || !!rowSelectableFilter(dataRow))
+      .map((dataRow) => dataRow[this.props.dataRowIdField]);
   }
 
   toggleDataRows = (event, dataRowIds, selected, selectedData) => {
     let selectedRowIds = [];
-    if(selected) {
+    if (selected) {
       selectedRowIds = this.getSelectedDataRows(dataRowIds);
     } else {
       selectedRowIds = this.removeSelectedDataRows(dataRowIds);
@@ -272,16 +269,16 @@ export default class Table extends Component {
     }
 
     this.props.onSelect(event, selectedRowIds, selectedData);
-    if(!event.isDefaultPrevented()) {
+    if (!event.isDefaultPrevented()) {
       this.setState({
-        selectedRowIds: selectedRowIds,
-        allSelected: false
+        selectedRowIds,
+        allSelected: false,
       });
     }
   }
 
   getSelectedDataRows(dataRowId) {
-    if(this.props.selectable === 'one')
+    if (this.props.selectable === 'one')
       return dataRowId;
 
     return this.addSelectedDataRow(dataRowId);
@@ -297,20 +294,20 @@ export default class Table extends Component {
     return selectedRowIds;
   }
 
-  removeSelectedDataRows (dataRowIds) {
-    return $.grep(this.state.selectedRowIds, function(dataRowId) {
+  removeSelectedDataRows(dataRowIds) {
+    return $.grep(this.state.selectedRowIds, function (dataRowId) {
       return ($.inArray(dataRowId, dataRowIds) < 0);
     }.bind(this));
   }
 
-  dataRowIsSelected (dataRow) {
+  dataRowIsSelected(dataRow) {
     let dataRowId = dataRow[this.props.dataRowIdField];
     return (($.inArray(dataRowId, this.state.selectedRowIds) >= 0) || this.props.allSelected);
   }
 
-  isAllDataRowsSelected () {
+  isAllDataRowsSelected() {
     let dataRowIds = this.getDataRowIds();
-    let selectedRowIdsInPage = $.grep(this.state.selectedRowIds, function(selectedDataRowId) {
+    let selectedRowIdsInPage = $.grep(this.state.selectedRowIds, function (selectedDataRowId) {
       return ($.inArray(selectedDataRowId, dataRowIds) >= 0);
     });
 
@@ -320,10 +317,10 @@ export default class Table extends Component {
   removeSelection = (event) => {
     this.props.onRemoveSelection(event);
 
-    if(!event.isDefaultPrevented()) {
+    if (!event.isDefaultPrevented()) {
       this.setState({
         selectedRowIds: [],
-        allSelected: false
+        allSelected: false,
       });
     }
   }
@@ -331,9 +328,9 @@ export default class Table extends Component {
   selectAllRows = (event) => {
     this.props.onSelectAll(event);
 
-    if(!event.isDefaultPrevented()) {
+    if (!event.isDefaultPrevented()) {
       this.setState({
-        allSelected: true
+        allSelected: true,
       });
     }
   }

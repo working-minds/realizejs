@@ -2,7 +2,7 @@
 # Folders
 .idea
 node_modules
-src
+bower_components
 test
 
 # Files
@@ -10,5 +10,4 @@ test
 .eslintignore
 .eslintrc.json
 bower.json
-Gruntfile.js
-webpack.config.babel.js
+webpack.config.js
