@@ -53,15 +53,16 @@ export default class TableHeader extends Component {
 
   labelClassName() {
     let className = '';
+    const { clearTheme, sortable, sortDirection } = this.props;
 
-    if (!this.props.clearTheme) {
+    if (!clearTheme) {
       className += Realize.themes.getCssClass('table.header.label');
     }
 
-    if (this.props.sortable) {
+    if (sortable) {
       className += ' sortable';
 
-      if (this.props.sortDirection !== null) {
+      if (sortDirection !== null) {
         className += ` ${sortDirection}`;
       }
     }

@@ -16,60 +16,66 @@ export default class GridPagination extends Component {
     onChangePerPage: PropTypes.func,
     pageRowsCount: PropTypes.number,
     type: PropTypes.string,
-    perPageOptions: PropTypes.array
+    perPageOptions: PropTypes.array,
   };
 
   static defaultProps = {
     themeClassKey: 'grid.pagination',
-    onPagination: function(page) {
-      return true;
-    },
-    onChangePerPage: function(perPage) { return true }
+    onPagination() { return true; },
+    onChangePerPage() { return true; },
   };
 
-  renderRangePagination () {
+  constructor(props) {
+    super(props);
+
+    this.handleChangePerPage = this.handleChangePerPage.bind(this);
+  }
+
+  renderRangePagination() {
     return (
-      <div className='range_pagination'>
+      <div className="range_pagination">
         <span>{this.rangePaginationText()}</span>
       </div>
     );
   }
 
-  renderPerPage () {
+  renderPerPage() {
     return (
-      <div className='per_page'>
-        <Input value={this.props.perPage} component='select'
-               includeBlank={false} clearTheme={true}
-               className='form__input input-field'
-               options={this.props.perPageOptions}
-               onChange={this.changePerPage}
-          />
+      <div className="per_page">
+        <Input
+          value={this.props.perPage}
+          component="select"
+          includeBlank={false}
+          clearTheme
+          className="form__input input-field"
+          options={this.props.perPageOptions}
+          onChange={this.handleChangePerPage}
+        />
       </div>
     );
   }
 
-  renderPagination () {
-    let totalRowsCount = this.props.count;
-    let pageRowsCount = this.props.pageRowsCount;
-    if (totalRowsCount <= pageRowsCount) {
-      return null;
+  renderPagination() {
+    const { count, pageRowsCount } = this.props;
+    if (count <= pageRowsCount) {
+      return <span />;
     }
 
     return (
       <div>
         <Pagination
           page={this.props.page}
-          count={this.props.count}
+          count={count}
           perPage={this.props.perPage}
           window={this.props.window}
           onPagination={this.props.onPagination}
           type={this.props.type}
         />
       </div>
-    )
+    );
   }
 
-  render () {
+  render() {
     return (
       <div className={this.className()}>
         {this.renderPagination()}
@@ -79,20 +85,18 @@ export default class GridPagination extends Component {
     );
   }
 
-  changePerPage (event) {
-    let perPage = parseInt(event.currentTarget.value);
+  handleChangePerPage(event) {
+    const perPage = parseInt(event.currentTarget.value);
     this.props.onChangePerPage(perPage);
   }
 
-  rangePaginationText () {
-    let perPage = this.props.perPage;
-    let page = this.props.page;
-    let pageRowsCount = this.props.pageRowsCount;
+  rangePaginationText() {
+    const { perPage, page, pageRowsCount } = this.props;
 
-    let firstElement = (perPage*page-(perPage-1));
-    let lastElement = (pageRowsCount < perPage) ? this.props.count : perPage*page;
-    let totalElement = this.props.count;
+    const firstElement = (perPage * page - (perPage - 1));
+    const lastElement = (pageRowsCount < perPage) ? this.props.count : perPage * page;
+    const totalElement = this.props.count;
 
-    return firstElement+' - '+lastElement+' de '+totalElement;
+    return `${firstElement} - ${lastElement} de ${totalElement}`;
   }
 }

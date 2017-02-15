@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
+import Realize from '../../realize';
 import { mixin } from '../../utils/decorators';
 
 import { CssClassMixin } from '../../mixins';
@@ -19,7 +20,7 @@ export default class TableSelectionIndicator extends Component {
     onRemoveSelection: PropTypes.func,
     onSelectAll: PropTypes.func,
     rowSelectableFilter: PropTypes.func,
-    forceShowSelectAllButton: PropTypes.bool
+    forceShowSelectAllButton: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -29,7 +30,7 @@ export default class TableSelectionIndicator extends Component {
     actionButtons: [],
     message: {
       plural: 'table.selection.select.plural',
-      singular: 'table.selection.select.singular'
+      singular: 'table.selection.select.singular',
     },
     removeSelectionButtonName: 'table.selection.clear',
     selectable: 'multiple',
@@ -37,26 +38,26 @@ export default class TableSelectionIndicator extends Component {
     allSelected: false,
     rowSelectableFilter: null,
     forceShowSelectAllButton: false,
-    onRemoveSelection: function(event) {},
-    onSelectAll: function(event) {}
+    onRemoveSelection() {},
+    onSelectAll() {},
   };
 
-  renderMessage () {
-    let count = this.getSelectionCount();
-    if(count === 0) {
+  renderMessage() {
+    const count = this.getSelectionCount();
+    if (count === 0) {
       return '';
-    } else if(count === 1) {
+    } else if (count === 1) {
       return Realize.i18n.t(this.props.message.singular);
-    } else {
-      var message = Realize.i18n.t(this.props.message.plural);
-      return message.replace(/:count/, count);
     }
+
+    const message = Realize.i18n.t(this.props.message.plural);
+    return message.replace(/:count/, count);
   }
 
-  renderActions () {
-    let count = this.getSelectionCount();
-    if(count === 0 || this.props.selectable !== 'multiple') {
-      return '';
+  renderActions() {
+    const count = this.getSelectionCount();
+    if (count === 0 || this.props.selectable !== 'multiple') {
+      return <span />;
     }
 
     return (
@@ -67,7 +68,7 @@ export default class TableSelectionIndicator extends Component {
     );
   }
 
-  renderRemoveSelectionButton () {
+  renderRemoveSelectionButton() {
     return (
       <a href="#!" onClick={this.props.onRemoveSelection}>
         {Realize.i18n.t(this.props.removeSelectionButtonName)}
@@ -75,9 +76,9 @@ export default class TableSelectionIndicator extends Component {
     );
   }
 
-  renderSelectAllButton () {
-    if(typeof this.props.rowSelectableFilter === "function" || this.props.allSelected) {
-      if(!this.props.forceShowSelectAllButton){
+  renderSelectAllButton() {
+    if (typeof this.props.rowSelectableFilter === 'function' || this.props.allSelected) {
+      if (!this.props.forceShowSelectAllButton) {
         return '';
       }
     }
@@ -92,7 +93,7 @@ export default class TableSelectionIndicator extends Component {
     );
   }
 
-  render () {
+  render() {
     return (
       <div className={this.className()}>
         <span>{this.renderMessage()}</span> {this.renderActions()}
@@ -100,17 +101,15 @@ export default class TableSelectionIndicator extends Component {
     );
   }
 
-  getSelectionCount () {
-    if(this.props.allSelected && !!this.props.count) {
-      return this.props.count;
-    } else {
-      return this.props.selectedRowIds.length;
-    }
+  getSelectionCount() {
+    return (this.props.allSelected && !!this.props.count)
+      ? this.props.count
+      : this.props.selectedRowIds.length;
   }
 
-  getSelectAllButtonName () {
-    let buttonName = Realize.i18n.t(this.props.selectAllButtonName);
-    let count = this.props.count || this.props.dataRows.length;
+  getSelectAllButtonName() {
+    const buttonName = Realize.i18n.t(this.props.selectAllButtonName);
+    const count = this.props.count || this.props.dataRows.length;
 
     return buttonName.replace(/:count/, count);
   }

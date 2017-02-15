@@ -3,7 +3,8 @@
   "parser": "babel-eslint",
   "rules": {
     "import/no-unresolved": [2, { "ignore": ["^[^.].*"] }],
-    "react/sort-comp": [0]
+    "react/sort-comp": [0],
+    "radix": ["error", "as-needed"]
   },
   "globals": {
     "describe": true,

@@ -15,5 +15,5 @@ export default {
   config: realizeConfig,
   themes: realizeThemes,
   i18n: realizeI18n,
-  setConfig: setConfig
+  setConfig,
 };
