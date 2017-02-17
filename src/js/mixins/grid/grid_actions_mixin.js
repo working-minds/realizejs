@@ -1,7 +1,5 @@
 import PropTypes from '../../prop_types';
-import mergeWith from 'lodash/mergeWith';
-import isArray from 'lodash/isArray';
-import $ from 'jquery';
+import { isArray, isBoolean, isString, mergeWith } from 'lodash';
 
 export default {
   propTypes: {
@@ -12,10 +10,10 @@ export default {
     createActionButton: PropTypes.object,
     showActionButton: PropTypes.object,
     editActionButton: PropTypes.object,
-    destroyActionButton: PropTypes.object
+    destroyActionButton: PropTypes.object,
   },
 
-  getDefaultProps () {
+  getDefaultProps() {
     return {
       actionButtons: {},
       rowHref: null,
@@ -23,89 +21,97 @@ export default {
       createActionButton: {},
       showActionButton: {},
       editActionButton: {},
-      destroyActionButton: {}
+      destroyActionButton: {},
     };
   },
 
-  getRowHref () {
-    var rowHref = this.props.rowHref;
-    var haveShowAction = this.props.haveShowAction;
-    if(!haveShowAction || (!!rowHref && typeof rowHref == "string")) {
-      return rowHref;
-    }
+  getRowHref() {
+    const rowHref = this.props.rowHref;
+    const isValidRowHref = rowHref && isString(rowHref);
 
-    return this.getRestActionUrl('show');
+    return (!this.props.haveShowAction || isValidRowHref)
+      ? rowHref
+      : this.restClient.getRestActionUrl('show');
   },
 
-  getActionButtons: function() {
-    return mergeWith(this.getDefaultActionButtonsObject(), this.props.actionButtons, this.mergeActionButtons.bind(this));
+  getActionButtons() {
+    return mergeWith(
+      this.getDefaultActionButtonsObject(),
+      this.props.actionButtons,
+      this.mergeActionButtons.bind(this)
+    );
   },
 
-  mergeActionButtons (defaultObject, propsObject) {
-    var propsActionButtons = this.props.actionButtons;
-    var propsExtend = propsActionButtons.extend;
-    var extendActionButtons = (typeof(propsExtend) == "boolean") ? propsExtend : false;
+  mergeActionButtons(defaultObject, propsObject) {
+    const propsActionButtons = this.props.actionButtons;
+    const propsExtend = propsActionButtons.extend;
+    const extendActionButtons = isBoolean(propsExtend) && propsExtend;
+    const mustConcatActionButtons = extendActionButtons
+      && isArray(propsObject)
+      && isArray(defaultObject);
 
-    if(extendActionButtons && isArray(propsObject) && isArray(defaultObject)) {
-      return propsObject.concat(defaultObject);
-    } else {
-      return propsObject;
-    }
+    return mustConcatActionButtons
+      ? propsObject.concat(defaultObject)
+      : propsObject;
   },
 
-  getDefaultActionButtonsObject () {
+  getDefaultActionButtonsObject() {
     return {
       extend: true,
       member: this.getDefaultMemberActionButtons(),
-      collection: this.getDefaultCollectionActionButtons()
-    }
+      collection: this.getDefaultCollectionActionButtons(),
+    };
   },
 
-  getDefaultMemberActionButtons () {
-    var actions = [
+  getDefaultMemberActionButtons() {
+    const actions = [
       this.getDefaultEditActionProps(),
-      this.getDefaultDestroyActionProps()
+      this.getDefaultDestroyActionProps(),
     ];
 
-    if(this.props.haveShowAction) {
+    if (this.props.haveShowAction) {
       actions.unshift(this.getDefaultShowActionProps());
     }
 
     return actions;
   },
 
-  getDefaultCollectionActionButtons () {
+  getDefaultCollectionActionButtons() {
     return [this.getDefaultCreateActionProps()];
   },
 
-  getDefaultCreateActionProps () {
-    return $.extend({}, {
+  getDefaultCreateActionProps() {
+    return {
       name: 'actions.new',
       context: 'none',
-      href: this.getRestActionUrl('add')
-    }, this.props.createActionButton);
+      href: this.restClient.getRestActionUrl('add'),
+      ...this.props.createActionButton,
+    };
   },
 
-  getDefaultShowActionProps () {
-    return $.extend({}, {
+  getDefaultShowActionProps() {
+    return {
       icon: 'search',
-      href: this.getRestActionUrl('show')
-    }, this.props.showActionButton);
+      href: this.restClient.getRestActionUrl('show'),
+      ...this.props.showActionButton,
+    };
   },
 
-  getDefaultEditActionProps () {
-    return $.extend({}, {
+  getDefaultEditActionProps() {
+    return {
       icon: 'edit',
-      href: this.getRestActionUrl('edit')
-    }, this.props.editActionButton);
+      href: this.restClient.getRestActionUrl('edit'),
+      ...this.props.editActionButton,
+    };
   },
 
-  getDefaultDestroyActionProps () {
-    return $.extend({}, {
+  getDefaultDestroyActionProps() {
+    return {
       icon: 'destroy',
-      method: this.getRestActionMethod('destroy'),
-      actionUrl: this.getRestActionUrl('destroy'),
-      confirmsWith: this.props.destroyConfirm
-    }, this.props.destroyActionButton);
-  }
-}
+      method: this.restClient.getRestActionMethod('destroy'),
+      actionUrl: this.restClient.getRestActionUrl('destroy'),
+      confirmsWith: this.props.destroyConfirm,
+      ...this.props.destroyActionButton,
+    };
+  },
+};

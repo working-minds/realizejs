@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
-import PropTypes from '../../prop_types';
-import $ from 'jquery';
+
 import { mixin } from '../../utils/decorators';
-import Realize from '../../realize';
 import { getProp } from '../../utils';
+import { setState } from '../../utils/react';
+import { isEmpty } from 'lodash';
+
+import PropTypes from '../../prop_types';
+import Realize from '../../realize';
+import RestClient from '../../services/rest_client';
+import I18n from '../../i18n';
 
 import {
   CssClassMixin,
   RequestHandlerMixin,
-  RestActionsMixin,
   GridActionsMixin,
 } from '../../mixins';
 
@@ -21,12 +25,14 @@ import {
 @mixin(
   CssClassMixin,
   RequestHandlerMixin,
-  RestActionsMixin,
   GridActionsMixin
 )
 export default class Grid extends Component {
   static propTypes = {
-    url: PropTypes.string,
+    actionUrls: PropTypes.object,
+    actionMethods: PropTypes.object,
+    destroyConfirm: PropTypes.node,
+    url: PropTypes.string.isRequired,
     eagerLoad: PropTypes.bool,
     resource: PropTypes.string,
     paginationConfigs: PropTypes.object,
@@ -61,6 +67,9 @@ export default class Grid extends Component {
   };
 
   static defaultProps = {
+    actionUrls: {},
+    actionMethods: null,
+    destroyConfirm: I18n.t('table.destroyConfirm'),
     themeClassKey: 'grid',
     eagerLoad: false,
     paginationConfigs: {},
@@ -118,6 +127,14 @@ export default class Grid extends Component {
     this.handleSelectDataRows = this.handleSelectDataRows.bind(this);
     this.handleRemoveSelection = this.handleRemoveSelection.bind(this);
     this.handleSelectAllRows = this.handleSelectAllRows.bind(this);
+
+    this.restClient = new RestClient({
+      baseUrl: this.props.url,
+      actionUrls: this.props.actionUrls,
+      actionMethods: this.props.actionMethods,
+    });
+
+    this.setStatePromise = setState.bind(null, this);
   }
 
   /* Lifecycle */
@@ -129,14 +146,15 @@ export default class Grid extends Component {
   }
 
   backToInitialState() {
-    this.setState({
+    const initialState = {
       selectedRowIds: [],
       allSelected: false,
       page: 1,
       filterData: {},
-    }, () => {
-      this.loadData();
-    });
+    };
+
+    return this.setStatePromise(initialState)
+      .then(() => this.loadData());
   }
 
   /* Configs */
@@ -156,83 +174,70 @@ export default class Grid extends Component {
   /* Data load handlers */
 
   loadData() {
-    this.setState({ gridIsLoading: true });
     const postData = this.buildPostData();
     const filterProps = this.props.filter;
-    const filterMethod = filterProps.method || 'GET';
-    const filterDataType = filterProps.dataType || 'json';
+    const method = filterProps.method || 'GET';
+    const dataType = filterProps.dataType || 'json';
 
-    $.ajax({
-      url: this.getRestActionUrl('index'),
-      method: filterMethod,
-      dataType: filterDataType,
-      data: postData,
-      success: this.handleLoad,
-      error: this.handleLoadError,
-    });
+    return this.setStatePromise({ gridIsLoading: true })
+      .then(() => this.restClient.index(postData, { dataType, method }))
+      .then(this.handleLoad)
+      .catch(this.handleLoadError);
   }
 
   handleLoad(data) {
     const dataRows = getProp(this.props.dataRowsParam, data);
     const count = getProp(this.props.countParam, data);
-
-    this.setState({
+    const loadedState = {
       gridIsLoading: false,
       dataRows,
       count,
-    }, () => {
-      this.props.onLoadSuccess(data);
-    });
+    };
+
+    return this.setStatePromise(loadedState)
+      .then(() => this.props.onLoadSuccess(data));
   }
 
   handleLoadError(xhr, status, error) {
-    this.props.onLoadError(xhr, status, error);
-    this.setState({ gridIsLoading: false });
-
-    console.log(`Grid Load Error: ${error}`);
+    return this.setStatePromise({ gridIsLoading: false })
+      .then(() => this.props.onLoadError(xhr, status, error));
   }
 
   buildPostData() {
-    const postData = Object.assign({},
-      this.state.filterData,
-      this.buildPaginationPostData()
-    );
-
-    if (typeof this.state.sortData === 'object' && !!this.state.sortData.field) {
-      Object.assign(postData, this.buildSortPostData());
-    }
-
-    return postData;
+    return {
+      ...this.state.filterData,
+      ...this.buildPaginationPostData(),
+      ...this.buildSortPostData(),
+    };
   }
 
   buildPaginationPostData() {
-    const paginationConfigs = this.paginationConfigs();
-    const paginationPostData = {};
+    const { param, perPageParam } = this.paginationConfigs();
 
-    const paginationParam = paginationConfigs.param;
-    const paginationParamPerPage = paginationConfigs.perPageParam;
-
-    paginationPostData[paginationParam] = this.state.page;
-    paginationPostData[paginationParamPerPage] = this.state.perPage;
-
-    return paginationPostData;
+    return {
+      [param]: this.state.page,
+      [perPageParam]: this.state.perPage,
+    };
   }
 
   buildSortPostData() {
-    const sortConfigs = this.sortConfigs();
-    const sortParam = sortConfigs.param;
-    const sortDirectionParam = sortConfigs.directionParam;
-    const sortPostData = {};
-    sortPostData[sortParam] = this.parseSortPostDataValue(sortConfigs);
-    sortPostData[sortDirectionParam] = this.state.sortData.direction;
+    const { sortData } = this.state;
+    const hasField = typeof sortData === 'object' && sortData.field;
 
-    return sortPostData;
+    if (!hasField) return {};
+
+    const sortConfigs = this.sortConfigs();
+    const { param, directionParam } = sortConfigs;
+
+    return {
+      [param]: this.parseSortPostDataValue(sortConfigs),
+      [directionParam]: sortData.direction,
+    };
   }
 
   parseSortPostDataValue(sortConfigs) {
     const sortValueFormat = sortConfigs.fieldValueFormat;
-    const field = this.state.sortData.field;
-    const direction = this.state.sortData.direction;
+    const { field, direction } = this.state.sortData;
 
     return !sortValueFormat
       ? field
@@ -256,92 +261,90 @@ export default class Grid extends Component {
     return this.state.dataRows;
   }
 
+  reconfigureGrid(config = {}, resetSelection = false) {
+    const selectedRowIds = resetSelection ? [] : this.state.selectedRowIds;
+    const nextState = {
+      ...config,
+      selectedRowIds,
+      allSelected: resetSelection ? false : this.state.allSelected,
+    };
+
+    return this.setStatePromise(nextState)
+      .then(() => this.loadData());
+  }
+
   /* Event handlers */
 
   handlePagination(page) {
-    this.state.page = page;
-    if (this.state.allSelected) {
-      this.state.selectedRowIds = [];
-    }
-
-    this.state.allSelected = false;
-    this.loadData();
+    return this.reconfigureGrid({ page }, this.state.allSelected);
   }
 
   handleChangePerPage(perPage) {
-    this.state.perPage = perPage;
-    this.paginationConfigs().perPage = perPage;
-
-    if (this.state.allSelected) {
-      this.state.selectedRowIds = [];
-    }
-
-    this.state.allSelected = false;
-    this.loadData();
+    return this.reconfigureGrid({ perPage }, this.state.allSelected);
   }
 
   handleFilterSubmit(event, postData) {
-    this.props.onFilterSubmit(event, postData);
-
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
-
-      this.state.selectedRowIds = [];
-      this.state.allSelected = false;
-      this.state.filterData = postData;
-      this.state.page = 1;
-      this.loadData();
-    }
+    return Promise.resolve()
+      .then(() => this.props.onFilterSubmit(event, postData))
+      .then(() => {
+        if (!event.isDefaultPrevented()) {
+          event.preventDefault();
+          return this.reconfigureGrid({ filterData: postData, page: 1 }, true);
+        }
+        return Promise.resolve();
+      });
   }
 
   handleSort(sortData) {
-    this.state.sortData = sortData;
-    this.state.page = 1;
-    this.loadData();
+    return this.reconfigureGrid({ sortData, page: 1 });
   }
 
   /* Selection event handlers */
 
   handleSelectDataRows(event, selectedRowIds, selectedData) {
-    this.props.onSelectDataRow(event, selectedRowIds);
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
+    return Promise.resolve()
+      .then(() => this.props.onSelectDataRow(event, selectedRowIds))
+      .then(() => {
+        if (!event.isDefaultPrevented()) {
+          event.preventDefault();
 
-      this.setState(this.getSelectDataRowsState(selectedRowIds, selectedData));
-    }
-  }
+          const setCurrentSelected = selectedData && this.props.selectable === 'one';
+          const nextState = {
+            selectedRowIds,
+            selectedData: setCurrentSelected ? selectedData : this.state.selectedData,
+            allSelected: false,
+          };
 
-  getSelectDataRowsState(selectedRowIds, selectedData) {
-    const nextState = { selectedRowIds, allSelected: false };
-
-    if (!!selectedData && this.props.selectable === 'one') {
-      nextState.selectedData = selectedData;
-    }
-
-    return nextState;
+          return this.setStatePromise(nextState);
+        }
+        return Promise.resolve();
+      });
   }
 
   handleRemoveSelection(event) {
-    this.props.onRemoveSelection(event);
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
+    return Promise.resolve()
+      .then(() => this.props.onRemoveSelection(event))
+      .then(() => {
+        if (!event.isDefaultPrevented()) {
+          event.preventDefault();
+          return this.reconfigureGrid({}, true);
+        }
 
-      this.setState({
-        selectedRowIds: [],
-        allSelected: false,
+        return Promise.resolve();
       });
-    }
   }
 
   handleSelectAllRows(event) {
-    this.props.onSelectAllRows(event);
-    if (!event.isDefaultPrevented()) {
-      event.preventDefault();
+    return Promise.resolve()
+      .then(() => this.props.onSelectAllRows(event))
+      .then(() => {
+        if (!event.isDefaultPrevented()) {
+          event.preventDefault();
+          return this.setStatePromise({ allSelected: true });
+        }
 
-      this.setState({
-        allSelected: true,
+        return Promise.resolve();
       });
-    }
   }
 
   /* Renderers */
@@ -355,8 +358,8 @@ export default class Grid extends Component {
   }
 
   renderFilter() {
-    if ($.isEmptyObject(this.props.filter)) {
-      return '';
+    if (isEmpty(this.props.filter)) {
+      return <span />;
     }
 
     return (
@@ -365,7 +368,6 @@ export default class Grid extends Component {
         {...this.props.filter}
         isLoading={this.state.gridIsLoading}
         onSubmit={this.handleFilterSubmit}
-        ref="filter"
       />
     );
   }
@@ -423,7 +425,7 @@ export default class Grid extends Component {
 
   render() {
     return (
-      <div className={this.buildGridClassName()} ref="grid">
+      <div className={this.buildGridClassName()}>
         {this.renderFilter()}
 
         {this.renderPaginationOnTop()}
