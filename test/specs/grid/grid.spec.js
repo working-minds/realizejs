@@ -808,44 +808,8 @@ describe('<Grid />', () => {
     });
   });
 
-  describe('#renderPaginationOnTop', () => {
-    it('renders a GridPage when no prop paginationOnTop is received', () => {
-      const expected = chance.bool();
-
-      const wrapper = shallow(<Grid url={dummyUrl} />);
-      const instance = wrapper.instance();
-
-      const renderPagination = sinon.stub(instance, 'renderPagination').returns(expected);
-      const result = instance.renderPaginationOnTop();
-
-      expect(renderPagination).to.have.been.calledOnce;
-      expect(result).to.be.equal(expected);
-    });
-
-    it('renders a GridPage when prop paginationOnTop is true', () => {
-      const expected = chance.hash();
-
-      const wrapper = shallow(<Grid url={dummyUrl} paginationOnTop={true} />);
-      const instance = wrapper.instance();
-
-      const renderPagination = sinon.stub(instance, 'renderPagination').returns(expected);
-      const result = instance.renderPaginationOnTop();
-
-      expect(renderPagination).to.have.been.calledOnce;
-      expect(result).to.be.equal(expected);
-    });
-
-    it('renders a span when prop paginationOnTop is false', () => {
-      const expected = <span/>;
-
-      const wrapper = shallow(<Grid url={dummyUrl} paginationOnTop={false} />);
-      const result = wrapper.instance().renderPaginationOnTop();
-      expect(result).to.be.eql(expected);
-    });
-  });
-
   describe('#renderFilter', () => {
-    it('renders a GridFilter when prop filter is received', () => {
+    it('renders a GridFilter', () => {
       const onSubmit = sinon.stub();
 
       const props = {
@@ -857,11 +821,14 @@ describe('<Grid />', () => {
         gridIsLoading: chance.bool()
       };
 
+      const extraProps = {[chance.word()]: chance.hash()}
+
       const expected = <GridFilter
         action={props.url}
         {...props.filter}
         isLoading={state.gridIsLoading}
         onSubmit={onSubmit}
+        {...extraProps}
       />;
 
       const wrapper = shallow(<Grid url={dummyUrl} {...props} />);
@@ -870,22 +837,7 @@ describe('<Grid />', () => {
       instance.state = state;
       instance.handleFilterSubmit = onSubmit;
 
-      const result = instance.renderFilter();
-      expect(result).to.be.eql(expected);
-    });
-
-    it('renders a span when filter prop is an empty object', () => {
-      const props = {
-        url: dummyUrl,
-        filter: {},
-      };
-
-      const expected = <span />;
-
-      const wrapper = shallow(<Grid url={dummyUrl} {...props} />);
-      const instance = wrapper.instance();
-
-      const result = instance.renderFilter();
+      const result = instance.renderFilter(extraProps);
       expect(result).to.be.eql(expected);
     });
   });
@@ -974,7 +926,7 @@ describe('<Grid />', () => {
   });
 
   describe('#renderPagination', () => {
-    it('renders GridPagination when prop pagination is true', () => {
+    it('renders a GridPagination', () => {
       const props = { url: dummyUrl, pagination: true };
       const state = {
         perPage: chance.integer(),
@@ -987,6 +939,8 @@ describe('<Grid />', () => {
       const handlePagination = () => {};
       const handleChangePerPage = () => {};
 
+      const extraProps = {[chance.word]: chance.hash()};
+
       const expected = <GridPagination
         {...paginationConfigsResult}
         perPage={state.perPage}
@@ -995,6 +949,7 @@ describe('<Grid />', () => {
         onPagination={handlePagination}
         onChangePerPage={handleChangePerPage}
         pageRowsCount={state.dataRows.length}
+        {...extraProps}
       />;
 
       const wrapper = shallow(<Grid {...props} />);
@@ -1006,19 +961,7 @@ describe('<Grid />', () => {
 
       sandbox.stub(instance, 'paginationConfigs').returns(paginationConfigsResult);
 
-      const result = instance.renderPagination();
-      expect(result).to.be.eql(expected);
-    });
-
-    it('renders a span when pagination is false', () => {
-      const props = { url: dummyUrl, pagination: false };
-
-      const expected = <span />;
-
-      const wrapper = shallow(<Grid {...props} />);
-      const instance = wrapper.instance();
-
-      const result = instance.renderPagination();
+      const result = instance.renderPagination(extraProps);
       expect(result).to.be.eql(expected);
     });
   });
@@ -1057,6 +1000,18 @@ describe('<Grid />', () => {
       const wrapper = shallow(<Grid url={dummyUrl} />);
 
       expect(wrapper.childAt(3).is(GridPagination)).to.be.true;
+    });
+
+    it('pass hidden prop to top GridPagination when paginationOnTop is false', () => {
+      const wrapper = shallow(<Grid url={dummyUrl} paginationOnTop={false} />);
+      expect(wrapper.childAt(1).prop('hidden')).to.be.true;
+    });
+
+    it('pass hidden prop to both GridPagination elements when pagination is false', () => {
+      const wrapper = shallow(<Grid url={dummyUrl} pagination={false} />);
+
+      expect(wrapper.childAt(1).prop('hidden')).to.be.true;
+      expect(wrapper.childAt(3).prop('hidden')).to.be.true;
     });
   });
 });

@@ -29,6 +29,7 @@ import {
 )
 export default class Grid extends Component {
   static propTypes = {
+    hidden: PropTypes.bool,
     actionUrls: PropTypes.object,
     actionMethods: PropTypes.object,
     destroyConfirm: PropTypes.node,
@@ -349,25 +350,14 @@ export default class Grid extends Component {
 
   /* Renderers */
 
-  renderPaginationOnTop() {
-    if (this.props.paginationOnTop) {
-      return this.renderPagination();
-    }
-
-    return <span />;
-  }
-
-  renderFilter() {
-    if (isEmpty(this.props.filter)) {
-      return <span />;
-    }
-
+  renderFilter(extraProps) {
     return (
       <GridFilter
         action={this.props.url}
         {...this.props.filter}
         isLoading={this.state.gridIsLoading}
         onSubmit={this.handleFilterSubmit}
+        {...extraProps}
       />
     );
   }
@@ -405,32 +395,30 @@ export default class Grid extends Component {
     );
   }
 
-  renderPagination() {
-    if (this.props.pagination) {
-      return (
-        <GridPagination
-          {...this.paginationConfigs()}
-          perPage={this.state.perPage}
-          page={this.state.page}
-          count={this.state.count}
-          onPagination={this.handlePagination}
-          onChangePerPage={this.handleChangePerPage}
-          pageRowsCount={this.state.dataRows.length}
-        />
-      );
-    }
-
-    return <span />;
+  renderPagination(extraProps) {
+    return (
+      <GridPagination
+        {...this.paginationConfigs()}
+        perPage={this.state.perPage}
+        page={this.state.page}
+        count={this.state.count}
+        onPagination={this.handlePagination}
+        onChangePerPage={this.handleChangePerPage}
+        pageRowsCount={this.state.dataRows.length}
+        {...extraProps}
+      />
+    );
   }
 
   render() {
+    if (this.props.hidden) return null;
+
     return (
       <div className={this.buildGridClassName()}>
-        {this.renderFilter()}
-
-        {this.renderPaginationOnTop()}
+        {this.renderFilter({ hidden: isEmpty(this.props.filter) })}
+        {this.renderPagination({ hidden: !this.props.pagination || !this.props.paginationOnTop })}
         {this.renderTable()}
-        {this.renderPagination()}
+        {this.renderPagination({ hidden: !this.props.pagination })}
       </div>
     );
   }

@@ -10,6 +10,7 @@ import { Form } from '../../components';
 @mixin(CssClassMixin)
 export default class GridFilter extends Component {
   static propTypes = {
+    hidden: PropTypes.bool,
     inputs: PropTypes.object,
     action: PropTypes.string,
     method: PropTypes.string,
@@ -95,6 +96,8 @@ export default class GridFilter extends Component {
   }
 
   render () {
+    if (this.props.hidden) return null;
+
     return(
       <div className={this.className()}>
         {this.renderFilters()}

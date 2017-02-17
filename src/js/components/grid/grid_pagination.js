@@ -8,6 +8,7 @@ import { Input, Pagination } from '../../components';
 @mixin(CssClassMixin)
 export default class GridPagination extends Component {
   static propTypes = {
+    hidden: PropTypes.bool,
     count: PropTypes.number,
     page: PropTypes.number,
     perPage: PropTypes.number,
@@ -76,6 +77,8 @@ export default class GridPagination extends Component {
   }
 
   render() {
+    if (this.props.hidden) return null;
+
     return (
       <div className={this.className()}>
         {this.renderPagination()}
