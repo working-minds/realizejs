@@ -144,7 +144,7 @@ export default class Input extends React.Component {
     const renderFunction = `render${capitalize(this.props.component)}Input`;
     const renderLabel = this.props.renderLabel;
 
-    if (this.hasOwnProperty(renderFunction)) {
+    if (renderFunction in this) {
       return this[renderFunction]();
     } else if (!renderLabel) {
       return this.renderInputWithoutLabel();
