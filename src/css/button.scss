@@ -3,13 +3,19 @@ button .preloader-wrapper.small {
   height: 24px;
 }
 
+.button.disabled-button {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
 .button--icon {
   padding-left: 1rem;
   padding-right: 1rem;
-}
 
-.button--icon.btn-floating{
-  padding-left: 0;
+  &.btn-floating {
+    padding-left: 0;
+  }
 }
 
 .button--floating.button--icon {
@@ -18,10 +24,10 @@ button .preloader-wrapper.small {
 
 .button-group .button {
   margin-left: 1rem;
-}
 
-.button-group .button:first-child {
-  margin-left: 0;
+  &:first-child {
+    margin-left: 0;
+  }
 }
 
 .realize-modal .modal-footer .button-group {

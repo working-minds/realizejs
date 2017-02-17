@@ -9,39 +9,43 @@
 
 .grid__pagination {
   text-align: right;
-}
 
-.grid__pagination div {
-  float: right;
-  padding: 0rem 0.5rem;
-}
+  div {
+    float: right;
+    padding: 0 0.5rem;
+  }
 
-.grid__pagination .range_pagination {
-  line-height: 45px;
-}
+  .pagination {
+    display: inline-block;
+  }
 
-.grid__pagination .range_pagination, .grid__pagination .per_page {
-  margin: 0rem 2rem;
-}
+  .range_pagination {
+    line-height: 45px;
+  }
 
-.grid__pagination .per_page .input-field {
-  max-width: 6rem;
-  margin-top: 0px;
-}
+  .range_pagination, .grid__pagination .per_page {
+    margin: 0 2rem;
+  }
 
-.grid__pagination .per_page .input-field input {
-  text-align: center;
-  margin: 0px;
-}
+  .per_page .input-field {
+    max-width: 6rem;
+    margin-top: 0;
 
-.grid__pagination .pagination {
-  display: inline-block;
-}
+    input {
+      text-align: center;
+      margin: 0;
+    }
 
-.grid__pagination .range_pagination span,
-.grid__pagination .per_page .input-field input, .grid__pagination .per_page .input-field span {
-  color: #999;
-  border-bottom: none;
+    .select-wrapper .caret {
+      margin-top: 0.10rem;
+    }
+  }
+
+  .range_pagination span,
+  .per_page .input-field input, .per_page .input-field span {
+    color: #999;
+    border-bottom: none;
+  }
 }
 
 @media only screen and (min-width : 601px) {

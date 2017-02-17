@@ -5,3 +5,9 @@
   -o-transform: translateY(0%);
   transform: translateY(0%);
 }
+
+.input-field label {
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -8,6 +8,17 @@ import { mixin } from '../../utils/decorators';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 
+const validFormats = [
+  'text',
+  'currency',
+  'number',
+  'percentage',
+  'boolean',
+  'date',
+  'datetime',
+  'time',
+];
+
 @mixin(CssClassMixin)
 export default class TableCell extends Component {
   static propTypes = {
@@ -15,7 +26,7 @@ export default class TableCell extends Component {
     data: PropTypes.object,
     dataRowIdField: PropTypes.string,
     value: PropTypes.func,
-    format: PropTypes.oneOf(['text', 'currency', 'number', 'percentage', 'boolean', 'date', 'datetime', 'time']),
+    format: PropTypes.oneOf(validFormats),
     formatString: PropTypes.string,
     component: PropTypes.string
   };

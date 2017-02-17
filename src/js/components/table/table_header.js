@@ -23,7 +23,7 @@ const validFormats = [
 export default class TableHeader extends Component {
   static propTypes = {
     label: PropTypes.localizedString,
-    format: PropTypes.oneOf([validFormats]),
+    format: PropTypes.oneOf(validFormats),
     sortable: PropTypes.bool,
     sortDirection: PropTypes.string,
     sortFieldName: PropTypes.string,
@@ -101,6 +101,10 @@ export default class TableHeader extends Component {
     let className = this.className();
     if (!!this.props.format) {
       className += ` table-header--${this.props.format}`;
+    }
+
+    if (!!this.props.name) {
+      className += ` table-header--${this.props.name}`;
     }
 
     return className;
