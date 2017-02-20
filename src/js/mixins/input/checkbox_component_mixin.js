@@ -1,52 +1,53 @@
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
+import { autobind } from 'utils/decorators';
 import $ from 'jquery';
 
 export default {
   propTypes: {
     checked: PropTypes.bool,
-    renderAsIndeterminate: PropTypes.bool
+    renderAsIndeterminate: PropTypes.bool,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       renderAsIndeterminate: false,
-      value: false
+      value: false,
     };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      checked: this.getInitialChecked()
+      checked: this.getInitialChecked(),
     };
   },
 
-  componentDidMount: function() {
-    var inputNode = ReactDOM.findDOMNode(this.refs.input);
+  componentDidMount() {
+    const inputNode = ReactDOM.findDOMNode(this.refs.input);
     inputNode.indeterminate = this.props.renderAsIndeterminate;
 
-    var $form = $(inputNode.form);
+    const $form = $(inputNode.form);
     $form.on('reset', this._handleCheckboxReset);
   },
 
-  componentWillUnmount: function() {
-    var inputNode = ReactDOM.findDOMNode(this.refs.input);
-    var $form = $(inputNode.form);
+  componentWillUnmount() {
+    const inputNode = ReactDOM.findDOMNode(this.refs.input);
+    const $form = $(inputNode.form);
     $form.off('reset', this._handleCheckboxReset);
   },
 
-  valueIsBoolean: function() {
-    var value = this.props.value;
-    return (typeof value === "boolean" || value === 0 || value === 1);
+  valueIsBoolean() {
+    const value = this.props.value;
+    return (typeof value === 'boolean' || value === 0 || value === 1);
   },
 
-  getInitialChecked: function() {
-    var checked = this.props.checked;
-    if(checked !== null && this.props.checked !== undefined) {
+  getInitialChecked() {
+    const { checked } = this.props;
+    if (checked !== null && checked !== undefined) {
       return checked;
     }
 
-    if(this.valueIsBoolean()) {
+    if (this.valueIsBoolean()) {
       return !!this.props.value;
     }
 
@@ -55,25 +56,25 @@ export default {
 
   /* Event handlers */
 
-  _handleCheckboxReset: function(event) {
-    if(this.isMounted()) {
-      this.setState({
-        checked: this.getInitialChecked()
-      });
-    }
+  @autobind
+  _handleCheckboxReset() {
+    this.setState({
+      checked: this.getInitialChecked(),
+    });
   },
 
-  _handleCheckboxChange: function(event) {
-    var newCheckedValue = event.target.checked;
+  @autobind
+  _handleCheckboxChange(event) {
+    const newCheckedValue = event.target.checked;
     this.props.onChange(event, newCheckedValue, this);
 
-    if(!event.isDefaultPrevented()) {
-      var newState = { checked: newCheckedValue };
-      if(this.valueIsBoolean()) {
+    if (!event.isDefaultPrevented()) {
+      const newState = { checked: newCheckedValue };
+      if (this.valueIsBoolean()) {
         newState.value = newCheckedValue;
       }
 
       this.setState(newState);
     }
-  }
-}
+  },
+};

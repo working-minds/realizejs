@@ -5,7 +5,7 @@ import InputBase from '../input_base';
 
 import {
   CssClassMixin,
-  CheckboxComponentMixin
+  CheckboxComponentMixin,
 } from '../../../mixins';
 
 @mixin(
@@ -18,9 +18,16 @@ export default class InputCheckbox extends InputBase {
     themeClassKey: 'input.checkbox',
   };
 
+  constructor(props) {
+    super(props);
+
+    this._handleCheckboxChange = this._handleCheckboxChange.bind(this);
+  }
+
   render() {
     return (
-      <input {...this.props}
+      <input
+        {...this.props}
         checked={this.state.checked}
         className={this.inputClassName()}
         onChange={this._handleCheckboxChange}

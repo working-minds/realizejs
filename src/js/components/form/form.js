@@ -3,18 +3,18 @@ import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import { FormActions } from '../../actions';
 import $ from 'jquery';
-import { mixin } from '../../utils/decorators';
+import { mixin, autobind } from '../../utils/decorators';
 
 import {
   InputGroup,
-  FormButtonGroup
+  FormButtonGroup,
 } from '../../components';
 
 import {
   CssClassMixin,
   ContainerMixin,
   FormErrorHandlerMixin,
-  FormSuccessHandlerMixin
+  FormSuccessHandlerMixin,
 } from '../../mixins';
 
 @mixin(
@@ -39,11 +39,15 @@ export default class Form extends Component {
     isLoading: PropTypes.bool,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
-    inputWrapperComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.element, PropTypes.string]),
+    inputWrapperComponent: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.element,
+      PropTypes.string,
+    ]),
     submitButton: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     otherButtons: PropTypes.array,
     onSubmit: PropTypes.func,
-    onReset: PropTypes.func
+    onReset: PropTypes.func,
   };
 
   static defaultProps = {
@@ -65,23 +69,139 @@ export default class Form extends Component {
     inputWrapperComponent: null,
     submitButton: {
       name: 'actions.send',
-      icon: 'send'
+      icon: 'send',
     },
     otherButtons: [],
-    onSubmit: function (event, postData) { },
-    onReset: function (event) { }
+    onSubmit() {},
+    onReset() {},
   };
 
   state = {
-    isLoading: null
+    isLoading: null,
   };
 
-  constructor(){
-    super();
+  constructor(props) {
+    super(props);
 
     this.clearErrors = this.clearErrors.bind(this);
     this.handleError = this.handleError.bind(this);
     this.handleValidationError = this.handleValidationError.bind(this);
+  }
+
+  propsToForward() {
+    return ['resource', 'data', 'readOnly', 'disabled'];
+  }
+
+  propsToForwardMapping() {
+    return {
+      errors: this.state.errors,
+      formStyle: this.props.style,
+    };
+  }
+
+  parseFormMethod() {
+    return (this.props.method === 'PUT' && !this.props.ajaxSubmit)
+      ? 'POST'
+      : this.props.method;
+  }
+
+  parseFormEncType() {
+    return this.props.multipart
+      ? 'multipart/form-data'
+      : 'application/x-www-form-urlencoded';
+  }
+
+  serialize() {
+    const form = ReactDOM.findDOMNode(this.refs.form);
+    return $(form).serializeObject();
+  }
+
+  @autobind
+  handleSubmit(event) {
+    event.nativeEvent.preventDefault();
+    event.persist();
+    const postData = this.serialize();
+
+    return Promise.resolve()
+      .then(() => this.props.onSubmit(event, postData))
+      .then(() => {
+        FormActions.submit(this.props.id, event, postData);
+
+        if (!event.isDefaultPrevented()) {
+          this.setState({ isLoading: true, errors: [], showSuccessFlash: false });
+          this.submit(postData);
+        }
+      });
+  }
+
+  submit(postData) {
+    this.props.ajaxSubmit
+      ? this.ajaxSubmit(postData)
+      : this.formSubmit();
+  }
+
+  ajaxSubmit(postData) {
+    let submitOptions = {
+      url: this.props.action,
+      method: this.props.method,
+      data: postData,
+      success: this.handleSuccess,
+      error: this.handleError,
+    };
+
+    if (!!this.props.dataType) {
+      submitOptions.dataType = this.props.dataType;
+    }
+
+    if (!!this.props.contentType) {
+      submitOptions.contentType = this.props.contentType;
+
+      if (submitOptions.contentType === 'application/json') {
+        submitOptions.data = JSON.stringify(postData);
+      }
+    }
+
+    if (this.props.multipart) {
+      const fd = new FormData(ReactDOM.findDOMNode(this.refs.form));
+      const multipartOptions = {
+        data: fd,
+        enctype: 'multipart/form-data',
+        processData: false,
+        contentType: false,
+      };
+      submitOptions = $.extend({}, submitOptions, multipartOptions);
+    }
+
+    $.ajax(submitOptions);
+  }
+
+  formSubmit() {
+    const formNode = ReactDOM.findDOMNode(this.refs.form);
+    formNode.submit();
+  }
+
+  @autobind
+  handleReset(event) {
+    this.props.onReset(event);
+    FormActions.reset(this.props.id, event);
+  }
+
+  reset() {
+    const formNode = ReactDOM.findDOMNode(this.refs.form);
+    formNode.reset();
+  }
+
+  haveNativeReset() {
+    return true;
+  }
+
+  isLoading() {
+    let isLoading = this.state.isLoading;
+    if (isLoading === null) {
+      isLoading = this.props.isLoading;
+    }
+
+    return isLoading;
   }
 
   renderMethodTag() {
@@ -93,20 +213,29 @@ export default class Form extends Component {
       return [];
     }
 
-    return <InputGroup {...this.propsWithoutCSS() } formStyle={this.props.style} errors={this.state.errors} ref="inputGroup" />;
+    return (
+      <InputGroup
+        {...this.propsWithoutCSS()}
+        formStyle={this.props.style}
+        errors={this.state.errors}
+        ref="inputGroup"
+      />
+    );
   }
 
   render() {
     return (
-      <form action={this.props.action}
-        method={(this.props.method == 'PUT' && !this.props.ajaxSubmit) ? 'POST' : this.props.method}
+      <form
+        action={this.props.action}
+        method={this.parseFormMethod()}
         encType={this.parseFormEncType()}
         id={this.props.id}
         onSubmit={this.handleSubmit}
         onReset={this.handleReset}
         className={this.className()}
         hidden={this.props.hidden}
-        ref="form">
+        ref="form"
+      >
 
         {this.renderFlashErrors()}
         {this.renderFlashSuccess()}
@@ -114,115 +243,8 @@ export default class Form extends Component {
         {this.renderMethodTag()}
         {this.renderChildren()}
 
-        <FormButtonGroup {...this.propsWithoutCSS() } isLoading={this.isLoading()} />
+        <FormButtonGroup {...this.propsWithoutCSS()} isLoading={this.isLoading()} />
       </form>
     );
-  }
-
-  propsToForward() {
-    return ['resource', 'data', 'readOnly', 'disabled'];
-  }
-
-  parseFormEncType() {
-    if (!!this.props.multipart) {
-      return "multipart/form-data";
-    } else {
-      return "application/x-www-form-urlencoded";
-    }
-  }
-
-  propsToForwardMapping() {
-    return {
-      errors: this.state.errors,
-      formStyle: this.props.style
-    };
-  }
-
-  serialize() {
-    var form = ReactDOM.findDOMNode(this.refs.form);
-    return $(form).serializeObject();
-  }
-
-  handleSubmit = (event) => {
-    event.nativeEvent.preventDefault();
-    var postData = this.serialize();
-    this.props.onSubmit(event, postData);
-    FormActions.submit(this.props.id, event, postData);
-
-    if (!event.isDefaultPrevented()) {
-      this.setState({ isLoading: true, errors: [], showSuccessFlash: false });
-      this.submit(postData);
-    }
-  }
-
-  submit(postData) {
-    if (!!this.props.ajaxSubmit) {
-      this.ajaxSubmit(postData);
-    } else {
-      this.formSubmit();
-    }
-  }
-
-  ajaxSubmit(postData) {
-    var submitOptions = {
-      url: this.props.action,
-      method: this.props.method,
-      data: postData,
-      success: this.handleSuccess,
-      error: this.handleError
-    };
-
-    if (!!this.props.dataType) {
-      submitOptions.dataType = this.props.dataType;
-    }
-
-    if (!!this.props.contentType) {
-      submitOptions.contentType = this.props.contentType;
-
-      if (submitOptions.contentType == "application/json") {
-        submitOptions.data = JSON.stringify(postData);
-      }
-    }
-
-    if (this.props.multipart) {
-      var fd = new FormData(ReactDOM.findDOMNode(this.refs.form));
-      var multipartOptions = {
-        data: fd,
-        enctype: 'multipart/form-data',
-        processData: false,
-        contentType: false
-      };
-      submitOptions = $.extend({}, submitOptions, multipartOptions);
-    }
-
-    $.ajax(submitOptions);
-  }
-
-  formSubmit() {
-    var formNode = ReactDOM.findDOMNode(this.refs.form);
-    formNode.submit();
-  }
-
-  handleReset = (event) => {
-    this.props.onReset(event);
-    FormActions.reset(this.props.id, event);
-  }
-
-  reset() {
-    var formNode = ReactDOM.findDOMNode(this.refs.form);
-    formNode.reset();
-  }
-
-  haveNativeReset() {
-    return true;
-  }
-
-  isLoading() {
-    var isLoading = this.state.isLoading;
-    if (isLoading === null) {
-      isLoading = this.props.isLoading;
-    }
-
-    return isLoading;
   }
 }

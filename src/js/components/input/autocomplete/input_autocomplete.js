@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../../prop_types';
 import $ from 'jquery';
@@ -23,21 +23,23 @@ import {
 )
 export default class InputAutocomplete extends InputBase {
   static propTypes = {
+    ...InputBase.propTypes,
     maxOptions: PropTypes.number,
     maxOptionsParam: PropTypes.string,
     searchParam: PropTypes.string,
     actionButtons: PropTypes.array,
     onSearchValueChange: PropTypes.func,
-    clientSideSearch: PropTypes.bool
-};
+    clientSideSearch: PropTypes.bool,
+  };
 
   static defaultProps = {
+    ...InputBase.defaultProps,
     maxOptions: 99,
     maxOptionsParam: 'limit',
     searchParam: 'query',
     themeClassKey: 'input.autocomplete',
     actionButtons: [],
-    clientSideSearch: false
+    clientSideSearch: false,
   };
 
   state = {
@@ -108,7 +110,7 @@ export default class InputAutocomplete extends InputBase {
   }
 
   executeClientSideOptionsSearch(searchValue) {
-    this.setState({ searchValue: searchValue });
+    this.setState({ searchValue });
   }
 
   executeServerSideOptionsSearch(searchValue) {
@@ -149,9 +151,10 @@ export default class InputAutocomplete extends InputBase {
   }
 
   getResultOptions() {
-    return this.state.options.filter(function(option) {
-      return !this.props.clientSideSearch || (!!option.name && !!option.name.match(new RegExp(this.state.searchValue, 'i')));
-    }.bind(this));
+    return this.state.options.filter((option) =>
+      !this.props.clientSideSearch ||
+      (!!option.name && !!option.name.match(new RegExp(this.state.searchValue, 'i')))
+    );
   }
 
   @autobind
@@ -160,7 +163,7 @@ export default class InputAutocomplete extends InputBase {
       value: [],
     }, this.triggerDependableChanged);
 
-    if(!this.props.multiple) {
+    if (!this.props.multiple) {
       this.hideResult();
     }
 
@@ -184,7 +187,7 @@ export default class InputAutocomplete extends InputBase {
 
   @autobind
   handleSearchNavigation(event) {
-    if(!!this.props.onKeyDown){
+    if (!!this.props.onKeyDown) {
       this.props.onKeyDown(event);
       return;
     }
@@ -226,7 +229,7 @@ export default class InputAutocomplete extends InputBase {
     this.forceUpdate();
     this.triggerDependableChanged();
 
-    if(!this.props.multiple) {
+    if (!this.props.multiple) {
       this.hideResult();
     }
 

@@ -96,10 +96,10 @@ export default class InputBase extends Component {
   }
 
   handleChange(event) {
-    this.props.onChange(event);
+    const { value } = event.target;
+    this.props.onChange(event, value);
 
     if (!event.isDefaultPrevented()) {
-      const value = event.target.value;
       this.setState({ value });
     }
   }

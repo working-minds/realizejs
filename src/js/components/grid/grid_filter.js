@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import { mixin } from '../../utils/decorators';
+import { i18n } from '../../realize';
+import $ from 'jquery';
 
 import { CssClassMixin } from '../../mixins';
 
@@ -21,65 +23,62 @@ export default class GridFilter extends Component {
     onSubmit: PropTypes.func,
     onReset: PropTypes.func,
     isLoading: PropTypes.bool,
-    collapsible: PropTypes.bool
+    collapsible: PropTypes.bool,
   };
 
   static defaultProps = {
-    method: "GET",
+    method: 'GET',
     collapsible: false,
     submitButton: {
       name: 'actions.filter',
-      icon: 'search'
+      icon: 'search',
     },
     clearButton: {
       name: 'actions.clear',
       type: 'reset',
-      style: 'cancel'
+      style: 'cancel',
     },
-    onSuccess: function(data) {
-      return true;
-    },
-    onError: function(xhr, status, error) {
-      return true;
-    },
-    onSubmit: function(event) {
-      return true;
-    }
+    onSuccess() {},
+    onError() {},
+    onSubmit() {},
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
-      themeClassKey: 'grid.filter.wrapper'
+      themeClassKey: 'grid.filter.wrapper',
     };
   }
 
-  componentDidUpdate (){
-    let collapsible = ReactDOM.findDOMNode(this.refs.collapsible);
+  componentDidUpdate() {
+    const collapsible = ReactDOM.findDOMNode(this.refs.collapsible);
     if (!!collapsible) {
       $(collapsible).collapsible();
     }
   }
 
-  renderFilters () {
-    if(this.props.collapsible)  {
-      return this.renderCollapsibleFilter();
-    } else {
-     return this.renderFormFilters();
-    }
+  renderFilters() {
+    return this.props.collapsible
+      ? this.renderCollapsibleFilter()
+      : this.renderFormFilters();
   }
 
-  renderCollapsibleFilter () {
-    let component = [];
+  renderCollapsibleFilter() {
+    const component = [];
 
     component.push(
-      <ul className='collapsible' data-collapsible='accordion' ref='collapsible' key='collapsible_form'>
+      <ul
+        className="collapsible"
+        data-collapsible="accordion"
+        ref="collapsible"
+        key="collapsible_form"
+      >
         <li>
-          <div className='collapsible-header'>
-            <span>Filtrar</span>
-            <i className='material-icons'>filter_list</i>
+          <div className="collapsible-header">
+            <span>{i18n.t('actions.filter')}</span>
+            <i className="material-icons">filter_list</i>
           </div>
-          <div className='collapsible-body'>
+          <div className="collapsible-body">
             {this.renderFormFilters()}
           </div>
         </li>
@@ -89,23 +88,28 @@ export default class GridFilter extends Component {
     return component;
   }
 
-  renderFormFilters () {
+  renderFormFilters() {
     return (
-      <Form {...this.props} otherButtons={[this.props.clearButton]} style="filter" ref="form" />
-    )
+      <Form
+        {...this.props}
+        otherButtons={[this.props.clearButton]}
+        style="filter"
+        ref="form"
+      />
+    );
   }
 
-  render () {
+  render() {
     if (this.props.hidden) return null;
 
-    return(
+    return (
       <div className={this.className()}>
         {this.renderFilters()}
       </div>
     );
   }
 
-  serialize () {
+  serialize() {
     return this.refs.form.serialize();
   }
 }

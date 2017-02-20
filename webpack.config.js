@@ -7,6 +7,13 @@ const BIN_CONTEXT = path.join(__dirname, 'dist');
 module.exports = {
   devtool: 'source-map',
 
+  resolve: {
+    modules: ['node_modules', 'src/js'],
+    descriptionFiles: ['package.json'],
+    mainFields: ['browser', 'main'],
+    mainFiles: ['index'],
+  },
+
   entry: [
     path.resolve(SRC_CONTEXT, 'index.js'),
   ],
@@ -57,13 +64,6 @@ module.exports = {
       window: 'ReactDOM',
       root: 'ReactDOM',
     },
-  },
-
-  resolve: {
-    modules: ['node_modules', 'src'],
-    descriptionFiles: ['package.json'],
-    mainFields: ['browser', 'main'],
-    mainFiles: ['index'],
   },
 
   module: {

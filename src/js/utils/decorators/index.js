@@ -2,5 +2,5 @@
 export mixin from './mixin';
 
 export {
-  autobind
+  autobind,
 } from 'core-decorators';
