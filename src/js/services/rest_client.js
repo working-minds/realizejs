@@ -1,5 +1,5 @@
 // TODO: mudar jQuery.ajax para client rest
-import Realize from 'realize';
+import Realize from '../realize';
 import $ from 'jquery';
 import { merge } from 'lodash';
 
@@ -66,11 +66,12 @@ export default class RestClient {
       value: (id, data, options) => {
         const requestId = !options ? null : id;
         const requestData = !options ? id : data;
+        const requestOptions = !options ? data : options;
 
         const url = this.getRestActionUrl(actionName, requestId);
         const method = this.getRestActionMethod(actionName);
 
-        return this.request(url, method, requestData, options);
+        return this.request(url, method, requestData, requestOptions);
       },
       configurable: true,
       enumerable: true,
@@ -80,7 +81,7 @@ export default class RestClient {
 
   getActionBaseUrl() {
     const matches = this.baseUrl.match(/^(.*)\?/);
-    return matches ? matches[1] : this.url;
+    return matches ? matches[1] : this.baseUrl;
   }
 
   getActionQueryString() {
