@@ -145,8 +145,8 @@ export default class Form extends Component {
       url: this.props.action,
       method: this.props.method,
       data: postData,
-      success: this.handleSuccess,
-      error: this.handleError,
+      success: (...args) => this.handleSuccess(...args),
+      error: (...args) => this.handleError(...args),
     };
 
     if (!!this.props.dataType) {
