@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
+import { isString } from 'lodash';
 
 import MenuItem from './menu_item';
 
@@ -30,7 +31,7 @@ export default class Menu extends Component {
   }
 
   render () {
-    let id = this.props.id !== 'string' ? '' : this.props.id;
+    let id = isString(this.props.id) ? this.props.id : null;
 
     return (
       <ul id={id} className={this.props.className}>
