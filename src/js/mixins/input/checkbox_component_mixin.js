@@ -12,7 +12,6 @@ export default {
   getDefaultProps() {
     return {
       renderAsIndeterminate: false,
-      value: false,
     };
   },
 

@@ -7,7 +7,7 @@ import i18n from '../../i18n';
 import { autobind } from '../../utils/decorators';
 
 export default class InputBase extends Component {
-  static propTypes = {
+  static _propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
     value: PropTypes.any,
@@ -19,7 +19,7 @@ export default class InputBase extends Component {
     onFocus: PropTypes.func,
   };
 
-  static defaultProps = {
+  static _defaultProps = {
     value: '',
     disabled: false,
     readOnly: false,
@@ -27,6 +27,22 @@ export default class InputBase extends Component {
     onFocus: () => true,
     errors: [],
   };
+
+  static get propTypes() {
+    return this._propTypes;
+  }
+
+  static set propTypes(newPropTypes) {
+    this._propTypes = { ...this._propTypes, ...newPropTypes };
+  }
+
+  static get defaultProps() {
+    return this._defaultProps;
+  }
+
+  static set defaultProps(newDefaultProps) {
+    this._defaultProps = { ...this._defaultProps, ...newDefaultProps };
+  }
 
   constructor(props) {
     super(props);
