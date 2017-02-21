@@ -161,7 +161,6 @@ export default class InputMasked extends Component {
     const $input = $(this.getInputElement());
     const maskOptions = this.parseMaskOptions();
 
-    console.log(maskOptions);
     $input.inputmask(maskOptions);
     this.setMaskPlaceholder(maskOptions);
     return maskOptions;
