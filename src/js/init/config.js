@@ -7,7 +7,7 @@ export default {
     create: ':url',
     edit: ':url/:id/edit',
     update: ':url/:id',
-    destroy: ':url/:id'
+    destroy: ':url/:id',
   },
 
   restMethods: {
@@ -17,7 +17,7 @@ export default {
     create: 'POST',
     edit: 'GET',
     update: 'PUT',
-    destroy: 'DELETE'
+    destroy: 'DELETE',
   },
 
   grid: {
@@ -30,13 +30,13 @@ export default {
       perPageOptions: [
         { name: '10', value: 10 },
         { name: '20', value: 20 },
-        { name: '50', value: 50 }
-      ]
+        { name: '50', value: 50 },
+      ],
     },
     sort: {
       param: 's',
       directionParam: 's_dir',
-      fieldValueFormat: '%{field}'
-    }
-  }
-}
+      fieldValueFormat: '%{field}',
+    },
+  },
+};
