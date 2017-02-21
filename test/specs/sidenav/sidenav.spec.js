@@ -16,11 +16,11 @@ describe('Sidenav', () => {
   it('renders with Menu', () => {
     const content = shallow(
       <SideNav>
-         <Menu ref_id='1'>
+         <Menu id='1'>
          </Menu>
      </SideNav>
     );
-    assert.equal(content.find('Menu').get(1).props.ref_id, "1");
+    assert.equal(content.find('Menu').get(1).props.id, "1");
   });
 
 });

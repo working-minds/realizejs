@@ -15,7 +15,7 @@ export default class SideNav extends Component {
     icon: PropTypes.string,
     iconAlign: PropTypes.string,
     text: PropTypes.string,
-    ref_id:PropTypes.string
+    id:PropTypes.string
   };
 
   static defaultProps = {
@@ -23,7 +23,7 @@ export default class SideNav extends Component {
     items: [],
     icon: 'view_headline',
     iconAlign: '',
-    ref_id: 'sideNav',
+    id: 'sideNav',
     text: ''
   };
 
@@ -34,7 +34,7 @@ export default class SideNav extends Component {
   renderMenu (){
     return (
       <Menu
-        ref_id={this.props.ref_id}
+        id={this.props.id}
         className="side-nav full"
         items={this.props.items}>
         {this.props.children}
@@ -47,7 +47,7 @@ export default class SideNav extends Component {
 
     return (
       <div>
-        <a href={this.props.href} className={this.className()} ref="sideNav" onClick={this.props.onClick} target={this.props.target} data-activates={this.props.ref_id}>
+        <a href={this.props.href} className={this.className()} ref="sideNav" onClick={this.props.onClick} target={this.props.target} data-activates={this.props.id}>
           <i className={'material-icons ' + iconAlign}>{this.props.icon}</i>
           {this.props.text}
         </a>

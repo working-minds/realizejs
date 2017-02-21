@@ -40,13 +40,16 @@ export default class InputBase extends Component {
   };
 
   componentDidMount() {
-    const $form = $(this.getInputFormNode());
-    $form.on('reset', this.handleReset);
+    this.setState({ mounted: true }, () => {
+      const $form = $(this.getInputFormNode());
+      $form.on('reset', this.handleReset);
+    });
   }
 
   componentWillUnmount() {
     const $form = $(this.getInputFormNode());
     $form.off('reset', this.handleReset);
+    this.setState({ mounted: false });
   }
 
   getInputFormNode() {
@@ -88,7 +91,7 @@ export default class InputBase extends Component {
   }
 
   handleReset() {
-    if (this.isMounted() && !this.inputNodeIsCheckbox()) {
+    if (this.state.mounted && !this.inputNodeIsCheckbox()) {
       this.setState({
         value: null,
       });

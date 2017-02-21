@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -14,13 +15,13 @@ module.exports = {
     mainFiles: ['index'],
   },
 
-  entry: [
-    path.resolve(SRC_CONTEXT, 'index.js'),
-  ],
+  entry: {
+    realizejs: path.resolve(SRC_CONTEXT, 'index.js'),
+  },
 
   output: {
     path: path.resolve(BIN_CONTEXT, 'build'),
-    filename: 'realizejs.js',
+    filename: '[name].js',
     chunkFilename: '[id].realizejs.js',
     library: 'Realize',
     libraryTarget: 'umd',
@@ -64,6 +65,12 @@ module.exports = {
       window: 'ReactDOM',
       root: 'ReactDOM',
     },
+    'react-addons-css-transition-group': {
+      commonjs: 'react-addons-css-transition-group',
+      commonjs2: 'react-addons-css-transition-group',
+      amd: 'react-addons-css-transition-group',
+      root: ['React','addons','CSSTransitionGroup']
+    }
   },
 
   module: {

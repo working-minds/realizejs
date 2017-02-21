@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
 
 import {
   Modal,
@@ -8,12 +8,12 @@ import {
   ModalContent,
   ModalFooter,
   Form,
-  FormButtonGroup
+  FormButtonGroup,
 } from '../../components';
 
 import {
   CssClassMixin,
-  ContainerMixin
+  ContainerMixin,
 } from '../../mixins';
 
 @mixin(
@@ -23,21 +23,22 @@ import {
 export default class ModalForm extends Component {
   static propTypes = {
     title: PropTypes.string,
-    form: PropTypes.object
+    form: PropTypes.object,
+    children: PropTypes.func,
   };
 
   static defaultProps = {
-    title: "",
-    form: {}
+    title: '',
+    form: {},
   };
 
   state = {
-    isLoading: false
+    isLoading: false,
   };
 
-  renderHeader () {
-    let modalHeader = this.filterChildren(ModalHeader);
-    if(!modalHeader || modalHeader.length == 0) {
+  renderHeader() {
+    const modalHeader = this.filterChildren(ModalHeader);
+    if (!modalHeader || modalHeader.length === 0) {
       modalHeader.push(
         <ModalHeader key="modal-header">
           <h5>{this.props.title}</h5>
@@ -48,7 +49,7 @@ export default class ModalForm extends Component {
     return modalHeader;
   }
 
-  renderContent () {
+  renderContent() {
     return (
       <ModalContent>
         <Form
@@ -57,7 +58,8 @@ export default class ModalForm extends Component {
           otherButtons={[]}
           onError={this.handleSubmitError}
           onSuccess={this.handleSubmitSuccess}
-          ref="form">
+          ref="form"
+        >
 
           {this.props.children}
         </Form>
@@ -65,7 +67,7 @@ export default class ModalForm extends Component {
     );
   }
 
-  renderFooter () {
+  renderFooter() {
     return (
       <ModalFooter>
         <FormButtonGroup {...this.props.form} submitButton={this.submitButtonProps()} isLoading={this.state.isLoading} />
@@ -73,7 +75,7 @@ export default class ModalForm extends Component {
     );
   }
 
-  render () {
+  render() {
     return (
       <Modal {...this.props}>
         {this.renderHeader()}
@@ -83,51 +85,45 @@ export default class ModalForm extends Component {
     );
   }
 
-  submitButtonProps () {
+  submitButtonProps() {
     var submitButtonProps = this.props.form.submitButton || this.defaultSubmitButtonProps();
-    submitButtonProps.onClick = this.submitForm;
+    submitButtonProps.onClick = this.submitForm.bind(this);
 
     return submitButtonProps;
   }
 
-  defaultSubmitButtonProps () {
+  defaultSubmitButtonProps() {
     return {
       name: 'actions.send',
-      icon: 'send'
+      icon: 'send',
     };
   }
 
-  submitForm (event) {
-    var formRef = this.refs.form;
-
-    formRef.handleSubmit(event);
-    this.setState({
-      isLoading: true
-    });
+  submitForm(event) {
+    this.refs.form.handleSubmit(event);
+    this.setState({ isLoading: true });
   }
 
-  handleSubmitSuccess = (data, status, xhr) => {
-    var onSuccessCallback = this.props.form.onSuccess;
-    if(typeof onSuccessCallback == "function") {
+  @autobind
+  handleSubmitSuccess(data, status, xhr) {
+    const onSuccessCallback = this.props.form.onSuccess;
+    if (typeof onSuccessCallback === 'function') {
       this.props.onSuccess(data, status, xhr);
     }
 
-    this.setState({
-      isLoading: false
-    });
+    this.setState({ isLoading: false });
 
     return true;
   }
 
-  handleSubmitError = (xhr, status, error) => {
-    var onErrorCallback = this.props.form.onError;
-    if(typeof onErrorCallback == "function") {
+  @autobind
+  handleSubmitError(xhr, status, error) {
+    const onErrorCallback = this.props.form.onError;
+    if (typeof onErrorCallback === 'function') {
       this.props.onError(xhr, status, error);
     }
 
-    this.setState({
-      isLoading: false
-    });
+    this.setState({ isLoading: false });
 
     return true;
   }

@@ -1,9 +1,7 @@
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
-import $ from 'jquery';
-import i18n from '../../i18n'
-import themes from '../../theme'
-
+import i18n from '../../i18n';
+import themes from '../../theme';
 
 export default {
   propTypes: {
@@ -15,106 +13,103 @@ export default {
     placeholder: PropTypes.localizedString,
     errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     onChange: PropTypes.func,
-    onFocus: PropTypes.func
+    onFocus: PropTypes.func,
   },
 
-  defaultProps: function() {
+  getDefaultProps() {
     return {
       disabled: false,
       readOnly: false,
-      onChange: function(event) { return true; },
-      onFocus: function(event) { return true; },
-      errors: []
+      onChange: () => true,
+      onFocus: () => true,
+      errors: [],
     };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      value: this.props.value
+      value: this.props.value,
     };
   },
 
-  componentDidMount: function() {
-    var $form = $(this.getInputFormNode());
-    $form.on('reset', this._handleReset);
+  componentDidMount() {
+    this.setState({ mounted: true }, () => {
+      const form = this.getInputFormNode();
+      form && form.addEventListener('reset', this._handleReset);
+    });
   },
 
-  componentWillUnmount: function() {
-    var $form = $(this.getInputFormNode());
-    $form.off('reset', this._handleReset);
+  componentWillUnmount() {
+    const form = this.getInputFormNode();
+    form && form.removeEventListener('reset', this._handleReset);
+    this.setState({ mounted: false });
   },
 
-  getInputFormNode: function() {
-    var inputRef = this.refs.input;
-    if(!!inputRef) {
-      return ReactDOM.findDOMNode(inputRef).form;
-    }
-
-    return null;
+  getInputFormNode() {
+    const inputRef = this.refs.input;
+    return this.refs.input ? ReactDOM.findDOMNode(inputRef).form : null;
   },
 
-  _handleReset: function(event) {
-    if(this.isMounted() && !this.inputNodeIsCheckbox()) {
-      this.setState({
-        value: null
-      });
+  _handleReset(event) {
+    if (this.state.mounted && !this.inputNodeIsCheckbox()) {
+      this.setState({ value: null });
     }
   },
 
-  _handleChange: function(event) {
-    var newValue = event.target.value;
+  _handleChange(event) {
+    const newValue = event.target.value;
     this.props.onChange(event, newValue, this);
 
-    if(!event.isDefaultPrevented()) {
+    if (!event.isDefaultPrevented()) {
       this.setState({ value: newValue });
     }
   },
 
-  _handleFocus: function(event) {
+  _handleFocus(event) {
     this.props.onFocus(event);
 
     if(this.props.readOnly) {
-      var inputNode = event.currentTarget;
-      inputNode.blur();
+      event.currentTarget.blur();
     }
   },
 
-  inputClassName: function() {
-    var className = this.className();
-    var errors = this.props.errors;
+  inputClassName() {
+    const className = this.className();
+    const errors = this.props.errors;
 
-    if(!!errors && errors.length > 0) {
-      className += ' ' + themes.getCssClass('input.error');
+    if (!!errors && errors.length > 0) {
+      return `${className} ${themes.getCssClass('input.error')}`;
     }
 
     return className;
   },
 
-  getPlaceholder: function() {
-    var placeholder = i18n.t(this.props.placeholder);
-    if(typeof placeholder !== "string" || placeholder.length === 0) {
+  getPlaceholder() {
+    const placeholder = i18n.t(this.props.placeholder);
+
+    if (typeof placeholder !== 'string' || placeholder.length === 0) {
       return null;
     }
 
     return placeholder;
   },
 
-  inputNodeIsCheckbox: function() {
-    var inputNode = ReactDOM.findDOMNode(this.refs.input);
-    return (!!inputNode && inputNode.type === "checkbox");
+  inputNodeIsCheckbox() {
+    const inputNode = ReactDOM.findDOMNode(this.refs.input);
+    return (!!inputNode && inputNode.type === 'checkbox');
   },
 
   /* Serializer functions */
 
-  getValue: function() {
-    var componentGetValue = this._getValue;
+  getValue() {
+    const componentGetValue = this._getValue;
 
     // workaround para o problema de não ser possível sobrescrever funções de mixins.
-    if(!!componentGetValue && typeof componentGetValue == "function") {
+    if (!!componentGetValue && typeof componentGetValue == "function") {
       return componentGetValue();
-    } else {
-      return this.state.value;
     }
-  }
 
-}
+    return this.state.value;
+  },
+
+};

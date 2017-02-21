@@ -5,13 +5,11 @@ import MenuItem from './menu_item';
 
 export default class Menu extends Component {
   static propTypes = {
-    ref_id: PropTypes.string,
     id: PropTypes.string,
     items: PropTypes.array
   };
 
   static defaultProps = {
-    ref_id:'',
     id: '',
     items: []
   };
@@ -32,10 +30,7 @@ export default class Menu extends Component {
   }
 
   render () {
-    if (this.props.ref_id || this.props.ref_id !== '') {
-      console && console.warn && console.warn('[Realize] Menu prop ref_id will be removed, use id instead!');
-    }
-    let id = this.props.ref_id || (typeof this.props.id !== 'string' ? '' : this.props.id);
+    let id = this.props.id !== 'string' ? '' : this.props.id;
 
     return (
       <ul id={id} className={this.props.className}>

@@ -44,7 +44,7 @@ export default class BulkEditForm extends Component {
     otherButtons: [],
     isLoading: false,
     themeClassKey: 'form',
-    style: 'default',
+    formStyle: 'default',
     resource: null,
     onSubmit: function (event, postData) {},
     onReset: function (event) {}

@@ -9,6 +9,7 @@ import 'moment/locale/pt-br';
 
 import numeral from 'numeral';
 import numeralPtBR from 'numeral/locales/pt-br';
+numeral.language('pt-br', numeralPtBR);
 
 const i18n = {
   locales: {},
@@ -30,7 +31,7 @@ const i18n = {
   setLocale(locale) {
     this.currentLocale = locale;
     // TODO normalize the locale key names - neither lib follows the standards
-    numeral.locale(locale.toLowerCase());
+    numeral.language(locale.toLowerCase());
     moment.locale(locale.toLowerCase());
   },
 
@@ -65,9 +66,6 @@ const i18n = {
 
 i18n.registerLocale(en, 'en');
 i18n.registerLocale(ptBR, 'pt-BR');
-
-// both numeral and moment load english by default
-numeral.locale('pt-br', numeralPtBR);
 
 i18n.setLocale(i18n.currentLocale);
 

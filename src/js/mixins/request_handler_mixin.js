@@ -31,9 +31,9 @@ export default {
       url: url,
       data: (requestData || {}),
       method: (method || 'GET'),
-      success: this.successCallback.bind(this),
-      error: this.errorCallback.bind(this),
-      complete: this.completeCallback.bind(this)
+      success: (...args) => this.successCallback(...args),
+      error: (...args) => this.errorCallback(...args),
+      complete: (...args) => this.completeCallback(...args)
     };
 
     if(!!dataType) {

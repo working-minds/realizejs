@@ -4,7 +4,7 @@ import PropTypes from '../../prop_types';
 import i18n from '../../i18n/i18n';
 import moment from 'moment';
 import { uuid } from '../../utils';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
 
 import InputBase from './input_base';
 import InputMasked from './input_masked';
@@ -103,7 +103,8 @@ export default class InputDatepicker extends InputBase {
 
     $inputNode.pickadate('on', 'close', this.props.onChange);
   }
-  
+
+  @autobind
   handleCalendarClick ( event ) {
     var $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
     var picker = $inputNode.pickadate('picker');

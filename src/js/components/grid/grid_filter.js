@@ -37,6 +37,7 @@ export default class GridFilter extends Component {
       name: 'actions.clear',
       type: 'reset',
       style: 'cancel',
+      buttonStyle: 'cancel',
     },
     onSuccess() {},
     onError() {},
@@ -93,7 +94,7 @@ export default class GridFilter extends Component {
       <Form
         {...this.props}
         otherButtons={[this.props.clearButton]}
-        style="filter"
+        formStyle="filter"
         ref="form"
       />
     );

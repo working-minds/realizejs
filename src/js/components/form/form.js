@@ -33,7 +33,7 @@ export default class Form extends Component {
     dataType: PropTypes.string,
     contentType: PropTypes.string,
     multipart: PropTypes.bool,
-    style: PropTypes.string,
+    formStyle: PropTypes.string,
     resource: PropTypes.string,
     ajaxSubmit: PropTypes.bool,
     isLoading: PropTypes.bool,
@@ -60,7 +60,7 @@ export default class Form extends Component {
     dataType: undefined,
     contentType: undefined,
     multipart: false,
-    style: 'default',
+    formStyle: 'default',
     resource: null,
     ajaxSubmit: true,
     isLoading: false,
@@ -95,7 +95,7 @@ export default class Form extends Component {
   propsToForwardMapping() {
     return {
       errors: this.state.errors,
-      formStyle: this.props.style,
+      formStyle: this.props.formStyle,
     };
   }
 
@@ -216,7 +216,7 @@ export default class Form extends Component {
     return (
       <InputGroup
         {...this.propsWithoutCSS()}
-        formStyle={this.props.style}
+        formStyle={this.props.formStyle}
         errors={this.state.errors}
         ref="inputGroup"
       />

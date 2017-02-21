@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Reflux from 'reflux';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
 
 import ModalHeader from './modal_header'
 import ModalContent from './modal_content'
@@ -124,6 +124,7 @@ export default class Modal extends Component {
     );
   }
 
+  @autobind
   handleModalStoreState () {
     var modalStore = this.state.modalStore;
     var shouldOpenModal = modalStore.shouldOpen;
@@ -154,6 +155,7 @@ export default class Modal extends Component {
     });
   }
 
+  @autobind
   handleReady () {
     this.resizeContent();
     ModalActions.openFinished();
@@ -169,6 +171,7 @@ export default class Modal extends Component {
     $modal.closeModal();
   }
 
+  @autobind
   resizeContent () {
     var modal = ReactDOM.findDOMNode(this.refs.modal);
     var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);

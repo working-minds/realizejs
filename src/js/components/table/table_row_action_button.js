@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
 
 import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
 
@@ -95,6 +95,7 @@ export default class TableRowActionButton extends Component {
     return buttonActionUrl;
   }
 
+  @autobind
   actionButtonClick (event) {
     let buttonOnClick = this.props.onClick;
     let buttonAction = this.actionButtonUrl();

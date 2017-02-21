@@ -9,7 +9,7 @@ export default class MenuItem extends Component {
     iconAlign: PropTypes.string,
     href: PropTypes.string,
     target: PropTypes.string,
-    onClick: PropTypes.object,
+    onClick: PropTypes.func,
     className: PropTypes.string,
     method: PropTypes.string,
     element: PropTypes.string

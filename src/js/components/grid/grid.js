@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { mixin } from '../../utils/decorators';
 import { getProp } from '../../utils';
 import { setState } from '../../utils/react';
+import { autobind } from '../../utils/decorators';
 import { isEmpty } from 'lodash';
 
 import PropTypes from '../../prop_types';
@@ -276,6 +277,7 @@ export default class Grid extends Component {
 
   /* Event handlers */
 
+  @autobind
   handlePagination(page) {
     return this.reconfigureGrid({ page }, this.state.allSelected);
   }
@@ -285,6 +287,7 @@ export default class Grid extends Component {
   }
 
   handleFilterSubmit(event, postData) {
+    event.persist();
     return Promise.resolve()
       .then(() => this.props.onFilterSubmit(event, postData))
       .then(() => {
@@ -303,6 +306,7 @@ export default class Grid extends Component {
   /* Selection event handlers */
 
   handleSelectDataRows(event, selectedRowIds, selectedData) {
+    event.persist();
     return Promise.resolve()
       .then(() => this.props.onSelectDataRow(event, selectedRowIds))
       .then(() => {
@@ -323,6 +327,7 @@ export default class Grid extends Component {
   }
 
   handleRemoveSelection(event) {
+    event.persist();
     return Promise.resolve()
       .then(() => this.props.onRemoveSelection(event))
       .then(() => {
@@ -336,6 +341,7 @@ export default class Grid extends Component {
   }
 
   handleSelectAllRows(event) {
+    event.persist();
     return Promise.resolve()
       .then(() => this.props.onSelectAllRows(event))
       .then(() => {
@@ -350,6 +356,7 @@ export default class Grid extends Component {
 
   /* Renderers */
 
+  // TODO: ao adicionar store, remover refs
   renderFilter(extraProps) {
     return (
       <GridFilter
@@ -357,6 +364,7 @@ export default class Grid extends Component {
         {...this.props.filter}
         isLoading={this.state.gridIsLoading}
         onSubmit={this.handleFilterSubmit}
+        ref="filter"
         {...extraProps}
       />
     );

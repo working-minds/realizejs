@@ -12,14 +12,14 @@ export default class HeaderMenu extends Component {
     rightIcon: PropTypes.string,
     text: PropTypes.string,
     href: PropTypes.string,
-    ref_id: PropTypes.string
+    id: PropTypes.string
   };
 
   static defaultProps = {
     items: [],
     leftIcon: '',
     rightIcon: '',
-    ref_id: 'headerMenu'
+    id: 'headerMenu'
   };
 
   componentDidMount (){
@@ -28,7 +28,7 @@ export default class HeaderMenu extends Component {
 
   renderMenu (){
     return (
-        <Menu ref_id={this.props.ref_id} className="dropdown-content" items={this.props.items}>
+        <Menu id={this.props.id} className="dropdown-content" items={this.props.items}>
           {this.props.children}
         </Menu>
     );
@@ -40,7 +40,7 @@ export default class HeaderMenu extends Component {
 
     return (
         <div>
-          <a href={this.props.href} ref="readerMenu" onClick={this.props.onClick} target={this.props.target} data-activates={this.props.ref_id}>
+          <a href={this.props.href} ref="readerMenu" onClick={this.props.onClick} target={this.props.target} data-activates={this.props.id}>
             {leftIcon}
             {this.props.text}
             {rightIcon}

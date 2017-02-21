@@ -24,9 +24,10 @@ export default class InputText extends InputBase {
   };
 
   render() {
+    const { children, ...props } = this.propsWithoutCSS();
     return (
       <input
-        {...this.propsWithoutCSS()}
+        {...props}
         value={this.state.value}
         placeholder={this.getPlaceholder()}
         className={this.inputClassName()}

@@ -66,7 +66,7 @@ export default class GridForm extends Component {
     },
     cancelButton: {
       name: 'actions.cancel',
-      style: 'cancel'
+      buttonStyle: 'cancel'
     },
     selectable: 'multiple',
     eagerLoad: true,
@@ -95,7 +95,7 @@ export default class GridForm extends Component {
       return <span/>;
     }
 
-    var formProps = merge({style: 'filter'}, this.props.form, {
+    var formProps = merge({formStyle: 'filter'}, this.props.form, {
       action: this.getFormAction(),
       data: this.state.selectedDataRow,
       method: this.getFormMethod(),

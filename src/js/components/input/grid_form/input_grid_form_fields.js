@@ -16,7 +16,7 @@ export default class InputGridFormFields extends Component {
     id: PropTypes.string,
     inputs: PropTypes.object,
     data: PropTypes.object,
-    style: PropTypes.string,
+    formStyle: PropTypes.string,
     resource: PropTypes.string,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -31,7 +31,7 @@ export default class InputGridFormFields extends Component {
     id: null,
     inputs: {},
     data: {},
-    style: 'default',
+    formStyle: 'default',
     resource: null,
     disabled: false,
     readOnly: false,
@@ -73,7 +73,7 @@ export default class InputGridFormFields extends Component {
       <InputGroup
         {...this.propsWithoutCSS()}
         errors={this.state.errors}
-        formStyle={this.props.style}
+        formStyle={this.props.formStyle}
         ref="inputGroup"
       />
     );
