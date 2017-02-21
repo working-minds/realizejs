@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import i18n from '../../i18n/i18n';
 import $ from 'jquery';
