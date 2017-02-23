@@ -28,6 +28,7 @@ export default class InputDatepicker extends InputBase {
   };
 
   state = {
+    ...this.state,
     inputMaskedKey: uuid.v4(),
   };
 
@@ -79,11 +80,6 @@ export default class InputDatepicker extends InputBase {
 
   tryGetISOFormatValue(value) {
     const date = moment.utc(value, moment.ISO_8601);
-    return date.isValid() ? this.formatDate(date) : this.tryGetDefaultFormatValue(value);
-  }
-
-  tryGetDefaultFormatValue(value) {
-    const date = moment.utc(value);
     return date.isValid() ? this.formatDate(date) : value;
   }
 
@@ -97,6 +93,7 @@ export default class InputDatepicker extends InputBase {
     return (inputValue != null && String(inputValue).length > 0);
   }
 
+  @autobind
   setPickadatePlugin() {
     const $inputNode = $(ReactDOM.findDOMNode(this.refs.input)).pickadate({
       editable: true,
@@ -114,11 +111,10 @@ export default class InputDatepicker extends InputBase {
     const $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
     const picker = $inputNode.pickadate('picker');
 
-    // TODO: should close on date click - materialize currently broke it
-    if (picker.get('open')) picker.close();
-    else picker.open();
-
+    event.preventDefault();
     event.stopPropagation();
+
+    requestAnimationFrame(() => { picker.get('open') ? picker.close() : picker.open(); });
   }
 
   @autobind

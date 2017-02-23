@@ -1,6 +1,12 @@
+@import "../variables.scss";
+
 .input-field {
   position: relative;
   min-height: 4rem;
+}
+
+.input-field button.prefix.input-datepicker__button {
+  color: $button-raised-color;
 }
 
 .input-datepicker__button {
