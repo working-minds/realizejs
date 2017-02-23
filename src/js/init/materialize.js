@@ -1,1 +1,1 @@
-require('materialize-css');
+import 'materialize-css';

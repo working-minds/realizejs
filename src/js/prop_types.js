@@ -13,5 +13,6 @@ export default {
     if (typeof value !== "string" || typeof translatedValue !== "string" || translatedValue.length === 0) {
       return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
     }
-  }
+  },
+  component: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.element, React.PropTypes.string]),
 }

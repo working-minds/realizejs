@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -69,8 +68,8 @@ module.exports = {
       commonjs: 'react-addons-css-transition-group',
       commonjs2: 'react-addons-css-transition-group',
       amd: 'react-addons-css-transition-group',
-      root: ['React','addons','CSSTransitionGroup']
-    }
+      root: ['React', 'addons', 'CSSTransitionGroup'],
+    },
   },
 
   module: {

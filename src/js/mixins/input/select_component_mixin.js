@@ -1,9 +1,10 @@
-import {getProp} from '../../utils';
-import { autobind } from '../../utils/decorators';
-import $ from 'jquery';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
-import map from 'lodash/map';
+import $ from 'jquery';
+
+import { getProp } from '../../utils';
+import { autobind } from '../../utils/decorators';
+import { map } from 'lodash';
 
 export default {
   propTypes: {
@@ -29,13 +30,9 @@ export default {
       options: [],
       multiple: false,
       onSelect: null,
-      onLoad: function(data) {
-        return true;
-      },
-      onLoadError: function(xhr, status, error) {
-        console.log('Select Load error:' + error);
-      },
-      requestTimeout: 300
+      onLoad() { return true; },
+      onLoadError(_, __, error) { console.log(`Select Load error: ${error}`); },
+      requestTimeout: 300,
     };
   },
 

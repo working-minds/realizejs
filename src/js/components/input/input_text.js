@@ -24,7 +24,8 @@ export default class InputText extends InputBase {
   };
 
   render() {
-    const { children, ...props } = this.propsWithoutCSS();
+    const { children, ...props } = this.propsWithoutCSS(); // eslint-disable-line no-unused-vars
+
     return (
       <input
         {...props}
