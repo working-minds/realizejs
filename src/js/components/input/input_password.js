@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from '../../prop_types';
 import { mixin } from '../../utils/decorators';
 
+import InputBase from './input_base';
+
 import {
   CssClassMixin,
-  InputComponentMixin,
 } from '../../mixins';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin
 )
-export default class InputPassword extends Component {
+export default class InputPassword extends InputBase {
   static propTypes = {
     confirms: PropTypes.string,
   };
@@ -29,7 +29,8 @@ export default class InputPassword extends Component {
         className={this.inputClassName()}
         onChange={this.handleChange}
         onFocus={this.handleFocus}
-        type="password" ref="input"
+        type="password"
+        ref="input"
       />
     );
   }

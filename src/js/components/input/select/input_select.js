@@ -1,28 +1,27 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../../prop_types';
 import $ from 'jquery';
 import i18n from '../../../i18n';
 import { autobind, mixin } from '../../../utils/decorators';
 
-import { InputSelectOption } from '../../../components';
+import InputBase from '../input_base';
+import InputSelectOption from './input_select_option';
 
 import {
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin,
   InputSelectActionsListenerMixin,
-  MaterializeSelectMixin
+  MaterializeSelectMixin,
 } from '../../../mixins';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin,
   SelectComponentMixin,
   InputSelectActionsListenerMixin,
   MaterializeSelectMixin
 )
-export default class InputSelect extends Component {
+export default class InputSelect extends InputBase {
   static propTypes = {
     includeBlank: PropTypes.bool,
     blankText: PropTypes.localizedString,
@@ -53,12 +52,8 @@ export default class InputSelect extends Component {
   }
 
   selectedValue() {
-    var value = this.state.value;
-    if (!this.props.multiple) {
-      value = value;
-    }
-
-    return value;
+    const value = this.state.value;
+    return !this.props.multiple ? value[0] : value;
   }
 
   @autobind
@@ -67,9 +62,9 @@ export default class InputSelect extends Component {
     const newValue = this.ensureIsArray(selectElement.value);
     this.props.onChange(event, newValue, this);
 
-    if(!event.isDefaultPrevented()) {
+    if (!event.isDefaultPrevented()) {
       this.setState({
-        value: newValue
+        value: newValue,
       }, this.triggerDependableChanged);
     }
   }
