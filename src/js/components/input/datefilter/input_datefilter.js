@@ -27,6 +27,7 @@ export default class InputDatefilter extends InputBase {
   };
 
   state = {
+    ...this.state,
     selectedDates: [],
   };
 

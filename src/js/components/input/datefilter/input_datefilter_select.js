@@ -24,12 +24,6 @@ export default class InputDatefilterSelect extends InputBase {
     placeholder: 'select',
   };
 
-  @autobind
-  focusSelect() {
-    const selectInput = ReactDOM.findDOMNode(this.refs.select);
-    selectInput.focus();
-  }
-
   selectId() {
     return `datefilter_select_${this.props.id}`;
   }
@@ -43,7 +37,7 @@ export default class InputDatefilterSelect extends InputBase {
     return (
       <div>
         <div className={this.className()}>
-          <span className="caret" onClick={this.focusSelect}>▼</span>
+          <span className="caret" onClick={this.handleFocusSelect}>▼</span>
           <InputText
             id={this.selectId()}
             value={this.renderSelectedDates()}
@@ -58,5 +52,11 @@ export default class InputDatefilterSelect extends InputBase {
         <Label {...this.propsWithoutCSS()} id={this.selectId()} />
       </div>
     );
+  }
+
+  @autobind
+  handleFocusSelect() {
+    const selectInput = ReactDOM.findDOMNode(this.refs.select);
+    selectInput.focus();
   }
 }

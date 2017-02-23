@@ -1,20 +1,18 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import i18n from '../../i18n';
 import { autobind, mixin } from '../../utils/decorators';
 
-import {
-  CssClassMixin,
-  InputComponentMixin,
-} from '../../mixins';
+import InputBase from './input_base';
+
+import { CssClassMixin } from '../../mixins';
 
 @mixin(
   CssClassMixin,
-  InputComponentMixin
 )
-export default class InputMasked extends Component {
+export default class InputMasked extends InputBase {
   static propTypes = {
     type: PropTypes.string,
     mask: PropTypes.string,
@@ -39,6 +37,7 @@ export default class InputMasked extends Component {
   };
 
   state = {
+    ...this.state,
     placeholder: this.getPlaceholder(),
     applyMask: true,
   };
@@ -149,9 +148,9 @@ export default class InputMasked extends Component {
     return appliedMask;
   }
 
-    applyPredefinedMask(predefinedMask) {
-    var $input = $(this.getInputElement());
-    var predefinedMaskOptions = $.extend({}, predefinedMask, this.parseMaskOptions());
+  applyPredefinedMask(predefinedMask) {
+    const $input = $(this.getInputElement());
+    const predefinedMaskOptions = $.extend({}, predefinedMask, this.parseMaskOptions());
 
     $input.inputmask(predefinedMaskOptions);
     return predefinedMaskOptions;

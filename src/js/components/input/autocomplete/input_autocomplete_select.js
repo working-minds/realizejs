@@ -26,6 +26,7 @@ export default class InputAutocompleteSelect extends InputBase {
   };
 
   state = {
+    ...this.state,
     options: [],
   };
 

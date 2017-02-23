@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { mixin } from '../../utils/decorators';
 
 import InputMasked from './input_masked';
 import { Label } from '../label';
 import InputBase from './input_base';
+
 import {
-  CssClassMixin
+  CssClassMixin,
 } from '../../mixins';
 
 @mixin(CssClassMixin)
@@ -15,7 +16,7 @@ export default class InputNumber extends InputBase {
     maskType: 'integer',
   };
 
-  componentDidMount () {
+  componentDidMount() {
     Materialize.updateTextFields();
   }
 

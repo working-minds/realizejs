@@ -106,6 +106,7 @@ export default class InputBase extends Component {
     return (!!inputNode && inputNode.type === 'checkbox');
   }
 
+  @autobind
   handleReset() {
     if (this.state.mounted && !this.inputNodeIsCheckbox()) {
       this.setState({
@@ -114,6 +115,7 @@ export default class InputBase extends Component {
     }
   }
 
+  @autobind
   handleChange(event) {
     const { value } = event.target;
     this.props.onChange(event, value);
@@ -123,6 +125,7 @@ export default class InputBase extends Component {
     }
   }
 
+  @autobind
   handleFocus(event) {
     this.props.onFocus(event);
 
@@ -130,7 +133,7 @@ export default class InputBase extends Component {
       const inputNode = event.currentTarget;
       inputNode.blur();
     }
-  };
+  }
 
   render() {
     return null;

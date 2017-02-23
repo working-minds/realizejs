@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from '../../prop_types';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
 
 import ColorPicker from 'react-color';
 
-import { Label }  from '../label';
+import { Label } from '../label';
 import InputHidden from './input_hidden';
 import InputBase from './input_base';
 
@@ -15,8 +15,8 @@ import {
 @mixin(CssClassMixin)
 export default class InputColorpicker extends InputBase {
   static propTypes = {
-    type: React.PropTypes.string
-  }
+    type: PropTypes.string,
+  };
 
   static defaultProps = {
     wrapperThemeClassKey: 'input.colorpicker.wrapper',
@@ -27,36 +27,53 @@ export default class InputColorpicker extends InputBase {
     position: 'below',
     display: false,
     positionCSS: {
-      marginTop: '0'
-    }
+      marginTop: '0',
+    },
   };
 
   state = {
+    ...this.state,
     displayColorPicker: this.props.display,
-    color: {}
+    color: {},
   };
 
-  componentWillMount () {
-    var value = this.props.value;
-    if(!value) {
-      this.setState({
-        value: this.props.defaultColor
-      });
-    }
+  componentWillMount() {
+    if (!this.props.value) this.setDefaultColor();
   }
 
-  render () {
+  getColor() {
+    return this.state.value || this.props.defaultColor;
+  }
+
+  setColor(value) {
+    this.setState({ value });
+  }
+
+  setDefaultColor() {
+    this.setColor(this.props.defaultColor);
+  }
+
+  displayBackgroundStyle() {
+    const backgroundColor = `#${this.getColor()}`;
+    return { backgroundColor };
+  }
+
+  showColorPicker() {
+    this.setState({ displayColorPicker: true });
+  }
+
+  render() {
     return (
       <div className={this.themedClassName(this.props.wrapperThemeClassKey)}>
         <input
           id="colorpicker_input"
           placeholder=""
           className={this.inputClassName()}
-          readOnly={true}
           type="text"
           ref="input"
+          readOnly
         />
-        <Label {...this.propsWithoutCSS()} id="colorpicker_input" active={true} />
+        <Label {...this.propsWithoutCSS()} id="colorpicker_input" active />
 
         <div
           className={this.themedClassName(this.props.displayThemeClassKey)}
@@ -64,10 +81,11 @@ export default class InputColorpicker extends InputBase {
           onClick={this.showColorPicker}
         ></div>
 
-        <ColorPicker {...this.props}
+        <ColorPicker
+          {...this.props}
           color={this.state.value}
           display={this.state.displayColorPicker}
-          onChangeComplete={this.onColorSelect}
+          onChangeComplete={this.handleColorSelect}
         />
 
         <InputHidden
@@ -78,24 +96,9 @@ export default class InputColorpicker extends InputBase {
     );
   }
 
-  displayBackgroundStyle () {
-    var colorHex = this.state.value || this.props.defaultColor;
-
-    return {
-      backgroundColor: '#' + colorHex
-    };
-  }
-
-  showColorPicker () {
-    this.setState({
-      displayColorPicker: true
-    });
-  }
-
-  onColorSelect (color) {
-    this.setState({
-      color: color,
-      value: color.hex
-    });
+  @autobind
+  handleColorSelect(color) {
+    const value = color.hex;
+    this.setState({ color, value });
   }
 }

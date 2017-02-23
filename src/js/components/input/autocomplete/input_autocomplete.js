@@ -23,7 +23,6 @@ import {
 )
 export default class InputAutocomplete extends InputBase {
   static propTypes = {
-    ...InputBase.propTypes,
     maxOptions: PropTypes.number,
     maxOptionsParam: PropTypes.string,
     searchParam: PropTypes.string,
@@ -33,7 +32,6 @@ export default class InputAutocomplete extends InputBase {
   };
 
   static defaultProps = {
-    ...InputBase.defaultProps,
     maxOptions: 99,
     maxOptionsParam: 'limit',
     searchParam: 'query',
@@ -43,6 +41,7 @@ export default class InputAutocomplete extends InputBase {
   };
 
   state = {
+    ...this.state,
     active: 0,
     searchValue: '',
     value: [],

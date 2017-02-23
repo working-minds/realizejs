@@ -28,6 +28,7 @@ export default class InputRadioGroup extends InputBase {
   };
 
   state = {
+    ...this.state,
     currentValue: this.props.currentValue,
   };
 

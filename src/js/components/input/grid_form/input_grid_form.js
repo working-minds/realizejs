@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from '../../../prop_types';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
 import { mixin } from '../../../utils/decorators';
 
-import GridForm from '../../grid_form';
+import GridForm from '../../grid_form/grid_form';
 import InputGridFormFields from './input_grid_form_fields';
 import InputHidden from '../input_hidden';
 import InputBase from '../input_base';
+
 import {
   CssClassMixin,
 } from '../../../mixins';
@@ -19,9 +20,9 @@ export default class InputGridForm extends InputBase {
     fields: PropTypes.object,
     form: PropTypes.object,
     clientSide: PropTypes.bool,
-    inputWrapperComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.element, PropTypes.string]),
+    inputWrapperComponent: PropTypes.component,
     onSuccess: PropTypes.func,
-    onDestroySuccess: PropTypes.func
+    onDestroySuccess: PropTypes.func,
   };
 
   static defaultProps = {
@@ -31,14 +32,14 @@ export default class InputGridForm extends InputBase {
     form: {},
     clientSide: true,
     inputWrapperComponent: null,
-    onSuccess: function() {},
-    onDestroySuccess: function() {}
+    onSuccess() {},
+    onDestroySuccess() {},
   };
 
   getDefaultFormProps() {
     return {
       formStyle: 'filter',
-      inputWrapperComponent: this.props.inputWrapperComponent
+      inputWrapperComponent: this.props.inputWrapperComponent,
     };
   }
 
