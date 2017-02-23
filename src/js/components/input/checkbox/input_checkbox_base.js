@@ -20,14 +20,10 @@ export default class InputCheckboxBase extends InputBase {
   };
 
   componentDidMount() {
+    super.componentDidMount();
+
     const inputNode = ReactDOM.findDOMNode(this.refs.input);
     inputNode.indeterminate = this.props.renderAsIndeterminate;
-    if (inputNode.form) inputNode.form.addEventListener('reset', this.handleReset);
-  }
-
-  componentWillUnmount() {
-    const inputNode = ReactDOM.findDOMNode(this.refs.input);
-    inputNode.form.removeEventListener('reset', this.handleChange);
   }
 
   valueIsBoolean() {
@@ -50,6 +46,8 @@ export default class InputCheckboxBase extends InputBase {
 
   @autobind
   handleReset() {
+    if (!this.mounted) return;
+
     this.setState({
       checked: this.getInitialChecked(),
     });

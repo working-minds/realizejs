@@ -17,6 +17,7 @@ export default class InputNumber extends InputBase {
   };
 
   componentDidMount() {
+    super.componentDidMount();
     Materialize.updateTextFields();
   }
 

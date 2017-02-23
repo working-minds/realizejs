@@ -31,35 +31,9 @@ export default class InputDatefilter extends InputBase {
     selectedDates: [],
   };
 
-  componentDidMount() {
-    const $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
-    const $form = $($containerNode.find('input')[0].form);
-    $form.on('reset', this.clearSelection);
-  }
-
-  componentWillUnmount() {
-    const $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
-    const $form = $($containerNode.find('input')[0].form);
-    $form.off('reset', this.clearSelection);
-  }
-
-  clearSelection() {
-    this.setState({
-      selectedDates: [],
-    });
-  }
-
-  showFilterBody() {
-    if (this.props.disabled) {
-      return;
-    }
-
-    $(document).on('click', this.handleDocumentClick);
-    const $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
-    const firstFilterInput = $bodyNode.find('input[type=text]')[0];
-
-    $bodyNode.show();
-    firstFilterInput.focus();
+  getInputFormNode() {
+    const container = ReactDOM.findDOMNode(this.refs.container);
+    return container.querySelector('input').form;
   }
 
   hideFilterBody() {
@@ -85,13 +59,35 @@ export default class InputDatefilter extends InputBase {
     this.hideFilterBody();
   }
 
+  @autobind
+  handleReset() {
+    this.setState({
+      selectedDates: [],
+    });
+  }
+
+  @autobind
+  handleFocus() {
+    if (this.props.disabled) {
+      return;
+    }
+
+    $(document).on('click', this.handleDocumentClick);
+    const $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
+    const firstFilterInput = $bodyNode.find('input[type=text]')[0];
+
+    $bodyNode.show();
+    firstFilterInput.focus();
+  }
+
+  // TODO: InputDatefilterBody não limpa campos no evento de form#reset.
   render() {
     return (
       <div className={this.className()} ref="container">
         <InputDatefilterSelect
           {...this.propsWithoutCSS()}
           selectedDates={this.state.selectedDates}
-          onFocus={this.showFilterBody}
+          onFocus={this.handleFocus}
         />
 
         <InputDatefilterBody

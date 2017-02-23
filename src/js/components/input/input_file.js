@@ -30,6 +30,7 @@ export default class InputFile extends InputBase {
   };
 
   componentDidMount() {
+    super.componentDidMount();
     this.setFilePathValue();
   }
 

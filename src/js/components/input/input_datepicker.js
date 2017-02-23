@@ -33,6 +33,7 @@ export default class InputDatepicker extends InputBase {
   };
 
   componentDidMount() {
+    super.componentDidMount();
     this.setPickadatePlugin();
   }
 

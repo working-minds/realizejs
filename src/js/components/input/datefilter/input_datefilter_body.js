@@ -56,17 +56,6 @@ export default class InputDatefilterBody extends Component {
     return i18n.t(`inputs.datefilter.${filterType}`);
   }
 
-  selectDate() {
-    const $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
-    const $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
-    const selectedDates = $.grep(
-      [$fromInput.val(), $toInput.val()],
-      (date) => !!date
-    );
-
-    this.props.onSelectDate(selectedDates);
-  }
-
   filterInputProps(filterType) {
     const inputProps = {
       formStyle: 'oneLine',
@@ -123,13 +112,25 @@ export default class InputDatefilterBody extends Component {
     }
   }
 
+  @autobind
+  handleSelectDate() {
+    const $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
+    const $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
+    const selectedDates = $.grep(
+      [$fromInput.val(), $toInput.val()],
+      (date) => !!date
+    );
+
+    this.props.onSelectDate(selectedDates);
+  }
+
   renderUpdateButton() {
     return (
       <div className="input-datefilter__button">
         <Button
           {...this.props.okButton}
           element="a"
-          onClick={this.selectDate}
+          onClick={this.handleSelectDate}
         />
       </div>
     );

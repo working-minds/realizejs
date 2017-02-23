@@ -5,6 +5,7 @@ import $ from 'jquery';
 import themes from '../../theme'
 import i18n from '../../i18n';
 import { autobind } from '../../utils/decorators';
+import { setState } from '../../utils/react';
 
 export default class InputBase extends Component {
   static _propTypes = {
@@ -55,17 +56,24 @@ export default class InputBase extends Component {
     value: this.props.value,
   };
 
+  setStatePromise = setState.bind(null, this);
+
   componentDidMount() {
-    this.setState({ mounted: true }, () => {
-      const $form = $(this.getInputFormNode());
-      $form.on('reset', this.handleReset);
-    });
+    this.mounted = true;
+
+    const form = this.getInputFormNode();
+    if (form) {
+      form.addEventListener('reset', this.handleReset);
+    }
   }
 
   componentWillUnmount() {
-    const $form = $(this.getInputFormNode());
-    $form.off('reset', this.handleReset);
-    this.setState({ mounted: false });
+    this.mounted = false;
+
+    const form = this.getInputFormNode();
+    if (form) {
+      form.removeEventListener('reset', this.handleReset);
+    }
   }
 
   getInputFormNode() {
@@ -108,10 +116,8 @@ export default class InputBase extends Component {
 
   @autobind
   handleReset() {
-    if (this.state.mounted && !this.inputNodeIsCheckbox()) {
-      this.setState({
-        value: null,
-      });
+    if (this.mounted && !this.inputNodeIsCheckbox()) {
+      this.setState({ value: null });
     }
   }
 

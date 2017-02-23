@@ -43,6 +43,7 @@ export default class InputMasked extends InputBase {
   };
 
   componentDidMount() {
+    super.componentDidMount();
     const appliedMask = this.applyMask();
     this.setMaskPlaceholder(appliedMask);
   }

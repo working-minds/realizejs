@@ -33,40 +33,13 @@ export default class InputSelect extends InputBase {
     blankText: 'select',
   };
 
-  componentDidMount() {
-    const valuesSelect = ReactDOM.findDOMNode(this.refs.select);
-    const $form = $(valuesSelect.form);
-    $form.on('reset', this.clearSelection);
-  }
-
-  componentWillUnmount() {
-    const valuesSelect = ReactDOM.findDOMNode(this.refs.select);
-    const $form = $(valuesSelect.form);
-    $form.off('reset', this.clearSelection);
-  }
-
-  clearSelection() {
-    this.setState({
-      value: [],
-    }, this.triggerDependableChanged);
+  getInputFormNode() {
+    return ReactDOM.findDOMNode(this.refs.select);
   }
 
   selectedValue() {
     const value = this.state.value;
     return !this.props.multiple ? value[0] : value;
-  }
-
-  @autobind
-  handleChange(event) {
-    const selectElement = ReactDOM.findDOMNode(this.refs.select);
-    const newValue = this.ensureIsArray(selectElement.value);
-    this.props.onChange(event, newValue, this);
-
-    if (!event.isDefaultPrevented()) {
-      this.setState({
-        value: newValue,
-      }, this.triggerDependableChanged);
-    }
   }
 
   renderOptions() {
@@ -105,5 +78,24 @@ export default class InputSelect extends InputBase {
         {this.renderOptions()}
       </select>
     );
+  }
+
+  @autobind
+  handleChange(event) {
+    const selectElement = ReactDOM.findDOMNode(this.refs.select);
+    const newValue = this.ensureIsArray(selectElement.value);
+    this.props.onChange(event, newValue, this);
+
+    if (!event.isDefaultPrevented()) {
+      this.setState({
+        value: newValue,
+      }, this.triggerDependableChanged);
+    }
+  }
+
+  @autobind
+  handleReset() {
+    this.setStatePromise({ value: [] })
+      .then(() => this.triggerDependableChanged);
   }
 }
