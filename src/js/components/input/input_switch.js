@@ -29,6 +29,12 @@ export default class InputSwitch extends InputBase {
     label: null,
   };
 
+  constructor(props) {
+    super(props);
+
+    this._handleCheckboxChange = this._handleCheckboxChange.bind(this);
+  }
+
   checkboxProps() {
     if (this.valueIsBoolean()) {
       return {};

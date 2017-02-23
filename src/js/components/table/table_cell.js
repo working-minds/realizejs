@@ -39,7 +39,7 @@ export default class TableCell extends Component {
     component: null
   };
 
-  renderValue () {
+  renderValue() {
     let format = this.props.format;
     let customValue = this.props.value;
     let dataValue = this.props.data[this.props.name];
@@ -67,7 +67,7 @@ export default class TableCell extends Component {
 
   }
 
-  render () {
+  render() {
     return (
       <td className={this.cellClassName()}>
         {this.renderValue()}
@@ -75,7 +75,7 @@ export default class TableCell extends Component {
     );
   }
 
-  cellClassName () {
+  cellClassName() {
     let className = this.className();
     if(!!this.props.format) {
       className += ' table-cell--' + this.props.format;
@@ -88,11 +88,11 @@ export default class TableCell extends Component {
     return className;
   }
 
-  textValue (value) {
+  textValue(value) {
     return value;
   }
 
-  numberValue (value) {
+  numberValue(value) {
     value = parseFloat(value);
     return numeral(value).format(this.getFormatString());
   }
