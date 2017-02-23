@@ -1,28 +1,19 @@
 import React from 'react';
 import { mixin } from '../../../utils/decorators';
 
-import InputBase from '../input_base';
+import InputCheckboxBase from './input_checkbox_base';
 
 import {
   CssClassMixin,
-  CheckboxComponentMixin,
 } from '../../../mixins';
 
 @mixin(
   CssClassMixin,
-  CheckboxComponentMixin
 )
-export default class InputCheckbox extends InputBase {
-  static propTypes = {};
+export default class InputCheckbox extends InputCheckboxBase {
   static defaultProps = {
     themeClassKey: 'input.checkbox',
   };
-
-  constructor(props) {
-    super(props);
-
-    this._handleCheckboxChange = this._handleCheckboxChange.bind(this);
-  }
 
   render() {
     return (

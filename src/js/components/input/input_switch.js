@@ -1,21 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from '../../prop_types';
 import i18n from '../../i18n';
 import { mixin } from '../../utils/decorators';
 
-import InputHidden from './input_base';
+import InputCheckboxBase from './checkbox/input_checkbox_base';
+import InputHidden from './input_hidden';
 import { Label } from '../label';
-import InputBase from './input_base';
+
 import {
   CssClassMixin,
-  CheckboxComponentMixin,
 } from '../../mixins';
 
 @mixin(
   CssClassMixin,
-  CheckboxComponentMixin,
 )
-export default class InputSwitch extends InputBase {
+export default class InputSwitch extends InputCheckboxBase {
   static propTypes = {
     label: PropTypes.string,
     offLabel: PropTypes.localizedString,
@@ -28,12 +27,6 @@ export default class InputSwitch extends InputBase {
     onLabel: 'true',
     label: null,
   };
-
-  constructor(props) {
-    super(props);
-
-    this._handleCheckboxChange = this._handleCheckboxChange.bind(this);
-  }
 
   checkboxProps() {
     if (this.valueIsBoolean()) {
@@ -71,7 +64,7 @@ export default class InputSwitch extends InputBase {
               value={this.state.value}
               disabled={this.props.disabled || this.props.readOnly}
               className={this.inputClassName()}
-              onChange={this._handleCheckboxChange}
+              onChange={this.handleChange}
               type="checkbox"
               ref="input"
             />
