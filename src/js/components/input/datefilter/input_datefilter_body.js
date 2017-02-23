@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../../prop_types';
-import $ from 'jquery';
 import i18n from '../../../i18n';
 import { autobind, mixin } from '../../../utils/decorators';
+import { compact } from 'lodash';
 
 import {
   Button,
@@ -17,6 +17,8 @@ export default class InputDatefilterBody extends Component {
   static propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
+    hidden: PropTypes.bool,
+    resource: PropTypes.string,
     fromFilterInput: PropTypes.object,
     toFilterInput: PropTypes.object,
     okButton: PropTypes.object,
@@ -26,6 +28,7 @@ export default class InputDatefilterBody extends Component {
     themeClassKey: 'input.datefilter.body',
     id: null,
     name: null,
+    hidden: false,
     resource: null,
     fromFilterInput: {},
     toFilterInput: {},
@@ -34,22 +37,18 @@ export default class InputDatefilterBody extends Component {
     },
   };
 
+  applyFilterTypeSuffix(key, filterType) {
+    return `${key}_${filterType}`;
+  }
+
   getFilterInputId(filterType) {
     const inputId = this.props.id;
-    if (!!inputId) {
-      return `${inputId}_${filterType}`;
-    }
-
-    return null;
+    return inputId ? this.applyFilterTypeSuffix(inputId, filterType) : null;
   }
 
   getFilterInputName(filterType) {
     const inputName = this.props.name;
-    if (!!inputName) {
-      return `${inputName}_${filterType}`;
-    }
-
-    return null;
+    return inputName ? this.applyFilterTypeSuffix(inputName, filterType) : null;
   }
 
   getFilterInputLabel(filterType) {
@@ -65,8 +64,8 @@ export default class InputDatefilterBody extends Component {
       label: this.getFilterInputLabel(filterType),
     };
 
-    $.extend(inputProps, this.props[`${filterType}FilterInput`]);
-    return inputProps;
+    const filterTypeInputProps = this.props[`${filterType}FilterInput`];
+    return { ...inputProps, ...filterTypeInputProps };
   }
 
   fromInputProps() {
@@ -77,12 +76,23 @@ export default class InputDatefilterBody extends Component {
     return this.filterInputProps('to');
   }
 
+  get filterBodyNode() {
+    return ReactDOM.findDOMNode(this.refs.filterBody);
+  }
+
+  get fromInputNode() {
+    return ReactDOM.findDOMNode(this.refs.fromInput);
+  }
+
+  get toInputNode() {
+    return ReactDOM.findDOMNode(this.refs.toInput);
+  }
+
   @autobind
   handleFilterBodyClick(event) {
-    const filterBody = ReactDOM.findDOMNode(this.refs.filterBody);
-    const fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
+    const fromInput = this.fromInputNode.querySelector('input');
 
-    if (event.target === filterBody) {
+    if (event.target === this.filterBodyNode) {
       fromInput.focus();
     }
   }
@@ -95,31 +105,28 @@ export default class InputDatefilterBody extends Component {
       this.handleInputTabKeypress(event);
     } else if (keyCode === 27) {
       event.preventDefault();
-      this.selectDate();
+      this.handleSelectDate();
     }
   }
 
   @autobind
   handleInputTabKeypress(event) {
     event.preventDefault();
-    const fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input')[0];
-    const toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input')[0];
+    const fromInput = this.fromInputNode.querySelector('input');
+    const toInput = this.toInputNode.querySelector('input');
 
     if (event.target === fromInput) {
       toInput.focus();
     } else {
-      this.selectDate();
+      this.handleSelectDate();
     }
   }
 
   @autobind
   handleSelectDate() {
-    const $fromInput = $(ReactDOM.findDOMNode(this.refs.fromInput)).find('input');
-    const $toInput = $(ReactDOM.findDOMNode(this.refs.toInput)).find('input');
-    const selectedDates = $.grep(
-      [$fromInput.val(), $toInput.val()],
-      (date) => !!date
-    );
+    const fromInput = this.fromInputNode.querySelector('input');
+    const toInput = this.toInputNode.querySelector('input');
+    const selectedDates = compact([fromInput.value, toInput.value]);
 
     this.props.onSelectDate(selectedDates);
   }
@@ -164,7 +171,12 @@ export default class InputDatefilterBody extends Component {
 
   render() {
     return (
-      <div className={this.className()} onClick={this.handleFilterBodyClick} ref="filterBody">
+      <div
+        className={this.className()}
+        style={{ display: this.props.hidden ? 'none' : 'block' }}
+        onClick={this.handleFilterBodyClick}
+        ref="filterBody"
+      >
         {this.renderFromInput()}
         {this.renderToInput()}
         {this.renderUpdateButton()}

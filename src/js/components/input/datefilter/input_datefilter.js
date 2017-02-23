@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../../prop_types';
-import $ from 'jquery';
 import { autobind, mixin } from '../../../utils/decorators';
 
 import InputBase from '../input_base';
 import InputDatefilterSelect from './input_datefilter_select';
 import InputDatefilterBody from './input_datefilter_body';
+
 import {
   CssClassMixin,
 } from '../../../mixins';
@@ -29,6 +29,7 @@ export default class InputDatefilter extends InputBase {
   state = {
     ...this.state,
     selectedDates: [],
+    bodyOpen: false,
   };
 
   getInputFormNode() {
@@ -36,51 +37,12 @@ export default class InputDatefilter extends InputBase {
     return container.querySelector('input').form;
   }
 
-  hideFilterBody() {
-    $(document).off('click', this.handleDocumentClick);
-    const $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
-    $bodyNode.hide();
-  }
-
-  @autobind
-  handleDocumentClick(event) {
-    const $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
-    if ($containerNode.find(event.target).length === 0) {
-      this.hideFilterBody();
-    }
-  }
-
-  @autobind
-  handleSelectDate(selectedDates) {
-    this.setState({
-      selectedDates,
-    });
-
-    this.hideFilterBody();
-  }
-
-  @autobind
-  handleReset() {
-    this.setState({
-      selectedDates: [],
-    });
-  }
-
-  @autobind
-  handleFocus() {
-    if (this.props.disabled) {
-      return;
-    }
-
-    $(document).on('click', this.handleDocumentClick);
-    const $bodyNode = $(ReactDOM.findDOMNode(this.refs.body));
-    const firstFilterInput = $bodyNode.find('input[type=text]')[0];
-
-    $bodyNode.show();
+  focusBody() {
+    const bodyNode = ReactDOM.findDOMNode(this.refs.body);
+    const firstFilterInput = bodyNode.querySelector('input[type=text]');
     firstFilterInput.focus();
   }
 
-  // TODO: InputDatefilterBody não limpa campos no evento de form#reset.
   render() {
     return (
       <div className={this.className()} ref="container">
@@ -92,6 +54,7 @@ export default class InputDatefilter extends InputBase {
 
         <InputDatefilterBody
           {...this.propsWithoutCSS()}
+          hidden={!this.state.bodyOpen}
           id={this.props.originalId}
           name={this.props.originalName}
           onSelectDate={this.handleSelectDate}
@@ -99,5 +62,39 @@ export default class InputDatefilter extends InputBase {
         />
       </div>
     );
+  }
+
+  @autobind
+  handleDocumentClick(event) {
+    const container = ReactDOM.findDOMNode(this.refs.container);
+    const containerHasTargetNode = container.contains(event.target);
+
+    if (!containerHasTargetNode) this.handleHideBody();
+  }
+
+  @autobind
+  handleSelectDate(selectedDates) {
+    this.setState({ selectedDates });
+    this.handleHideBody();
+  }
+
+  @autobind
+  handleReset() {
+    this.setState({ selectedDates: [] });
+  }
+
+  @autobind
+  handleFocus() {
+    if (this.props.disabled) return;
+
+    document.addEventListener('click', this.handleDocumentClick);
+    this.setStatePromise({ bodyOpen: true })
+      .then(() => this.focusBody());
+  }
+
+  @autobind
+  handleHideBody() {
+    document.removeEventListener('click', this.handleDocumentClick);
+    this.setStatePromise({ bodyOpen: false });
   }
 }

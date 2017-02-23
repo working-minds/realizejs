@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../../prop_types';
 import { uuid } from '../../../utils';
@@ -6,9 +6,10 @@ import { mixin, autobind } from '../../../utils/decorators';
 
 import InputBase from '../input_base';
 import InputText from '../input_text';
-import { Label }  from '../../label';
+import { Label } from '../../label';
+
 import {
-  CssClassMixin
+  CssClassMixin,
 } from '../../../mixins';
 
 @mixin(CssClassMixin)
