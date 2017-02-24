@@ -134,6 +134,15 @@ export default class InputDatepicker extends InputBase {
     this.setState({ value: null });
   }
 
+  @autobind
+  handleReset() {
+    if (this.mounted) {
+      const value = null;
+      const inputMaskedKey = uuid.v4();
+      this.setState({ value, inputMaskedKey }, this.setPickadatePlugin);
+    }
+  }
+
   _getValue() {
     return this.getFormattedDateValue();
   }
