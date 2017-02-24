@@ -5,21 +5,24 @@ import PropTypes from '../../prop_types';
 import $ from 'jquery';
 import { autobind, mixin } from '../../utils/decorators';
 
-import ModalHeader from './modal_header'
-import ModalContent from './modal_content'
-import ModalFooter from './modal_footer'
+import ModalHeader from './modal_header';
+import ModalContent from './modal_content';
+import ModalFooter from './modal_footer';
+
+import ModalActions from '../../actions/modal_actions';
 
 import {
   CssClassMixin,
-  ContainerMixin
+  ContainerMixin,
 } from '../../mixins';
 
 import { ModalStore } from '../../stores';
+const ModalStoreMixin = Reflux.connect(ModalStore, 'modalStore');
 
 @mixin(
-  Reflux.connect(ModalStore, 'modalStore'),
+  ModalStoreMixin,
   CssClassMixin,
-  ContainerMixin
+  ContainerMixin,
 )
 export default class Modal extends Component {
   static propTypes = {
@@ -35,7 +38,9 @@ export default class Modal extends Component {
     inDuration: PropTypes.number,
     outDuration: PropTypes.number,
     ready: PropTypes.func,
-    complete: PropTypes.func
+    complete: PropTypes.func,
+
+    children: PropTypes.component,
   };
 
   static defaultProps = {
@@ -51,39 +56,39 @@ export default class Modal extends Component {
     opacity: 0.4,
     inDuration: 300,
     outDuration: 200,
-    ready: function() { return true; },
-    complete: function() { return true; }
+    ready() { return true; },
+    complete() { return true; },
   };
 
   state = {
-    modalStore: null
+    modalStore: null,
   };
 
-  componentDidMount () {
+  componentDidMount() {
     this.resizeContent();
     $(window).on('resize', this.resizeContent);
 
-    if(!!this.props.opened) {
+    if (!!this.props.opened) {
       this.open();
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     $(window).off('resize', this.resizeContent);
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     this.resizeContent();
-    if(!!this.state.opened) {
+    if (!!this.state.opened) {
       this.open();
     }
 
-    if(this.state.modalStore) {
+    if (this.state.modalStore) {
       this.handleModalStoreState();
     }
   }
 
-  renderHeader () {
+  renderHeader() {
     return (
       <div ref="headerContainer" className="modal-header-container">
         {this.filterChildren(ModalHeader)}
@@ -91,7 +96,7 @@ export default class Modal extends Component {
     );
   }
 
-  renderContent () {
+  renderContent() {
     return (
       <div ref="contentContainer" className="modal-content-container">
         {this.filterChildren(ModalContent)}
@@ -99,7 +104,7 @@ export default class Modal extends Component {
     );
   }
 
-  renderFooter () {
+  renderFooter() {
     return (
       <div ref="footerContainer" className="modal-footer-container">
         {this.filterChildren(ModalFooter)}
@@ -107,16 +112,27 @@ export default class Modal extends Component {
     );
   }
 
-  render () {
-    var header = this.filterChildren(ModalHeader)? this.renderHeader() : '';
-    var content = this.filterChildren(ModalContent)? this.renderContent() : '';
-    var footer = this.filterChildren(ModalFooter)? this.renderFooter() : '';
+  render() {
+    const header = this.filterChildren(ModalHeader) ? this.renderHeader() : '';
+    const content = this.filterChildren(ModalContent) ? this.renderContent() : '';
+    const footer = this.filterChildren(ModalFooter) ? this.renderFooter() : '';
 
-    if(header == '' && content == '' && footer == '')
-      content = (<ModalContent {...this.props}>{this.props.children}</ModalContent>);
+    const rootProps = {
+      id: this.props.id,
+      className: this.className(),
+      ref: 'modal',
+    };
+
+    if (header === '' && content === '' && footer === '') {
+      return (
+        <div {...rootProps}>
+          <ModalContent {...this.props}>{this.props.children}</ModalContent>
+        </div>
+      );
+    }
 
     return (
-      <div id={this.props.id} className={this.className()} ref="modal">
+      <div {...rootProps}>
         {header}
         {content}
         {footer}
@@ -125,88 +141,90 @@ export default class Modal extends Component {
   }
 
   @autobind
-  handleModalStoreState () {
-    var modalStore = this.state.modalStore;
-    var shouldOpenModal = modalStore.shouldOpen;
-    var shouldCloseModal = modalStore.shouldClose;
-    var modalToOpenId = modalStore.modalId;
+  handleModalStoreState() {
+    const modalStore = this.state.modalStore;
+    const shouldOpenModal = modalStore.shouldOpen;
+    const shouldCloseModal = modalStore.shouldClose;
+    const modalToOpenId = modalStore.modalId;
 
-    if(modalToOpenId == this.props.id) {
-      if(shouldOpenModal) {
+    if (modalToOpenId === this.props.id) {
+      if (shouldOpenModal) {
         this.open();
       }
 
-      if(shouldCloseModal) {
+      if (shouldCloseModal) {
         this.close();
       }
     }
   }
 
-  open (options) {
-    var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
+  open() {
+    const $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.openModal({
-      dismissible: this.props.dismissible,  // Modal can be dismissed by clicking outside of the modal
-      opacity: this.props.opacity,          // Opacity of modal background
-      inDuration: this.props.inDuration,    // Transition in duration
-      outDuration: this.props.outDuration,  // Transition out duration
-      ready: this.handleReady,              // Callback for Modal open
-      complete: this.props.complete         // Callback for Modal close
+      dismissible: this.props.dismissible,
+      opacity: this.props.opacity,
+      inDuration: this.props.inDuration,
+      outDuration: this.props.outDuration,
+      ready: this.handleReady,
+      complete: this.props.complete,
     });
   }
 
   @autobind
-  handleReady () {
+  handleReady() {
     this.resizeContent();
     ModalActions.openFinished();
 
-    if(typeof this.props.ready === "function") {
+    if (typeof this.props.ready === 'function') {
       this.props.ready();
     }
   }
 
-  close () {
-    var $modal = $(ReactDOM.findDOMNode(this.refs.modal));
+  close() {
+    const $modal = $(ReactDOM.findDOMNode(this.refs.modal));
 
     $modal.closeModal();
   }
 
   @autobind
-  resizeContent () {
-    var modal = ReactDOM.findDOMNode(this.refs.modal);
-    var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
+  resizeContent() {
+    const modal = ReactDOM.findDOMNode(this.refs.modal);
+    const contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
 
-    $(modal).css("max-height", $(window).height() - (this.props.marginHeaderFooter));
-    $(modal).css("width", this.props.width);
+    $(modal).css('max-height', $(window).height() - (this.props.marginHeaderFooter));
+    $(modal).css('width', this.props.width);
 
-    var availableHeight = this.getAvailableHeight();
-    var contentHeight = this.getContentHeight();
-    var containerHeight = 0;
-    if(!!this.props.useAvailableHeight) {
+    const availableHeight = this.getAvailableHeight();
+    const contentHeight = this.getContentHeight();
+    let containerHeight = 0;
+
+    if (!!this.props.useAvailableHeight) {
       containerHeight = availableHeight;
     } else {
       containerHeight = Math.min(availableHeight, contentHeight);
     }
 
-    $(contentContainer).css("height", containerHeight);
+    $(contentContainer).css('height', containerHeight);
   }
 
-  getAvailableHeight () {
-    var headerContainer = ReactDOM.findDOMNode(this.refs.headerContainer);
-    var footerContainer = ReactDOM.findDOMNode(this.refs.footerContainer);
+  getAvailableHeight() {
+    const headerContainer = ReactDOM.findDOMNode(this.refs.headerContainer);
+    const footerContainer = ReactDOM.findDOMNode(this.refs.footerContainer);
+    const windowHeight = $(window).height() - (this.props.marginHeaderFooter);
+    const containerHeight = ($(headerContainer).height() + $(footerContainer).height());
 
-    return ($(window).height() - (this.props.marginHeaderFooter)) - ($(headerContainer).height() + $(footerContainer).height());
+    return windowHeight - containerHeight;
   }
 
-  getContentHeight () {
-    var contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
-    var minContentHeight = this.props.minContentHeight;
-    var contentHeight = 0;
+  getContentHeight() {
+    const contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
+    const minContentHeight = this.props.minContentHeight;
+    let contentHeight = 0;
 
-    $(contentContainer).find("> *").each(function(i, content) {
-      contentHeight += $(content).outerHeight();
-    });
-
+    $(contentContainer).find('> *').each(
+      (i, content) => { contentHeight += $(content).outerHeight(); }
+    );
 
     return Math.max(minContentHeight, contentHeight);
   }

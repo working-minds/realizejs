@@ -1,40 +1,47 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
 
 import { Button } from '../../components';
 import { CssClassMixin } from '../../mixins';
+
+import ModalActions from '../../actions/modal_actions';
 
 @mixin(CssClassMixin)
 export default class ModalButton extends Component {
   static propTypes = {
     modalId: PropTypes.string,
-    openerId: PropTypes.string
+    openerId: PropTypes.string,
+    disabled: PropTypes.bool,
+    element: PropTypes.string,
   };
 
   static defaultProps = {
     modalId: '',
-    openerId: ''
+    openerId: '',
   };
 
-  render () {
+  render() {
     return (
-      <Button {...this.props}
+      <Button
+        {...this.props}
         className={this.getClassName()}
-        onClick={this.openModal}
-        ref="modalButton"/>
+        onClick={this.handleOpenModal}
+        ref="modalButton"
+      />
     );
   }
 
-  getClassName () {
+  getClassName() {
     let className = this.className();
-    if(this.props.disabled && this.props.element === 'a')
+    if (this.props.disabled && this.props.element === 'a')
       className = 'button btn-flat disable-action-button';
 
     return className;
   }
 
-  openModal (event) {
+  @autobind
+  handleOpenModal(event) {
     event.nativeEvent.preventDefault();
     event.stopPropagation();
     event.preventDefault();
