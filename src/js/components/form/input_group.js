@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
-import $ from 'jquery';
-import filter from 'lodash/filter';
-import merge from 'lodash/merge';
+import { filter, merge } from 'lodash';
 import { mixin } from '../../utils/decorators';
 
 import { Input } from '../../components';

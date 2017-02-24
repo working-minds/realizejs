@@ -1,7 +1,8 @@
 import PropTypes from '../prop_types';
-import merge from 'lodash/merge';
-import Realize from '../realize'
+import Realize from '../realize';
 import i18n from '../i18n';
+
+import { merge } from 'lodash';
 
 export default {
   propTypes: {

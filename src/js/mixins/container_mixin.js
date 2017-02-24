@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from '../prop_types';
 import $ from 'jquery';
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
 
 export default {
   propTypes: {

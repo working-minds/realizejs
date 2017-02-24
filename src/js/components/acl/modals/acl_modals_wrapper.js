@@ -3,10 +3,9 @@ import PropTypes from '../../../prop_types';
 import $ from 'jquery';
 import { autobind, mixin } from '../../../utils/decorators';
 
-import {
-  PermissionManagerModal,
-  AddPrincipalsModal,
-} from '../../../components';
+import PermissionManagerModal from './permission_manager_modal';
+import AddPrincipalsModal from './add_principals_modal';
+
 import { RequestHandlerMixin } from '../../../mixins';
 
 @mixin(RequestHandlerMixin)
@@ -18,7 +17,7 @@ export default class AclModalsWrapper extends Component {
     resourceType: PropTypes.string,
     urlProps: PropTypes.object,
     title: PropTypes.string,
-    reloadPageAfterSubmit: PropTypes.bool
+    reloadPageAfterSubmit: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -34,8 +33,7 @@ export default class AclModalsWrapper extends Component {
       principalsTypeBaseUrl: '/wkm_acl_ui/principals/types',
       updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
       principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions',
-
-    }
+    },
   };
 
   onSuccess() {

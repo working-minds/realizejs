@@ -1,7 +1,7 @@
 import Realize from '../../realize';
 import React from 'react';
 import PropTypes from '../../prop_types';
-import capitalize from 'lodash/capitalize';
+import { capitalize } from 'lodash';
 import { mixin } from '../../utils/decorators';
 
 import { CssClassMixin } from '../../mixins';

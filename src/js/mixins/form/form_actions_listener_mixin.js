@@ -2,7 +2,7 @@ import PropTypes from '../../prop_types';
 import $ from 'jquery';
 
 import FormStore from '../../stores/form_store';
-import capitalize from 'lodash/capitalize'
+import { capitalize } from 'lodash';
 
 export default {
   propTypes: {

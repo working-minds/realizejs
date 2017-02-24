@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from '../../../prop_types';
-import merge from 'lodash/merge';
-import mapValues from 'lodash/mapValues';
+import { merge } from 'lodash';
+import { mapValues } from 'lodash';
 import { mixin } from '../../../utils/decorators';
 
 import GridForm from '../../grid_form/grid_form';

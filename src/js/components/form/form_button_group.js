@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 import { mixin } from '../../utils/decorators';
 
 import { Button } from '../../components';

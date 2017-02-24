@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import $ from 'jquery';
-import merge from 'lodash/merge';
+import { merge } from 'lodash';
 import { uuid } from '../../utils';
 import { mixin } from '../../utils/decorators';
 import { Grid } from '../grid';

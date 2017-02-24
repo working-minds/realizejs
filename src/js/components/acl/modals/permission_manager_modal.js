@@ -2,17 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from '../../../prop_types';
 import $ from 'jquery';
 import { autobind, mixin } from '../../../utils/decorators';
-import difference from 'lodash/difference';
+import { difference } from 'lodash';
 
-import {
-  Modal,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-  PermissionManager,
-  CloseModalButton,
-  UpdatePermissionsButton,
-} from '../../../components';
+import { Modal, ModalHeader, ModalContent, ModalFooter } from '../../../components/modal';
+import CloseModalButton from './close_modal_button';
+import PermissionManager from '../permission_manager';
+import UpdatePermissionsButton from '../update_permission_button';
 
 import { RequestHandlerMixin } from '../../../mixins';
 
@@ -30,7 +25,9 @@ export default class PermissionManagerModal extends Component {
     principalsBaseUrl: PropTypes.string,
     principalsPermissionsBaseUrl: PropTypes.string,
     title: PropTypes.string,
-    reloadPageAfterSubmit: PropTypes.bool
+    reloadPageAfterSubmit: PropTypes.bool,
+    headerSize: PropTypes.string,
+    handleRemovePrincipal: PropTypes.func,
   };
 
   static defaultProps = {
@@ -45,14 +42,15 @@ export default class PermissionManagerModal extends Component {
     updatePermissionsBaseUrl: '/wkm_acl_ui/bulk_permissions',
     principalsBaseUrl: '/wkm_acl_ui/principals',
     principalsPermissionsBaseUrl: '/wkm_acl_ui/principals/principals_permissions',
-    reloadPageAfterSubmit: false
+    reloadPageAfterSubmit: false,
   };
 
   @autobind
   onSuccess() {
     $(`#${this.props.modalId}`).closeModal();
-    if(this.props.reloadPageAfterSubmit)
+    if (this.props.reloadPageAfterSubmit) {
       window.location.reload();
+    }
   }
 
   getPostData() {
@@ -71,7 +69,7 @@ export default class PermissionManagerModal extends Component {
         postData.push({
           principal_id: principalPermissions[i].principal_id,
           principal_type: principalPermissions[i].principal_type,
-          permissions
+          permissions,
         });
       }
     }
@@ -79,7 +77,7 @@ export default class PermissionManagerModal extends Component {
     return {
       resource_id: this.props.resource.id,
       resource_type: this.props.resourceType,
-      permissions_by_principal: postData
+      permissions_by_principal: postData,
     };
   }
 

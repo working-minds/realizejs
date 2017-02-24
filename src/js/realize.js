@@ -2,7 +2,7 @@ import realizeConfig from './init/config';
 import realizeThemes from './theme/theme.js';
 import realizeI18n from './i18n/i18n';
 
-import merge from 'lodash/merge';
+import { merge } from 'lodash';
 
 export const config = realizeConfig;
 export const themes = realizeThemes;
