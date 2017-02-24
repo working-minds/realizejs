@@ -36,7 +36,6 @@ export default class GridFilter extends Component {
     clearButton: {
       name: 'actions.clear',
       type: 'reset',
-      style: 'cancel',
       buttonStyle: 'cancel',
     },
     onSuccess() {},

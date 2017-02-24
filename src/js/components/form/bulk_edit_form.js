@@ -21,7 +21,7 @@ export default class BulkEditForm extends Component {
     method: PropTypes.string,
     dataType: PropTypes.string,
     contentType: PropTypes.string,
-    style: PropTypes.string,
+    formStyle: PropTypes.string,
     resource: PropTypes.string,
     submitButton: PropTypes.object,
     otherButtons: PropTypes.array,
