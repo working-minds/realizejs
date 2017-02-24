@@ -5,10 +5,10 @@ import ptBR from './locales/pt-BR';
 import en from './locales/en';
 
 import moment from 'moment';
-import 'moment/locale/pt-br';
+import './momentLocales/pt-BR';
 
 import numeral from 'numeral';
-import numeralPtBR from 'numeral/locales/pt-br';
+import './numeralLocales/pt-BR';
 
 const i18n = {
   locales: {},

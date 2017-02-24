@@ -11,7 +11,7 @@ export default {
     clear: 'Limpar',
     add: 'Adicionar',
     update: 'Atualizar',
-    cancel: 'Cancelar'
+    cancel: 'Cancelar',
   },
 
   table: {
@@ -22,8 +22,8 @@ export default {
       selectAll: 'selecionar todos os :count itens',
       select: {
         singular: '1 item selecionado',
-        plural: ':count itens selecionados'
-      }
+        plural: ':count itens selecionados',
+      },
     },
 
     cell: {
@@ -33,81 +33,81 @@ export default {
         currency: 'R$ 0,0.00',
         date: 'DD/MM/YYYY',
         datetime: 'DD/MM/YYYY HH:mm',
-        time: 'HH:mm'
-      }
-    }
+        time: 'HH:mm',
+      },
+    },
   },
 
   masks: {
     date: {
-      alias: 'dd/mm/yyyy'
+      alias: 'dd/mm/yyyy',
     },
     datetime: {
       mask: 'd/m/y h:s',
-      placeholder: 'dd/mm/yyyy, hh:ss'
+      placeholder: 'dd/mm/yyyy, hh:ss',
     },
     cpf: '999.999.999-99',
     cnpj: '99.999.999/9999-99',
     phone: '(99) 9999[9]-9999',
     integer: {
-      alias: "integer"
+      alias: 'integer',
     },
     decimal: {
-      alias: "decimal",
-      groupSeparator: ".",
-      radixPoint: ",",
+      alias: 'decimal',
+      groupSeparator: '.',
+      radixPoint: ',',
       removeMaskOnSubmit: true,
       autoGroup: true,
       digits: 2,
       digitsOptional: false,
-      placeholder: "0",
-      clearMaskOnLostFocus: false
+      placeholder: '0',
+      clearMaskOnLostFocus: false,
     },
     currency: {
-      alias: "currency",
-      prefix: "R$ ",
-      groupSeparator: ".",
-      radixPoint: ",",
-      placeholder: "0",
-      removeMaskOnSubmit: true
-    }
+      alias: 'currency',
+      prefix: 'R$ ',
+      groupSeparator: '.',
+      radixPoint: ',',
+      placeholder: '0',
+      removeMaskOnSubmit: true,
+    },
   },
 
   inputs: {
     autocomplete: {
       emptyResult: 'Nenhum item foi encontrado.',
-      clear: 'Limpar itens selecionados'
+      clear: 'Limpar itens selecionados',
     },
 
     datefilter: {
       from: 'De',
-      to: 'Até'
+      to: 'Até',
     },
 
     file: {
-      buttonName: 'Arquivo'
-    }
+      buttonName: 'Arquivo',
+    },
   },
 
   date: {
     formats: {
       default: 'DD/MM/YYYY HH:mm',
       date: 'DD/MM/YYYY'
-    }
+    },
   },
 
   errors: {
-    invalidAction: "Ação inválida",
+    invalidAction: 'Ação inválida',
     inputSelect: {
-      invalidOption: "Formato inválido de opção de select (Formato esperado: {name:\"\", value:\"\"})"
-    }
+      invalidOption: 'Formato inválido de opção de select (Formato esperado: {name:\"\", value:\"\"})',
+    },
   },
 
   notifications: {
     buttons: {
-     noNotifications: "Sem notificações",
-     seeAll:  "Ver Todas"
-    }
-  }
+     noNotifications: 'Sem notificações',
+     seeAll:  'Ver Todas',
+    },
+  },
 
 };
