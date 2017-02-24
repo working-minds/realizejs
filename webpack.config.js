@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -48,8 +49,20 @@ module.exports = {
       window: 'Materialize',
       root: 'Materialize',
     },
-    moment: 'moment',
-    numeral: 'numeral',
+    moment: {
+      commonjs: 'moment',
+      commonjs2: 'moment',
+      amd: 'moment',
+      window: 'moment',
+      root: 'moment',
+    },
+    numeral: {
+      commonjs: 'numeral',
+      commonjs2: 'numeral',
+      amd: 'numeral',
+      window: 'numeral',
+      root: 'numeral',
+    },
     react: {
       commonjs: 'react',
       commonjs2: 'react',
@@ -94,5 +107,7 @@ module.exports = {
 
   plugins: [
     new ExtractTextPlugin('realizejs.css'),
+    new webpack.IgnorePlugin(/\.\/locale/, /moment/),
+    new webpack.IgnorePlugin(/\.\/locales/, /numeral/),
   ],
 };
