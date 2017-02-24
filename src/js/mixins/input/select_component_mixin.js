@@ -18,10 +18,10 @@ export default {
     onLoad: PropTypes.func,
     onLoadError: PropTypes.func,
     onSelect: PropTypes.func,
-    requestTimeout: PropTypes.number
+    requestTimeout: PropTypes.number,
   },
 
-  getDefaultProps () {
+  getDefaultProps() {
     return {
       dependsOn: null,
       optionsParam: null,
@@ -36,7 +36,7 @@ export default {
     };
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
       options: this.props.options,
       optionsCache: this.props.options,
@@ -44,22 +44,22 @@ export default {
       mustDisable: false,
       loadParams: {},
       loadData: [],
-      hasPendingRequest: false
+      hasPendingRequest: false,
     };
   },
 
-  componentWillMount () {
+  componentWillMount() {
     // SelecComponent alwalys handle value as an array.
     this.state.value = this.ensureIsArray(this.state.value);
 
-    if(!!this.props.dependsOn) {
+    if (!!this.props.dependsOn) {
       this.state.mustDisable = true;
     }
   },
 
-  componentDidMount () {
-    if(this.props.optionsUrl) {
-      if(!!this.props.dependsOn) {
+  componentDidMount() {
+    if (this.props.optionsUrl) {
+      if (!!this.props.dependsOn) {
         this.listenToDependableChange();
         this.loadDependentOptions(null, true);
       } else {
@@ -68,27 +68,27 @@ export default {
     }
 
     const value = this.ensureIsArray(this.state.value);
-    if(value.length > 0) {
+    if (value.length > 0) {
       this.triggerDependableChanged();
     }
   },
 
-  componentWillUnmount () {
-    if(!!this.props.dependsOn) {
+  componentWillUnmount() {
+    if (!!this.props.dependsOn) {
       this.unbindDependableChangeListener();
     }
   },
 
-  ensureIsArray (value) {
-    if(value === null || value === undefined || value.length === 0) {
-      value = [];
-    } else if(!$.isArray(value)) {
-      value = [value];
+  ensureIsArray(value) {
+    if (value === null || value === undefined || value.length === 0) {
+      return [];
+    } else if (!$.isArray(value)) {
+      return [value];
     }
     return value;
   },
 
-  selectedOptions () {
+  selectedOptions() {
     const value = this.ensureIsArray(this.state.value);
     let selectedOptions = [];
 
@@ -102,7 +102,7 @@ export default {
     return selectedOptions;
   },
 
-  loadOptions () {
+  loadOptions() {
     this.state.hasPendingRequest = true;
     var requestTime = new Date().getTime();
     var timeout = 0;
@@ -132,7 +132,7 @@ export default {
     this.state.lastXhrRequestTime = requestTime;
   },
 
-  handleLoad (data) {
+  handleLoad(data) {
     var options = [];
     var optionsParam = this.props.optionsParam;
     if(!!optionsParam) {

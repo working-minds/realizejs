@@ -76,7 +76,7 @@ export default class InputFile extends InputBase {
 
   @autobind
   handleChange(event) {
-    this.handleChange(event);
+    super.handleChange(event);
 
     const fileInput = ReactDOM.findDOMNode(this.refs.input);
     const filePathInput = ReactDOM.findDOMNode(this.refs.filePath);
