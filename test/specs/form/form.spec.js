@@ -5,7 +5,7 @@ import { Form } from 'components/form'
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 
-describe('Form', () => {
+describe('<Form/>', () => {
   it('exists', () => {
     assert(Form);
   });

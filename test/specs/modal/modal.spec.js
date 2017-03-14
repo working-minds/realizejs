@@ -3,7 +3,7 @@ import { Modal } from 'components/modal';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 
-describe('Modal', () => {
+describe('<Modal/>', () => {
   it('exists', () => {
     assert(Modal);
   });

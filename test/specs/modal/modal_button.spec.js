@@ -4,7 +4,7 @@ import { assert } from 'chai';
 import { shallow } from 'enzyme';
 
 
-describe('< Modal Button/>', () => {
+describe('<ModalButton/>', () => {
   it('exists', () => {
     assert(ModalButton);
   });

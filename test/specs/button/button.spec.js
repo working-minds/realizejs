@@ -3,7 +3,7 @@ import { Button } from 'components';
 import { assert } from 'chai';
 import { shallow, mount } from 'enzyme';
 
-describe('Button', () => {
+describe('<Button/>', () => {
   it('exists', () => {
     assert(Button);
   });

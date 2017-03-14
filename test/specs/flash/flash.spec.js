@@ -3,7 +3,7 @@ import { Flash } from 'components/flash'
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 
-describe('Flash', () => {
+describe('<Flash/>', () => {
   it('exists', () => {
     assert(Flash);
   });

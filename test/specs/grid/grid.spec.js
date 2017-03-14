@@ -6,7 +6,7 @@ import { mount, shallow } from 'enzyme';
 
 import { Chance } from 'chance';
 
-describe('<Grid />', () => {
+describe('<Grid/>', () => {
   const dummyUrl = '';
   const chance = new Chance();
   let sandbox;
@@ -151,11 +151,6 @@ describe('<Grid />', () => {
       restClientIndex = sandbox.stub(instance.restClient, 'index');
       handleLoad = sandbox.stub(instance, 'handleLoad');
       handleLoadError = sandbox.stub(instance, 'handleLoadError');
-    });
-
-    it('returns a promise', () => {
-      setStatePromise.returns(Promise.resolve());
-      expect(instance.loadData()).to.be.instanceof(Promise);
     });
 
     it('sets a loading state', function(done) {
@@ -523,11 +518,15 @@ describe('<Grid />', () => {
   });
 
   describe('#handleFilterSubmit', () => {
-    it('calls onFilterSubmit', (done) => {
-      const onFilterSubmit = sinon.stub();
-      const event = { isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub() };
-      const postData = { [chance.word()]: chance.hash() };
+    let onFilterSubmit, event, postData;
 
+    beforeEach(() => {
+      onFilterSubmit = sinon.stub();
+      event = { isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub(), persist: () => {} };
+      postData = { [chance.word()]: chance.hash() };
+    });
+
+    it('calls onFilterSubmit', (done) => {
       const instance = shallow(<Grid url={dummyUrl} onFilterSubmit={onFilterSubmit}/>).instance();
       sandbox.stub(instance, 'loadData');
 
@@ -542,10 +541,6 @@ describe('<Grid />', () => {
     });
 
     it('reconfigures grid if not default prevented', (done) => {
-      const onFilterSubmit = sinon.stub();
-      const event = { isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub() };
-      const postData = { [chance.word()]: chance.hash() };
-
       const instance = shallow(<Grid url={dummyUrl} onFilterSubmit={onFilterSubmit}/>).instance();
       sandbox.stub(instance, 'loadData');
 
@@ -561,10 +556,6 @@ describe('<Grid />', () => {
     });
 
     it('cancels event when default is prevented', (done) => {
-      const onFilterSubmit = sinon.stub();
-      const event = { isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub() };
-      const postData = { [chance.word()]: chance.hash() };
-
       const instance = shallow(<Grid url={dummyUrl} onFilterSubmit={onFilterSubmit}/>).instance();
       sandbox.stub(instance, 'loadData');
 
@@ -600,14 +591,14 @@ describe('<Grid />', () => {
         })
         .catch(done);
     });
-  })
+  });
 
   describe('#handleSelectDataRows', () => {
     let promise, onSelectDataRow, event, selectedRowIds, selectedData, wrapper, instance, setStatePromise;
 
     beforeEach(() => {
       onSelectDataRow = sinon.stub();
-      event = {isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub()};
+      event = { isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub(), persist: () => {} };
       selectedRowIds = [chance.d100()];
       selectedData = {[chance.word()]: chance.hash()};
 
@@ -697,7 +688,7 @@ describe('<Grid />', () => {
 
     beforeEach(() => {
       onRemoveSelection = sinon.stub();
-      event = {isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub()};
+      event = { isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub(), persist: () => {} };
 
       wrapper = shallow(<Grid url={dummyUrl} onRemoveSelection={onRemoveSelection}/>);
       instance = wrapper.instance();
@@ -737,8 +728,6 @@ describe('<Grid />', () => {
         const p = Promise.resolve();
         reconfigureGrid = reconfigureGrid.withArgs({}, true).returns(p);
 
-        const event = {isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub()};
-
         instance
           .handleRemoveSelection(event)
           .then(() => {
@@ -755,7 +744,7 @@ describe('<Grid />', () => {
 
     beforeEach(() => {
       onSelectAllRows = sinon.stub();
-      event = {isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub()};
+      event = { isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub(), persist: () => {} };
 
       wrapper = shallow(<Grid url={dummyUrl} onSelectAllRows={onSelectAllRows}/>);
       instance = wrapper.instance();
@@ -795,8 +784,6 @@ describe('<Grid />', () => {
         const p = Promise.resolve();
         setStatePromise = setStatePromise.withArgs({ allSelected: true }).returns(p);
 
-        const event = {isDefaultPrevented: sinon.stub(), preventDefault: sinon.stub()};
-
         instance
           .handleSelectAllRows(event)
           .then(() => {
@@ -828,6 +815,7 @@ describe('<Grid />', () => {
         {...props.filter}
         isLoading={state.gridIsLoading}
         onSubmit={onSubmit}
+        ref="filter"
         {...extraProps}
       />;
 

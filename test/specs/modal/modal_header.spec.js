@@ -1,6 +1,6 @@
 import { ModalHeader } from 'components/modal'
 
-describe('< Modal Header/>', () => {
+describe('<ModalHeader/>', () => {
   it('exists', () => {
     assert(ModalHeader);
   });

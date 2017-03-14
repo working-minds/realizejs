@@ -3,7 +3,7 @@ import { Menu } from 'components/menu';
 import { MenuItem } from 'components/menu';
 import { shallow } from 'enzyme';
 
-describe('Menu', () => {
+describe('<Menu/>', () => {
   it('exists', () => {
     assert(Menu);
   });

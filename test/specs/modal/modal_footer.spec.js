@@ -1,6 +1,6 @@
 import {ModalFooter} from 'components/modal'
 
-describe('< Modal Footer/>', () => {
+describe('<ModalFooter/>', () => {
   it('exists', () => {
     assert(ModalFooter);
   });

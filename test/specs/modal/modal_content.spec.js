@@ -1,7 +1,7 @@
 import { ModalContent } from 'components/modal';
 import { assert } from 'chai';
 
-describe('< Modal Content/>', () => {
+describe('<ModalContent/>', () => {
   it('exists', () => {
     assert(ModalContent);
   });

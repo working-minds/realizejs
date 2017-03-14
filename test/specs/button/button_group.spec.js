@@ -3,7 +3,7 @@ import { ButtonGroup } from 'components'
 import { assert} from 'chai';
 import { mount } from 'enzyme';
 
-describe('ButtonGroup', () => {
+describe('<ButtonGroup/>', () => {
   it('exists', () => {
     assert(ButtonGroup);
   });
