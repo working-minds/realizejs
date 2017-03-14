@@ -13,6 +13,7 @@
   <script src="/realizejs/assets/js/vendor/jquery/jquery-2.2.4.min.js"></script>
   <script src="/realizejs/assets/js/vendor/jquery/jquery.inputmask.bundle.js"></script>
   <script src="/realizejs/assets/js/vendor/jquery/jquery.serialize-object.min.js"></script>
+  <script src="/realizejs/assets/js/vendor/lunr/lunr.min.js"></script>
   <script src="/realizejs/assets/js/vendor/materialize/materialize.js"></script>
   <script src="/realizejs/assets/js/vendor/modernizr/modernizr-2.8.3.min.js"></script>
   <script src="/realizejs/assets/js/vendor/string/string.js"></script>
@@ -20,6 +21,7 @@
   <script src="/realizejs/assets/js/vendor/realize/playground.min.js"></script>
   <script src="https://cdn.rawgit.com/rafaelfbs/xhr-mock/2.0.2-beta/dist/xhr-mock.browser.js"></script>
   <script src="/realizejs/assets/js/functions/main.js"></script>
+  <script src="/realizejs/assets/js/functions/search.js"></script>
 
   <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="/realizejs/css/main.css">
@@ -37,8 +39,18 @@
   <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0%)">
     <li><a href="/realizejs/" class="brand-logo hide-on-med-and-down"><img src="/realizejs/assets/img/layout/realizemin.png" alt=""></a></li>
     <li class="bold active">
-    <li class="bold"><a href="/realizejs/about.html" class="waves-effect">Sobre</a></li>
-<li class="bold"><a href="/realizejs/getting_started.html" class="waves-effect">Começando</a></li>
+    <li class="bold">
+    <form class="form container">
+        <input type="text" id="search-box" onkeyup="getSearch(event)" name="query" placeholder="Buscar" />
+    </form>
+</li>
+<li class="bold">
+    <ul id="search-results" class="container"></ul>
+</li>
+<li class="bold "><a href="/realizejs/about.html" class="waves-effect">Sobre</a></li>
+<li class="bold "><a href="/realizejs/getting_started.html" class="waves-effect">Começando</a></li>
+<li class="bold "><a href="/realizejs/configurations.html" class="waves-effect">Configurações</a></li>
+<li class="bold "><a href="/realizejs/i18n.html" class="waves-effect">Internacionalização (I18n)</a></li>
 
 <li class="no-padding">
     <ul class="collapsible collapsible-accordion">
@@ -47,204 +59,71 @@
             <a class="collapsible-header waves-effect components-collapsible active">Componentes</a>
             <div class="collapsible-body">
                 <ul>
-                    
                         
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/button.html" class="">Button</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/button_group.html" class="">ButtonGroup</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/container.html" class="">Container</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/flash.html" class="">Flash</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/form.html" class="">Form</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class="active"><a href="/realizejs/doc/components/grid.html" class="active">Grid</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/grid_form.html" class="">GridForm</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header.html" class="">Header</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_button.html" class="">HeaderButton</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_menu.html" class="">HeaderMenu</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_section.html" class="">HeaderSection</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input.html" class="">Input</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_datepicker.html" class="">InputDatepicker</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_error.html" class="">InputError</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_file.html" class="">InputFile</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_group.html" class="">InputGroup</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_hidden.html" class="">InputHidden</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_masked.html" class="">InputMasked</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_number.html" class="">InputNumber</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_password.html" class="">InputPassword</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_select.html" class="">InputSelect</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_switch.html" class="">InputSwitch</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_text.html" class="">InputText</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_textarea.html" class="">InputTextarea</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/menu.html" class="">Menu</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/modal.html" class="">Modal</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/modal_form.html" class="">Modal Form</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/notification_list.html" class="">NotificationList</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/sidenav.html" class="">Sidenav</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/table.html" class="">Table</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/tabs.html" class="">Tabs</a></li>
-                        
-                    
-                        
-                    
+                    <li class=""><a href="/realizejs/doc/components/button.html" class="">Button</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/button_group.html" class="">ButtonGroup</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/container.html" class="">Container</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/flash.html" class="">Flash</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/form.html" class="">Form</a></li>
+                                 
+                    <li class="active"><a href="/realizejs/doc/components/grid.html" class="active">Grid</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/grid_form.html" class="">GridForm</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header.html" class="">Header</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_button.html" class="">HeaderButton</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_menu.html" class="">HeaderMenu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_section.html" class="">HeaderSection</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/input.html" class="">Input</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_autocomplete.html" class="">InputAutocomplete</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/input_datefilter.html" class="">InputDatefilter</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_datepicker.html" class="">InputDatepicker</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_file.html" class="">InputFile</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_group.html" class="">InputGroup</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_hidden.html" class="">InputHidden</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_masked.html" class="">InputMasked</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_number.html" class="">InputNumber</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_password.html" class="">InputPassword</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_select.html" class="">InputSelect</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/input_switch.html" class="">InputSwitch</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_text.html" class="">InputText</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_textarea.html" class="">InputTextarea</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/menu.html" class="">Menu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal.html" class="">Modal</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal_form.html" class="">Modal Form</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/notification_list.html" class="">NotificationList</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/sidenav.html" class="">Sidenav</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/table.html" class="">Table</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/tabs.html" class="">Tabs</a></li>
+                       
                 </ul>
             </div>
         </li>
@@ -267,6 +146,8 @@
                         
                           
                           <li class=""><a href="/realizejs/doc/mixins/checkbox_component_mixin.html" class="">CheckboxComponent</a></li>
+                        
+                    
                         
                     
                         
@@ -312,6 +193,10 @@
                         
                           
                           <li class=""><a href="/realizejs/doc/mixins/grid_actions_mixin.html" class="">GridActions</a></li>
+                        
+                    
+                        
+                    
                         
                     
                         
@@ -418,7 +303,545 @@
         </li>
     </ul>
 </li -->
+<script>
+    window.store = [
+        
+            
+            
+            
 
+            
+                {
+                    "title": "Sobre",
+                    "desc": "page-desc.about",
+                    "content": "Equipe\n\n\n\n  \n    \n    Ariel Lindgren\n  \n\n  \n    \n    Pedro Jesus\n  \n\n  \n    \n    Lucas Toledo\n  \n\n  \n    \n    Rafael Ferrari\n  \n\n\n\n",
+                    "url": "/realizejs/about.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Button",
+                    "desc": "description.button",
+                    "content": "\n\nPropsname Stringicon Stringstyle Stringelement Stringhref StringactionUrl StringactionData Stringmethod StringisLoading Booleandisabled BooleandisableWith StringconfirmsWith FunctiononClick Functiontarget StringMixins\n\n\nPropsname String\nTexto apresentado no corpo do botão.\n\n\n\ndefault: ''\n\n\nicon String\nNome do ícone à ser inserido no botão. Caso não especificado, nenhum ícone será inserido. Provê suporte a todos os ícones do Google Material Icons. URL: https://design.google.com/icons/\n\n\n\ndefault: null\n\n\nstyle String\nEstilo que será utilizado no botão. Aceita os seguintes valores: 'danger', 'primary', 'warning', 'cancel'.\n\n\n\ndefault: null\n\n\nelement String\nNome do elemento DOM a ser renderizado. Pode ser do tipo \"button\" ou \"a\".\n\n\n\ndefault: \"button\"\n\n\nhref String\nEndereço URL de redirecionamento, caso element seja \"a\".\n\n\n\ndefault: null\n\n\nactionUrl String\nEndereço URL para requisição ajax. Utilize actionData para definir os dados enviados.\n\n\n\ndefault: null\n\n\nactionData String\nObjeto contendo dados enviados na requisição ajax.\n\n\n\ndefault: {}\n\n\nmethod String\nMétodo http utilizado na requisição ajax.\n\n\n\ndefault: \"GET\"\n\n\nisLoading Boolean\nCaso true, informa que o componente está sendo carregado.\n\n\n\ndefault: false\n\n\ndisabled Boolean\nCaso true, desabilita os eventos do botão. \n\n\n\ndefault: false\n\n\ndisableWith String\nTexto a ser apresentado quando botão está desabilitado. \n\n\n\ndefault: \"loading\"\n\n\nconfirmsWith Function\nTexto de alerta apresentado para confirmar ação.\n\n\n\ndefault: null\n\n\nonClick Function\nFunção callback executada ao receber evento de clique.\n\n\n\ndefault: function(event) {}\n\n\ntarget String\nUtilizado para renderizar a propriedade target ou formtarget do link (a) e do botão (button), respectivamente.\n\n\n\ndefault: null\n\n\nMixins\nO componente Button também possui os seguintes mixins: CSSClassMixin e RequestHandlerMixin.\n\n",
+                    "url": "/realizejs/doc/components/button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "ButtonGroup",
+                    "desc": "description.button_group",
+                    "content": "\n\nPropsbuttons Array\n\n\nPropsbuttons Array\nArray de props do componente Button.\n\n\n\ndefault: []\n\n\n",
+                    "url": "/realizejs/doc/components/button_group.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Configurações",
+                    "desc": "",
+                    "content": "\n\nOnde encontrá-lasrestUrlsrestMethodsGridpaginationparam StringperPage Number e perPageParam Stringwindow Numbertype StringperPageOptions Arraysortparam StringdirectionParam StringfieldValueFormat StringComo alterar essas configurações\n\nO RealizeJS possui algumas configurações padrão definidas em sua implementação, abaixo será apresentado cada uma delas e como fazer alterações.\n\n\n\nOnde encontrá-las\nAs configurações estão descritas no arquivo config.js.\n\nrestUrls\nNessa propriedade é definido os caminhos para chamadas REST. Os símbolos :url e :id são trocados dinamicamente por seus respectivos valores de acordo com as propriedades do componente. Ela é utilizada nos componentes Grid e GridForm, para definir as URLs das ações padrão de CRUD.\n\n\nconfig.js\n\nrestUrls: {\n    index: ':url',\n    show: ':url/:id',\n    add: ':url/new',\n    create: ':url',\n    edit: ':url/:id/edit',\n    update: ':url/:id',\n    destroy: ':url/:id'\n}\n\n\nrestMethods\nPropriedade que define os métodos do protocolo HTTP utilizado para cada ação definida na configuração restUrls.\n\n\nconfig.js\n\nrestMethods: {\n    index: 'GET',\n    show: 'GET',\n    add: 'GET',\n    create: 'POST',\n    edit: 'GET',\n    update: 'PUT',\n    destroy: 'DELETE'\n}\n\n\nGrid\nPropriedades globais utilizadas pelo componente Grid, para as funcionalidades de paginação e ordenação.\n\n\nconfig.js\n\ngrid: {\n    pagination: {\n      param: 'p',\n      perPageParam: 'per_page',\n      perPage: 20,\n      window: 4,\n      type: 'default',\n      perPageOptions: [\n            { name: '10', value: 10 },\n            { name: '20', value: 20 },\n            { name: '50', value: 50 }\n        ]\n    },\n    sort: {\n        param: 's',\n        directionParam: 's_dir',\n        fieldValueFormat: '%{field}'\n    }\n}\n\n\npagination\nEspecificação do funcionamento de cada um dos atributos do objeto grid.pagination. Alguns deles podem ser alterados diretamente no componente GridPagination, como pode ser visto no exemplo a seguir. Neste exemplo é criado um componente customizado, o GridPaginationExample. Em seu estado é atribuido as configurações sobrescritas que serão enviadas para o componente GridPagination.\n\n\n\n\nparam String\nNome do parâmetro na query string que define em qual página está o Grid para o back-end.\n\n\n\ndefault: 'p'\n\n\n\nExemplo\n\nurl?p=1\n\n\nperPage Number e perPageParam String\nperPage é quantidade de itens a serem exibidos por página no Grid, e perPageParam é o nome do parâmetro na query string onde essa informação é enviada para o back-end.\n\n\n\nperPage default: 20\nperPageParam default: 'per_page'\n\n\n\nExemplo\n\nurl?per_page=20\n\n\nwindow Number\nTamanho da janela de exibição da paginação.\n\n\n\ndefault: 4\n\n\ntype String\nPropriedade utilizada na renderização dos campos de paginação. São aceitos os valores default e input. No caso default, será apresentado os botões com os números (e dependendo da página, ir para primeira página e/ou ir para última página). No caso input, é renderizado um campo para o usuário inserir a página que deseja ir.\n\n\n\ndefault: 'default'\n\n\nperPageOptions Array\nÉ utilizado para montar o select de opções da quantidade de itens exibidos por página (altera o valor do perPage) dentro do componente GridPagination.\n\n\n\ndefault: [\n    { name: '10', value: 10 },\n    { name: '20', value: 20 },\n    { name: '50', value: 50 }\n]\n\n\nsort\nDescrição da funcionalidade dos atributos do objeto grid.sort.\n\nparam String\nNome do parâmetro na query string onde será enviado para o back-end qual campo deve ser ordenado no componente Grid. Dependendo da configuração (fieldValueFormat), o valor da direção da ordenação também pode ser enviado por esse parâmetro.\n\n\n\ndefault: 's'\n\n\n\nExemplo\n\ndefault:\nurl?s=created_at\n\nsort: {\n  param: 'sorting'\n}\nurl?sorting=created_at\n\n\ndirectionParam String\nNome do parâmetro na query string que define qual será a direção da ordenação do componente Grid.\n\n\n\ndefault: 's_dir'\n\n\n\nExemplo\n\ndefault:\nurl?s_dir=asc\n\nsort: {\n  directionParam: 'sorting_direction'\n}\nurl?sorting_direction=asc\n\n\nfieldValueFormat String\nPadrão utilizado para gerar o valor do parâmetro de ordenação enviado para o back-end (definido em param). O código que utiliza este padrão pode ser encontrado em Grid, no método parseSortPostDataValue.\n\n\n\ndefault: %{field}\n\n\n\nExemplo\n\ndefault:\nurl?s=created_at&amp;s_dir=desc\n\nsort: {\n  fieldValueFormat: '%{field},%{direction}'\n}\nurl?s=created_at,desc\n\n\nComo alterar essas configurações\nO Realize provê a função setConfig para a customização dessas configurações no seu objeto global. A seguir é apresentando um exemplo de uso desta função.\n\n\nExemplo\n\nRealize.setConfig(\n    {\n        restUrls: {\n            destroy: ':url/delete/:id'\n        },\n\n        restMethods: {\n            add: 'PUT'\n        },\n\n        grid: {\n            pagination: {\n                param: 'pagination',\n                perPageParam: 'per_table',\n                perPage: 10,\n                window: 2,\n            },\n            sort: {\n                param: 'sort',\n            }\n        }\n    }\n);\n\n\n",
+                    "url": "/realizejs/configurations.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Container",
+                    "desc": "description.container",
+                    "content": "\n\nPropsclassName String\n\n\nPropsclassName String\nClasse CSS do componente.\n\n\n\ndefault: \"row\"\n\n\n",
+                    "url": "/realizejs/doc/components/container.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Flash",
+                    "desc": "description.flash",
+                    "content": "\n\nPropsmessage Nodetype StringdismissTimeout NumbercanDismiss Booleandismissed BooleanonDismiss Function\n\n\nPropsmessage Node\nReactNode contendo o(s) erro(s) apresentados na notificação.\n\n\n\ndefault: ''\n\n\n\n\n/*String*/\nmessage: \"Campo 'product' vazio.\"\n\n/*Usando JSX*/\nmessage: (\n  &lt;ul&gt;\n    &lt;li&gt;Campo 'product' vazio.&lt;/li&gt;\n    &lt;li&gt;Campo 'price' vazio.&lt;/li&gt;\n  &lt;ul&gt;\n)\n\n/*Usando JS*/\n// lista de erros\nvar errors = [\n  \"Campo 'product' vazio.\",\n  \"Campo 'price' vazio.\"\n];\n// nas props\nmessage: (\n  React.createElement('ul', {},\n    errors.forEach(function(error) {\n      React.createElement('li', {}, error);\n    })\n  )\n)\n\n\ntype String\nTipo de notificação. Notificações flash podem ser do tipo \"info\", \"warning\", \"error\" ou \"success\".\n\n\n\ndefault: \"info\"\n\n\ndismissTimeout Number\nTempo de permanência da notificação, em ms. Caso o valor seja -1, a notificação permanece indefinidamente.\n\n\n\ndefault: -1\n\n\ncanDismiss Boolean\nCaso true, indica que a notificação pode ser fechada pelo usuário.\n\n\n\ndefault: true\n\n\ndismissed Boolean\nCaso true, indica que a notificação foi fechada. Caso o valor seja true, o componente não é renderizado.\n\n\n\ndefault: false\n\n\nonDismiss Function\nFunção de callback, que é executada após a notificação flash ser fechada.\n\n\n\ndefault: function() {return true;}\n\n\n",
+                    "url": "/realizejs/doc/components/flash.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Form",
+                    "desc": "description.form",
+                    "content": "\n\nPropsinputs Object obrigatórioaction Stringdata Objectmethod StringdataType StringcontentType Stringmultipart Booleanstyle StringthemeClassKey Stringresource StringsubmitButton ObjectotherButtons ObjectisLoading BooleanonSubmit FunctiononReset FunctionajaxSubmit Booleandisabled BooleanreadOnly Boolean\n\n\nPropsinputs Object obrigatório\nObjeto que define as props dos inputs do formulário, onde a chave é o id do input. Veja o componente Input.\n\n\n\ninputs: {\n  name: {\n    label: \"Nome do produto\"\n  },\n  price: {\n    label: \"Preço\",\n    component: \"masked\",\n    maskType: \"currency\"\n  }\n}\n\n\naction String\nEndereço URL para o envio dos dados do formulário.\n\n\n\ndefault: ''\n\n\ndata Object\nMapa para os valores dos inputs, onde a chave é o id do input e o valor dessa é o valor associado ao input.\n\n\n\ndefault: {}\n\n\n\n\ndata: {\n  name: 'Caneta Esferográfica',\n  price: 1.85\n}\n\n\nmethod String\nMétodo http utilizado para envio dos dados do formulário.\n\n\n\ndefault: \"POST\"\n\n\ndataType String\nTipo de dado esperado na resposta do servidor. Veja documentação detalhada em JQuery.ajax.\n\n\n\ndefault: Automático (xml, json, script, html)\n\n\n\n\n\"xml\"\n\nResposta como documento XML.\n\n\"html\"\n\nResposta como documento HTML.\n\n\"script\"\n\nResposta como código JavaScript.\n\n\"json\"\n\nResposta como documento JSON.\n\n\"jsonp\"\n\nResposta como documento JSON usando JSONP.\n\n\"text\"\n\nResposta como documento de texto.\n\nMultiplos valores, separados por espaço\n\nConverte o documento recebido de um determinado tipo para outro. Por exemplo, para uma resposta do tipo texto ser tratada como um objeto XML, use text xml.\n\n\n\ncontentType String\nTipo de dado enviado na requisição ao servidor. Veja mais em W3C/Forms.\n\n\n\ndefault: \"application/x-www-form-urlencoded\"\n\n\nmultipart Boolean\nCaso true, especifica que o formulário deve utilizar multipart/form-data como contentType.\n\n\n\ndefault: false\n\n\nstyle String\nEstilo da grid de inputs especificado nas configurações de tema.\n\n\n\ndefault: \"default\"\n\n\n\n\nRealize.themes.myCustomTheme = {\n  form: {\n    cssClass: 'custom-form'\n  }\n};\n\n// Nas props do form\n{\n  style: \"myCustomTheme\",\n  ...\n}\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"form\"\n\n\nresource String\nEssa propriedade serve para alterar o name e o id dos inputs gerados pelo componente Form. Veja o componente Input para mais informações e exemplos.\n\n\n\ndefault: null\n\n\nsubmitButton Object\nAtributos do botão submit.\n\n\n\nname String\n\nNome do botão submit ou chave da string de localização nas configurações de recursos i18n e l10n.\n\n\n\n\n\ndefault: \"actions.send\"\n\n\n\n\nicon String\n\nNome do ícone utilizado no botão.\n\n\n\n\n\ndefault: \"send\"\n\n\notherButtons Object\nLista de objetos especificando as props dos botões adicionais do formulário. Veja o componente Button.\n\n\n\ndefault: []\n\n\n\n\notherButtons: [\n  {\n    name: 'actions.clear',\n    icon: 'delete'\n    element: 'button',\n    type: 'reset'\n  }\n]\n\n\nisLoading Boolean\nCaso true, informa que o componente está sendo carregado.\n\n\n\ndefault: false\n\n\nonSubmit Function\nFunção callback executada ao receber evento submit.\n\n\n\ndefault: function(event, postData) {}\n\n\nonReset Function\nFunção callback executada ao receber event de reset.\n\n\n\ndefault: function(event) {}\n\n\najaxSubmit Boolean\nCaso true, a chamada ao backend será feita através de ajax.\n\n\n\ndefault: true\n\n\ndisabled Boolean\nCaso true, os itens do Form serão desabilitados.\n\n\n\ndefault: false\n\n\nreadOnly Boolean\nCaso true, os itens do Form serão somente para leitura.\n\n\n\ndefault: false\n\n\n",
+                    "url": "/realizejs/doc/components/form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Começando",
+                    "desc": "",
+                    "content": "Pré-requisitos\nAntes de você começar a usar o Realize.js para criar aplicações incríveis, recomendamos algumas coisas:\n\nSe familiarize um pouco com o React.js\nO Realize.js utiliza é construido sobre o framework React.js desenvolvido pelo Facebook, o que nos proporciona uma enorme flexibilidade e controle quando falamos de front-end.\n\n\nA maior vantagem que vemos no uso do React é que podemos encapsular todo o comportamento e apresentação de um componente \"de tela\" em um único local e de forma organizada, podendo focar no que realmente é importante.\n\n\nA documentação do React é bem extensa e cobre praticamente tudo que você precisa saber para começar a criar aplicações rapidamente e embora você não precise ser um expert em React para utilizar o Realize.js, um conhecimento dos conceitos básicos irá lhe ajudar muito!\n\nEscolha seu gestor de pacotes\nVocê pode obter o Realize.js pelo Bower ou como um npm package, que você pode usar em conjunto com o Webpack ou Browserify, por exemplo.\n\nInstalaçãoBower + Grunt\nAssumimos que você possui o Bower, o Grunt e suas dependências instalados. Caso não tenha, siga os guias em:\n\n\n\n\nhttp://bower.io/#getting-started\n\n\nhttp://gruntjs.com/getting-started\n\n\n\n\nCom ambos instalados, comece inicializando o bower. Abra seu terminal e execute os comandos abaixo:\n\n\n\n$ bower init\n? name: realize-bower (1)\n? version: 0.0.1\n? description: Using Realize.js with bower (2)\n? main file: app.js (3)\n? what types of modules does this package expose?\n❯◉ globals\n...\n\n\n\n\n\nforneça o nome da sua app\n\n\ne uma descrição\n\n\ndetermine o nome do arquivo que será gerado\n\n\n\n\nEm seguida, adicione o Realize.js\n\n\n\n$ bower install realizejs --save\n\n\n\nSeu arquivo bower.json deve se parecer com o conteúdo abaixo:\n\n\n\n{\n  \"name\": \"realize-bower\",\n  \"version\": \"0.0.1\",\n  \"authors\": [\n    \"Ariel Lindgren &lt;ariel@wkm.com.br&gt;\"\n  ],\n  \"description\": \"Using Realize.js with bower\",\n  \"main\": \"app.js\",\n  \"moduleType\": [\n    \"globals\"\n  ],\n  \"license\": \"MIT\",\n  \"ignore\": [\n    \"**/.*\",\n    \"node_modules\",\n    \"bower_components\",\n    \"test\",\n    \"tests\"\n  ],\n  \"dependencies\": {\n    \"realizejs\": \"~0.8.33\"\n  }\n}\n\n\n\nAo final deste processo, você estará com todas as dependências necessárias instaladas na sua aplicação. Agora basta criar uma tarefa do Grunt para consolidar todos esses recursos.\n\n\nPara tal, vamos começar declarando exports no arquivo bower.json:\n\n\n\n{\n  \"name\": \"realize-bower\",\n  \"version\": \"0.0.1\",\n  \"authors\": [\n    \"Ariel Lindgren &lt;ariel@wkm.com.br&gt;\"\n  ],\n  \"description\": \"Using Realize.js with bower\",\n  \"main\": \"app.js\",\n  \"moduleType\": [\n    \"globals\"\n  ],\n  \"license\": \"MIT\",\n  \"ignore\": [\n    \"**/.*\",\n    \"node_modules\",\n    \"bower_components\",\n    \"test\",\n    \"tests\"\n  ],\n  \"dependencies\": {\n    \"realizejs\": \"~0.8.33\"\n  },\n\n  \"exportsOverride\": {  (1)\n    \"jquery\": {\n      \"js\": \"dist/jquery.js\"\n    },\n    \"jquery-serialize-object\": {\n      \"js\": \"jquery.serialize-object.js\"\n    },\n    \"jquery.inputmask\":{\n      \"js\": [\"dist/jquery.inputmask.bundle.js\"]\n    },\n    \"materialize\": {\n      \"js\": \"dist/js/materialize.js\",\n      \"css\": \"dist/css/materialize.css\",\n      \"fonts\": [\"dist/font/material-design-icons/*\", \"dist/font/roboto/*\"]\n    },\n    \"realizejs\": {\n      \"js\": \"dist/js/realize.js\",\n      \"css\": \"dist/css/realize.css\"\n    },\n    \"string\":{\n      \"js\": [\"dist/string.js\"]\n    }\n  }\n}\n\n\n\n\n\ninsira esse bloco no seu bower.json\n\n\n\n\nAgora é necessário configurar o Grunt. Crie um arquivo chamado package.json com o seguinte conteúdo:\n\n\n\n{\n  \"name\": \"realize-bower\", (1)\n  \"version\": \"0.0.1\",\n  \"devDependencies\": { (2)\n\n  }\n}\n\n\n\n\n\nUse o mesmo nome dado em bower.json\n\n\na fim de não fixar as versões no momento em que escrevemos a documentação, deixamos o \"devDependencies\" vazio e vamos adicionar as referencias pelo shell\n\n\n\n\nCrie também um arquivo chamado Gruntfile.js com o seguinte conteúdo:\n\n\n\nvar path = require('path');\n\nmodule.exports = function(grunt) {\n\n  grunt.initConfig({\n    bower: {\n      install: {\n        options: {\n          targetDir: './vendor/assets', (1)\n          install: true,\n          verbose: true,\n          cleanTargetDir: false,\n          cleanBowerDir: false,\n\n          layout: function(type, component, source) {\n            var renamedType = type;\n            console.log(renamedType);\n            if (type == 'js') renamedType = 'javascripts';\n            else if (type == 'css') renamedType = 'stylesheets';\n\n\n            return path.join(renamedType, component);\n          }\n        }\n      }\n    }\n  });\n  grunt.loadNpmTasks('grunt-bower-task');\n  grunt.registerTask('default', ['bower:install']);\n};\n\n\n\n\n\nInforme aqui a pasta de destino para onde os recursos deverão ser copiados. No exemplo, usamos a pasta vendor/assets, no padrão do Rails.\n\n\n\n\nPara mais informações sobre tasks do Grunt, acesse o site do Grunt mencionado acima.\n\n\nAgora execute no shell:\n\n\n\n$ npm install grunt grunt-bower-task  --save-dev\n# ... output do node ... (1)\n$ grunt (2)\n\n\n\n\n\nNesse ponto, todas as dependencias do Grunt estarão instaladas\n\n\nExecuta a cópia dos arquivos exportados em exportsOverride do bower.json\n\n\n\n\nAo término, todos os arquivos estarão disponíveis na pasta especificada em targetDir, no exemplo acima, ./vendor/assets.\n\nConfiguração HTML\nApos instalação, certifique-se que os arquivos do RealizeJS estão sendo referenciados corretamente em seu cabeçalho e no corpo do HTML. Segue um exemplo de como pode ser feito a referência.\n\n\n\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;!--Importe Google Icon Font--&gt;\n    &lt;link href=\"http://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\"&gt;\n    &lt;!--Importe realizejs.css--&gt;\n    &lt;link type=\"text/css\" rel=\"stylesheet\" href=\"css/realizejs.min.css\"  media=\"screen,projection\"/&gt;\n\n    &lt;!--Adicione para informar o browser que o site é otimizado para dispositivos móveis--&gt;\n    &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n    &lt;script type=\"text/javascript\" src=\"js/realizejs.min.js\"&gt;&lt;/script&gt;\n  &lt;/body&gt;\n&lt;/html&gt;\n\n\nGuias\nDisponibilizaremos em breve alguns guias no nosso site para você começar a implementar suas aplicações com o Realize.js bem rápido caso você utilize Ruby on Rails ou Spring, mas você pode utilizá-lo com qualquer back-end que desejar.\n\n",
+                    "url": "/realizejs/getting_started.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Grid",
+                    "desc": "description.grid",
+                    "content": "\n\nPropriedades do GridDadosFiltroFunçõesI18nOrdenaçãoPaginaçãoTabela\n\n\nPropriedades do Grid\nAntes de navegar entre as propriedades, é bom saber que as seguintes props são obrigatórias:\n\n\n\n\ncolumns\n\n\nurl\n\n\n\nDadoscolumns Object obrigatório\nObjeto de configurações das colunas da tabela, onde a chave mapeia um campo do dataRows, e o valor são as props do componente TableHeader.\n\n\n\ncolumns: {\n    title: {\n      name:  'title',\n      label: 'Título',\n      format: 'text',\n      sortable: true,\n      sortDirection: 'asc',\n      sortFieldName: 'name',\n      onSort: function (sortData) {\n        return true;\n      }\n    }\n}\n\n\ncountParam String\nNome do parâmetro do objeto de dados recebido na resposta do servidor que contém a quantidade total de itens.\n\n\n\ndefault: 'count'\n\n\ndata Object\nObjeto contendo a lista de dados para inicializar a tabela e a quantidade total de itens. Caso eagerLoad seja true, os dados são requisitados ao servidor e data é ignorado.\n\n\n\ndata: {\n  count: 10,\n  dataRows: [\n    { name: 'Jonh Doe', age: '21', ...},\n    { name; 'Elliot Andersen', age: '22', ...}\n  ]\n}\n\n\n\n\ncount Number\n\nNúmero total de itens no servidor, utilizado para referência de paginação.\n\ndataRows Array\n\nLista de dados da tabela. Veja dataRowsParam para mapear o nome do parâmetro recebido do servidor.\n\n\n\n\n\ndefault: []\n\n\n\n\ndefault: 0\n\n\ndataRowIdField String\nNome da propriedade na lista de dados que contém os ids dos mesmos.\n\n\n\ndefault: 'id'\n\n\ndataRowsParam String\nNome do parâmetro do objeto de dados recebido na resposta do servidor que contém as linhas da tabela.\n\n\n\ndefault: 'data'\n\n\neagerLoad Boolean\nCaso true, o componente requisita os dados ao servidor no momento da inicialização. Caso contrário, inicializa com os valores provenientes de data.\n\n\n\ndefault: false\n\n\nselectedRowIdsParam String\nNome do parâmetro para envio dos ids das linhas selecionadas.\n\n\n\ndefault: 'rowIds'\n\n\nurl String obrigatório\nEndereço URL que serve os dados para a tabela.\n\nFiltrofilter Object\nObjeto de configuração do filtro da tabela. Veja a documentação de GridFilter para a definição completa dos props de filter.\n\n\n\ndefault: {}\n\n\n\n\nfilter: {\n  resource: 'q',\n  inputs: {\n    name:  { label: 'Nome'  },\n    price: { label: 'Preço' },\n    ...\n  },\n}\n\n\nrowSelectableFilter Function\nFunção para filtrar linhas habilitadas a serem selecionadas.\n\n\n\ndefault: null\n\n\n\n\nfunction rowSelectableFilter(rowData) {\n  // selecionar somente linhas pares\n  return rowData.id % 2 == 0;\n}\n\n\nFunçõesonClickRow Function\nFunção callback executado ao clicar em uma linha da tabela.\n\n\n\ndefault: null\n\n\n\n\nfunction onClickRow(event, rowData) {\n  // lógica executada ao clicar em uma linha.\n}\n\n\nonFilterSubmit Function\nFunção que será chamada sempre que o filtro for submetido.\n\n\n\ndefault: function(event, postData) { }\n\n\nonLoadError Function\nFunção callback executado em caso de erro no carregamento dos dados.\n\n\n\ndefault: null\n\n\n\n\nfunction onLoadError(xhr, status, error) {\n  // logica em caso de erro.\n}\n\n\nonLoadSuccess Function\nFunção callback executado ao carregar dados com sucesso.\n\n\n\ndefault: null\n\n\n\n\nfunction onLoadSuccess() {\n  // lógica ao carregar dados.\n}\n\n\nonSelectAllRows Function\nFunção que será chamada quando todas coluna for selecionada.\n\n\n\ndefault: function(event) { }\n\n\nonSelectDataRow Function\nFunção que será chamada quando uma coluna for selecionada.\n\n\n\ndefault: function(event, selectedRowIds) { }\n\n\nonRemoveSelection Function\nFunção que será chamada quando uma coluna for desselecionada.\n\n\n\ndefault: function(event) { }\n\n\nI18nemptyMessage String\nChave do recurso a ser utilizado quando não tiver nenhum dado na tabela.\n\n\n\ndefault: 'table.emptyResult'\n\n\nresource String\nNome de recursos i18n e l10n. Quando adicionado, busca o valor do recurso indicado.\n\n\n\ndefault: null\n\n\n\nExemplo\n\nresource: 'product'\n\n// No arquivo de recursos\nRealize.i18n.registerLocale({\n  resources: {\n    defaults: {\n      fields: {\n        price: 'Valor', // Esse recurso será ignorado.\n        created_at: 'Criado em',\n        active: 'Ativo'\n      }\n    },\n    product: {\n      fields: {\n        name: 'Nome',\n        price: 'Preço', // Será utilizado este recurso.\n        manufacturer_name: 'Fabricante',\n        barcode: 'Código de Barras',\n        group_name: 'Grupo',\n        subgroup_name: 'Subgrupo'\n      }\n    }\n  }\n}, 'pt-BR');\n\n\nOrdenaçãosortConfigs Object\nObjeto de configuração da ordenação das colunas das tabelas. Quando esse objeto de configurações é atribuido, sobrescreve-se as configurações globais.\n\n\n\ndefault: {}\n\n\n\n\nsortConfigs: {\n  param: 's',\n  valueFormat: '%{field} %{direction}'\n}\n\n\n\n\nparam String\n\nNome do parâmetro hash de ordenação acessado no backend.\n\n\n\n\n\ndefault: 's'\n\n\n\n\nvalueFormat String\n\nFormato da string de ordenação enviada como parâmetro de ordenação ao servidor. Pode-se utilizar as variáveis %{field} e %{direction} para substituir o id do campo e a direção atual do campo, respectivamente.\n\n\n\n\n\ndefault: '%{field} %{direction}'\n\n\n\n\ndirectionParam String\n\nNome do parâmetro na query string que define qual será a direção da ordenação.\n\n\n\n\n\ndefault: 's_dir'\n\n\nsortData Object\nObjeto de definição de ordenação padrão da tabela.\n\n\n\nsortData: {\n  field: 'name',\n  direction: 'asc'\n}\n\n\n\n\ndefault: {}\n\n\nPaginaçãopagination Boolean\nCaso false, desabilita a paginação dos dados.\n\n\n\ndefault: true\n\n\npaginationConfigs Object\nObjeto de configuração da barra de paginação. Quando esse objeto de configurações é atribuido, sobrescreve-se as configurações globais.\n\n\n\ndefault: {}\n\n\n\n\npaginationConfigs: {\n  param: 'p',\n  perPage: 10,\n  window: 4\n}\n\n\n\n\nparam String\n\nNome do parâmetro de paginação acessado pelo servidor.\n\n\n\n\n\ndefault: 'p'\n\n\npaginationOnTop Boolean\nCaso false, desabilita a barra de paginação no topo.\n\n\n\ndefault: true\n\n\nperPageOptions Array\nÉ utilizado para montar o select de opções da quantidade de itens exibidos por página (altera o valor do perPage).\n\n\n\ndefault: [\n    { name: '10', value: 10 },\n    { name: '20', value: 20 },\n    { name: '50', value: 50 }\n]\n\n\nTabelaactionButtons Object\nObjeto de definição dos botões de ações de linha e da tabela. Veja GridActionsMixin.\n\nclearThemeTable Boolean\nCaso true, desabilita tema utilizado na tabela.\n\n\n\ndefault: false\n\n\ncustomTableHeader String\nString com fragmento html para inserir cabeçalho customizado.\n\n\n\ndefault: null\n\n\nforceShowSelectAllButton Boolean\nCaso true e rowSelectableFilter esteja definido, força a apresentação da ação de selecionar todos os itens.\n\n\n\ndefault: false\n\n\nisLoading Boolean\nCaso false, informa que o componente ainda está sendo carregado.\n\n\n\ndefault: false\n\n\nselectable String\nEspera os seguintes valores: multiple, none ou one.\nCaso none, desabilita a seleção de linhas na tabela.\n\n\n\ndefault: 'multiple'\n\n\ntableClassName String\nClasse css do elemento da tabela.\n\n\n\ndefault: undefined\n\n\ntableRowCssClass Function\nFunção para configuração da classe css da linha.\n\n\n\ndefault: null\n\n\n\n\nfunction (rowData) {\n  // estilizar linhas pares e ímpares\n  return rowData.id % 2 == 0 ? 'par' : 'impar';\n}\n\n\n",
+                    "url": "/realizejs/doc/components/grid.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "GridForm",
+                    "desc": "description.grid_form",
+                    "content": "{% translate_file doc/components/grid_form.adoc %}\n",
+                    "url": "/realizejs/doc/components/grid_form.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Header",
+                    "desc": "description.header",
+                    "content": "{% translate_file doc/components/header.adoc %}",
+                    "url": "/realizejs/doc/components/header.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderButton",
+                    "desc": "description.header_button",
+                    "content": "{% translate_file doc/components/header_button.adoc %}",
+                    "url": "/realizejs/doc/components/header_button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderMenu",
+                    "desc": "description.header_menu",
+                    "content": "{% translate_file doc/components/header_menu.adoc %}",
+                    "url": "/realizejs/doc/components/header_menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderSection",
+                    "desc": "description.header_section",
+                    "content": "{% translate_file doc/components/header_section.adoc %}\n",
+                    "url": "/realizejs/doc/components/header_section.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Internacionalização (I18n)",
+                    "desc": "",
+                    "content": "{% translate_file guides/i18n.adoc %}\n",
+                    "url": "/realizejs/i18n.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "",
+                    "desc": "",
+                    "content": "\n    \n        \n            \n                \n                    \n                \n                {% t cont%}\n                \n                  {% t get-started %}\n                \n                v. {{ site.realize_version}} beta\n                \n            \n        \n    \n\n\n\n    \n        \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t about%}\n                            {% t about-intro %}\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t getting-started%}\n                            {% t getting-stated-intro %}\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t documentation%}\n                            {% t documentation-intro %}\n                        \n                    \n                \n            \n        \n    \n\n",
+                    "url": "/realizejs/"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Input",
+                    "desc": "description.input",
+                    "content": "{% translate_file doc/components/input.adoc %}\n",
+                    "url": "/realizejs/doc/components/input.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputAutocomplete",
+                    "desc": "description.input_autocomplete",
+                    "content": "{% translate_file doc/components/input_autocomplete.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_autocomplete.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatefilter",
+                    "desc": "description.input_datefilter",
+                    "content": "{% translate_file doc/components/input_datefilter.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_datefilter.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatepicker",
+                    "desc": "description.input_datepicker",
+                    "content": "{% translate_file doc/components/input_datepicker.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_datepicker.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputFile",
+                    "desc": "description.input_file",
+                    "content": "{% translate_file doc/components/input_file.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_file.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputGroup",
+                    "desc": "description.input_group",
+                    "content": "{% translate_file doc/components/input_group.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_group.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputHidden",
+                    "desc": "description.input_hidden",
+                    "content": "{% translate_file doc/components/input_hidden.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_hidden.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputMasked",
+                    "desc": "description.input_masked",
+                    "content": "{% translate_file doc/components/input_masked.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_masked.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputNumber",
+                    "desc": "description.input_number",
+                    "content": "{% translate_file doc/components/input_number.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_number.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputPassword",
+                    "desc": "description.input_password",
+                    "content": "{% translate_file doc/components/input_password.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_password.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputSelect",
+                    "desc": "description.input_select",
+                    "content": "{% translate_file doc/components/input_select.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_select.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputSwitch",
+                    "desc": "description.input_switch",
+                    "content": "{% translate_file doc/components/input_switch.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_switch.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputText",
+                    "desc": "description.input_text",
+                    "content": "{% translate_file doc/components/input_text.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_text.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputTextarea",
+                    "desc": "description.input_textarea",
+                    "content": "{% translate_file doc/components/input_textarea.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_textarea.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Menu",
+                    "desc": "description.menu",
+                    "content": "{% translate_file doc/components/menu.adoc %}",
+                    "url": "/realizejs/doc/components/menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal",
+                    "desc": "description.modal",
+                    "content": "{% translate_file doc/components/modal.adoc %}",
+                    "url": "/realizejs/doc/components/modal.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal Form",
+                    "desc": "description.modal_form",
+                    "content": "{% translate_file doc/components/modal_form.adoc %}",
+                    "url": "/realizejs/doc/components/modal_form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "NotificationList",
+                    "desc": "description.notification_list",
+                    "content": "{% translate_file doc/components/notification_list.adoc %}\n",
+                    "url": "/realizejs/doc/components/notification_list.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Sidenav",
+                    "desc": "description.sidenav",
+                    "content": "{% translate_file doc/components/sidenav.adoc %}\n",
+                    "url": "/realizejs/doc/components/sidenav.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Table",
+                    "desc": "description.table",
+                    "content": "{% translate_file doc/components/table.adoc %}\n",
+                    "url": "/realizejs/doc/components/table.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Tabs",
+                    "desc": "description.tabs",
+                    "content": "{% translate_file doc/components/tabs.adoc %}\n",
+                    "url": "/realizejs/doc/components/tabs.html"
+                },
+        
+            
+            
+            
+
+            
+    ];
+</script>
     </li>
   </ul>
   <div class="navbar-fixed hide-on-large-only">
@@ -471,12 +894,47 @@
           <div class="row">
             <div class="col s12 m9 l10">
               
-                <div id="playground"></div>
+                <div class="doc-examples"><div id="playground"></div></div>
 <script type="text" id="demo_grid.html">
- ReactDOM.render(<div>
+ let columns = {
+    name: { name:  'name', label: 'Name', format: 'text' },
+    age: { name: 'age', label: 'Age', format: 'text' },
+    company: { name: 'company', label: 'Company', format: 'text' },
+    email: { name: 'email', label: 'Email', format: 'text' }
+};
+
+let data = {
+    dataRows: [
+        {"id":"5825ede4682afc040d87dcf2","age":28,"name":"Tia Lawson","company":"ACCUPRINT","email":"tialawson@accuprint.com"},
+        {"id":"5825ede4b5afe3ef9d8a2d68","age":37,"name":"Candice Cobb","company":"MAKINGWAY","email":"candicecobb@makingway.com"},
+        {"id":"5825ede4e0b0d03b37f94778","age":24,"name":"Olson Steele","company":"ORBIFLEX","email":"olsonsteele@orbiflex.com"},
+        {"id":"5825ede48c2c22966fb97a1f","age":23,"name":"Heather Cash","company":"SHOPABOUT","email":"heathercash@shopabout.com"},
+        {"id":"5825ede46c23271944bc2449","age":28,"name":"Lora Reilly","company":"BRAINQUIL","email":"lorareilly@brainquil.com"},
+        {"id":"5825ede44d83241068b37aab","age":40,"name":"Bridges Long","company":"DOGSPA","email":"bridgeslong@dogspa.com"},
+        {"id":"5825ede4b9934a785828a28a","age":29,"name":"Schroeder Zamora","company":"KOFFEE","email":"schroederzamora@koffee.com"},
+        {"id":"5825ede422d772548e00e557","age":29,"name":"Lynne Ortiz","company":"CANDECOR","email":"lynneortiz@candecor.com"},
+        {"id":"5825ede4bbbd274e299b1156","age":34,"name":"Mayra Stout","company":"UNISURE","email":"mayrastout@unisure.com"},
+        {"id":"5825ede4de3762d3e6394d3b","age":26,"name":"Lupe Wade","company":"GLOBOIL","email":"lupewade@globoil.com"},
+        {"id":"5825ede4b7914c13cc0d71eb","age":36,"name":"Eula Peck","company":"ZANILLA","email":"eulapeck@zanilla.com"},
+        {"id":"5825ede48b6eadd8dc9fd5be","age":32,"name":"Martha Merritt","company":"EXERTA","email":"marthamerritt@exerta.com"},
+        {"id":"5825ede4ce2bc3ba29462890","age":29,"name":"Andrews Mann","company":"TALENDULA","email":"andrewsmann@talendula.com"},
+        {"id":"5825ede4da989a75c5574f81","age":32,"name":"Rivers Lawrence","company":"COMVERGES","email":"riverslawrence@comverges.com"},
+        {"id":"5825ede45218afcbae24b2e2","age":32,"name":"Browning Anthony","company":"TURNLING","email":"browninganthony@turnling.com"},
+        {"id":"5825ede452180a043c934b6f","age":35,"name":"Monroe Brown","company":"ZANITY","email":"monroebrown@zanity.com"},
+        {"id":"5825ede4b0d6f98528b732e6","age":25,"name":"Rosanne Bartlett","company":"DYNO","email":"rosannebartlett@dyno.com"},
+        {"id":"5825ede4799fea15e2f65f3e","age":23,"name":"Medina Griffith","company":"CUBICIDE","email":"medinagriffith@cubicide.com"},
+        {"id":"5825ede4f237b7a4649a7988","age":31,"name":"Terry Joyce","company":"GEEKOSIS","email":"terryjoyce@geekosis.com"},
+        {"id":"5825ede4b5d94b002692ceed","age":32,"name":"Garrett Sharp","company":"AQUAMATE","email":"garrettsharp@aquamate.com"}
+    ],
+    count: 100
+}
+
+ReactDOM.render(<div>
     <Grid
-            url='/items'
-            eagerLoad
+        url=''
+        eagerLoad={false}
+        columns={columns}
+        data={data}
     />
 </div>, mountNode)
 </script>
@@ -490,49 +948,70 @@
               <div class="asciidoctor">
                 <div id="preamble">
 <div class="sectionbody">
-<div id="toc" class="toc-wrapper pin-top"><div style="height: 1px;"><ul class="sectlevel1 table-of-contents"><li><a href="#props">Props</a><li><a href="#url-span-class-prop-type-prop-type-string-string-span-span-class-prop-required-obrigatório-span">url <span class="prop-type prop-type-string">String</span> <span class="prop-required">obrigatório</span></a></li><li><a href="#columns-span-class-prop-type-prop-type-object-object-span-span-class-prop-required-obrigatório-span">columns <span class="prop-type prop-type-object">Object</span> <span class="prop-required">obrigatório</span></a></li><li><a href="#data-span-class-prop-type-prop-type-object-object-span">data <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#eagerload-span-class-prop-type-prop-type-boolean-boolean-span">eagerLoad <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#resource-span-class-prop-type-prop-type-string-string-span">resource <span class="prop-type prop-type-string">String</span></a></li><li><a href="#filter-span-class-prop-type-prop-type-object-object-span">filter <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#pagination-span-class-prop-type-prop-type-boolean-boolean-span">pagination <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#paginationontop-span-class-prop-type-prop-type-boolean-boolean-span">paginationOnTop <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#paginationconfigs-span-class-prop-type-prop-type-object-object-span">paginationConfigs <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#sortconfigs-span-class-prop-type-prop-type-object-object-span">sortConfigs <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#sortdata-span-class-prop-type-prop-type-object-object-span">sortData <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#datarowsparam-span-class-prop-type-prop-type-string-string-span">dataRowsParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#countparam-span-class-prop-type-prop-type-string-string-span">countParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#selectedrowidsparam-span-class-prop-type-prop-type-string-string-span">selectedRowIdsParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#actionbuttons-span-class-prop-type-prop-type-object-object-span">actionButtons <span class="prop-type prop-type-object">Object</span></a></li><li><a href="#isloading-span-class-prop-type-prop-type-boolean-boolean-span">isLoading <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#selectable-span-class-prop-type-prop-type-boolean-boolean-span">selectable <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#clearthemetable-span-class-prop-type-prop-type-boolean-boolean-span">clearThemeTable <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#tableclassname-span-class-prop-type-prop-type-string-string-span">tableClassName <span class="prop-type prop-type-string">String</span></a></li><li><a href="#tablerowcssclass-span-class-prop-type-prop-type-function-function-span">tableRowCssClass <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#customtableheader-span-class-prop-type-prop-type-string-string-span">customTableHeader <span class="prop-type prop-type-string">String</span></a></li><li><a href="#rowselectablefilter-span-class-prop-type-prop-type-function-function-span">rowSelectableFilter <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#forceshowselectallbutton-span-class-prop-type-prop-type-boolean-boolean-span">forceShowSelectAllButton <span class="prop-type prop-type-boolean">Boolean</span></a></li><li><a href="#onloadsuccess-span-class-prop-type-prop-type-function-function-span">onLoadSuccess <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#onloaderror-span-class-prop-type-prop-type-function-function-span">onLoadError <span class="prop-type prop-type-function">Function</span></a></li><li><a href="#onclickrow-span-class-prop-type-prop-type-function-function-span">onClickRow <span class="prop-type prop-type-function">Function</span></a></li></li></ul></div></div>
+<div id="toc" class="toc-wrapper pin-top"><div style="height: 1px;"><ul class="sectlevel1 table-of-contents"><li><a href="#propriedades-do-em-grid-em">Propriedades do <em>Grid</em></a><li><a href="#dados">Dados</a></li><li><a href="#filtro">Filtro</a></li><li><a href="#funções">Funções</a></li><li><a href="#i18n">I18n</a></li><li><a href="#ordenação">Ordenação</a></li><li><a href="#paginação">Paginação</a></li><li><a href="#tabela">Tabela</a></li></li></ul></div></div>
 </div>
 </div>
-<div class="sect2"><h3 id="props" class="  section scrollspy">Props</h3><div class="sect2"><h3 id="url-span-class-prop-type-prop-type-string-string-span-span-class-prop-required-obrigatório-span" class="  section scrollspy">url <span class="prop-type prop-type-string">String</span> <span class="prop-required">obrigatório</span></h3><div class="paragraph">
-<p>Endereço URL que serve os dados para a tabela.</p>
-</div></div>
-<div class="sect2"><h3 id="columns-span-class-prop-type-prop-type-object-object-span-span-class-prop-required-obrigatório-span" class="  section scrollspy">columns <span class="prop-type prop-type-object">Object</span> <span class="prop-required">obrigatório</span></h3><div class="paragraph">
-<p>Objeto de configurações das colunas da tabela, onde a chave especifica o <em>id</em> do <em>input</em> e o valor são as props do componente <a href="./table_header.html">TableHeader</a>.</p>
+<div class="sect2"><h3 id="propriedades-do-em-grid-em" class="  section scrollspy">Propriedades do <em>Grid</em></h3><div class="paragraph">
+<p>Antes de navegar entre as propriedades, é bom saber que as seguintes <em>props</em> são obrigatórias:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#columns">columns</a></p>
+</li>
+<li>
+<p><a href="#url">url</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2"><h3 id="dados" class="  section scrollspy">Dados</h3><div class="sect3"><h4 id="columns" class="  section scrollspy">columns <span class="prop-type prop-type-object">Object</span> <span class="prop-required">obrigatório</span></h4><div class="paragraph">
+<p>Objeto de configurações das colunas da tabela, onde a chave mapeia um campo do <em>dataRows</em>, e o valor são as props do componente <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/table/table_header.jsx">TableHeader</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">columns: {
-  title: {
-    name:  'title',
-    label: 'Título',
-    format: 'text',
-    sortable: true,
-    sortDirection: 'asc',
-    sortFieldName: 'name',
-    onSort: function (sortData) {
-      return true;
+    title: {
+      name:  'title',
+      label: 'Título',
+      format: 'text',
+      sortable: true,
+      sortDirection: 'asc',
+      sortFieldName: 'name',
+      onSort: function (sortData) {
+        return true;
+      }
     }
-  }
 }</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="data-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">data <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="countparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">countParam <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>Nome do parâmetro do objeto de dados recebido na resposta do servidor que contém a quantidade total de itens.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'count'</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="data-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">data <span class="prop-type prop-type-object">Object</span></h4><div class="paragraph">
 <p>Objeto contendo a lista de dados para inicializar a tabela e a quantidade total de itens. Caso <span class="prop-name"><b>eagerLoad</b></span> seja <span class="prop-value"><b><i>true</b></i></span>, os dados são requisitados ao servidor e <span class="prop-name"><b>data</b></span> é ignorado.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">data: {
+  count: 10,
   dataRows: [
-    ['linha_1_coluna_1', 'linha_1_coluna_2', ...],
-    ['linha_2_coluna_1', 'linha_2_coluna_2', ...],
-  ],
-  count: 10
-  }
+    { name: 'Jonh Doe', age: '21', ...},
+    { name; 'Elliot Andersen', age: '22', ...}
+  ]
 }</code></pre>
 </div>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1">count <span class="prop-type prop-type-number">Number</span></dt>
+<dd>
+<p>Número total de itens no servidor, utilizado para referência de paginação.</p>
+</dd>
 <dt class="hdlist1">dataRows <span class="prop-type prop-type-array">Array</span></dt>
 <dd>
 <p>Lista de dados da tabela. Veja <span class="prop-name"><b>dataRowsParam</b></span> para mapear o nome do parâmetro recebido do servidor.</p>
@@ -544,69 +1023,47 @@
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">default: []</code></pre>
 </div>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">count <span class="prop-type prop-type-number">Number</span></dt>
-<dd>
-<p>Número total de itens no servidor, utilizado para referência de paginação.</p>
-</dd>
-</dl>
-</div>
 <div class="listingblock prop-default">
 <div class="content">
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 0</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="eagerload-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">eagerLoad <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="datarowidfield-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">dataRowIdField <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>Nome da propriedade na lista de dados que contém os <em>ids</em> dos mesmos.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code>default: 'id'</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="datarowsparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">dataRowsParam <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>Nome do parâmetro do objeto de dados recebido na resposta do servidor que contém as linhas da tabela.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'data'</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="eagerload-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">eagerLoad <span class="prop-type prop-type-boolean">Boolean</span></h4><div class="paragraph">
 <p>Caso <span class="prop-value"><b><i>true</b></i></span>, o componente requisita os dados ao servidor no momento da inicialização. Caso contrário, inicializa com os valores provenientes de <span class="prop-name"><b>data</b></span>.</p>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: true</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="resource-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">resource <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
-<p>Nome do objeto de recursos i18n e l10n.</p>
+<div class="sect3"><h4 id="selectedrowidsparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">selectedRowIdsParam <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>Nome do parâmetro para envio dos <em>ids</em> das linhas selecionadas.</p>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">// No arquivo de recursos
-Realize.i18n.registerLocale({
-  resources: {
-    defaults: {
-      fields: {
-        created_at: 'Criado em',
-        active: 'Ativo'
-      }
-    },
-    product: {
-      fields: {
-        name: 'Nome',
-        price: 'Preço',
-        manufacturer_name: 'Fabricante',
-        barcode: 'Código de Barras',
-        group_name: 'Grupo',
-        subgroup_name: 'Subgrupo'
-      }
-    }
-  }
-}, 'pt-BR');
-
-// Nas props do componente
-resource: 'product',
-columns: {
-  name:  {...},
-  price: {...},
-  ...
-}</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'rowIds'</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="filter-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">filter <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="url" class="  section scrollspy">url <span class="prop-type prop-type-string">String</span> <span class="prop-required">obrigatório</span></h4><div class="paragraph">
+<p>Endereço URL que serve os dados para a tabela.</p>
+</div></div></div>
+<div class="sect2"><h3 id="filtro" class="  section scrollspy">Filtro</h3><div class="sect3"><h4 id="filter-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">filter <span class="prop-type prop-type-object">Object</span></h4><div class="paragraph">
 <p>Objeto de configuração do filtro da tabela. Veja a documentação de <a href="./grid_filter.html">GridFilter</a> para a definição completa dos props de filter.</p>
 </div>
 <div class="listingblock prop-default">
@@ -626,54 +1083,146 @@ columns: {
 }</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="pagination-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">pagination <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
-<p>Caso <span class="prop-value"><b><i>false</b></i></span>, desabilita a paginação dos dados.</p>
+<div class="sect3"><h4 id="rowselectablefilter-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">rowSelectableFilter <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função para filtrar linhas habilitadas a serem selecionadas.</p>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="paginationontop-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">paginationOnTop <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
-<p>Caso <span class="prop-value"><b><i>false</b></i></span>, desabilita a barra de paginação no topo.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: true</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="paginationconfigs-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">paginationConfigs <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
-<p>Objeto de configuração da barra de paginação. Veja a documentação de <a href="./grid_pagination.html">GridPagination</a> para a definição completa das props de <span class="prop-name"><b>paginationConfigs</b></span>.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">paginationConfigs: {
-  param: 'p',
-  perPage: 10,
-  window: 4
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function rowSelectableFilter(rowData) {
+  // selecionar somente linhas pares
+  return rowData.id % 2 == 0;
 }</code></pre>
 </div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">param <span class="prop-type prop-type-string">String</span></dt>
-<dd>
-<p>Nome do parâmetro de paginação acessado pelo servidor.</p>
-</dd>
-</dl>
+</div></div></div>
+<div class="sect2"><h3 id="funções" class="  section scrollspy">Funções</h3><div class="sect3"><h4 id="onclickrow-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onClickRow <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função <em>callback</em> executado ao clicar em uma linha da tabela.</p>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'p'</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onClickRow(event, rowData) {
+  // lógica executada ao clicar em uma linha.
+}</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="sortconfigs-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">sortConfigs <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
-<p>Objeto de configuração da ordenação das colunas das tabelas.</p>
+<div class="sect3"><h4 id="onfiltersubmit-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onFilterSubmit <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função que será chamada sempre que o filtro for submetido.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code>default: function(event, postData) { }</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="onloaderror-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onLoadError <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função <em>callback</em> executado em caso de erro no carregamento dos dados.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onLoadError(xhr, status, error) {
+  // logica em caso de erro.
+}</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="onloadsuccess-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onLoadSuccess <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função <em>callback</em> executado ao carregar dados com sucesso.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onLoadSuccess() {
+  // lógica ao carregar dados.
+}</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="onselectallrows-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onSelectAllRows <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função que será chamada quando todas coluna for selecionada.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code>default: function(event) { }</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="onselectdatarow-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onSelectDataRow <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função que será chamada quando uma coluna for selecionada.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code>default: function(event, selectedRowIds) { }</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="onremoveselection-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onRemoveSelection <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
+<p>Função que será chamada quando uma coluna for desselecionada.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code>default: function(event) { }</code></pre>
+</div>
+</div></div></div>
+<div class="sect2"><h3 id="i18n" class="  section scrollspy">I18n</h3><div class="sect3"><h4 id="emptymessage-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">emptyMessage <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>Chave do recurso a ser utilizado quando não tiver nenhum dado na tabela.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code>default: 'table.emptyResult'</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="resource-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">resource <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>Nome de recursos i18n e l10n. Quando adicionado, busca o <em>valor</em> do recurso indicado.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div>
+<div id="app-listing" class="listingblock">
+<div class="title">Exemplo</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">resource: 'product'
+
+// No arquivo de recursos
+Realize.i18n.registerLocale({
+  resources: {
+    defaults: {
+      fields: {
+        price: 'Valor', // Esse recurso será ignorado.
+        created_at: 'Criado em',
+        active: 'Ativo'
+      }
+    },
+    product: {
+      fields: {
+        name: 'Nome',
+        price: 'Preço', // Será utilizado este recurso.
+        manufacturer_name: 'Fabricante',
+        barcode: 'Código de Barras',
+        group_name: 'Grupo',
+        subgroup_name: 'Subgrupo'
+      }
+    }
+  }
+}, 'pt-BR');</code></pre>
+</div>
+</div></div></div>
+<div class="sect2"><h3 id="ordenação" class="  section scrollspy">Ordenação</h3><div class="sect3"><h4 id="sortconfigs-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">sortConfigs <span class="prop-type prop-type-object">Object</span></h4><div class="paragraph">
+<p>Objeto de configuração da ordenação das colunas das tabelas. Quando esse objeto de configurações é atribuido, sobrescreve-se as <a href="../config.html">configurações globais</a>.</p>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
@@ -713,8 +1262,21 @@ columns: {
 <div class="content">
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">default: '%{field} %{direction}'</code></pre>
 </div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">directionParam <span class="prop-type prop-type-string">String</span></dt>
+<dd>
+<p>Nome do parâmetro na <em>query string</em> que define qual será a direção da ordenação.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 's_dir'</code></pre>
+</div>
 </div></div>
-<div class="sect2"><h3 id="sortdata-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">sortData <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="sortdata-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">sortData <span class="prop-type prop-type-object">Object</span></h4><div class="paragraph">
 <p>Objeto de definição de ordenação padrão da tabela.</p>
 </div>
 <div class="listingblock">
@@ -729,51 +1291,69 @@ columns: {
 <div class="content">
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
 </div>
-</div></div>
-<div class="sect2"><h3 id="datarowsparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">dataRowsParam <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
-<p>Nome do parâmetro do objeto de dados recebido na resposta do servidor que contém as linhas da tabela.</p>
+</div></div></div>
+<div class="sect2"><h3 id="paginação" class="  section scrollspy">Paginação</h3><div class="sect3"><h4 id="pagination-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">pagination <span class="prop-type prop-type-boolean">Boolean</span></h4><div class="paragraph">
+<p>Caso <span class="prop-value"><b><i>false</b></i></span>, desabilita a paginação dos dados.</p>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'data'</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: true</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="countparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">countParam <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
-<p>Nome do parâmetro do objeto de dados recebido na resposta do servidor que contém a quantidade total de itens.</p>
+<div class="sect3"><h4 id="paginationconfigs-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">paginationConfigs <span class="prop-type prop-type-object">Object</span></h4><div class="paragraph">
+<p>Objeto de configuração da barra de paginação. Quando esse objeto de configurações é atribuido, sobrescreve-se as <a href="../config.html">configurações globais</a>.</p>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'count'</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: {}</code></pre>
 </div>
-</div></div>
-<div class="sect2"><h3 id="selectedrowidsparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">selectedRowIdsParam <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
-<p>Nome do parâmetro para envio dos <em>ids</em> das linhas selecionadas.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">paginationConfigs: {
+  param: 'p',
+  perPage: 10,
+  window: 4
+}</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">param <span class="prop-type prop-type-string">String</span></dt>
+<dd>
+<p>Nome do parâmetro de paginação acessado pelo servidor.</p>
+</dd>
+</dl>
 </div>
 <div class="listingblock prop-default">
 <div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'rowIds'</code></pre>
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'p'</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="actionbuttons-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">actionButtons <span class="prop-type prop-type-object">Object</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="paginationontop-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">paginationOnTop <span class="prop-type prop-type-boolean">Boolean</span></h4><div class="paragraph">
+<p>Caso <span class="prop-value"><b><i>false</b></i></span>, desabilita a barra de paginação no topo.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: true</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="perpageoptions-span-class-prop-type-prop-type-array-array-span" class="  section scrollspy">perPageOptions <span class="prop-type prop-type-array">Array</span></h4><div class="paragraph">
+<p>É utilizado para montar o <em>select</em> de opções da quantidade de itens exibidos por página (altera o valor do <em>perPage</em>).</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: [
+    { name: '10', value: 10 },
+    { name: '20', value: 20 },
+    { name: '50', value: 50 }
+]</code></pre>
+</div>
+</div></div></div>
+<div class="sect2"><h3 id="tabela" class="  section scrollspy">Tabela</h3><div class="sect3"><h4 id="actionbuttons-span-class-prop-type-prop-type-object-object-span" class="  section scrollspy">actionButtons <span class="prop-type prop-type-object">Object</span></h4><div class="paragraph">
 <p>Objeto de definição dos botões de ações de linha e da tabela. Veja <a href="../mixins/grid_actions_mixin.html">GridActionsMixin</a>.</p>
 </div></div>
-<div class="sect2"><h3 id="isloading-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">isLoading <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
-<p>Caso <span class="prop-value"><b><i>false</b></i></span>, informa que o componente ainda está sendo carregado.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="selectable-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">selectable <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
-<p>Caso <span class="prop-value"><b><i>false</b></i></span>, desabilita a seleção de linhas na tabela.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="clearthemetable-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">clearThemeTable <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="clearthemetable-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">clearThemeTable <span class="prop-type prop-type-boolean">Boolean</span></h4><div class="paragraph">
 <p>Caso <span class="prop-value"><b><i>true</b></i></span>, desabilita tema utilizado na tabela.</p>
 </div>
 <div class="listingblock prop-default">
@@ -781,7 +1361,40 @@ columns: {
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="tableclassname-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">tableClassName <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="customtableheader-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">customTableHeader <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>String com fragmento html para inserir cabeçalho customizado.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="forceshowselectallbutton-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">forceShowSelectAllButton <span class="prop-type prop-type-boolean">Boolean</span></h4><div class="paragraph">
+<p>Caso <span class="prop-value"><b><i>true</b></i></span> e <span class="prop-name"><b>rowSelectableFilter</b></span> esteja definido, força a apresentação da ação de selecionar todos os itens.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="isloading-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">isLoading <span class="prop-type prop-type-boolean">Boolean</span></h4><div class="paragraph">
+<p>Caso <span class="prop-value"><b><i>false</b></i></span>, informa que o componente ainda está sendo carregado.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="selectable-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">selectable <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
+<p>Espera os seguintes valores: <span class="prop-value"><b><i>multiple</b></i></span>, <span class="prop-value"><b><i>none</b></i></span> ou <span class="prop-value"><b><i>one</b></i></span>.<br>
+Caso <span class="prop-value"><b><i>none</b></i></span>, desabilita a seleção de linhas na tabela.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'multiple'</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="tableclassname-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">tableClassName <span class="prop-type prop-type-string">String</span></h4><div class="paragraph">
 <p>Classe css do elemento da tabela.</p>
 </div>
 <div class="listingblock prop-default">
@@ -789,7 +1402,7 @@ columns: {
 <pre class="highlight"><code class="language-javascript" data-lang="javascript">default: undefined</code></pre>
 </div>
 </div></div>
-<div class="sect2"><h3 id="tablerowcssclass-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">tableRowCssClass <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
+<div class="sect3"><h4 id="tablerowcssclass-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">tableRowCssClass <span class="prop-type prop-type-function">Function</span></h4><div class="paragraph">
 <p>Função para configuração da classe css da linha.</p>
 </div>
 <div class="listingblock prop-default">
@@ -804,84 +1417,7 @@ columns: {
   return rowData.id % 2 == 0 ? 'par' : 'impar';
 }</code></pre>
 </div>
-</div></div>
-<div class="sect2"><h3 id="customtableheader-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">customTableHeader <span class="prop-type prop-type-string">String</span></h3><div class="paragraph">
-<p>String com fragmento html para inserir cabeçalho customizado.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="rowselectablefilter-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">rowSelectableFilter <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
-<p>Função para filtrar linhas habilitadas a serem selecionadas.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">function rowSelectableFilter(rowData) {
-  // selecionar somente linhas pares
-  return rowData.id % 2 == 0;
-}</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="forceshowselectallbutton-span-class-prop-type-prop-type-boolean-boolean-span" class="  section scrollspy">forceShowSelectAllButton <span class="prop-type prop-type-boolean">Boolean</span></h3><div class="paragraph">
-<p>Caso <span class="prop-value"><b><i>true</b></i></span> e <span class="prop-name"><b>rowSelectableFilter</b></span> esteja definido, força a apresentação da ação de selecionar todos os itens.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: false</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="onloadsuccess-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onLoadSuccess <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
-<p>Função <em>callback</em> executado ao carregar dados com sucesso.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onLoadSuccess() {
-  // lógica ao carregar dados.
-}</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="onloaderror-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onLoadError <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
-<p>Função <em>callback</em> executado em caso de erro no carregamento dos dados.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onLoadError(xhr, status, error) {
-  // logica em caso de erro.
-}</code></pre>
-</div>
-</div></div>
-<div class="sect2"><h3 id="onclickrow-span-class-prop-type-prop-type-function-function-span" class="  section scrollspy">onClickRow <span class="prop-type prop-type-function">Function</span></h3><div class="paragraph">
-<p>Função <em>callback</em> executado ao clicar em uma linha da tabela.</p>
-</div>
-<div class="listingblock prop-default">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: null</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-javascript" data-lang="javascript">function onClickRow(event, rowData) {
-  // lógica executada ao clicar em uma linha.
-}</code></pre>
-</div>
-</div></div></div>
+</div></div></div></div>
 
               </div>
             </div>

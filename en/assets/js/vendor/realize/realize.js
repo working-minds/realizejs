@@ -63937,7 +63937,7 @@ window.EditPermissions = React.createClass({
         component.push(React.createElement(Input, { key: this.generateUUID(),
           component: 'checkbox',
           ref: 'checkbox_' + permission,
-          label: I18n.t('permissions.' + permission),
+          label: Realize.i18n.t('permissions.' + permission),
           value: permission,
           checked: this.checked(permission),
           disabled: this.disabled(permission),
@@ -64080,7 +64080,7 @@ window.IndexPermissions = React.createClass({
   defaultColumns: function defaultColumns(resourceType) {
     return {
       resource_name: {
-        label: I18n.t('models.' + resourceType)
+        label: Realize.i18n.t('models.' + resourceType)
       },
       permission: {
         label: 'Permissão',
@@ -64165,7 +64165,7 @@ window.LabelPermission = React.createClass({
         component.push(React.createElement(
           'div',
           null,
-          I18n.t('permissions.' + permission)
+          Realize.i18n.t('permissions.' + permission)
         ));
       });
     }
@@ -71337,7 +71337,7 @@ window.NotificationsList = React.createClass({
           React.createElement(
             'a',
             null,
-            I18n.t('labels.not-notifications')
+            Realize.i18n.t('labels.not-notifications')
           )
         )
       ));
@@ -71352,7 +71352,7 @@ window.NotificationsList = React.createClass({
           React.createElement(
             'a',
             { href: '/notifications' },
-            I18n.t('buttons.see-all')
+            Realize.i18n.t('buttons.see-all')
           )
         )
       ));
@@ -74975,7 +74975,7 @@ var propTypes = {
       return null;
     }
 
-    var translatedValue = i18n.t(value);
+    var translatedValue = Realize.i18n.t(value);
     if (typeof value !== "string" || typeof translatedValue !== "string" || translatedValue.length === 0) {
       return new Error('Property ' + propName + ' from ' + componentName + ' is not a localized string.');
     }

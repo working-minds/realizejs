@@ -13,6 +13,7 @@
   <script src="/realizejs/assets/js/vendor/jquery/jquery-2.2.4.min.js"></script>
   <script src="/realizejs/assets/js/vendor/jquery/jquery.inputmask.bundle.js"></script>
   <script src="/realizejs/assets/js/vendor/jquery/jquery.serialize-object.min.js"></script>
+  <script src="/realizejs/assets/js/vendor/lunr/lunr.min.js"></script>
   <script src="/realizejs/assets/js/vendor/materialize/materialize.js"></script>
   <script src="/realizejs/assets/js/vendor/modernizr/modernizr-2.8.3.min.js"></script>
   <script src="/realizejs/assets/js/vendor/string/string.js"></script>
@@ -20,6 +21,7 @@
   <script src="/realizejs/assets/js/vendor/realize/playground.min.js"></script>
   <script src="https://cdn.rawgit.com/rafaelfbs/xhr-mock/2.0.2-beta/dist/xhr-mock.browser.js"></script>
   <script src="/realizejs/assets/js/functions/main.js"></script>
+  <script src="/realizejs/assets/js/functions/search.js"></script>
 
   <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="/realizejs/css/main.css">
@@ -37,8 +39,18 @@
   <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0%)">
     <li><a href="/realizejs/" class="brand-logo hide-on-med-and-down"><img src="/realizejs/assets/img/layout/realizemin.png" alt=""></a></li>
     <li class="bold active">
-    <li class="bold"><a href="/realizejs/about.html" class="waves-effect">Sobre</a></li>
-<li class="bold"><a href="/realizejs/getting_started.html" class="waves-effect">Começando</a></li>
+    <li class="bold">
+    <form class="form container">
+        <input type="text" id="search-box" onkeyup="getSearch(event)" name="query" placeholder="Buscar" />
+    </form>
+</li>
+<li class="bold">
+    <ul id="search-results" class="container"></ul>
+</li>
+<li class="bold "><a href="/realizejs/about.html" class="waves-effect">Sobre</a></li>
+<li class="bold "><a href="/realizejs/getting_started.html" class="waves-effect">Começando</a></li>
+<li class="bold "><a href="/realizejs/configurations.html" class="waves-effect">Configurações</a></li>
+<li class="bold "><a href="/realizejs/i18n.html" class="waves-effect">Internacionalização (I18n)</a></li>
 
 <li class="no-padding">
     <ul class="collapsible collapsible-accordion">
@@ -47,204 +59,71 @@
             <a class="collapsible-header waves-effect components-collapsible active">Componentes</a>
             <div class="collapsible-body">
                 <ul>
-                    
                         
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/button.html" class="">Button</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/button_group.html" class="">ButtonGroup</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/container.html" class="">Container</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/flash.html" class="">Flash</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/form.html" class="">Form</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/grid.html" class="">Grid</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/grid_form.html" class="">GridForm</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header.html" class="">Header</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_button.html" class="">HeaderButton</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_menu.html" class="">HeaderMenu</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_section.html" class="">HeaderSection</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input.html" class="">Input</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_datepicker.html" class="">InputDatepicker</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_error.html" class="">InputError</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_file.html" class="">InputFile</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_group.html" class="">InputGroup</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_hidden.html" class="">InputHidden</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_masked.html" class="">InputMasked</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_number.html" class="">InputNumber</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_password.html" class="">InputPassword</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_select.html" class="">InputSelect</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class="active"><a href="/realizejs/doc/components/input_switch.html" class="active">InputSwitch</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_text.html" class="">InputText</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_textarea.html" class="">InputTextarea</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/menu.html" class="">Menu</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/modal.html" class="">Modal</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/modal_form.html" class="">Modal Form</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/notification_list.html" class="">NotificationList</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/sidenav.html" class="">Sidenav</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/table.html" class="">Table</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/tabs.html" class="">Tabs</a></li>
-                        
-                    
-                        
-                    
+                    <li class=""><a href="/realizejs/doc/components/button.html" class="">Button</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/button_group.html" class="">ButtonGroup</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/container.html" class="">Container</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/flash.html" class="">Flash</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/form.html" class="">Form</a></li>
+                                 
+                    <li class=""><a href="/realizejs/doc/components/grid.html" class="">Grid</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/grid_form.html" class="">GridForm</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header.html" class="">Header</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_button.html" class="">HeaderButton</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_menu.html" class="">HeaderMenu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_section.html" class="">HeaderSection</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/input.html" class="">Input</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_autocomplete.html" class="">InputAutocomplete</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/input_datefilter.html" class="">InputDatefilter</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_datepicker.html" class="">InputDatepicker</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_file.html" class="">InputFile</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_group.html" class="">InputGroup</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_hidden.html" class="">InputHidden</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_masked.html" class="">InputMasked</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_number.html" class="">InputNumber</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_password.html" class="">InputPassword</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_select.html" class="">InputSelect</a></li>
+                         
+                    <li class="active"><a href="/realizejs/doc/components/input_switch.html" class="active">InputSwitch</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_text.html" class="">InputText</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_textarea.html" class="">InputTextarea</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/menu.html" class="">Menu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal.html" class="">Modal</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal_form.html" class="">Modal Form</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/notification_list.html" class="">NotificationList</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/sidenav.html" class="">Sidenav</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/table.html" class="">Table</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/tabs.html" class="">Tabs</a></li>
+                       
                 </ul>
             </div>
         </li>
@@ -267,6 +146,8 @@
                         
                           
                           <li class=""><a href="/realizejs/doc/mixins/checkbox_component_mixin.html" class="">CheckboxComponent</a></li>
+                        
+                    
                         
                     
                         
@@ -312,6 +193,10 @@
                         
                           
                           <li class=""><a href="/realizejs/doc/mixins/grid_actions_mixin.html" class="">GridActions</a></li>
+                        
+                    
+                        
+                    
                         
                     
                         
@@ -418,7 +303,545 @@
         </li>
     </ul>
 </li -->
+<script>
+    window.store = [
+        
+            
+            
+            
 
+            
+                {
+                    "title": "Sobre",
+                    "desc": "page-desc.about",
+                    "content": "Equipe\n\n\n\n  \n    \n    Ariel Lindgren\n  \n\n  \n    \n    Pedro Jesus\n  \n\n  \n    \n    Lucas Toledo\n  \n\n  \n    \n    Rafael Ferrari\n  \n\n\n\n",
+                    "url": "/realizejs/about.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Button",
+                    "desc": "description.button",
+                    "content": "\n\nPropsname Stringicon Stringstyle Stringelement Stringhref StringactionUrl StringactionData Stringmethod StringisLoading Booleandisabled BooleandisableWith StringconfirmsWith FunctiononClick Functiontarget StringMixins\n\n\nPropsname String\nTexto apresentado no corpo do botão.\n\n\n\ndefault: ''\n\n\nicon String\nNome do ícone à ser inserido no botão. Caso não especificado, nenhum ícone será inserido. Provê suporte a todos os ícones do Google Material Icons. URL: https://design.google.com/icons/\n\n\n\ndefault: null\n\n\nstyle String\nEstilo que será utilizado no botão. Aceita os seguintes valores: 'danger', 'primary', 'warning', 'cancel'.\n\n\n\ndefault: null\n\n\nelement String\nNome do elemento DOM a ser renderizado. Pode ser do tipo \"button\" ou \"a\".\n\n\n\ndefault: \"button\"\n\n\nhref String\nEndereço URL de redirecionamento, caso element seja \"a\".\n\n\n\ndefault: null\n\n\nactionUrl String\nEndereço URL para requisição ajax. Utilize actionData para definir os dados enviados.\n\n\n\ndefault: null\n\n\nactionData String\nObjeto contendo dados enviados na requisição ajax.\n\n\n\ndefault: {}\n\n\nmethod String\nMétodo http utilizado na requisição ajax.\n\n\n\ndefault: \"GET\"\n\n\nisLoading Boolean\nCaso true, informa que o componente está sendo carregado.\n\n\n\ndefault: false\n\n\ndisabled Boolean\nCaso true, desabilita os eventos do botão. \n\n\n\ndefault: false\n\n\ndisableWith String\nTexto a ser apresentado quando botão está desabilitado. \n\n\n\ndefault: \"loading\"\n\n\nconfirmsWith Function\nTexto de alerta apresentado para confirmar ação.\n\n\n\ndefault: null\n\n\nonClick Function\nFunção callback executada ao receber evento de clique.\n\n\n\ndefault: function(event) {}\n\n\ntarget String\nUtilizado para renderizar a propriedade target ou formtarget do link (a) e do botão (button), respectivamente.\n\n\n\ndefault: null\n\n\nMixins\nO componente Button também possui os seguintes mixins: CSSClassMixin e RequestHandlerMixin.\n\n",
+                    "url": "/realizejs/doc/components/button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "ButtonGroup",
+                    "desc": "description.button_group",
+                    "content": "\n\nPropsbuttons Array\n\n\nPropsbuttons Array\nArray de props do componente Button.\n\n\n\ndefault: []\n\n\n",
+                    "url": "/realizejs/doc/components/button_group.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Configurações",
+                    "desc": "",
+                    "content": "\n\nOnde encontrá-lasrestUrlsrestMethodsGridpaginationparam StringperPage Number e perPageParam Stringwindow Numbertype StringperPageOptions Arraysortparam StringdirectionParam StringfieldValueFormat StringComo alterar essas configurações\n\nO RealizeJS possui algumas configurações padrão definidas em sua implementação, abaixo será apresentado cada uma delas e como fazer alterações.\n\n\n\nOnde encontrá-las\nAs configurações estão descritas no arquivo config.js.\n\nrestUrls\nNessa propriedade é definido os caminhos para chamadas REST. Os símbolos :url e :id são trocados dinamicamente por seus respectivos valores de acordo com as propriedades do componente. Ela é utilizada nos componentes Grid e GridForm, para definir as URLs das ações padrão de CRUD.\n\n\nconfig.js\n\nrestUrls: {\n    index: ':url',\n    show: ':url/:id',\n    add: ':url/new',\n    create: ':url',\n    edit: ':url/:id/edit',\n    update: ':url/:id',\n    destroy: ':url/:id'\n}\n\n\nrestMethods\nPropriedade que define os métodos do protocolo HTTP utilizado para cada ação definida na configuração restUrls.\n\n\nconfig.js\n\nrestMethods: {\n    index: 'GET',\n    show: 'GET',\n    add: 'GET',\n    create: 'POST',\n    edit: 'GET',\n    update: 'PUT',\n    destroy: 'DELETE'\n}\n\n\nGrid\nPropriedades globais utilizadas pelo componente Grid, para as funcionalidades de paginação e ordenação.\n\n\nconfig.js\n\ngrid: {\n    pagination: {\n      param: 'p',\n      perPageParam: 'per_page',\n      perPage: 20,\n      window: 4,\n      type: 'default',\n      perPageOptions: [\n            { name: '10', value: 10 },\n            { name: '20', value: 20 },\n            { name: '50', value: 50 }\n        ]\n    },\n    sort: {\n        param: 's',\n        directionParam: 's_dir',\n        fieldValueFormat: '%{field}'\n    }\n}\n\n\npagination\nEspecificação do funcionamento de cada um dos atributos do objeto grid.pagination. Alguns deles podem ser alterados diretamente no componente GridPagination, como pode ser visto no exemplo a seguir. Neste exemplo é criado um componente customizado, o GridPaginationExample. Em seu estado é atribuido as configurações sobrescritas que serão enviadas para o componente GridPagination.\n\n\n\n\nparam String\nNome do parâmetro na query string que define em qual página está o Grid para o back-end.\n\n\n\ndefault: 'p'\n\n\n\nExemplo\n\nurl?p=1\n\n\nperPage Number e perPageParam String\nperPage é quantidade de itens a serem exibidos por página no Grid, e perPageParam é o nome do parâmetro na query string onde essa informação é enviada para o back-end.\n\n\n\nperPage default: 20\nperPageParam default: 'per_page'\n\n\n\nExemplo\n\nurl?per_page=20\n\n\nwindow Number\nTamanho da janela de exibição da paginação.\n\n\n\ndefault: 4\n\n\ntype String\nPropriedade utilizada na renderização dos campos de paginação. São aceitos os valores default e input. No caso default, será apresentado os botões com os números (e dependendo da página, ir para primeira página e/ou ir para última página). No caso input, é renderizado um campo para o usuário inserir a página que deseja ir.\n\n\n\ndefault: 'default'\n\n\nperPageOptions Array\nÉ utilizado para montar o select de opções da quantidade de itens exibidos por página (altera o valor do perPage) dentro do componente GridPagination.\n\n\n\ndefault: [\n    { name: '10', value: 10 },\n    { name: '20', value: 20 },\n    { name: '50', value: 50 }\n]\n\n\nsort\nDescrição da funcionalidade dos atributos do objeto grid.sort.\n\nparam String\nNome do parâmetro na query string onde será enviado para o back-end qual campo deve ser ordenado no componente Grid. Dependendo da configuração (fieldValueFormat), o valor da direção da ordenação também pode ser enviado por esse parâmetro.\n\n\n\ndefault: 's'\n\n\n\nExemplo\n\ndefault:\nurl?s=created_at\n\nsort: {\n  param: 'sorting'\n}\nurl?sorting=created_at\n\n\ndirectionParam String\nNome do parâmetro na query string que define qual será a direção da ordenação do componente Grid.\n\n\n\ndefault: 's_dir'\n\n\n\nExemplo\n\ndefault:\nurl?s_dir=asc\n\nsort: {\n  directionParam: 'sorting_direction'\n}\nurl?sorting_direction=asc\n\n\nfieldValueFormat String\nPadrão utilizado para gerar o valor do parâmetro de ordenação enviado para o back-end (definido em param). O código que utiliza este padrão pode ser encontrado em Grid, no método parseSortPostDataValue.\n\n\n\ndefault: %{field}\n\n\n\nExemplo\n\ndefault:\nurl?s=created_at&amp;s_dir=desc\n\nsort: {\n  fieldValueFormat: '%{field},%{direction}'\n}\nurl?s=created_at,desc\n\n\nComo alterar essas configurações\nO Realize provê a função setConfig para a customização dessas configurações no seu objeto global. A seguir é apresentando um exemplo de uso desta função.\n\n\nExemplo\n\nRealize.setConfig(\n    {\n        restUrls: {\n            destroy: ':url/delete/:id'\n        },\n\n        restMethods: {\n            add: 'PUT'\n        },\n\n        grid: {\n            pagination: {\n                param: 'pagination',\n                perPageParam: 'per_table',\n                perPage: 10,\n                window: 2,\n            },\n            sort: {\n                param: 'sort',\n            }\n        }\n    }\n);\n\n\n",
+                    "url": "/realizejs/configurations.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Container",
+                    "desc": "description.container",
+                    "content": "\n\nPropsclassName String\n\n\nPropsclassName String\nClasse CSS do componente.\n\n\n\ndefault: \"row\"\n\n\n",
+                    "url": "/realizejs/doc/components/container.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Flash",
+                    "desc": "description.flash",
+                    "content": "\n\nPropsmessage Nodetype StringdismissTimeout NumbercanDismiss Booleandismissed BooleanonDismiss Function\n\n\nPropsmessage Node\nReactNode contendo o(s) erro(s) apresentados na notificação.\n\n\n\ndefault: ''\n\n\n\n\n/*String*/\nmessage: \"Campo 'product' vazio.\"\n\n/*Usando JSX*/\nmessage: (\n  &lt;ul&gt;\n    &lt;li&gt;Campo 'product' vazio.&lt;/li&gt;\n    &lt;li&gt;Campo 'price' vazio.&lt;/li&gt;\n  &lt;ul&gt;\n)\n\n/*Usando JS*/\n// lista de erros\nvar errors = [\n  \"Campo 'product' vazio.\",\n  \"Campo 'price' vazio.\"\n];\n// nas props\nmessage: (\n  React.createElement('ul', {},\n    errors.forEach(function(error) {\n      React.createElement('li', {}, error);\n    })\n  )\n)\n\n\ntype String\nTipo de notificação. Notificações flash podem ser do tipo \"info\", \"warning\", \"error\" ou \"success\".\n\n\n\ndefault: \"info\"\n\n\ndismissTimeout Number\nTempo de permanência da notificação, em ms. Caso o valor seja -1, a notificação permanece indefinidamente.\n\n\n\ndefault: -1\n\n\ncanDismiss Boolean\nCaso true, indica que a notificação pode ser fechada pelo usuário.\n\n\n\ndefault: true\n\n\ndismissed Boolean\nCaso true, indica que a notificação foi fechada. Caso o valor seja true, o componente não é renderizado.\n\n\n\ndefault: false\n\n\nonDismiss Function\nFunção de callback, que é executada após a notificação flash ser fechada.\n\n\n\ndefault: function() {return true;}\n\n\n",
+                    "url": "/realizejs/doc/components/flash.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Form",
+                    "desc": "description.form",
+                    "content": "\n\nPropsinputs Object obrigatórioaction Stringdata Objectmethod StringdataType StringcontentType Stringmultipart Booleanstyle StringthemeClassKey Stringresource StringsubmitButton ObjectotherButtons ObjectisLoading BooleanonSubmit FunctiononReset FunctionajaxSubmit Booleandisabled BooleanreadOnly Boolean\n\n\nPropsinputs Object obrigatório\nObjeto que define as props dos inputs do formulário, onde a chave é o id do input. Veja o componente Input.\n\n\n\ninputs: {\n  name: {\n    label: \"Nome do produto\"\n  },\n  price: {\n    label: \"Preço\",\n    component: \"masked\",\n    maskType: \"currency\"\n  }\n}\n\n\naction String\nEndereço URL para o envio dos dados do formulário.\n\n\n\ndefault: ''\n\n\ndata Object\nMapa para os valores dos inputs, onde a chave é o id do input e o valor dessa é o valor associado ao input.\n\n\n\ndefault: {}\n\n\n\n\ndata: {\n  name: 'Caneta Esferográfica',\n  price: 1.85\n}\n\n\nmethod String\nMétodo http utilizado para envio dos dados do formulário.\n\n\n\ndefault: \"POST\"\n\n\ndataType String\nTipo de dado esperado na resposta do servidor. Veja documentação detalhada em JQuery.ajax.\n\n\n\ndefault: Automático (xml, json, script, html)\n\n\n\n\n\"xml\"\n\nResposta como documento XML.\n\n\"html\"\n\nResposta como documento HTML.\n\n\"script\"\n\nResposta como código JavaScript.\n\n\"json\"\n\nResposta como documento JSON.\n\n\"jsonp\"\n\nResposta como documento JSON usando JSONP.\n\n\"text\"\n\nResposta como documento de texto.\n\nMultiplos valores, separados por espaço\n\nConverte o documento recebido de um determinado tipo para outro. Por exemplo, para uma resposta do tipo texto ser tratada como um objeto XML, use text xml.\n\n\n\ncontentType String\nTipo de dado enviado na requisição ao servidor. Veja mais em W3C/Forms.\n\n\n\ndefault: \"application/x-www-form-urlencoded\"\n\n\nmultipart Boolean\nCaso true, especifica que o formulário deve utilizar multipart/form-data como contentType.\n\n\n\ndefault: false\n\n\nstyle String\nEstilo da grid de inputs especificado nas configurações de tema.\n\n\n\ndefault: \"default\"\n\n\n\n\nRealize.themes.myCustomTheme = {\n  form: {\n    cssClass: 'custom-form'\n  }\n};\n\n// Nas props do form\n{\n  style: \"myCustomTheme\",\n  ...\n}\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"form\"\n\n\nresource String\nEssa propriedade serve para alterar o name e o id dos inputs gerados pelo componente Form. Veja o componente Input para mais informações e exemplos.\n\n\n\ndefault: null\n\n\nsubmitButton Object\nAtributos do botão submit.\n\n\n\nname String\n\nNome do botão submit ou chave da string de localização nas configurações de recursos i18n e l10n.\n\n\n\n\n\ndefault: \"actions.send\"\n\n\n\n\nicon String\n\nNome do ícone utilizado no botão.\n\n\n\n\n\ndefault: \"send\"\n\n\notherButtons Object\nLista de objetos especificando as props dos botões adicionais do formulário. Veja o componente Button.\n\n\n\ndefault: []\n\n\n\n\notherButtons: [\n  {\n    name: 'actions.clear',\n    icon: 'delete'\n    element: 'button',\n    type: 'reset'\n  }\n]\n\n\nisLoading Boolean\nCaso true, informa que o componente está sendo carregado.\n\n\n\ndefault: false\n\n\nonSubmit Function\nFunção callback executada ao receber evento submit.\n\n\n\ndefault: function(event, postData) {}\n\n\nonReset Function\nFunção callback executada ao receber event de reset.\n\n\n\ndefault: function(event) {}\n\n\najaxSubmit Boolean\nCaso true, a chamada ao backend será feita através de ajax.\n\n\n\ndefault: true\n\n\ndisabled Boolean\nCaso true, os itens do Form serão desabilitados.\n\n\n\ndefault: false\n\n\nreadOnly Boolean\nCaso true, os itens do Form serão somente para leitura.\n\n\n\ndefault: false\n\n\n",
+                    "url": "/realizejs/doc/components/form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Começando",
+                    "desc": "",
+                    "content": "Pré-requisitos\nAntes de você começar a usar o Realize.js para criar aplicações incríveis, recomendamos algumas coisas:\n\nSe familiarize um pouco com o React.js\nO Realize.js utiliza é construido sobre o framework React.js desenvolvido pelo Facebook, o que nos proporciona uma enorme flexibilidade e controle quando falamos de front-end.\n\n\nA maior vantagem que vemos no uso do React é que podemos encapsular todo o comportamento e apresentação de um componente \"de tela\" em um único local e de forma organizada, podendo focar no que realmente é importante.\n\n\nA documentação do React é bem extensa e cobre praticamente tudo que você precisa saber para começar a criar aplicações rapidamente e embora você não precise ser um expert em React para utilizar o Realize.js, um conhecimento dos conceitos básicos irá lhe ajudar muito!\n\nEscolha seu gestor de pacotes\nVocê pode obter o Realize.js pelo Bower ou como um npm package, que você pode usar em conjunto com o Webpack ou Browserify, por exemplo.\n\nInstalaçãoBower + Grunt\nAssumimos que você possui o Bower, o Grunt e suas dependências instalados. Caso não tenha, siga os guias em:\n\n\n\n\nhttp://bower.io/#getting-started\n\n\nhttp://gruntjs.com/getting-started\n\n\n\n\nCom ambos instalados, comece inicializando o bower. Abra seu terminal e execute os comandos abaixo:\n\n\n\n$ bower init\n? name: realize-bower (1)\n? version: 0.0.1\n? description: Using Realize.js with bower (2)\n? main file: app.js (3)\n? what types of modules does this package expose?\n❯◉ globals\n...\n\n\n\n\n\nforneça o nome da sua app\n\n\ne uma descrição\n\n\ndetermine o nome do arquivo que será gerado\n\n\n\n\nEm seguida, adicione o Realize.js\n\n\n\n$ bower install realizejs --save\n\n\n\nSeu arquivo bower.json deve se parecer com o conteúdo abaixo:\n\n\n\n{\n  \"name\": \"realize-bower\",\n  \"version\": \"0.0.1\",\n  \"authors\": [\n    \"Ariel Lindgren &lt;ariel@wkm.com.br&gt;\"\n  ],\n  \"description\": \"Using Realize.js with bower\",\n  \"main\": \"app.js\",\n  \"moduleType\": [\n    \"globals\"\n  ],\n  \"license\": \"MIT\",\n  \"ignore\": [\n    \"**/.*\",\n    \"node_modules\",\n    \"bower_components\",\n    \"test\",\n    \"tests\"\n  ],\n  \"dependencies\": {\n    \"realizejs\": \"~0.8.33\"\n  }\n}\n\n\n\nAo final deste processo, você estará com todas as dependências necessárias instaladas na sua aplicação. Agora basta criar uma tarefa do Grunt para consolidar todos esses recursos.\n\n\nPara tal, vamos começar declarando exports no arquivo bower.json:\n\n\n\n{\n  \"name\": \"realize-bower\",\n  \"version\": \"0.0.1\",\n  \"authors\": [\n    \"Ariel Lindgren &lt;ariel@wkm.com.br&gt;\"\n  ],\n  \"description\": \"Using Realize.js with bower\",\n  \"main\": \"app.js\",\n  \"moduleType\": [\n    \"globals\"\n  ],\n  \"license\": \"MIT\",\n  \"ignore\": [\n    \"**/.*\",\n    \"node_modules\",\n    \"bower_components\",\n    \"test\",\n    \"tests\"\n  ],\n  \"dependencies\": {\n    \"realizejs\": \"~0.8.33\"\n  },\n\n  \"exportsOverride\": {  (1)\n    \"jquery\": {\n      \"js\": \"dist/jquery.js\"\n    },\n    \"jquery-serialize-object\": {\n      \"js\": \"jquery.serialize-object.js\"\n    },\n    \"jquery.inputmask\":{\n      \"js\": [\"dist/jquery.inputmask.bundle.js\"]\n    },\n    \"materialize\": {\n      \"js\": \"dist/js/materialize.js\",\n      \"css\": \"dist/css/materialize.css\",\n      \"fonts\": [\"dist/font/material-design-icons/*\", \"dist/font/roboto/*\"]\n    },\n    \"realizejs\": {\n      \"js\": \"dist/js/realize.js\",\n      \"css\": \"dist/css/realize.css\"\n    },\n    \"string\":{\n      \"js\": [\"dist/string.js\"]\n    }\n  }\n}\n\n\n\n\n\ninsira esse bloco no seu bower.json\n\n\n\n\nAgora é necessário configurar o Grunt. Crie um arquivo chamado package.json com o seguinte conteúdo:\n\n\n\n{\n  \"name\": \"realize-bower\", (1)\n  \"version\": \"0.0.1\",\n  \"devDependencies\": { (2)\n\n  }\n}\n\n\n\n\n\nUse o mesmo nome dado em bower.json\n\n\na fim de não fixar as versões no momento em que escrevemos a documentação, deixamos o \"devDependencies\" vazio e vamos adicionar as referencias pelo shell\n\n\n\n\nCrie também um arquivo chamado Gruntfile.js com o seguinte conteúdo:\n\n\n\nvar path = require('path');\n\nmodule.exports = function(grunt) {\n\n  grunt.initConfig({\n    bower: {\n      install: {\n        options: {\n          targetDir: './vendor/assets', (1)\n          install: true,\n          verbose: true,\n          cleanTargetDir: false,\n          cleanBowerDir: false,\n\n          layout: function(type, component, source) {\n            var renamedType = type;\n            console.log(renamedType);\n            if (type == 'js') renamedType = 'javascripts';\n            else if (type == 'css') renamedType = 'stylesheets';\n\n\n            return path.join(renamedType, component);\n          }\n        }\n      }\n    }\n  });\n  grunt.loadNpmTasks('grunt-bower-task');\n  grunt.registerTask('default', ['bower:install']);\n};\n\n\n\n\n\nInforme aqui a pasta de destino para onde os recursos deverão ser copiados. No exemplo, usamos a pasta vendor/assets, no padrão do Rails.\n\n\n\n\nPara mais informações sobre tasks do Grunt, acesse o site do Grunt mencionado acima.\n\n\nAgora execute no shell:\n\n\n\n$ npm install grunt grunt-bower-task  --save-dev\n# ... output do node ... (1)\n$ grunt (2)\n\n\n\n\n\nNesse ponto, todas as dependencias do Grunt estarão instaladas\n\n\nExecuta a cópia dos arquivos exportados em exportsOverride do bower.json\n\n\n\n\nAo término, todos os arquivos estarão disponíveis na pasta especificada em targetDir, no exemplo acima, ./vendor/assets.\n\nConfiguração HTML\nApos instalação, certifique-se que os arquivos do RealizeJS estão sendo referenciados corretamente em seu cabeçalho e no corpo do HTML. Segue um exemplo de como pode ser feito a referência.\n\n\n\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;!--Importe Google Icon Font--&gt;\n    &lt;link href=\"http://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\"&gt;\n    &lt;!--Importe realizejs.css--&gt;\n    &lt;link type=\"text/css\" rel=\"stylesheet\" href=\"css/realizejs.min.css\"  media=\"screen,projection\"/&gt;\n\n    &lt;!--Adicione para informar o browser que o site é otimizado para dispositivos móveis--&gt;\n    &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n    &lt;script type=\"text/javascript\" src=\"js/realizejs.min.js\"&gt;&lt;/script&gt;\n  &lt;/body&gt;\n&lt;/html&gt;\n\n\nGuias\nDisponibilizaremos em breve alguns guias no nosso site para você começar a implementar suas aplicações com o Realize.js bem rápido caso você utilize Ruby on Rails ou Spring, mas você pode utilizá-lo com qualquer back-end que desejar.\n\n",
+                    "url": "/realizejs/getting_started.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Grid",
+                    "desc": "description.grid",
+                    "content": "\n\nPropriedades do GridDadosFiltroFunçõesI18nOrdenaçãoPaginaçãoTabela\n\n\nPropriedades do Grid\nAntes de navegar entre as propriedades, é bom saber que as seguintes props são obrigatórias:\n\n\n\n\ncolumns\n\n\nurl\n\n\n\nDadoscolumns Object obrigatório\nObjeto de configurações das colunas da tabela, onde a chave mapeia um campo do dataRows, e o valor são as props do componente TableHeader.\n\n\n\ncolumns: {\n    title: {\n      name:  'title',\n      label: 'Título',\n      format: 'text',\n      sortable: true,\n      sortDirection: 'asc',\n      sortFieldName: 'name',\n      onSort: function (sortData) {\n        return true;\n      }\n    }\n}\n\n\ncountParam String\nNome do parâmetro do objeto de dados recebido na resposta do servidor que contém a quantidade total de itens.\n\n\n\ndefault: 'count'\n\n\ndata Object\nObjeto contendo a lista de dados para inicializar a tabela e a quantidade total de itens. Caso eagerLoad seja true, os dados são requisitados ao servidor e data é ignorado.\n\n\n\ndata: {\n  count: 10,\n  dataRows: [\n    { name: 'Jonh Doe', age: '21', ...},\n    { name; 'Elliot Andersen', age: '22', ...}\n  ]\n}\n\n\n\n\ncount Number\n\nNúmero total de itens no servidor, utilizado para referência de paginação.\n\ndataRows Array\n\nLista de dados da tabela. Veja dataRowsParam para mapear o nome do parâmetro recebido do servidor.\n\n\n\n\n\ndefault: []\n\n\n\n\ndefault: 0\n\n\ndataRowIdField String\nNome da propriedade na lista de dados que contém os ids dos mesmos.\n\n\n\ndefault: 'id'\n\n\ndataRowsParam String\nNome do parâmetro do objeto de dados recebido na resposta do servidor que contém as linhas da tabela.\n\n\n\ndefault: 'data'\n\n\neagerLoad Boolean\nCaso true, o componente requisita os dados ao servidor no momento da inicialização. Caso contrário, inicializa com os valores provenientes de data.\n\n\n\ndefault: false\n\n\nselectedRowIdsParam String\nNome do parâmetro para envio dos ids das linhas selecionadas.\n\n\n\ndefault: 'rowIds'\n\n\nurl String obrigatório\nEndereço URL que serve os dados para a tabela.\n\nFiltrofilter Object\nObjeto de configuração do filtro da tabela. Veja a documentação de GridFilter para a definição completa dos props de filter.\n\n\n\ndefault: {}\n\n\n\n\nfilter: {\n  resource: 'q',\n  inputs: {\n    name:  { label: 'Nome'  },\n    price: { label: 'Preço' },\n    ...\n  },\n}\n\n\nrowSelectableFilter Function\nFunção para filtrar linhas habilitadas a serem selecionadas.\n\n\n\ndefault: null\n\n\n\n\nfunction rowSelectableFilter(rowData) {\n  // selecionar somente linhas pares\n  return rowData.id % 2 == 0;\n}\n\n\nFunçõesonClickRow Function\nFunção callback executado ao clicar em uma linha da tabela.\n\n\n\ndefault: null\n\n\n\n\nfunction onClickRow(event, rowData) {\n  // lógica executada ao clicar em uma linha.\n}\n\n\nonFilterSubmit Function\nFunção que será chamada sempre que o filtro for submetido.\n\n\n\ndefault: function(event, postData) { }\n\n\nonLoadError Function\nFunção callback executado em caso de erro no carregamento dos dados.\n\n\n\ndefault: null\n\n\n\n\nfunction onLoadError(xhr, status, error) {\n  // logica em caso de erro.\n}\n\n\nonLoadSuccess Function\nFunção callback executado ao carregar dados com sucesso.\n\n\n\ndefault: null\n\n\n\n\nfunction onLoadSuccess() {\n  // lógica ao carregar dados.\n}\n\n\nonSelectAllRows Function\nFunção que será chamada quando todas coluna for selecionada.\n\n\n\ndefault: function(event) { }\n\n\nonSelectDataRow Function\nFunção que será chamada quando uma coluna for selecionada.\n\n\n\ndefault: function(event, selectedRowIds) { }\n\n\nonRemoveSelection Function\nFunção que será chamada quando uma coluna for desselecionada.\n\n\n\ndefault: function(event) { }\n\n\nI18nemptyMessage String\nChave do recurso a ser utilizado quando não tiver nenhum dado na tabela.\n\n\n\ndefault: 'table.emptyResult'\n\n\nresource String\nNome de recursos i18n e l10n. Quando adicionado, busca o valor do recurso indicado.\n\n\n\ndefault: null\n\n\n\nExemplo\n\nresource: 'product'\n\n// No arquivo de recursos\nRealize.i18n.registerLocale({\n  resources: {\n    defaults: {\n      fields: {\n        price: 'Valor', // Esse recurso será ignorado.\n        created_at: 'Criado em',\n        active: 'Ativo'\n      }\n    },\n    product: {\n      fields: {\n        name: 'Nome',\n        price: 'Preço', // Será utilizado este recurso.\n        manufacturer_name: 'Fabricante',\n        barcode: 'Código de Barras',\n        group_name: 'Grupo',\n        subgroup_name: 'Subgrupo'\n      }\n    }\n  }\n}, 'pt-BR');\n\n\nOrdenaçãosortConfigs Object\nObjeto de configuração da ordenação das colunas das tabelas. Quando esse objeto de configurações é atribuido, sobrescreve-se as configurações globais.\n\n\n\ndefault: {}\n\n\n\n\nsortConfigs: {\n  param: 's',\n  valueFormat: '%{field} %{direction}'\n}\n\n\n\n\nparam String\n\nNome do parâmetro hash de ordenação acessado no backend.\n\n\n\n\n\ndefault: 's'\n\n\n\n\nvalueFormat String\n\nFormato da string de ordenação enviada como parâmetro de ordenação ao servidor. Pode-se utilizar as variáveis %{field} e %{direction} para substituir o id do campo e a direção atual do campo, respectivamente.\n\n\n\n\n\ndefault: '%{field} %{direction}'\n\n\n\n\ndirectionParam String\n\nNome do parâmetro na query string que define qual será a direção da ordenação.\n\n\n\n\n\ndefault: 's_dir'\n\n\nsortData Object\nObjeto de definição de ordenação padrão da tabela.\n\n\n\nsortData: {\n  field: 'name',\n  direction: 'asc'\n}\n\n\n\n\ndefault: {}\n\n\nPaginaçãopagination Boolean\nCaso false, desabilita a paginação dos dados.\n\n\n\ndefault: true\n\n\npaginationConfigs Object\nObjeto de configuração da barra de paginação. Quando esse objeto de configurações é atribuido, sobrescreve-se as configurações globais.\n\n\n\ndefault: {}\n\n\n\n\npaginationConfigs: {\n  param: 'p',\n  perPage: 10,\n  window: 4\n}\n\n\n\n\nparam String\n\nNome do parâmetro de paginação acessado pelo servidor.\n\n\n\n\n\ndefault: 'p'\n\n\npaginationOnTop Boolean\nCaso false, desabilita a barra de paginação no topo.\n\n\n\ndefault: true\n\n\nperPageOptions Array\nÉ utilizado para montar o select de opções da quantidade de itens exibidos por página (altera o valor do perPage).\n\n\n\ndefault: [\n    { name: '10', value: 10 },\n    { name: '20', value: 20 },\n    { name: '50', value: 50 }\n]\n\n\nTabelaactionButtons Object\nObjeto de definição dos botões de ações de linha e da tabela. Veja GridActionsMixin.\n\nclearThemeTable Boolean\nCaso true, desabilita tema utilizado na tabela.\n\n\n\ndefault: false\n\n\ncustomTableHeader String\nString com fragmento html para inserir cabeçalho customizado.\n\n\n\ndefault: null\n\n\nforceShowSelectAllButton Boolean\nCaso true e rowSelectableFilter esteja definido, força a apresentação da ação de selecionar todos os itens.\n\n\n\ndefault: false\n\n\nisLoading Boolean\nCaso false, informa que o componente ainda está sendo carregado.\n\n\n\ndefault: false\n\n\nselectable String\nEspera os seguintes valores: multiple, none ou one.\nCaso none, desabilita a seleção de linhas na tabela.\n\n\n\ndefault: 'multiple'\n\n\ntableClassName String\nClasse css do elemento da tabela.\n\n\n\ndefault: undefined\n\n\ntableRowCssClass Function\nFunção para configuração da classe css da linha.\n\n\n\ndefault: null\n\n\n\n\nfunction (rowData) {\n  // estilizar linhas pares e ímpares\n  return rowData.id % 2 == 0 ? 'par' : 'impar';\n}\n\n\n",
+                    "url": "/realizejs/doc/components/grid.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "GridForm",
+                    "desc": "description.grid_form",
+                    "content": "\n\nPropsform ObjectcreateButton ObjectupdateButton ObjectcancelButton ObjectonSubmit FunctiononReset FunctiononSuccess FunctiononError Function\n\n\nProps\nO GridForm herda as props de Grid e extende as seguintes props:\n\nform Object\nProps do formulário de edição de um item. Veja a documentação do componente Form.\n\n\n\ndefault: {}\n\n\n\n\nform: {\n  inputs: {\n    name:  { label: 'Nome'  },\n    price: {\n      label: 'Preço',\n      component: 'masked',\n      maskType: 'currency'\n    }\n  }\n}\n\n\ncreateButton Object\nProps do botão de criar novo item. Veja a documentação do componente Button.\n\n\n\nname String\n\nNome do botão create ou chave da string de localização nas configurações de recursos i18n e l10n.\n\n\n\n\n\ndefault: \"actions.add\"\n\n\n\n\nicon String\n\nNome do ícone utilizado no botão.\n\n\n\n\n\ndefault: \"add\"\n\n\nupdateButton Object\nProps do botão de atualizar item. Veja a documentação do componente Button.\n\n\n\nname String\n\nNome do botão update ou chave da string de localização nas configurações de recursos i18n e l10n.\n\n\n\n\n\ndefault: \"actions.update\"\n\n\n\n\nicon String\n\nNome do ícone utilizado no botão.\n\n\n\n\n\ndefault: \"edit\"\n\n\ncancelButton Object\nProps do botão de cancelar alterações. Veja a documentação do componente Button.\n\n\n\nname String\n\nNome do botão cancel ou chave da string de localização nas configurações de recursos i18n e l10n.\n\n\n\n\n\ndefault: \"actions.cancel\"\n\n\n\n\nicon String\n\nNome do ícone utilizado no botão.\n\n\n\n\n\ndefault: \"cancel\"\n\n\nonSubmit Function\nFunção callback executada ao receber evento submit.\n\n\n\ndefault: function(event, postData) {}\n\n\n\n\nonSubmit: function(event, postData) {\n  // lógica ao enviar dados.\n}\n\n\nonReset Function\nFunção callback executada ao receber event de reset.\n\n\n\ndefault: function(event) {}\n\n\n\n\nonReset: function(event) {\n  // lógica ao limpar formulário\n}\n\n\nonSuccess Function\nFunção callback executado ao enviar dados com sucesso.\n\n\n\ndefault: function(data, status, xhr) {}\n\n\nonError Function\nFunção callback executado ao falhar em enviar dados.\n\n\n\ndefault: function(xhr, status, error) {}\n\n\n",
+                    "url": "/realizejs/doc/components/grid_form.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Header",
+                    "desc": "description.header",
+                    "content": "\n\nPropsthemeClassKey StringwrapperClassName String\n\n\nPropsthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"header\"\n\n\nwrapperClassName String\nClasse do elemento que encapsula os elementos filhos.\n\n\n\ndefault: \"nav-wrapper container\"\n\n",
+                    "url": "/realizejs/doc/components/header.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderButton",
+                    "desc": "description.header_button",
+                    "content": "\n\nPropsimgSrc StringimgAlt Stringicon StringiconAlign Stringtext Stringhref Stringtarget StringonClick Functionref String\n\n\nPropsimgSrc String\nEndereço URL da imagem do botão.\n\nimgAlt String\nTexto alternativo para a imagem.\n\nicon String\nNome do ícone à ser inserido no botão. Caso não especificado, nenhum ícone será inserido.\n\n\n\ndefault: icon\n\n\niconAlign String\nNome da classe do 'material-icons' para alinhamento do icone.\n\n\n\ndefault: ' '\n\n\ntext String\nTexto do botão, caso imgSrc não esteja definido.\n\n\n\ndefault: undefined\n\n\nhref String\nEndereço do link do botão.\n\n\n\ndefault: undefined\n\n\ntarget String\nAtributo target da tag a.\n\n\n\ndefault: undefined\n\n\nonClick Function\nFunção callback executada ao receber evento de clique.\n\n\n\ndefault: function(event) {}\n\n\nref String\nNome de referência para o componente.\n\n\n\ndefault: undefined\n\n",
+                    "url": "/realizejs/doc/components/header_button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderMenu",
+                    "desc": "description.header_menu",
+                    "content": "\n\nPropsitems ArrayleftIcon StringrightIcon Stringtext Stringhref Stringref_id String\n\n\nPropsitems Array\nItens do menu.\n\n\n\ndefault: []\n\n\nleftIcon String\nNome do ícone do material-icons apresentado à esquerda.\n\n\n\ndefault: ''\n\n\nrightIcon String\nNome do ícone do material-icons apresentado à direita.\n\n\n\ndefault: ''\n\n\ntext String\nNome do menu\n\n\n\ndefault: undefined\n\n\nhref String\nEndereço do link do menu.\n\n\n\ndefault: undefined\n\n\nref_id String\nId de referência do menu.\n\n\n\ndefault: 'headerMenu'\n\n",
+                    "url": "/realizejs/doc/components/header_menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderSection",
+                    "desc": "description.header_section",
+                    "content": "\n\nPropsalign Stringid StringclassName String\n\n\nPropsalign String\nAlinhamento do grupo de componentes filhos de header.\n\n\n\ndefault: 'left'\n\n\nid String\nId do elemento HTML do componente.\n\n\n\ndefault: ''\n\n\nclassName String\nClasses da seção de header.\n\n\n\ndefault: 'hide-on-med-and-down'\n\n\n",
+                    "url": "/realizejs/doc/components/header_section.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Internacionalização (I18n)",
+                    "desc": "",
+                    "content": "Internacionalização com RealizeJS\nA implementação do i18n é mais uma das diversas funcionalidades do RealizeJS. Abaixo será apresentado suas propriedades e funções. Caso queira ver diretamento do código-fonte, acesse o arquivo i18n.js.\n\nPropriedadeslocales Object\nObjeto que inclui todas as localizações suportadas pelo sistema. Por padrão, é adicionado en e pt-BR.\n\ncurrentLocale String\nOnde define a atual localização do sistema.\n\n\n\ndefault: 'en'\n\n\nFunçõesregisterLocale Function\nAdiciona ou sobrescreve o objeto de propriedades uma determinada localização da propriedade locales. Recebe um objeto de propriedades de localização e seu local (ex.: 'en-US').\n\n\ni18n.js\n\nregisterLocale: function(newLocaleObj, locale) {\n  if(!$.isPlainObject(newLocaleObj)) {\n    throw 'Invalid Locale Object.'\n  }\n\n  if(!locale) {\n    throw 'Invalid Locale Name.';\n  }\n\n  var currentLocaleObj = this.locales[locale] || {};\n  this.locales[locale] = $.extend(true, {}, currentLocaleObj, newLocaleObj);\n}\n\n\nsetLocale Function\nRecebe o novo local da aplicação e altera a currentLocale.\n\n\ni18n.js\n\nsetLocale: function(locale) {\n  this.currentLocale = locale;\n}\n\n\ntranslate Function\nRecebe a chave do recurso e um booleano para sinalizar se é ou não para lançar exceção. Busca na propriedade locales (na localização atual) o recurso através da chave recebida como parâmetro.\n\n\ni18n.js\n\ntranslate: function(key, throwsException) {\n  if(throwsException === undefined) {\n    throwsException = false;\n  }\n\n  if(typeof key !== \"string\") {\n    if(throwsException) {\n      throw 'Key is not a string';\n    }\n\n    return '';\n  }\n\n  var currentLocale = this.currentLocale;\n  var localeObj = this.locales[currentLocale];\n\n  var translation = utils.getProp(key, localeObj);\n  if(!translation) {\n    if(throwsException) {\n      throw 'Key not found in locale object';\n    }\n\n    translation = key;\n  }\n\n  return translation;\n}\n\n\nt Function\nFoi disponibilizado essa função com o proposito de facilitar no desenvolvimento. Retorna uma chamada a função translate e assim como ela, recebe a chave do recurso e um booleano .\n\n\ni18n.js\n\nt: function(key, throwsException) {\n  return this.translate(key, throwsException);\n}\n\n\n",
+                    "url": "/realizejs/i18n.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "",
+                    "desc": "",
+                    "content": "\n    \n        \n            \n                \n                    \n                \n                Um conjunto de componentes ricos implementados com React, prontos para integrar com seu backend.\n                \n                  Comece agora!\n                \n                v. 0.8.33 beta\n                \n            \n        \n    \n\n\n\n    \n        \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            Sobre\n                            Conheça a equipe e a motivação para criar o projeto.\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            Começando\n                            Guias para instalação e configuração do Realize.js.\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            Documentação\n                            Acesse a documentação de referência dos componentes.\n                        \n                    \n                \n            \n        \n    \n\n",
+                    "url": "/realizejs/"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Input",
+                    "desc": "description.input",
+                    "content": "\n\nPropsid String obrigatórioname Stringlabel Stringvalue Anycomponent StringformStyle Stringdata Objecterrors ObjectmaxLength NumberrenderLabel Booleanresource Stringscope StringthemeClassKey String\n\n\nPropsid String obrigatório\nAtributo id do input.\n\nname String\nAtributo name do input.\n\n\n\ndefault: props.id\n\n\nlabel String\nTexto da tag label associada a este input.\n\n\n\ndefault: ''\n\n\nvalue Any\nValor inicial do input.\n\n\n\ndefault: undefined\n\n\ncomponent String\nNome do componente de input. Por padrão, os inputs aceitam valores do tipo texto.\n\n\n\ndefault: \"text\"\n\n\n\nOs tipos definidos são:\n\n\n\n\"text\"\n\nInput para campos do tipo texto. Veja o componente InputText.\n\n\n\n\n\nprops: {\n  label: 'A text input',\n  component: 'test',\n  value: 'A text value'\n}\n\n\n\n\n\"autocomplete\"\n\nInput para campos do tipo texto com suporte a autocomplete. Veja o componente InputAutocomplete.\n\n\n\n\n\nprops: {\n  label: 'An autocomplete input',\n  component: 'autocomplete',\n  options: [{\n            id: 0,\n            name: 'word 1'},\n          {\n            id: 1,\n            name: 'word 2'},\n          {\n            id: 2,\n            name: 'word 3'\n          }\n        ]\n  }\n\n\n\n\n\"textarea\"\n\nInput para inserção de textos multi-linha. Veja o componente InputTextarea.\n\n\n\n\n\nprops: {\n  label: 'A textarea input',\n  component: 'textarea',\n  value: 'A text value in textarea'\n}\n\n\n\n\n\"number\"\n\nInput para campos do tipo número. Veja o componente InputNumber.\n\n\n\n\n\nprops: {\n  label: 'A number input',\n  component: 'number',\n  value: 12345\n}\n\n\n\n\n\"masked\"\n\nInput para definir um formato predefinido utilizando máscaras. Veja o componente InputMasked.\n\n\n\n\n\nprops: {\n  label: 'A masked input',\n  component: 'masked',\n  maskType: 'currency',\n  value: 1.85\n}\n\n\n\n\n\"password\"\n\nInput para campos do tipo senha. Veja o componente InputPassword.\n\n\n\n\n\nprops: {\n  label: 'A password input',\n  component: 'password',\n  value: '123abc456'\n}\n\n\n\n\n\"datepicker\"\n\nInput para inserção de datas utilizando um calendário. Veja o componente InputDatepicker.\n\n\n\n\n\nprops: {\n  label: 'A datepicker input',\n  component: 'datepicker',\n  value: '20151210'\n}\n\n\n\n\n\"file\"\n\nInput para seleção e upload de arquivos. Veja o componente InputFile.\n\n\n\n\n\nprops: {\n  label: 'A datepicker input',\n  component: 'file'\n}\n\n\n\n\n\"hidden\"\n\nInput invisível. Veja o componente InputHidden.\n\n\n\n\n\nprops: {\n  component: 'hidden'\n}\n\n\n\n\n\"switch\"\n\nInput para campos do tipo boolean. Veja o componente InputSwitch.\n\n\n\n\n\nprops: {\n  label: 'A switch input',\n  component: 'switch',\n  value: true\n}\n\n\nformStyle String\nEstilo da grid de inputs especificado nas configurações de tema. Caso não especificado, utiliza o estilo definido no formulário.\n\n\n\ndefault: \"default\"\n\n\ndata Object\nObjeto mapeando o valor deste input, na forma {input_id: value}.\n\n\n\ndefault: {}\n\n\nerrors Object\nObjeto que define os campos com erros de validação. Os erros serão exibidos através do componente InputError.\n\n\n\ndefault: {}\n\n\n\nExemplo\n\nerrors: {\n  password: [ 'Senha incorreta' ],\n  date: [ 'Data com formato incorreto' ]\n}\n\n\nmaxLength Number\nTamanho máximo do valor do input.\n\n\n\ndefault: null\n\n\nrenderLabel Boolean\nCaso false, renderiza input sem título.\n\n\n\ndefault: true\n\n\nresource String\nEssa propriedade serve para alterar o name e o id dos inputs do componente Input.\n\n\n\ndefault: null\n\n\n\nExemplo\n\n&lt;Input id=\"usuarios\" name=\"usuarios\" resource='cadastros' /&gt;\n\n// O id dos inputs ficará assim:\nid='cadastros_usuarios';\n\n// O name dos inputs ficará assim:\nname='cadastros[usuarios]';\n\n\nscope String\nTipo de escopo do input. Pode ser \"resource\" ou \"global\". Caso \"resource\", insere o nome do resource como prefixo do id do input.\n\n\n\ndefault: \"resource\"\n\n\n\n\nid: 'name'\nresource: 'product'\nscope: 'resource'\n// id do input será product_name\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"form.inputGroup\"\n\n\n",
+                    "url": "/realizejs/doc/components/input.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputAutocomplete",
+                    "desc": "description.input_autocomplete",
+                    "content": "\n\nSuas propriedadesoptionsUrl Stringoptions ArrayrequestTimeout NumbernameField StringvalueField Stringmultiple BooleanmaxOptions NumbermaxOptionsParam StringsearchParam StringactionButtons ArraydependsOn ObjectFunções de callbackonLoad FunctiononLoadError FunctiononSelect Function\n\n\nSuas propriedadesoptionsUrl String\nURL na qual será feito chamadas via ajax, montando assim os itens da lista de maneira dinâmica.\n\n\n\ndefault: undefined\n\n\noptions Array\nCaso os dados não sejam preenchidos dinamicamente através da propriedade optionsUrl, eles podem ser carregados estaticamente nessa propriedade.\n\n\n\ndefault: []\n\n\n\nExemplo\n\n&lt;InputAutocomplete\n    options={[\n        { name: 'foo', id: 'foo' },\n        { name: 'bar', id: 'bar' }\n    ]}\n/&gt;\n\n\nrequestTimeout Number\nTempo limite de uma chamada via ajax ao backend, passando deste tempo a conexão é desfeita.\n\n\n\ndefault: 300\n\n\nnameField String\nNome do campo no lista de itens que será utilizado como nome do option do select.\n\n\n\ndefault: 'name'\n\n\nvalueField String\nNome do campo no lista de itens que será utilizado como value do option do select.\n\n\n\ndefault: 'id'\n\n\nmultiple Boolean\nCaso true, habilita a seleção multipla de opções.\n\n\n\ndefault: false\n\n\nmaxOptions Number\nQuantidade máxima de itens a serem obtidos no servidor.\n\n\n\ndefault: 99\n\n\nmaxOptionsParam String\nNome do parametro na query string enviado para o backend com a quantidade de itens que deve ser retornado.\n\n\n\ndefault: 'limit'\n\n\nsearchParam String\nNome do parametro na query string enviado para o backend com os parâmetros de busca.\n\n\n\ndefault: 'query'\n\n\nactionButtons Array\nObjeto utilizado para definir botões no InputAutocompleteResult. Como pode ser visto no exemplo acima, de acordo com as propriedades, um botão é montado dentro do select do InputAutocomplete.\n\n\n\ndefault: []\n\n\ndependsOn Object\nObjeto definindo o input em que este select é dependente.\n\n\n\ndependableId String\n\nId do elemento DOM para o input dependente.\n\nparam String\n\nParâmetro a ser enviado ao servidor para requisição das opções.\n\n\n\n\n\ndefault: null\n\n\nFunções de callbackonLoad Function\nFunção de callback chamada quando os dados são carregados do backend.\n\n\n\ndefault: null\n\n\nonLoadError Function\nFunção de callback chamada quando ocorre um erro ao carregar os dados do backend.\n\n\n\ndefault: null\n\n\nonSelect Function\nFunção de callback chamada quando uma opção é selecionada.\n\n\n\ndefault: null\n\n\n",
+                    "url": "/realizejs/doc/components/input_autocomplete.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatefilter",
+                    "desc": "description.input_datefilter",
+                    "content": "\n\nSuas propriedadesid Stringname StringoriginalId StringoriginalName Stringresource Stringdisabled BooleanfromFilterInput ObjecttoFilterInput ObjectokButton Object\n\n\n\n\nImportant\n\n\nEste componente se encontra em fase beta.\n\n\n\n\n\n\nSuas propriedadesid String\nAtributo utilizado na criação da propriedade id dos input de select no componente InputDatefilterSelect.\n\n\n\ndefault: undefined\n\n\nname String\nAtributo utilizado como texto do componente Label criado no componente InputDatefilterSelect.\n\n\n\ndefault: null\n\n\noriginalId String\nAtributo utilizado na criação da propriedade id dos inputs de data no componente InputDatefilterBody.\n\n\n\ndefault: undefined\n\n\noriginalName String\nAtributo utilizado na criação da propriedade name dos inputs de data no componente InputDatefilterBody.\n\n\n\ndefault: undefined\n\n\nresource String\nEssa propriedade serve para alterar o name e o id dos inputs do componente Input. Veja o componente Input para mais informações e exemplos.\n\n\n\ndefault: null\n\n\ndisabled Boolean\nCaso true, o componente é desabilitado.\n\n\n\ndefault: false\n\n\nfromFilterInput Object\nObjeto que define as props do fromInput do componente, onde a chave é o id do input. Veja o componente Input.\n\n\n\ndefault: {}\n\n\n\nExemplo\n\nfromFilterInput: {\n    label: \"Desde\",\n    component: \"datepicker\",\n    ref: \"desdeInput\"\n  }\n}\n\n\ntoFilterInput Object\nObjeto que define as props do toInput do componente, onde a chave é o id do input. Veja o componente Input.\n\n\n\ndefault: {}\n\n\n\nExemplo\n\ntoFilterInput: {\n    label: \"Até\",\n    component: \"datepicker\",\n    ref: \"ateInput\"\n  }\n}\n\n\nokButton Object\nObjeto que define as props do okButton do componente. Nele pode ser incluido todas as propriedades de um componente Button.\n\n\n\ndefault: {\n    name: 'ok'\n}\n\n\n",
+                    "url": "/realizejs/doc/components/input_datefilter.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatepicker",
+                    "desc": "description.input_datepicker",
+                    "content": "\n\nPropsmask Stringformat StringmaskType StringthemeClassKey String\n\n\nPropsmask String\n\n\n\nImportant\n\n\nNecessário verificar definição e utilização.\n\n\n\n\n\n\ndefault: null\n\n\nformat String\nFormato da data para o valor do input. Caso não definido, o componente utiliza o formato de data definido nas configurações do Realize.\n\n\n\ndefault: null\n\n\nmaskType String\n\n\n\nImportant\n\n\nNecessário verificar definição e utilização.\n\n\n\n\n\nTipo da mascara predefinida. Veja Masks.\n\n\n\ndefault: 'date'\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"input.datepicker\"\n\n\n",
+                    "url": "/realizejs/doc/components/input_datepicker.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputFile",
+                    "desc": "description.input_file",
+                    "content": "\n\nPropsbuttonName StringbuttonClassName StringbuttonIcon StringwrapperClassName StringfilePathWrapperClassName StringthemeClassKey String\n\n\nPropsbuttonName String\nNome do botão para selecionar arquivo.\n\n\n\ndefault: 'Arquivo'\n\n\nbuttonClassName String\nNome da classe para o botão de seleção de arquivo.\n\n\n\ndefault: undefined\n\n\nbuttonIcon String\nNome do icone do Material Icons.\n\n\n\ndefault: undefined\n\n\nwrapperClassName String\nNome da classe para o elemento wrapper do input.\n\n\n\ndefault: undefined\n\n\nfilePathWrapperClassName String\nNome da classe para o elemento wrapper do input do caminho do arquivo.\n\n\n\ndefault: undefined\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"input.file\"\n\n\n",
+                    "url": "/realizejs/doc/components/input_file.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputGroup",
+                    "desc": "description.input_group",
+                    "content": "\n\nPropsinputs Object obrigatóriolabel Stringdata Objectdisabled Booleanseparator Booleanerrors Objectresource StringreadOnly BooleanformStyle StringthemeClassKey StringwrapperClassName String\n\n\nPropsinputs Object obrigatório\nObjeto que define as props dos inputs do grupo, onde a chave é o id do input. Veja o componente Input.\n\n\n\ninputs: {\n  name: {\n    label: \"Nome do produto\"\n  },\n  price: {\n    label: \"Preço\",\n    component: \"masked\",\n    maskType: \"currency\"\n  }\n}\n\n\nlabel String\nTítulo do grupo.\n\n\n\ndefault: null\n\n\ndata Object\nMapa para os valores dos inputs, onde a chave é o id do input e o valor dessa é o valor associado ao input.\n\n\n\ndefault: {}\n\n\n\n\ndata: {\n  name: 'Caneta Esferográfica',\n  price: 1.85\n}\n\n\ndisabled Boolean\nCaso true, desabilita o campo de input.\n\n\n\ndefault: false\n\n\nseparator Boolean\nCaso true, insere um separador no final do bloco.\n\n\n\ndefault: false\n\n\nerrors Object\nObjeto que define os campos com erros de validação.\n\n\n\ndefault: {}\n\n\n\n\n/* Usando escopo resource */\nresource: 'product',\nerrors: {\n  product: {\n    name: 'Wrong name...'\n  }\n}\n/* Usando escopo global */\nerrors: {\n  name: 'Wrong name...'\n}\n\n\nresource String\nEssa propriedade serve para alterar o name e o id dos inputs do componente Input. Veja o componente Input para mais informações e exemplos.\n\n\n\ndefault: null\n\n\nreadOnly Boolean\nCaso true, torna o campo para somente leitura.\n\n\n\ndefault: false\n\n\nformStyle String\nEstilo da grid de inputs especificado nas configurações de tema. Caso não especificado, utiliza o estilo definido no formulário. \n\n\n\ndefault: \"default\"\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"form.inputGroup\"\n\n\nwrapperClassName String\nClasse do elemento que encapsula os elementos filhos.\n\n\n\ndefault: \"wrapper_input_group\"\n\n\n",
+                    "url": "/realizejs/doc/components/input_group.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputHidden",
+                    "desc": "description.input_hidden",
+                    "content": "PropsthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\nPropsthemeClassKey String\n",
+                    "url": "/realizejs/doc/components/input_hidden.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputMasked",
+                    "desc": "description.input_masked",
+                    "content": "\n\nPropsmask StringmaskType StringremoveMaskOnChange Booleantype Stringregex StringonComplete FunctiononIncomplete FunctiononCleared Function\n\n\nPropsmask String\n\n\n\nImportant\n\n\nNecessário verificar definição e utilização.\n\n\n\n\nmaskType String\nTipo da mascara predefinida. Veja Masks.\n\n\n\ndefault: null\n\n\nremoveMaskOnChange Boolean\nCaso true, remove a mascára depois que onKeyUp é lançado.\n\n\n\ndefault: false\n\n\ntype String\nTipo do input.\n\n\n\ndefault: 'text'\n\n\nregex String\nMascara customizada do tipo Regex.\n\n\n\ndefault: \"input.text\"\n\n\n\n\n// exemplo de máscara para cpf\nregex: '\\d{3}.\\d{3}.\\d{3}-\\d{2}'\n\n\nonComplete Function\nFunção callback executado ao completar máscara.\n\n\n\ndefault: function () {}\n\n\nonIncomplete Function\nFunção callback executado ao desfocar input com máscara incompleta.\n\n\n\ndefault: function () {}\n\n\nonCleared Function\nFunção callback executado ao limpar máscara.\n\n\n\ndefault: function () {}\n\n\n",
+                    "url": "/realizejs/doc/components/input_masked.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputNumber",
+                    "desc": "description.input_number",
+                    "content": "\n\nPropsmaskType StringthemeClassKey String\n\n\nPropsmaskType String\nMascára aplicada para números.\n\n\n\ndefault: 'integer'\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: 'input.number'\n\n\n",
+                    "url": "/realizejs/doc/components/input_number.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputPassword",
+                    "desc": "description.input_password",
+                    "content": "\n\nPropsconfirms StringthemeClassKey String\n\n\nPropsconfirms String\n\n\n\nImportant\n\n\nNecessário verificar utilização.\n\n\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"input.text\"\n\n\n",
+                    "url": "/realizejs/doc/components/input_password.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputSelect",
+                    "desc": "description.input_select",
+                    "content": "\n\nPropsoptions ArrayoptionsUrl StringoptionsParam StringnameField StringvalueField StringdependsOn Objectmultiple BooleanonSelect FunctiononLoad FunctiononLoadError FunctionincludeBlank BooleanblankText StringthemeClassKey StringDefinindo um selectDefinindo selects dependentes\n\n\nPropsoptions Array\nLista estática de opções do select. Cada elemento da lista é um objeto com as propriedades \"name\" e \"value\" onde, respectivamente, se referem ao nome e o valor da opção.\n\n\n\ndefault: []\n\n\noptionsUrl String\nEndereço URL que serve os dados para o select.\n\n\n\ndefault: undefined\n\n\noptionsParam String\nNome da propriedade do objeto recebido pelo servidor contendo as opções do select.\n\n\n\ndefault: null\n\n\nnameField String\nNome da propriedade do objeto recebido pelo servidor contendo o nome da opção.\n\n\n\ndefault: 'name'\n\n\nvalueField String\nNome da propriedade do objeto recebido pelo servidor contendo o valor da opção.\n\n\n\ndefault: 'id'\n\n\ndependsOn Object\nObjeto definindo o input em que este select é dependente.\n\n\n\ndependableId String\n\nId do elemento DOM para o input dependente.\n\nparam String\n\nParâmetro a ser enviado ao servidor para requisição das opções.\n\n\n\n\n\ndefault: null\n\n\nmultiple Boolean\nCaso true, habilita a seleção de múltiplas opções.\n\n\n\ndefault: false\n\n\nonSelect Function\nFunção callback executado ao selectionar opção no select.\n\n\n\ndefault: null\n\n\n\n\nfunction onSelect(event) {\n  // lógica executada ao selecionar opção\n}\n\n\nonLoad Function\nFunção callback executada ao carregar opções do select.\n\n\n\ndefault: function (data) { return true; }\n\n\n\n\nfunction onLoad(event) {\n  // lógica executada ao carregar opções\n}\n\n\nonLoadError Function\nFunção callback executado em caso de erro no carregamento das opções.\n\n\n\ndefault: null\n\n\n\n\nfunction onLoadError(xhr, status, error) {\n  // logica em caso de erro.\n}\n\n\nincludeBlank Boolean\nCaso true, inclui um item nulo no início da lista.\n\n\n\ndefault: true\n\n\nblankText String\nTexto do item nulo da lista.\n\n\n\ndefault: 'select'\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"input.select\"\n\n\nDefinindo um select\nUm formulário com select listando estados que o usuário pode selecionar pode ser implementado com opções estáticas, seguindo o exemplo abaixo:\n\n\n\nvar formProps = {\n  inputs: {\n    state: {\n      label: 'Estado',\n      component: 'select',\n      options: [\n        {\n          value: 0,\n          name: 'Rio de Janeiro'\n        },\n        {\n          value: 1,\n          name: 'São Paulo'\n        }\n      ]\n    }\n  }\n};\n\n\n\nO mesmo formulário, utilizando opções carregadas via ajax para a url \"/states\" que retorna uma lista de estados, pode ser implementado da seguinte maneira:\n\n\n\n// Resposta do servidor\ntype StatesResponse = {\n  states: Array&lt;State&gt;,\n  count: number\n}\n\n// Objeto de Estado\ntype State = {\n  pk: number,\n  fullname: string,\n  shortname: string\n}\n\n// Props de um formulário utilizando\n// o componente InputSelect\nvar formProps = {\n  inputs: {\n    state: {\n      label: 'Estado',\n      component: 'select',\n\n      optionsUrl: '/states'\n      optionsParam: 'states',\n      nameField: 'fullname',\n      valueField: 'pk'\n    }\n  }\n};\n\n// form\n// &lt;Form {...formProps} /&gt;\n\n\nDefinindo selects dependentes\nInputs do tipo select podem ter opções que dependem de valores de outros inputs do formulário, como a listagem de cidades de um determinado estado. Para alcançar esta função, configure o componente como dependente seguindo o exemplo abaixo:\n\n\n\nvar formProps = {\n  inputs: {\n    state: {\n      label: 'Estado',\n      component: 'select',\n      optionsUrl: '/states'\n    },\n    city: {\n      label: 'Cidade',\n      component: 'select',\n      optionsUrl: '/cities',\n      dependsOn: {\n        dependableId: 'state'\n      }\n    }\n  }\n};\n\n// form\n&lt;Form {...formProps} /&gt;\n\n\n",
+                    "url": "/realizejs/doc/components/input_select.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputSwitch",
+                    "desc": "description.input_switch",
+                    "content": "\n\nPropslabel StringonLabel StringoffLabel StringthemeClassKey String\n\n\nPropslabel String\nTexto da label do input.\n\n\n\ndefault: null\n\n\nonLabel String\nTexto da label indicando que a chave está ligada.\n\n\n\ndefault: 'true'\n\n\noffLabel String\nTexto da label indicando que a chave está desligada.\n\n\n\ndefault: 'false'\n\n\nthemeClassKey String\nChave atribuida ao objeto especificado nas configurações de tema.\n\n\n\ndefault: \"input.switch\"\n\n\n",
+                    "url": "/realizejs/doc/components/input_switch.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputText",
+                    "desc": "description.input_text",
+                    "content": "{% translate_file doc/components/input_text.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_text.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputTextarea",
+                    "desc": "description.input_textarea",
+                    "content": "{% translate_file doc/components/input_textarea.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_textarea.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Menu",
+                    "desc": "description.menu",
+                    "content": "{% translate_file doc/components/menu.adoc %}",
+                    "url": "/realizejs/doc/components/menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal",
+                    "desc": "description.modal",
+                    "content": "{% translate_file doc/components/modal.adoc %}",
+                    "url": "/realizejs/doc/components/modal.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal Form",
+                    "desc": "description.modal_form",
+                    "content": "{% translate_file doc/components/modal_form.adoc %}",
+                    "url": "/realizejs/doc/components/modal_form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "NotificationList",
+                    "desc": "description.notification_list",
+                    "content": "{% translate_file doc/components/notification_list.adoc %}\n",
+                    "url": "/realizejs/doc/components/notification_list.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Sidenav",
+                    "desc": "description.sidenav",
+                    "content": "{% translate_file doc/components/sidenav.adoc %}\n",
+                    "url": "/realizejs/doc/components/sidenav.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Table",
+                    "desc": "description.table",
+                    "content": "{% translate_file doc/components/table.adoc %}\n",
+                    "url": "/realizejs/doc/components/table.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Tabs",
+                    "desc": "description.tabs",
+                    "content": "{% translate_file doc/components/tabs.adoc %}\n",
+                    "url": "/realizejs/doc/components/tabs.html"
+                },
+        
+            
+            
+            
+
+            
+    ];
+</script>
     </li>
   </ul>
   <div class="navbar-fixed hide-on-large-only">
@@ -470,6 +893,20 @@
         <div class="container content">
           <div class="row">
             <div class="col s12 m9 l10">
+              
+                <div class="doc-examples"><div id="playground"></div></div>
+<script type="text" id="demo_input_switch.html">
+ ReactDOM.render(
+<div>
+  <InputSwitch label='The switch' />
+</div>, mountNode);
+</script>
+<script>
+  ReactDOM.render(React.createElement(RealizePlayground.default,{
+    code: document.getElementById('demo_input_switch.html').text
+  }), document.getElementById("playground"))
+</script>
+
               
               <div class="asciidoctor">
                 <div id="preamble">

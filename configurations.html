@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Configurações</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <script src="/realizejs/assets/js/vendor/jquery/jquery-2.2.4.min.js"></script>
+  <script src="/realizejs/assets/js/vendor/jquery/jquery.inputmask.bundle.js"></script>
+  <script src="/realizejs/assets/js/vendor/jquery/jquery.serialize-object.min.js"></script>
+  <script src="/realizejs/assets/js/vendor/lunr/lunr.min.js"></script>
+  <script src="/realizejs/assets/js/vendor/materialize/materialize.js"></script>
+  <script src="/realizejs/assets/js/vendor/modernizr/modernizr-2.8.3.min.js"></script>
+  <script src="/realizejs/assets/js/vendor/string/string.js"></script>
+  <script src="/realizejs/assets/js/vendor/realize/realize.js"></script>
+  <script src="/realizejs/assets/js/vendor/realize/playground.min.js"></script>
+  <script src="https://cdn.rawgit.com/rafaelfbs/xhr-mock/2.0.2-beta/dist/xhr-mock.browser.js"></script>
+  <script src="/realizejs/assets/js/functions/main.js"></script>
+  <script src="/realizejs/assets/js/functions/search.js"></script>
+
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="/realizejs/css/main.css">
+  <link rel="icon" type="image/png" href="/realizejs/assets/img/icon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/realizejs/assets/img/icon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/realizejs/assets/img/icon-96x96.png" sizes="96x96">
+
+</head>
+
+
+  <body>
+		<div class="global internal">
+
+      <header>
+  <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0%)">
+    <li><a href="/realizejs/" class="brand-logo hide-on-med-and-down"><img src="/realizejs/assets/img/layout/realizemin.png" alt=""></a></li>
+    <li class="bold active">
+    <li class="bold">
+    <form class="form container">
+        <input type="text" id="search-box" onkeyup="getSearch(event)" name="query" placeholder="Buscar" />
+    </form>
+</li>
+<li class="bold">
+    <ul id="search-results" class="container"></ul>
+</li>
+<li class="bold "><a href="/realizejs/about.html" class="waves-effect">Sobre</a></li>
+<li class="bold "><a href="/realizejs/getting_started.html" class="waves-effect">Começando</a></li>
+<li class="bold active"><a href="/realizejs/configurations.html" class="waves-effect">Configurações</a></li>
+<li class="bold "><a href="/realizejs/i18n.html" class="waves-effect">Internacionalização (I18n)</a></li>
+
+<li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+        <li class="bold">
+            
+            <a class="collapsible-header waves-effect components-collapsible ">Componentes</a>
+            <div class="collapsible-body">
+                <ul>
+                        
+                    <li class=""><a href="/realizejs/doc/components/button.html" class="">Button</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/button_group.html" class="">ButtonGroup</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/container.html" class="">Container</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/flash.html" class="">Flash</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/form.html" class="">Form</a></li>
+                                 
+                    <li class=""><a href="/realizejs/doc/components/grid.html" class="">Grid</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/grid_form.html" class="">GridForm</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header.html" class="">Header</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_button.html" class="">HeaderButton</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_menu.html" class="">HeaderMenu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_section.html" class="">HeaderSection</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/input.html" class="">Input</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_autocomplete.html" class="">InputAutocomplete</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/input_datefilter.html" class="">InputDatefilter</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_datepicker.html" class="">InputDatepicker</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_file.html" class="">InputFile</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_group.html" class="">InputGroup</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_hidden.html" class="">InputHidden</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_masked.html" class="">InputMasked</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_number.html" class="">InputNumber</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_password.html" class="">InputPassword</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_select.html" class="">InputSelect</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/input_switch.html" class="">InputSwitch</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_text.html" class="">InputText</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_textarea.html" class="">InputTextarea</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/menu.html" class="">Menu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal.html" class="">Modal</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal_form.html" class="">Modal Form</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/notification_list.html" class="">NotificationList</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/sidenav.html" class="">Sidenav</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/table.html" class="">Table</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/tabs.html" class="">Tabs</a></li>
+                       
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li>
+<!-- li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+        <li class="bold">
+            
+            <a class="collapsible-header waves-effect components-collapsible ">Mixins</a>
+            <div class="collapsible-body">
+                <ul>
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/checkbox_component_mixin.html" class="">CheckboxComponent</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/container_mixin.html" class="">Container</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/css_class_mixin.html" class="">CssClass</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/form_actions_listener_mixin.html" class="">FormActionsListener</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/form_container_mixin.html" class="">FormContainer</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/form_error_handler_mixin.html" class="">FormErrorHandler</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/form_success_mixin.html" class="">FormSuccess</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/grid_actions_mixin.html" class="">GridActions</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/input_component_mixin.html" class="">InputComponent</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/input_select_actions_listener_mixin.html" class="">InputSelectActionsListener</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/localized_resource_field_mixin.html" class="">LocalizedResourceField</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/materialize_select_mixin.html" class="">MaterializeSelect</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/modal_render_mixin.html" class="">ModalRender</a></li>
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/request_handler_mixin.html" class="">RequestHandler</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/rest_actions_mixin.html" class="">RestActions</a></li>
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/select_component_mixin.html" class="">SelectComponent</a></li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                          
+                          <li class=""><a href="/realizejs/doc/mixins/tooltip_mixin.html" class="">Tooltip</a></li>
+                        
+                    
+                </ul>
+            </div>
+        </li>
+    </ul>
+</li -->
+<script>
+    window.store = [
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Sobre",
+                    "desc": "page-desc.about",
+                    "content": "Equipe\n\n\n\n  \n    \n    Ariel Lindgren\n  \n\n  \n    \n    Pedro Jesus\n  \n\n  \n    \n    Lucas Toledo\n  \n\n  \n    \n    Rafael Ferrari\n  \n\n\n\n",
+                    "url": "/realizejs/about.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Button",
+                    "desc": "description.button",
+                    "content": "\n\nPropsname Stringicon Stringstyle Stringelement Stringhref StringactionUrl StringactionData Stringmethod StringisLoading Booleandisabled BooleandisableWith StringconfirmsWith FunctiononClick Functiontarget StringMixins\n\n\nPropsname String\nTexto apresentado no corpo do botão.\n\n\n\ndefault: ''\n\n\nicon String\nNome do ícone à ser inserido no botão. Caso não especificado, nenhum ícone será inserido. Provê suporte a todos os ícones do Google Material Icons. URL: https://design.google.com/icons/\n\n\n\ndefault: null\n\n\nstyle String\nEstilo que será utilizado no botão. Aceita os seguintes valores: 'danger', 'primary', 'warning', 'cancel'.\n\n\n\ndefault: null\n\n\nelement String\nNome do elemento DOM a ser renderizado. Pode ser do tipo \"button\" ou \"a\".\n\n\n\ndefault: \"button\"\n\n\nhref String\nEndereço URL de redirecionamento, caso element seja \"a\".\n\n\n\ndefault: null\n\n\nactionUrl String\nEndereço URL para requisição ajax. Utilize actionData para definir os dados enviados.\n\n\n\ndefault: null\n\n\nactionData String\nObjeto contendo dados enviados na requisição ajax.\n\n\n\ndefault: {}\n\n\nmethod String\nMétodo http utilizado na requisição ajax.\n\n\n\ndefault: \"GET\"\n\n\nisLoading Boolean\nCaso true, informa que o componente está sendo carregado.\n\n\n\ndefault: false\n\n\ndisabled Boolean\nCaso true, desabilita os eventos do botão. \n\n\n\ndefault: false\n\n\ndisableWith String\nTexto a ser apresentado quando botão está desabilitado. \n\n\n\ndefault: \"loading\"\n\n\nconfirmsWith Function\nTexto de alerta apresentado para confirmar ação.\n\n\n\ndefault: null\n\n\nonClick Function\nFunção callback executada ao receber evento de clique.\n\n\n\ndefault: function(event) {}\n\n\ntarget String\nUtilizado para renderizar a propriedade target ou formtarget do link (a) e do botão (button), respectivamente.\n\n\n\ndefault: null\n\n\nMixins\nO componente Button também possui os seguintes mixins: CSSClassMixin e RequestHandlerMixin.\n\n",
+                    "url": "/realizejs/doc/components/button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "ButtonGroup",
+                    "desc": "description.button_group",
+                    "content": "\n\nPropsbuttons Array\n\n\nPropsbuttons Array\nArray de props do componente Button.\n\n\n\ndefault: []\n\n\n",
+                    "url": "/realizejs/doc/components/button_group.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Configurações",
+                    "desc": "",
+                    "content": "\n\nOnde encontrá-lasrestUrlsrestMethodsGridpaginationparam StringperPage Number e perPageParam Stringwindow Numbertype StringperPageOptions Arraysortparam StringdirectionParam StringfieldValueFormat StringComo alterar essas configurações\n\nO RealizeJS possui algumas configurações padrão definidas em sua implementação, abaixo será apresentado cada uma delas e como fazer alterações.\n\n\n\nOnde encontrá-las\nAs configurações estão descritas no arquivo config.js.\n\nrestUrls\nNessa propriedade é definido os caminhos para chamadas REST. Os símbolos :url e :id são trocados dinamicamente por seus respectivos valores de acordo com as propriedades do componente. Ela é utilizada nos componentes Grid e GridForm, para definir as URLs das ações padrão de CRUD.\n\n\nconfig.js\n\nrestUrls: {\n    index: ':url',\n    show: ':url/:id',\n    add: ':url/new',\n    create: ':url',\n    edit: ':url/:id/edit',\n    update: ':url/:id',\n    destroy: ':url/:id'\n}\n\n\nrestMethods\nPropriedade que define os métodos do protocolo HTTP utilizado para cada ação definida na configuração restUrls.\n\n\nconfig.js\n\nrestMethods: {\n    index: 'GET',\n    show: 'GET',\n    add: 'GET',\n    create: 'POST',\n    edit: 'GET',\n    update: 'PUT',\n    destroy: 'DELETE'\n}\n\n\nGrid\nPropriedades globais utilizadas pelo componente Grid, para as funcionalidades de paginação e ordenação.\n\n\nconfig.js\n\ngrid: {\n    pagination: {\n      param: 'p',\n      perPageParam: 'per_page',\n      perPage: 20,\n      window: 4,\n      type: 'default',\n      perPageOptions: [\n            { name: '10', value: 10 },\n            { name: '20', value: 20 },\n            { name: '50', value: 50 }\n        ]\n    },\n    sort: {\n        param: 's',\n        directionParam: 's_dir',\n        fieldValueFormat: '%{field}'\n    }\n}\n\n\npagination\nEspecificação do funcionamento de cada um dos atributos do objeto grid.pagination. Alguns deles podem ser alterados diretamente no componente GridPagination, como pode ser visto no exemplo a seguir. Neste exemplo é criado um componente customizado, o GridPaginationExample. Em seu estado é atribuido as configurações sobrescritas que serão enviadas para o componente GridPagination.\n\n\n\n\nparam String\nNome do parâmetro na query string que define em qual página está o Grid para o back-end.\n\n\n\ndefault: 'p'\n\n\n\nExemplo\n\nurl?p=1\n\n\nperPage Number e perPageParam String\nperPage é quantidade de itens a serem exibidos por página no Grid, e perPageParam é o nome do parâmetro na query string onde essa informação é enviada para o back-end.\n\n\n\nperPage default: 20\nperPageParam default: 'per_page'\n\n\n\nExemplo\n\nurl?per_page=20\n\n\nwindow Number\nTamanho da janela de exibição da paginação.\n\n\n\ndefault: 4\n\n\ntype String\nPropriedade utilizada na renderização dos campos de paginação. São aceitos os valores default e input. No caso default, será apresentado os botões com os números (e dependendo da página, ir para primeira página e/ou ir para última página). No caso input, é renderizado um campo para o usuário inserir a página que deseja ir.\n\n\n\ndefault: 'default'\n\n\nperPageOptions Array\nÉ utilizado para montar o select de opções da quantidade de itens exibidos por página (altera o valor do perPage) dentro do componente GridPagination.\n\n\n\ndefault: [\n    { name: '10', value: 10 },\n    { name: '20', value: 20 },\n    { name: '50', value: 50 }\n]\n\n\nsort\nDescrição da funcionalidade dos atributos do objeto grid.sort.\n\nparam String\nNome do parâmetro na query string onde será enviado para o back-end qual campo deve ser ordenado no componente Grid. Dependendo da configuração (fieldValueFormat), o valor da direção da ordenação também pode ser enviado por esse parâmetro.\n\n\n\ndefault: 's'\n\n\n\nExemplo\n\ndefault:\nurl?s=created_at\n\nsort: {\n  param: 'sorting'\n}\nurl?sorting=created_at\n\n\ndirectionParam String\nNome do parâmetro na query string que define qual será a direção da ordenação do componente Grid.\n\n\n\ndefault: 's_dir'\n\n\n\nExemplo\n\ndefault:\nurl?s_dir=asc\n\nsort: {\n  directionParam: 'sorting_direction'\n}\nurl?sorting_direction=asc\n\n\nfieldValueFormat String\nPadrão utilizado para gerar o valor do parâmetro de ordenação enviado para o back-end (definido em param). O código que utiliza este padrão pode ser encontrado em Grid, no método parseSortPostDataValue.\n\n\n\ndefault: %{field}\n\n\n\nExemplo\n\ndefault:\nurl?s=created_at&amp;s_dir=desc\n\nsort: {\n  fieldValueFormat: '%{field},%{direction}'\n}\nurl?s=created_at,desc\n\n\nComo alterar essas configurações\nO Realize provê a função setConfig para a customização dessas configurações no seu objeto global. A seguir é apresentando um exemplo de uso desta função.\n\n\nExemplo\n\nRealize.setConfig(\n    {\n        restUrls: {\n            destroy: ':url/delete/:id'\n        },\n\n        restMethods: {\n            add: 'PUT'\n        },\n\n        grid: {\n            pagination: {\n                param: 'pagination',\n                perPageParam: 'per_table',\n                perPage: 10,\n                window: 2,\n            },\n            sort: {\n                param: 'sort',\n            }\n        }\n    }\n);\n\n\n",
+                    "url": "/realizejs/configurations.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Container",
+                    "desc": "description.container",
+                    "content": "{% translate_file doc/components/container.adoc %}\n",
+                    "url": "/realizejs/doc/components/container.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Flash",
+                    "desc": "description.flash",
+                    "content": "{% translate_file doc/components/flash.adoc %}\n",
+                    "url": "/realizejs/doc/components/flash.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Form",
+                    "desc": "description.form",
+                    "content": "{% translate_file doc/components/form.adoc %}\n",
+                    "url": "/realizejs/doc/components/form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Começando",
+                    "desc": "",
+                    "content": "{% translate_file guides/getting-started.adoc %}\n",
+                    "url": "/realizejs/getting_started.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Grid",
+                    "desc": "description.grid",
+                    "content": "{% translate_file doc/components/grid.adoc %}\n",
+                    "url": "/realizejs/doc/components/grid.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "GridForm",
+                    "desc": "description.grid_form",
+                    "content": "{% translate_file doc/components/grid_form.adoc %}\n",
+                    "url": "/realizejs/doc/components/grid_form.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Header",
+                    "desc": "description.header",
+                    "content": "{% translate_file doc/components/header.adoc %}",
+                    "url": "/realizejs/doc/components/header.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderButton",
+                    "desc": "description.header_button",
+                    "content": "{% translate_file doc/components/header_button.adoc %}",
+                    "url": "/realizejs/doc/components/header_button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderMenu",
+                    "desc": "description.header_menu",
+                    "content": "{% translate_file doc/components/header_menu.adoc %}",
+                    "url": "/realizejs/doc/components/header_menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderSection",
+                    "desc": "description.header_section",
+                    "content": "{% translate_file doc/components/header_section.adoc %}\n",
+                    "url": "/realizejs/doc/components/header_section.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Internacionalização (I18n)",
+                    "desc": "",
+                    "content": "{% translate_file guides/i18n.adoc %}\n",
+                    "url": "/realizejs/i18n.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "",
+                    "desc": "",
+                    "content": "\n    \n        \n            \n                \n                    \n                \n                {% t cont%}\n                \n                  {% t get-started %}\n                \n                v. {{ site.realize_version}} beta\n                \n            \n        \n    \n\n\n\n    \n        \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t about%}\n                            {% t about-intro %}\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t getting-started%}\n                            {% t getting-stated-intro %}\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t documentation%}\n                            {% t documentation-intro %}\n                        \n                    \n                \n            \n        \n    \n\n",
+                    "url": "/realizejs/"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Input",
+                    "desc": "description.input",
+                    "content": "{% translate_file doc/components/input.adoc %}\n",
+                    "url": "/realizejs/doc/components/input.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputAutocomplete",
+                    "desc": "description.input_autocomplete",
+                    "content": "{% translate_file doc/components/input_autocomplete.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_autocomplete.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatefilter",
+                    "desc": "description.input_datefilter",
+                    "content": "{% translate_file doc/components/input_datefilter.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_datefilter.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatepicker",
+                    "desc": "description.input_datepicker",
+                    "content": "{% translate_file doc/components/input_datepicker.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_datepicker.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputFile",
+                    "desc": "description.input_file",
+                    "content": "{% translate_file doc/components/input_file.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_file.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputGroup",
+                    "desc": "description.input_group",
+                    "content": "{% translate_file doc/components/input_group.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_group.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputHidden",
+                    "desc": "description.input_hidden",
+                    "content": "{% translate_file doc/components/input_hidden.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_hidden.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputMasked",
+                    "desc": "description.input_masked",
+                    "content": "{% translate_file doc/components/input_masked.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_masked.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputNumber",
+                    "desc": "description.input_number",
+                    "content": "{% translate_file doc/components/input_number.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_number.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputPassword",
+                    "desc": "description.input_password",
+                    "content": "{% translate_file doc/components/input_password.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_password.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputSelect",
+                    "desc": "description.input_select",
+                    "content": "{% translate_file doc/components/input_select.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_select.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputSwitch",
+                    "desc": "description.input_switch",
+                    "content": "{% translate_file doc/components/input_switch.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_switch.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputText",
+                    "desc": "description.input_text",
+                    "content": "{% translate_file doc/components/input_text.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_text.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputTextarea",
+                    "desc": "description.input_textarea",
+                    "content": "{% translate_file doc/components/input_textarea.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_textarea.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Menu",
+                    "desc": "description.menu",
+                    "content": "{% translate_file doc/components/menu.adoc %}",
+                    "url": "/realizejs/doc/components/menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal",
+                    "desc": "description.modal",
+                    "content": "{% translate_file doc/components/modal.adoc %}",
+                    "url": "/realizejs/doc/components/modal.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal Form",
+                    "desc": "description.modal_form",
+                    "content": "{% translate_file doc/components/modal_form.adoc %}",
+                    "url": "/realizejs/doc/components/modal_form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "NotificationList",
+                    "desc": "description.notification_list",
+                    "content": "{% translate_file doc/components/notification_list.adoc %}\n",
+                    "url": "/realizejs/doc/components/notification_list.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Sidenav",
+                    "desc": "description.sidenav",
+                    "content": "{% translate_file doc/components/sidenav.adoc %}\n",
+                    "url": "/realizejs/doc/components/sidenav.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Table",
+                    "desc": "description.table",
+                    "content": "{% translate_file doc/components/table.adoc %}\n",
+                    "url": "/realizejs/doc/components/table.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Tabs",
+                    "desc": "description.tabs",
+                    "content": "{% translate_file doc/components/tabs.adoc %}\n",
+                    "url": "/realizejs/doc/components/tabs.html"
+                },
+        
+            
+            
+            
+
+            
+    ];
+</script>
+    </li>
+  </ul>
+  <div class="navbar-fixed hide-on-large-only">
+    <nav>
+      <div class="container-fluid">
+        <a href="#" data-activates="nav-mobile" class="button-collapse top-nav hide-on-large-only"><i class="material-icons">menu</i></a>
+
+        <div class="nav-wrapper">
+          <a href="/realizejs/" class="brand-logo"><img src="/realizejs/assets/img/layout/realizemin.png" alt=""></a>
+          <ul class="right">
+            <li><a href="https://github.com/working-minds" target="_blank"><span class="icon icon--github "><svg viewBox="0 0 16 16"><path d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span></a>
+</li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="fundo-roxo">
+  <div class="container">
+    <ul class="flag-list right">
+      <li><a href="https://github.com/working-minds" target="_blank"><span class="icon icon--github internal"><svg viewBox="0 0 16 16"><path d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span></a>
+</li>
+
+      
+        
+        <li><a class="flag brazil-flag "></a></li>
+        <li><a href="/realizejs/en/configurations.html" class="flag en-flag active-flag" ></a></li>
+      
+    </ul>
+    <div class="row">
+      <div class="col l12">
+        
+        
+        <h1 class="heading">Configurações</h1>
+        
+        <p class="caption"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</header>
+
+
+      <div class="page-content">
+        <div class="container content">
+          <div class="row">
+            <div class="col s12 m9 l10">
+              
+              <div class="asciidoctor">
+                <div id="preamble">
+<div class="sectionbody">
+<div id="toc" class="toc-wrapper pin-top"><div style="height: 1px;"><ul class="sectlevel1 table-of-contents"><li><a href="#onde-encontrá-las">Onde encontrá-las</a><li><a href="#resturls">restUrls</a></li><li><a href="#restmethods">restMethods</a></li><li><a href="#grid">Grid</a><li><a href="#pagination">pagination</a><li><a href="#param-span-class-prop-type-prop-type-string-string-span">param <span class="prop-type prop-type-string">String</span></a></li><li><a href="#perpage-span-class-prop-type-prop-type-number-number-span-e-perpageparam-span-class-prop-type-prop-type-string-string-span">perPage <span class="prop-type prop-type-number">Number</span> e perPageParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#window-span-class-prop-type-prop-type-number-number-span">window <span class="prop-type prop-type-number">Number</span></a></li><li><a href="#type-span-class-prop-type-prop-type-string-string-span">type <span class="prop-type prop-type-string">String</span></a></li><li><a href="#perpageoptions-span-class-prop-type-prop-type-array-array-span">perPageOptions <span class="prop-type prop-type-array">Array</span></a></li></li><li><a href="#sort">sort</a><li><a href="#param-span-class-prop-type-prop-type-string-string-span-2">param <span class="prop-type prop-type-string">String</span></a></li><li><a href="#directionparam-span-class-prop-type-prop-type-string-string-span">directionParam <span class="prop-type prop-type-string">String</span></a></li><li><a href="#fieldvalueformat-span-class-prop-type-prop-type-string-string-span">fieldValueFormat <span class="prop-type prop-type-string">String</span></a></li></li></li></li><li><a href="#como-alterar-essas-configurações">Como alterar essas configurações</a></li></ul></div></div>
+<div class="paragraph">
+<p>O RealizeJS possui algumas configurações padrão definidas em sua implementação, abaixo será apresentado cada uma delas e como fazer alterações.</p>
+</div>
+</div>
+</div>
+<div class="sect2"><h3 id="onde-encontrá-las" class="  section scrollspy">Onde encontrá-las</h3><div class="paragraph">
+<p>As configurações estão descritas no arquivo <a href="https://github.com/working-minds/realizejs/blob/master/src/js/config.js"><em>config.js</em></a>.</p>
+</div>
+<div class="sect2"><h3 id="resturls" class="  section scrollspy">restUrls</h3><div class="paragraph">
+<p>Nessa propriedade é definido os caminhos para chamadas <em>REST</em>. Os símbolos <em>:url</em> e <em>:id</em> são trocados dinamicamente por seus respectivos valores de acordo com as propriedades do componente. Ela é utilizada nos componentes <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/grid/grid.jsx"><em>Grid</em></a> e <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/gridForm/grid_form.jsx"><em>GridForm</em></a>, para definir as URLs das ações padrão de CRUD.</p>
+</div>
+<div class="listingblock">
+<div class="title">config.js</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">restUrls: {
+    index: ':url',
+    show: ':url/:id',
+    add: ':url/new',
+    create: ':url',
+    edit: ':url/:id/edit',
+    update: ':url/:id',
+    destroy: ':url/:id'
+}</code></pre>
+</div>
+</div></div>
+<div class="sect2"><h3 id="restmethods" class="  section scrollspy">restMethods</h3><div class="paragraph">
+<p>Propriedade que define os <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">métodos do protocolo <em>HTTP</em></a> utilizado para cada ação definida na configuração <strong>restUrls</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="title">config.js</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">restMethods: {
+    index: 'GET',
+    show: 'GET',
+    add: 'GET',
+    create: 'POST',
+    edit: 'GET',
+    update: 'PUT',
+    destroy: 'DELETE'
+}</code></pre>
+</div>
+</div></div>
+<div class="sect3"><h4 id="grid" class="  section scrollspy">Grid</h4><div class="paragraph">
+<p>Propriedades globais utilizadas pelo componente <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/grid/grid.jsx"><em>Grid</em></a>, para as funcionalidades de paginação e ordenação.</p>
+</div>
+<div class="listingblock">
+<div class="title">config.js</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">grid: {
+    pagination: {
+      param: 'p',
+      perPageParam: 'per_page',
+      perPage: 20,
+      window: 4,
+      type: 'default',
+      perPageOptions: [
+            { name: '10', value: 10 },
+            { name: '20', value: 20 },
+            { name: '50', value: 50 }
+        ]
+    },
+    sort: {
+        param: 's',
+        directionParam: 's_dir',
+        fieldValueFormat: '%{field}'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="sect4"><h5 id="pagination" class="  section scrollspy">pagination</h5><div class="paragraph">
+<p>Especificação do funcionamento de cada um dos atributos do objeto <em>grid.pagination</em>. Alguns deles podem ser alterados diretamente no componente <em>GridPagination</em>, como pode ser visto no exemplo a seguir. Neste exemplo é criado um componente customizado, o <em>GridPaginationExample</em>. Em seu estado é atribuido as configurações sobrescritas que serão enviadas para o componente <em>GridPagination</em>.</p>
+</div>
+<div class="doc-examples"><div id="playground"></div></div>
+<script type="text" id="demo_/grid-pagination.html">
+ class GridPaginationExample extends React.Component {
+    constructor() {
+        super();
+
+        this.onPagination = this.onPagination.bind(this);
+        this.state = {
+            count: 100,
+            page: 1,
+            perPage: 10,
+            window: 2
+        }
+    }
+
+    onPagination (page) {
+        this.setState({page: page});
+    }
+
+    render () {
+        return (
+            <GridPagination
+                {... Realize.config.grid.pagination}
+                count={this.state.count}
+                page={this.state.page}
+                perPage={this.state.perPage}
+                window={this.state.window}
+                onPagination={this.onPagination}
+            />
+        );
+    }
+}
+
+ReactDOM.render(<div>
+    <GridPaginationExample />
+</div>, mountNode)
+</script>
+<script>
+  ReactDOM.render(React.createElement(RealizePlayground.default,{
+    code: document.getElementById('demo_/grid-pagination.html').text
+  }), document.getElementById("playground"))
+</script>
+<div class="sect4"><h5 id="param-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">param <span class="prop-type prop-type-string">String</span></h5><div class="paragraph">
+<p>Nome do parâmetro na <em>query string</em> que define em qual página está o <em>Grid</em> para o <em>back-end</em>.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'p'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Exemplo</div>
+<div class="content">
+<pre class="highlight"><code>url?p=1</code></pre>
+</div>
+</div></div>
+<div class="sect4"><h5 id="perpage-span-class-prop-type-prop-type-number-number-span-e-perpageparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">perPage <span class="prop-type prop-type-number">Number</span> e perPageParam <span class="prop-type prop-type-string">String</span></h5><div class="paragraph">
+<p><em>perPage</em> é quantidade de itens a serem exibidos por página no <em>Grid</em>, e <em>perPageParam</em> é o nome do parâmetro na <em>query string</em> onde essa informação é enviada para o <em>back-end</em>.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">perPage default: 20
+perPageParam default: 'per_page'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Exemplo</div>
+<div class="content">
+<pre class="highlight"><code>url?per_page=20</code></pre>
+</div>
+</div></div>
+<div class="sect4"><h5 id="window-span-class-prop-type-prop-type-number-number-span" class="  section scrollspy">window <span class="prop-type prop-type-number">Number</span></h5><div class="paragraph">
+<p>Tamanho da janela de exibição da paginação.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 4</code></pre>
+</div>
+</div></div>
+<div class="sect4"><h5 id="type-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">type <span class="prop-type prop-type-string">String</span></h5><div class="paragraph">
+<p>Propriedade utilizada na renderização dos campos de paginação. São aceitos os valores <em>default</em> e <em>input</em>. No caso <em>default</em>, será apresentado os botões com os números (e dependendo da página, ir para primeira página e/ou ir para última página). No caso <em>input</em>, é renderizado um campo para o usuário inserir a página que deseja ir.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 'default'</code></pre>
+</div>
+</div></div>
+<div class="sect4"><h5 id="perpageoptions-span-class-prop-type-prop-type-array-array-span" class="  section scrollspy">perPageOptions <span class="prop-type prop-type-array">Array</span></h5><div class="paragraph">
+<p>É utilizado para montar o <em>select</em> de opções da quantidade de itens exibidos por página (altera o valor do <em>perPage</em>) dentro do componente <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/grid/grid_pagination.jsx"><em>GridPagination</em></a>.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: [
+    { name: '10', value: 10 },
+    { name: '20', value: 20 },
+    { name: '50', value: 50 }
+]</code></pre>
+</div>
+</div></div></div>
+<div class="sect4"><h5 id="sort" class="  section scrollspy">sort</h5><div class="paragraph">
+<p>Descrição da funcionalidade dos atributos do objeto <em>grid.sort</em>.</p>
+</div>
+<div class="sect4"><h5 id="param-span-class-prop-type-prop-type-string-string-span-2" class="  section scrollspy">param <span class="prop-type prop-type-string">String</span></h5><div class="paragraph">
+<p>Nome do parâmetro na <em>query string</em> onde será enviado para o <em>back-end</em> qual campo deve ser ordenado no componente <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/grid/grid.jsx"><em>Grid</em></a>. Dependendo da configuração (<strong>fieldValueFormat</strong>), o valor da direção da ordenação também pode ser enviado por esse parâmetro.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 's'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Exemplo</div>
+<div class="content">
+<pre class="highlight"><code>default:
+url?s=created_at
+
+sort: {
+  param: 'sorting'
+}
+url?sorting=created_at</code></pre>
+</div>
+</div></div>
+<div class="sect4"><h5 id="directionparam-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">directionParam <span class="prop-type prop-type-string">String</span></h5><div class="paragraph">
+<p>Nome do parâmetro na <em>query string</em> que define qual será a direção da ordenação do componente <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/grid/grid.jsx"><em>Grid</em></a>.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: 's_dir'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Exemplo</div>
+<div class="content">
+<pre class="highlight"><code>default:
+url?s_dir=asc
+
+sort: {
+  directionParam: 'sorting_direction'
+}
+url?sorting_direction=asc</code></pre>
+</div>
+</div></div>
+<div class="sect4"><h5 id="fieldvalueformat-span-class-prop-type-prop-type-string-string-span" class="  section scrollspy">fieldValueFormat <span class="prop-type prop-type-string">String</span></h5><div class="paragraph">
+<p>Padrão utilizado para gerar o valor do parâmetro de ordenação enviado para o <em>back-end</em> (definido em <strong>param</strong>). O código que utiliza este padrão pode ser encontrado em <a href="https://github.com/working-minds/realizejs/blob/master/src/js/components/grid/grid.jsx"><em>Grid</em></a>, no método <em>parseSortPostDataValue</em>.</p>
+</div>
+<div class="listingblock prop-default">
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default: %{field}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Exemplo</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">default:
+url?s=created_at&amp;s_dir=desc
+
+sort: {
+  fieldValueFormat: '%{field},%{direction}'
+}
+url?s=created_at,desc</code></pre>
+</div>
+</div></div></div></div></div>
+<div class="sect1"><h2 id="como-alterar-essas-configurações" class="  section scrollspy">Como alterar essas configurações</h2><div class="sectionbody"><div class="paragraph">
+<p>O Realize provê a função <em>setConfig</em> para a customização dessas configurações no seu objeto global. A seguir é apresentando um exemplo de uso desta função.</p>
+</div>
+<div class="listingblock">
+<div class="title">Exemplo</div>
+<div class="content">
+<pre class="highlight"><code class="language-javascript" data-lang="javascript">Realize.setConfig(
+    {
+        restUrls: {
+            destroy: ':url/delete/:id'
+        },
+
+        restMethods: {
+            add: 'PUT'
+        },
+
+        grid: {
+            pagination: {
+                param: 'pagination',
+                perPageParam: 'per_table',
+                perPage: 10,
+                window: 2,
+            },
+            sort: {
+                param: 'sort',
+            }
+        }
+    }
+);</code></pre>
+</div>
+</div></div></div>
+
+              </div>
+            </div>
+            <div class='col hide-on-small-only m3 l2' id="side-toc">
+              <script>
+$(document).ready(function() {
+  $(".toc-wrapper").appendTo("#side-toc")
+  $('.scrollspy').scrollSpy();
+});
+</script>
+
+            </div>
+          </div>
+        </div>
+      </div>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/default.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script>
+      <footer>
+    <p class="center-align">Criado pela equipe da <a href="http://workingminds.com.br"><img src="/realizejs/assets/img/content/workingminds.png" alt=""></a></p>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-81705825-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    </div>
+  </body>
+
+</html>

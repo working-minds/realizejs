@@ -13,6 +13,7 @@
   <script src="/realizejs/assets/js/vendor/jquery/jquery-2.2.4.min.js"></script>
   <script src="/realizejs/assets/js/vendor/jquery/jquery.inputmask.bundle.js"></script>
   <script src="/realizejs/assets/js/vendor/jquery/jquery.serialize-object.min.js"></script>
+  <script src="/realizejs/assets/js/vendor/lunr/lunr.min.js"></script>
   <script src="/realizejs/assets/js/vendor/materialize/materialize.js"></script>
   <script src="/realizejs/assets/js/vendor/modernizr/modernizr-2.8.3.min.js"></script>
   <script src="/realizejs/assets/js/vendor/string/string.js"></script>
@@ -20,6 +21,7 @@
   <script src="/realizejs/assets/js/vendor/realize/playground.min.js"></script>
   <script src="https://cdn.rawgit.com/rafaelfbs/xhr-mock/2.0.2-beta/dist/xhr-mock.browser.js"></script>
   <script src="/realizejs/assets/js/functions/main.js"></script>
+  <script src="/realizejs/assets/js/functions/search.js"></script>
 
   <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="/realizejs/css/main.css">
@@ -37,8 +39,18 @@
   <ul id="nav-mobile" class="side-nav fixed" style="transform: translateX(0%)">
     <li><a href="/realizejs/" class="brand-logo hide-on-med-and-down"><img src="/realizejs/assets/img/layout/realizemin.png" alt=""></a></li>
     <li class="bold active">
-    <li class="bold"><a href="/realizejs/about.html" class="waves-effect">Sobre</a></li>
-<li class="bold"><a href="/realizejs/getting_started.html" class="waves-effect">Começando</a></li>
+    <li class="bold">
+    <form class="form container">
+        <input type="text" id="search-box" onkeyup="getSearch(event)" name="query" placeholder="Buscar" />
+    </form>
+</li>
+<li class="bold">
+    <ul id="search-results" class="container"></ul>
+</li>
+<li class="bold active"><a href="/realizejs/about.html" class="waves-effect">Sobre</a></li>
+<li class="bold "><a href="/realizejs/getting_started.html" class="waves-effect">Começando</a></li>
+<li class="bold "><a href="/realizejs/configurations.html" class="waves-effect">Configurações</a></li>
+<li class="bold "><a href="/realizejs/i18n.html" class="waves-effect">Internacionalização (I18n)</a></li>
 
 <li class="no-padding">
     <ul class="collapsible collapsible-accordion">
@@ -47,204 +59,71 @@
             <a class="collapsible-header waves-effect components-collapsible ">Componentes</a>
             <div class="collapsible-body">
                 <ul>
-                    
                         
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/button.html" class="">Button</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/button_group.html" class="">ButtonGroup</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/container.html" class="">Container</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/flash.html" class="">Flash</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/form.html" class="">Form</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/grid.html" class="">Grid</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/grid_form.html" class="">GridForm</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header.html" class="">Header</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_button.html" class="">HeaderButton</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_menu.html" class="">HeaderMenu</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/header_section.html" class="">HeaderSection</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input.html" class="">Input</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_datepicker.html" class="">InputDatepicker</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_error.html" class="">InputError</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_file.html" class="">InputFile</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_group.html" class="">InputGroup</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_hidden.html" class="">InputHidden</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_masked.html" class="">InputMasked</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_number.html" class="">InputNumber</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_password.html" class="">InputPassword</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_select.html" class="">InputSelect</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_switch.html" class="">InputSwitch</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_text.html" class="">InputText</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/input_textarea.html" class="">InputTextarea</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/menu.html" class="">Menu</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/modal.html" class="">Modal</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/modal_form.html" class="">Modal Form</a></li>
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/notification_list.html" class="">NotificationList</a></li>
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/sidenav.html" class="">Sidenav</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/table.html" class="">Table</a></li>
-                        
-                    
-                        
-                          
-                          <li class=""><a href="/realizejs/doc/components/tabs.html" class="">Tabs</a></li>
-                        
-                    
-                        
-                    
+                    <li class=""><a href="/realizejs/doc/components/button.html" class="">Button</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/button_group.html" class="">ButtonGroup</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/container.html" class="">Container</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/flash.html" class="">Flash</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/form.html" class="">Form</a></li>
+                                 
+                    <li class=""><a href="/realizejs/doc/components/grid.html" class="">Grid</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/grid_form.html" class="">GridForm</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header.html" class="">Header</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_button.html" class="">HeaderButton</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_menu.html" class="">HeaderMenu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/header_section.html" class="">HeaderSection</a></li>
+                           
+                    <li class=""><a href="/realizejs/doc/components/input.html" class="">Input</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_autocomplete.html" class="">InputAutocomplete</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/input_datefilter.html" class="">InputDatefilter</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_datepicker.html" class="">InputDatepicker</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_file.html" class="">InputFile</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_group.html" class="">InputGroup</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_hidden.html" class="">InputHidden</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_masked.html" class="">InputMasked</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_number.html" class="">InputNumber</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_password.html" class="">InputPassword</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_select.html" class="">InputSelect</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/input_switch.html" class="">InputSwitch</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_text.html" class="">InputText</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/input_textarea.html" class="">InputTextarea</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/menu.html" class="">Menu</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal.html" class="">Modal</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/modal_form.html" class="">Modal Form</a></li>
+                         
+                    <li class=""><a href="/realizejs/doc/components/notification_list.html" class="">NotificationList</a></li>
+                             
+                    <li class=""><a href="/realizejs/doc/components/sidenav.html" class="">Sidenav</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/table.html" class="">Table</a></li>
+                       
+                    <li class=""><a href="/realizejs/doc/components/tabs.html" class="">Tabs</a></li>
+                       
                 </ul>
             </div>
         </li>
@@ -267,6 +146,8 @@
                         
                           
                           <li class=""><a href="/realizejs/doc/mixins/checkbox_component_mixin.html" class="">CheckboxComponent</a></li>
+                        
+                    
                         
                     
                         
@@ -312,6 +193,10 @@
                         
                           
                           <li class=""><a href="/realizejs/doc/mixins/grid_actions_mixin.html" class="">GridActions</a></li>
+                        
+                    
+                        
+                    
                         
                     
                         
@@ -418,7 +303,545 @@
         </li>
     </ul>
 </li -->
+<script>
+    window.store = [
+        
+            
+            
+            
 
+            
+                {
+                    "title": "Sobre",
+                    "desc": "page-desc.about",
+                    "content": "Equipe\n\n\n\n  \n    \n    Ariel Lindgren\n  \n\n  \n    \n    Pedro Jesus\n  \n\n  \n    \n    Lucas Toledo\n  \n\n  \n    \n    Rafael Ferrari\n  \n\n\n\n",
+                    "url": "/realizejs/about.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Button",
+                    "desc": "description.button",
+                    "content": "{% translate_file doc/components/button.adoc %}\n",
+                    "url": "/realizejs/doc/components/button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "ButtonGroup",
+                    "desc": "description.button_group",
+                    "content": "{% translate_file doc/components/button_group.adoc %}\n",
+                    "url": "/realizejs/doc/components/button_group.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Configurações",
+                    "desc": "",
+                    "content": "{% translate_file guides/configurations.adoc %}\n",
+                    "url": "/realizejs/configurations.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Container",
+                    "desc": "description.container",
+                    "content": "{% translate_file doc/components/container.adoc %}\n",
+                    "url": "/realizejs/doc/components/container.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Flash",
+                    "desc": "description.flash",
+                    "content": "{% translate_file doc/components/flash.adoc %}\n",
+                    "url": "/realizejs/doc/components/flash.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Form",
+                    "desc": "description.form",
+                    "content": "{% translate_file doc/components/form.adoc %}\n",
+                    "url": "/realizejs/doc/components/form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Começando",
+                    "desc": "",
+                    "content": "{% translate_file guides/getting-started.adoc %}\n",
+                    "url": "/realizejs/getting_started.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Grid",
+                    "desc": "description.grid",
+                    "content": "{% translate_file doc/components/grid.adoc %}\n",
+                    "url": "/realizejs/doc/components/grid.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "GridForm",
+                    "desc": "description.grid_form",
+                    "content": "{% translate_file doc/components/grid_form.adoc %}\n",
+                    "url": "/realizejs/doc/components/grid_form.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Header",
+                    "desc": "description.header",
+                    "content": "{% translate_file doc/components/header.adoc %}",
+                    "url": "/realizejs/doc/components/header.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderButton",
+                    "desc": "description.header_button",
+                    "content": "{% translate_file doc/components/header_button.adoc %}",
+                    "url": "/realizejs/doc/components/header_button.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderMenu",
+                    "desc": "description.header_menu",
+                    "content": "{% translate_file doc/components/header_menu.adoc %}",
+                    "url": "/realizejs/doc/components/header_menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "HeaderSection",
+                    "desc": "description.header_section",
+                    "content": "{% translate_file doc/components/header_section.adoc %}\n",
+                    "url": "/realizejs/doc/components/header_section.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Internacionalização (I18n)",
+                    "desc": "",
+                    "content": "{% translate_file guides/i18n.adoc %}\n",
+                    "url": "/realizejs/i18n.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "",
+                    "desc": "",
+                    "content": "\n    \n        \n            \n                \n                    \n                \n                {% t cont%}\n                \n                  {% t get-started %}\n                \n                v. {{ site.realize_version}} beta\n                \n            \n        \n    \n\n\n\n    \n        \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t about%}\n                            {% t about-intro %}\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t getting-started%}\n                            {% t getting-stated-intro %}\n                        \n                    \n                \n            \n            \n                \n                    \n                        \n                            \n                        \n                        \n                            {% t documentation%}\n                            {% t documentation-intro %}\n                        \n                    \n                \n            \n        \n    \n\n",
+                    "url": "/realizejs/"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Input",
+                    "desc": "description.input",
+                    "content": "{% translate_file doc/components/input.adoc %}\n",
+                    "url": "/realizejs/doc/components/input.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputAutocomplete",
+                    "desc": "description.input_autocomplete",
+                    "content": "{% translate_file doc/components/input_autocomplete.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_autocomplete.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatefilter",
+                    "desc": "description.input_datefilter",
+                    "content": "{% translate_file doc/components/input_datefilter.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_datefilter.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputDatepicker",
+                    "desc": "description.input_datepicker",
+                    "content": "{% translate_file doc/components/input_datepicker.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_datepicker.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputFile",
+                    "desc": "description.input_file",
+                    "content": "{% translate_file doc/components/input_file.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_file.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputGroup",
+                    "desc": "description.input_group",
+                    "content": "{% translate_file doc/components/input_group.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_group.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputHidden",
+                    "desc": "description.input_hidden",
+                    "content": "{% translate_file doc/components/input_hidden.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_hidden.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputMasked",
+                    "desc": "description.input_masked",
+                    "content": "{% translate_file doc/components/input_masked.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_masked.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputNumber",
+                    "desc": "description.input_number",
+                    "content": "{% translate_file doc/components/input_number.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_number.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputPassword",
+                    "desc": "description.input_password",
+                    "content": "{% translate_file doc/components/input_password.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_password.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputSelect",
+                    "desc": "description.input_select",
+                    "content": "{% translate_file doc/components/input_select.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_select.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "InputSwitch",
+                    "desc": "description.input_switch",
+                    "content": "{% translate_file doc/components/input_switch.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_switch.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputText",
+                    "desc": "description.input_text",
+                    "content": "{% translate_file doc/components/input_text.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_text.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "InputTextarea",
+                    "desc": "description.input_textarea",
+                    "content": "{% translate_file doc/components/input_textarea.adoc %}\n",
+                    "url": "/realizejs/doc/components/input_textarea.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Menu",
+                    "desc": "description.menu",
+                    "content": "{% translate_file doc/components/menu.adoc %}",
+                    "url": "/realizejs/doc/components/menu.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal",
+                    "desc": "description.modal",
+                    "content": "{% translate_file doc/components/modal.adoc %}",
+                    "url": "/realizejs/doc/components/modal.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Modal Form",
+                    "desc": "description.modal_form",
+                    "content": "{% translate_file doc/components/modal_form.adoc %}",
+                    "url": "/realizejs/doc/components/modal_form.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "NotificationList",
+                    "desc": "description.notification_list",
+                    "content": "{% translate_file doc/components/notification_list.adoc %}\n",
+                    "url": "/realizejs/doc/components/notification_list.html"
+                },
+        
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+            
+            
+            
+
+            
+                {
+                    "title": "Sidenav",
+                    "desc": "description.sidenav",
+                    "content": "{% translate_file doc/components/sidenav.adoc %}\n",
+                    "url": "/realizejs/doc/components/sidenav.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Table",
+                    "desc": "description.table",
+                    "content": "{% translate_file doc/components/table.adoc %}\n",
+                    "url": "/realizejs/doc/components/table.html"
+                },
+        
+            
+            
+            
+
+            
+                {
+                    "title": "Tabs",
+                    "desc": "description.tabs",
+                    "content": "{% translate_file doc/components/tabs.adoc %}\n",
+                    "url": "/realizejs/doc/components/tabs.html"
+                },
+        
+            
+            
+            
+
+            
+    ];
+</script>
     </li>
   </ul>
   <div class="navbar-fixed hide-on-large-only">
