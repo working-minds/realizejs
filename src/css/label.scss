@@ -1,0 +1,13 @@
+.input-field .select-wrapper + label.active {
+  -webkit-transform: translateY(0%);
+  -moz-transform: translateY(0%);
+  -ms-transform: translateY(0%);
+  -o-transform: translateY(0%);
+  transform: translateY(0%);
+}
+
+.input-field label {
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

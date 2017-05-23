@@ -1,46 +1,55 @@
-var utils = require('../utils.js');
+import { getProp } from '../utils';
+import _ from 'lodash';
 
-var i18n = {
+import ptBR from './locales/pt-BR';
+import en from './locales/en';
+
+import moment from 'moment';
+import './momentLocales/pt-BR';
+
+import numeral from 'numeral';
+import './numeralLocales/pt-BR';
+
+const i18n = {
   locales: {},
   currentLocale: 'en',
 
-  registerLocale: function(newLocaleObj, locale) {
-    if(!$.isPlainObject(newLocaleObj)) {
-      throw 'Invalid Locale Object.'
+  registerLocale(newLocaleObj, locale) {
+    if (!_.isPlainObject(newLocaleObj)) {
+      throw new Error('Invalid Locale Object.');
     }
 
-    if(!locale) {
-      throw 'Invalid Locale Name.';
+    if (!locale) {
+      throw new Error('Invalid Locale Name.');
     }
 
-    var currentLocaleObj = this.locales[locale] || {};
-    this.locales[locale] = $.extend(true, {}, currentLocaleObj, newLocaleObj);
+    const currentLocaleObj = this.locales[locale] || {};
+    this.locales[locale] = _.merge(currentLocaleObj, newLocaleObj);
   },
 
-  setLocale: function(locale) {
+  setLocale(locale) {
     this.currentLocale = locale;
+    // TODO normalize the locale key names - neither lib follows the standards
+    numeral.locale(locale.toLowerCase());
+    moment.locale(locale.toLowerCase());
   },
 
-  translate: function(key, throwsException) {
-    if(throwsException === undefined) {
-      throwsException = false;
-    }
-
-    if(typeof key !== "string") {
-      if(throwsException) {
-        throw 'Key is not a string';
+  translate(key, throwsException = false) {
+    if (typeof key !== 'string') {
+      if (throwsException) {
+        throw new Error('Key is not a string');
       }
 
       return '';
     }
 
-    var currentLocale = this.currentLocale;
-    var localeObj = this.locales[currentLocale];
+    const currentLocale = this.currentLocale;
+    const localeObj = this.locales[currentLocale];
 
-    var translation = utils.getProp(key, localeObj);
-    if(!translation) {
-      if(throwsException) {
-        throw 'Key not found in locale object';
+    let translation = getProp(key, localeObj);
+    if (!translation) {
+      if (throwsException) {
+        throw new Error('Key not found in locale object');
       }
 
       translation = key;
@@ -49,9 +58,14 @@ var i18n = {
     return translation;
   },
 
-  t: function(key, throwsException) {
+  t(key, throwsException) {
     return this.translate(key, throwsException);
-  }
+  },
 };
 
-module.exports = i18n;
+i18n.registerLocale(en, 'en');
+i18n.registerLocale(ptBR, 'pt-BR');
+
+i18n.setLocale(i18n.currentLocale);
+
+export default i18n;

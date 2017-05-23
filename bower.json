@@ -1,6 +1,6 @@
 {
   "name": "realizejs",
-  "version": "0.8.35",
+  "version": "0.9.0",
   "authors": [
     "Ariel Lindgren <ariel@wkm.com.br>",
     "Pedro Jesus <pjesus@wkm.com.br>",
@@ -21,16 +21,18 @@
     "test",
     "tests"
   ],
-
   "main": [
-    "dist/css/realize.css",
-    "dist/js/realize.js"
+    "dist/build/realizejs.css",
+    "dist/build/realizejs.js"
   ],
-
   "dependencies": {
-    "materialize": "0.97.0",
-    "jquery-serialize-object": "~2.5.0",
-    "string": "~3.3.0",
-    "jquery.inputmask":"~3.1.63"
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "jquery": "^2.2.3",
+    "lodash": "^4.6.1",
+    "moment": "^2.12.0",
+    "numeral": "^1.5.3",
+    "materialize": "~0.97.0",
+    "string": "~3.3.0"
   }
 }

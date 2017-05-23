@@ -1,0 +1,35 @@
+button .preloader-wrapper.small {
+  width: 24px;
+  height: 24px;
+}
+
+.button.disabled-button {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+.button--icon {
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  &.btn-floating {
+    padding-left: 0;
+  }
+}
+
+.button--floating.button--icon {
+  padding: 0;
+}
+
+.button-group .button {
+  margin-left: 1rem;
+
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+.realize-modal .modal-footer .button-group {
+  float: right;
+}

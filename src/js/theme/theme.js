@@ -1,12 +1,18 @@
-var utils = require('../utils.js');
+import lodash from 'lodash';
+import $ from 'jquery';
 
-var themes = {
+import {getProp} from '../utils';
+
+import themeDefault from './mappings/default';
+import themeMaterialize from './mappings/materialize';
+
+const themes = {
   themes: {},
   defaultTheme: 'default',
   currentTheme: 'materialize',
 
-  registerTheme: function(newThemeObj, theme) {
-    if(!$.isPlainObject(newThemeObj)) {
+  registerTheme (newThemeObj, theme) {
+    if(!lodash.isPlainObject(newThemeObj)) {
       throw 'Invalid Theme Object.'
     }
 
@@ -15,26 +21,26 @@ var themes = {
     }
 
     var currentThemeObj = this.themes[theme] || {};
-    this.themes[theme] = $.extend({}, currentThemeObj, newThemeObj);
+    this.themes[theme] = lodash.merge({}, currentThemeObj, newThemeObj);
   },
 
-  getCurrent: function() {
+  getCurrent () {
     var defaultThemeObj = this.themes[this.defaultTheme];
     var currentThemeObj = this.themes[this.currentTheme];
 
     return $.extend({}, defaultThemeObj, currentThemeObj);
   },
 
-  getProp: function(key) {
+  getProp (key) {
     if(!key) {
       return '';
     }
 
     var currentTheme = this.getCurrent();
-    return utils.getProp(key, currentTheme);
+    return getProp(key, currentTheme);
   },
 
-  getCssClass: function(keys) {
+  getCssClass (keys) {
     var keysArr = keys.split(' ');
     var themeClass = "";
 
@@ -47,6 +53,9 @@ var themes = {
 
     return themeClass.trim();
   }
-};
+}
 
-module.exports = themes;
+themes.registerTheme(themeDefault, 'default');
+themes.registerTheme(themeMaterialize, 'materialize');
+
+export default themes;

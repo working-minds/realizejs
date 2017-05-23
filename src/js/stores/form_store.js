@@ -1,6 +1,7 @@
-var FormActions = require('realize/actions/form_actions.js');
+import Reflux from 'reflux';
+import FormActions from '../actions/form_actions';
 
-var FormStore = Reflux.createStore({
+export default Reflux.createStore({
   listenables: [FormActions],
   formId: '',
   action: '',
@@ -52,6 +53,3 @@ var FormStore = Reflux.createStore({
   }
 
 });
-
-module.exports = FormStore;
-window.FormStore = FormStore;

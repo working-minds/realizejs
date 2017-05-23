@@ -1,0 +1,13 @@
+# RealizeJS source code and others things.
+# Folders
+.idea
+node_modules
+bower_components
+test
+
+# Files
+.babelrc
+.eslintignore
+.eslintrc.json
+bower.json
+webpack.config.js

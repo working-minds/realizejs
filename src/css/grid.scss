@@ -1,0 +1,55 @@
+.grid {
+  opacity: 1.0;
+}
+
+.grid.loading {
+  opacity: 0.65;
+  transition: opacity .5s ease-out;
+}
+
+.grid__pagination {
+  text-align: right;
+
+  div {
+    float: right;
+    padding: 0 0.5rem;
+  }
+
+  .pagination {
+    display: inline-block;
+  }
+
+  .range_pagination {
+    line-height: 45px;
+  }
+
+  .range_pagination, .grid__pagination .per_page {
+    margin: 0 2rem;
+  }
+
+  .per_page .input-field {
+    max-width: 6rem;
+    margin-top: 0;
+
+    input {
+      text-align: center;
+      margin: 0;
+    }
+
+    .select-wrapper .caret {
+      margin-top: 0.10rem;
+    }
+  }
+
+  .range_pagination span,
+  .per_page .input-field input, .per_page .input-field span {
+    color: #999;
+    border-bottom: none;
+  }
+}
+
+@media only screen and (min-width : 601px) {
+  .grid__selection-indicator {
+    padding: 5px 10px;
+  }
+}

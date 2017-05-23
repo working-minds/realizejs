@@ -1,13 +1,19 @@
-var Realize = {};
+import realizeConfig from './init/config';
+import realizeThemes from './theme/theme.js';
+import realizeI18n from './i18n/i18n';
 
-//TODO: ajustar o assign do config
-var RealizeConfig = require('./config.js');
-Realize.config = RealizeConfig.config;
-Realize.setConfig = RealizeConfig.setConfig;
+import { merge } from 'lodash';
 
-Realize.PropTypes = require('./propTypes.js');
-Realize.utils = require('./utils.js');
-Realize.themes = require('./theme/theme.js');
-Realize.i18n = require('./i18n/i18n.js');
+export const config = realizeConfig;
+export const themes = realizeThemes;
+export const i18n = realizeI18n;
+export const setConfig = (newConfig) => {
+  merge(config, newConfig);
+};
 
-module.exports = Realize;
+export default {
+  config: realizeConfig,
+  themes: realizeThemes,
+  i18n: realizeI18n,
+  setConfig,
+};

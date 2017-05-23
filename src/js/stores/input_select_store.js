@@ -1,6 +1,7 @@
-var InputSelectActions = require('realize/actions/input_select_actions.js');
+import Reflux from 'reflux';
+import InputSelectActions from '../actions/input_select_actions';
 
-var InputSelectStore = Reflux.createStore({
+export default Reflux.createStore({
   listenables: [InputSelectActions],
 
   action: '',
@@ -23,6 +24,3 @@ var InputSelectStore = Reflux.createStore({
     this.trigger(this);
   }
 });
-
-module.exports = InputSelectStore;
-window.InputSelectStore = InputSelectStore;

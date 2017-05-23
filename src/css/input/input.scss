@@ -1,0 +1,34 @@
+@import "../variables.scss";
+
+.input-field {
+  position: relative;
+  min-height: 4rem;
+}
+
+.input-field button.prefix.input-datepicker__button {
+  color: $button-raised-color;
+}
+
+.input-datepicker__button {
+  padding: 0;
+  right: 1rem;
+}
+
+.input-checkbox-group.align-horizontal p {
+  float: left;
+  margin-left: 15px;
+}
+
+.select-wrapper > input[type=text] {
+  cursor: pointer;
+}
+
+.input-radio-group.align-horizontal p {
+  float: left;
+  margin-left: 15px;
+}
+
+.input-switch {
+  height: 3rem;
+  margin-bottom: 1.1rem;
+}
