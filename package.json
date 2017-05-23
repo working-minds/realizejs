@@ -66,10 +66,11 @@
     "webpack": "^2.2.1"
   },
   "peerDependencies": {
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+
   },
   "dependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
     "core-decorators": "^0.12.2",
     "form-serializer": "^2.5.0",
     "jquery": "^2.1.1",
