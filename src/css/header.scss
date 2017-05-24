@@ -1,3 +1,11 @@
 .sidenav__button {
   cursor: pointer;
 }
+
+.brand-logo {
+  .brand-logo__text {
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+    color: $secondary-color;
+  }
+}

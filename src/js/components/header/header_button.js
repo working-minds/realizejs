@@ -3,6 +3,7 @@ import PropTypes from '../../prop_types';
 
 export default class HeaderButton extends Component {
   static propTypes = {
+    className: PropTypes.string,
     imgSrc: PropTypes.string,
     imgAlt: PropTypes.string,
     icon: PropTypes.string,
@@ -11,37 +12,55 @@ export default class HeaderButton extends Component {
     href: PropTypes.string,
     target: PropTypes.string,
     onClick: PropTypes.func,
-    ref: PropTypes.string
+    ref: PropTypes.string,
   };
 
   static defaultProps = {
-    iconAlign: ' '
+    className: 'brand-logo',
+    iconAlign: 'left',
+    imgSrc: null,
+    text: '',
   };
 
-  renderButton () {
+  renderIcon() {
+    if (!this.props.imgSrc && this.props.icon) {
+      return (
+        <i className={`material-icons ${this.props.iconAlign}`}>
+          {this.props.icon}
+        </i>
+      );
+    }
+
+    return <span />;
+  }
+
+  renderImage() {
+    if (this.props.imgSrc) {
+      return <img src={this.props.imgSrc} alt={this.props.imgAlt} />;
+    }
+
+    return <span />;
+  }
+
+  renderText() {
     return (
-      <a href={this.props.href} ref={this.props.ref}  onClick={this.props.onClick} target={this.props.target} >
-        <i className={'material-icons ' + this.props.iconAlign}>{this.props.icon}</i>{this.props.text}
-      </a>
+      <span className={`${this.props.className}__text`}>{this.props.text}</span>
     );
   }
 
-  renderImage (){
+  render() {
     return (
-      <a className="brand-logo" href={this.props.href}>
-        <img src={this.props.imgSrc} alt={this.props.imgAlt}/>
-      </a>);
-  }
-
-  render () {
-    let button = '';
-    if(this.props.imgSrc)
-      button = this.renderImage();
-    else
-      button = this.renderButton();
-
-    return (
-      button
+      <a
+        href={this.props.href}
+        className={this.props.className}
+        onClick={this.props.onClick}
+        target={this.props.target}
+        ref={this.props.ref}
+      >
+        {this.renderIcon()}
+        {this.renderImage()}
+        {this.renderText()}
+      </a>
     );
   }
 }
