@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 
 import PropTypes from '../../prop_types';
-import i18n from '../../i18n/i18n';
 import QueryStringParser from '../../utils/query_string_parser';
 import { autobind, mixin } from '../../utils/decorators';
 
@@ -77,12 +76,11 @@ export default class TableActionButton extends Component {
 
   @autobind
   handleActionButtonClick(event) {
-    if (this.isDisabled()) return;
-
-    const { onClick, actionUrl, confirmsWith } = this.props;
+    const { onClick, actionUrl } = this.props;
     const selectedData = this.getSelectedData();
-    if (confirmsWith && !confirm(i18n.t(confirmsWith))) return;
-    if (typeof onClick === 'function') {
+
+    if (this.isDisabled()) return;
+    else if (typeof onClick === 'function') {
       onClick(event, selectedData);
     } else if (actionUrl) {
       this.performRequest(actionUrl, selectedData, this.props.method);
