@@ -126,7 +126,7 @@ export default class Button extends Component {
   }
 
   render() {
-    const { type, hidden, disabled, isLoading } = this.props;
+    const { hidden, disabled, isLoading } = this.props;
     const ButtonElement = this.props.element;
     const buttonContent = (isLoading)
       ? this.renderLoadingIndicator()
@@ -136,7 +136,7 @@ export default class Button extends Component {
     return (
       <ButtonElement
         className={this.getClassName()}
-        type={type}
+        {...this.props}
         disabled={disabled || isLoading}
         href={this.getHref()}
         onClick={this.handleClick}

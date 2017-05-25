@@ -14,7 +14,7 @@ export default class HeaderButton extends Component {
     target: PropTypes.string,
     onClick: PropTypes.func,
     ref: PropTypes.string,
-    linkComponent: PropTypes.func,
+    element: PropTypes.node,
   };
 
   static defaultProps = {
@@ -22,7 +22,7 @@ export default class HeaderButton extends Component {
     iconAlign: 'left',
     imgSrc: null,
     text: '',
-    linkComponent: Link,
+    element: Link,
   };
 
   renderIcon() {
@@ -52,20 +52,14 @@ export default class HeaderButton extends Component {
   }
 
   render() {
-    const LinkComponent = this.props.linkComponent;
+    const ButtonComponent = this.props.element;
 
     return (
-      <LinkComponent
-        href={this.props.href}
-        className={this.props.className}
-        onClick={this.props.onClick}
-        target={this.props.target}
-        ref={this.props.ref}
-      >
+      <ButtonComponent {...this.props} >
         {this.renderIcon()}
         {this.renderImage()}
         {this.renderText()}
-      </LinkComponent>
+      </ButtonComponent>
     );
   }
 }
