@@ -1,49 +1,51 @@
+import React from 'react';
+
 import PropTypes from '../../prop_types';
-import $ from 'jquery';
+import { FormActions } from '../../actions';
 
 import { Flash } from '../../components';
 
 export default {
   propTypes: {
     onSuccess: PropTypes.func,
-    successMessage: PropTypes.string
+    successMessage: PropTypes.string,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
-      onSuccess: function(data, status, xhr) { return true; },
-      successMessage: ''
+      onSuccess() { return true; },
+      successMessage: '',
     };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      showSuccessFlash: false
+      showSuccessFlash: false,
     };
   },
 
-  renderFlashSuccess: function() {
-    if(!this.state.showSuccessFlash) {
-      return '';
-    }
-
-    return <Flash type="success" message={this.props.successMessage} dismissed={false} />;
+  renderFlashSuccess() {
+    if (!this.state.showSuccessFlash) return <span />;
+    return (
+      <Flash
+        type="success"
+        message={this.props.successMessage}
+        dismissed={false}
+      />
+    );
   },
 
-  handleSuccess: function(data, status, xhr) {
-    var showSuccessFlash = (!!this.props.successMessage && this.props.successMessage.length > 0);
+  handleSuccess(data, status, xhr) {
     this.setState({
       isLoading: false,
       errors: {},
-      showSuccessFlash: showSuccessFlash
+      showSuccessFlash: (!!this.props.successMessage && this.props.successMessage.length > 0),
     });
 
     FormActions.success(this.props.id, data, status, xhr);
-    if(this.props.onSuccess(data, status, xhr)) {
-      if(xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
-        eval(data);
-      }
-
+    if (this.props.onSuccess(data, status, xhr) &&
+        xhr.getResponseHeader('Content-Type').match(/text\/javascript/)) {
+      eval(data);
     }
-  }
-}
+  },
+};
