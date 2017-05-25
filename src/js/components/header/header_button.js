@@ -13,8 +13,7 @@ export default class HeaderButton extends Component {
     href: PropTypes.string,
     target: PropTypes.string,
     onClick: PropTypes.func,
-    ref: PropTypes.string,
-    element: PropTypes.node,
+    element: PropTypes.component,
   };
 
   static defaultProps = {

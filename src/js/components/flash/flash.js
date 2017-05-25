@@ -7,7 +7,6 @@ import CssClassMixin from '../../mixins/css_class_mixin';
 
 import {FlashContent, FlashDismiss} from '../flash';
 
-
 @mixin(CssClassMixin)
 export default class Flash extends Component {
   static propTypes = {

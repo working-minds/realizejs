@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
+
 import PropTypes from '../../prop_types';
 import i18n from '../../i18n/i18n';
 import { autobind, mixin } from '../../utils/decorators';
 
 import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
 import Button from '../../components/button/button';
+import { Link } from 'components/link';
 
-@mixin(
-  CssClassMixin,
-  RequestHandlerMixin
-)
+@mixin(CssClassMixin, RequestHandlerMixin)
 export default class TableRowActionButton extends Component {
   static propTypes = {
     data: PropTypes.object,
@@ -21,6 +20,7 @@ export default class TableRowActionButton extends Component {
     disabled: PropTypes.bool,
     href: PropTypes.string,
     confirmsWith: PropTypes.string,
+    element: PropTypes.component,
     onClick: PropTypes.func,
     conditionToShowActionButton: PropTypes.func,
   };
@@ -34,6 +34,7 @@ export default class TableRowActionButton extends Component {
     disabled: false,
     href: null,
     confirmsWith: null,
+    element: Link,
     onClick: () => true,
     conditionToShowActionButton: () => true,
   };
