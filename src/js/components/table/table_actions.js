@@ -44,7 +44,6 @@ export default class TableActions extends Component {
         <TableActionButton
           {...actionButtonProps}
           {...this.propsWithoutCSS()}
-          element={"a"}
           themeClassKey={"button.flat"}
           key={`action_${i}`}
         />
