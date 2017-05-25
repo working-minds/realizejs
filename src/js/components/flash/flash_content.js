@@ -11,22 +11,26 @@ export default class FlashContent extends Component {
     message: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.string,
-      PropTypes.array
-    ])
+      PropTypes.array,
+    ]),
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
-      themeClassKey: 'flash.content flash.' + this.props.type + '.content'
+      themeClassKey: `flash.content flash.${this.props.type}.content`
     };
   }
 
-  renderMessages () {
+  renderMessages() {
     const isArray = Array.isArray(this.props.message);
     const messages = !isArray ? [this.props.message] : this.props.message;
-    return messages.map(function(message, index) {
-      return typeof message == "string" ? <p key={"flash_content_" + index}>{message}</p> : message;
+    return messages.map((message, index) => {
+      const MessageComponent = typeof message === 'string'
+        ? 'p'
+        : 'span';
+
+      return <MessageComponent key={`flash_content_${index}`}>{message}</MessageComponent>;
     });
   }
 
