@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'components/link';
 import PropTypes from '../../prop_types';
 
 export default class HeaderButton extends Component {
@@ -13,6 +14,7 @@ export default class HeaderButton extends Component {
     target: PropTypes.string,
     onClick: PropTypes.func,
     ref: PropTypes.string,
+    linkComponent: PropTypes.func,
   };
 
   static defaultProps = {
@@ -20,6 +22,7 @@ export default class HeaderButton extends Component {
     iconAlign: 'left',
     imgSrc: null,
     text: '',
+    linkComponent: Link,
   };
 
   renderIcon() {
@@ -49,8 +52,10 @@ export default class HeaderButton extends Component {
   }
 
   render() {
+    const LinkComponent = this.props.linkComponent;
+
     return (
-      <a
+      <LinkComponent
         href={this.props.href}
         className={this.props.className}
         onClick={this.props.onClick}
@@ -60,7 +65,7 @@ export default class HeaderButton extends Component {
         {this.renderIcon()}
         {this.renderImage()}
         {this.renderText()}
-      </a>
+      </LinkComponent>
     );
   }
 }

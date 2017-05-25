@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import i18n from '../../i18n/i18n';
-import $ from 'jquery';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
 import { Icon } from '../icon';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 import RequestHandlerMixin from '../../mixins/request_handler_mixin';
 
+// TODO (PJ): Separar em dois componentes os concerns de href e actionURL.
 @mixin(
   CssClassMixin,
   RequestHandlerMixin
@@ -25,10 +25,11 @@ export default class Button extends Component {
     actionData: PropTypes.object,
     isLoading: PropTypes.bool,
     disableWith: PropTypes.localizedString,
-    confirmsWith: PropTypes.localizedString,
-    element: PropTypes.oneOf(['button', 'a']),
+    confirmsWith: PropTypes.string,
+    element: PropTypes.node,
     target: PropTypes.string,
     method: PropTypes.string,
+    hidden: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -44,129 +45,104 @@ export default class Button extends Component {
     disableWith: 'loading',
     confirmsWith: null,
     element: 'button',
-    method: null,
+    method: 'POST',
+    hidden: false,
   };
 
   constructor(props) {
     super(props);
     this.state = {
       themeClassKey: this.getButtonThemeClassKey() + this.getStyleThemeClassKey(),
-    }
+    };
   }
 
   getButtonThemeClassKey() {
-    let themeClassKey = this.props.themeClassKey;
-
-    if (!this.props.name || this.props.name.length === 0) {
-      themeClassKey += ' button.iconOnly';
-    }
-
-    return themeClassKey;
+    const { themeClassKey, name } = this.props;
+    return (!name || name.length === 0)
+      ? `${themeClassKey} button.iconOnly`
+      : themeClassKey;
   }
 
   getStyleThemeClassKey() {
-    if (!this.props.buttonStyle) {
-      return '';
-    }
-
-    return ' button.' + this.props.buttonStyle;
+    const { buttonStyle } = this.props;
+    return (buttonStyle) ? ` button.${buttonStyle}` : '';
   }
 
   getClassName() {
-    let className = this.className();
-    if (this.props.disabled && this.props.element === 'a')
-      className = 'button btn-flat disable-action-button';
-
-    return className;
+    return (this.props.disabled)
+      ? `${this.className()}button btn-flat disable-action-button`
+      : this.className();
   }
 
   getHref() {
-    if (this.props.disabled && this.props.element === 'a')
-      return 'javascript:void(0)';
-    return this.props.href;
-  }
-
-  getMethod() {
-    if (!!this.props.method) {
-      return this.props.method;
-    }
-
-    return null;
-  }
-
-  getConfirmsWith() {
-    if (!!this.props.confirmsWith) {
-      return i18n.t(this.props.confirmsWith);
-    }
-
-    return null
+    return (this.props.disabled)
+      ? 'javascript:void(0)'
+      : this.props.href;
   }
 
   getIconClassName() {
-    if (!this.props.name || this.props.name.length === 0) {
-      return '';
-    } else {
-      return 'right';
+    return (!this.props.name || this.props.name.length === 0)
+      ? ''
+      : 'right';
+  }
+
+  @autobind
+  handleClick(event) {
+    const { onClick, actionUrl, actionData, method, confirmsWith } = this.props;
+    if (confirmsWith && !confirm(i18n.t(confirmsWith))) return;
+
+    if (typeof onClick === 'function') {
+      onClick(event);
+    } else if (actionUrl) {
+      this.performRequest(actionUrl, actionData, method);
     }
   }
 
-  handleClick = (event) => {
-    let buttonOnClick = this.props.onClick;
-    let buttonAction = this.props.actionUrl;
+  renderIcon() {
+    const { icon } = this.props;
+    const iconProps = (typeof icon === 'string')
+      ? { type: icon }
+      : icon;
 
-    if ($.isFunction(buttonOnClick)) {
-      this.props.onClick(event);
-    } else if (!!buttonAction) {
-      let actionData = this.props.actionData;
-      this.performRequest(buttonAction, actionData, (this.getMethod() || 'POST'));
-    }
-  }
-
-  render() {
-    let content = '';
-    if (this.props.isLoading) {
-      content = this.renderLoadingIndicator();
-    } else {
-      content = this.renderContent();
-    }
-
+    if (!icon) return <span />;
     return (
-      React.createElement(this.props.element,
-        {
-          className: this.getClassName(),
-          type: this.props.type,
-          hidden: this.props.hidden,
-          disabled: this.props.disabled || this.props.isLoading,
-          href: this.getHref(),
-          onClick: this.handleClick,
-          'data-method': this.getMethod(),
-          'data-confirm': this.getConfirmsWith()
-        },
-        content
-      )
+      <Icon className={this.getIconClassName()} {...iconProps} />
+    );
+  }
+
+  renderLoadingIndicator() {
+    return (
+      <span>{i18n.t(this.props.disableWith)}</span>
     );
   }
 
   renderContent() {
-    return [i18n.t(this.props.name), this.renderIcon()];
+    return (
+      <span>
+        <span>{i18n.t(this.props.name)}</span>
+        {this.renderIcon()}
+      </span>
+    );
   }
 
-  renderIcon() {
-    if (!this.props.icon) {
-      return '';
-    }
+  render() {
+    const { type, hidden, disabled, isLoading } = this.props;
+    const ButtonElement = this.props.element;
+    const buttonContent = (isLoading)
+      ? this.renderLoadingIndicator()
+      : this.renderContent();
 
-    let iconProps = null;
-    if ($.isPlainObject(this.props.icon)) {
-      iconProps = this.props.icon;
-    } else {
-      iconProps = { type: this.props.icon };
-    }
-
-    return <Icon className={this.getIconClassName()} {...iconProps} key="icon" />;
-  }
-
-  renderLoadingIndicator() {
-    return i18n.t(this.props.disableWith);
+    if (hidden) return <span />;
+    return (
+      <ButtonElement
+        className={this.getClassName()}
+        type={type}
+        disabled={disabled || isLoading}
+        href={this.getHref()}
+        onClick={this.handleClick}
+      >
+        {buttonContent}
+      </ButtonElement>
+    );
   }
 }
