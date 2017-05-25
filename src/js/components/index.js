@@ -10,6 +10,7 @@ export * from './icon';
 export * from './indicator';
 export * from './input';
 export * from './label';
+export * from './link';
 export * from './menu';
 export * from './modal';
 export * from './notification';
