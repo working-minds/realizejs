@@ -98,15 +98,16 @@ export default {
 
   errors: {
     invalidAction: 'Ação inválida',
+    formErrorMessage: 'Por favor, verifique o(s) erro(s) abaixo.',
     inputSelect: {
-      invalidOption: 'Formato inválido de opção de select (Formato esperado: {name:\"\", value:\"\"})',
+      invalidOption: 'Formato inválido de opção de select (Formato esperado: {name:"", value:""})',
     },
   },
 
   notifications: {
     buttons: {
-     noNotifications: 'Sem notificações',
-     seeAll:  'Ver Todas',
+      noNotifications: 'Sem notificações',
+      seeAll: 'Ver Todas',
     },
   },
 

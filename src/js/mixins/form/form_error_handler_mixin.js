@@ -1,101 +1,98 @@
+import React from 'react';
+import _ from 'lodash';
+
+import i18n from '../../i18n/i18n';
 import PropTypes from '../../prop_types';
 import { FormActions } from '../../actions';
-import { autobind } from '../../utils/decorators';
-import $ from 'jquery';
+import Flash from '../../components/flash/flash';
 
 export default {
   propTypes: {
     errorMessage: PropTypes.string,
     baseErrorParam: PropTypes.string,
     onError: PropTypes.func,
-    mapping: PropTypes.bool
+    mapping: PropTypes.bool,
   },
 
-  getDefaultProps () {
+  getDefaultProps() {
     return {
-      errorMessage: 'Por favor, verifique o(s) erro(s) abaixo.',
+      errorMessage: i18n.t('errors.formErrorMessage'),
       baseErrorParam: 'base',
-      onError: function (xhr, status, error) {
-        return true;
-      },
-      mapping: true
+      onError() { return true; },
+      mapping: true,
     };
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
-      errors: {}
+      errors: {},
     };
   },
 
-  renderFlashErrors () {
-    if ($.isEmptyObject(this.state.errors)) {
-      return '';
-    }
-
-    return <Flash type="error" message={this.flashErrorMessage()} dismissed={false} />;
-  },
-
-  clearErrors () {
+  clearErrors() {
     this.setState({ errors: {} });
   },
 
-  handleError (xhr, status, error) {
+  handleValidationError(xhr) {
+    this.setState({ errors: this.getParsedErrors(xhr.responseText) });
+  },
+
+  getParsedErrors(errors) {
+    const parsedErrors = JSON.parse(errors);
+    if (this.props.mapping) {
+      return this.mapParsedErrors(parsedErrors);
+    } else {
+      return parsedErrors;
+    }
+  },
+
+  mapParsedErrors(parsedErrors) {
+    return Object.keys(parsedErrors)
+      .reduce((acc, k) => Object.assign({}, acc, { [k.split('.').pop()]: parsedErrors[k] }), {});
+  },
+
+  handleError(xhr, status, error) {
     this.setState({ isLoading: false });
 
     FormActions.error(this.props.id, xhr, status, error);
-    if (this.props.onError(xhr, status, error)) {
-      if (xhr.status === 422) {
-        this.handleValidationError(xhr);
-      }
+    if (this.props.onError(xhr, status, error) && (xhr.status === 422)) {
+      this.handleValidationError(xhr);
     }
   },
 
-  handleValidationError (xhr) {
-    this.setState({ errors: this.getMappingErrors(xhr.responseText) });
+  renderBaseErrorsListItems(baseErrors) {
+    return baseErrors.map((baseError) => (
+      <li key={baseError}>{baseError}</li>
+    ));
   },
 
-  getMappingErrors (error) {
-    var errors = JSON.parse(error);
-    if (this.props.mapping) {
-      var mappingErrors = {};
-
-      for (var property in errors) {
-        var key = property.split('.').pop();
-        mappingErrors[key] = errors[property]
-      }
-
-      return mappingErrors;
-    } else {
-      return errors;
-    }
+  renderBaseErrorsList() {
+    const baseErrors = this.state.errors[this.props.baseErrorParam];
+    if (!baseErrors) return <span />;
+    return (
+      <ul>
+        {this.renderBaseErrorsListItems(baseErrors)}
+      </ul>
+    );
   },
 
-  flashErrorMessage () {
+  renderFlashErrorMessage() {
     return (
       <div>
         {this.props.errorMessage}
-        {this.baseErrorsList()}
+        {this.renderBaseErrorsList()}
       </div>
     );
   },
 
-  baseErrorsList () {
-    var baseErrors = this.state.errors[this.props.baseErrorParam];
-    var baseErrorsListComponents = [];
-    if (!baseErrors) {
-      return '';
-    }
-
-    for (var i = 0; i < baseErrors.length; i++) {
-      var baseError = baseErrors[i];
-      baseErrorsListComponents.push(<li key={baseError}>{baseError}</li>);
-    }
-
+  renderFlashErrors() {
+    if (_.isEmpty(this.state.errors)) return <span />;
     return (
-      <ul>
-        {baseErrorsListComponents}
-      </ul>
+      <Flash
+        type="error"
+        message={this.renderFlashErrorMessage()}
+        dismissed={false}
+      />
     );
-  }
-}
+  },
+};

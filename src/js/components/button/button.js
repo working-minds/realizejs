@@ -26,10 +26,10 @@ export default class Button extends Component {
     isLoading: PropTypes.bool,
     disableWith: PropTypes.localizedString,
     confirmsWith: PropTypes.string,
-    element: PropTypes.node,
     target: PropTypes.string,
     method: PropTypes.string,
     hidden: PropTypes.bool,
+    element: PropTypes.component,
   };
 
   static defaultProps = {
@@ -76,7 +76,7 @@ export default class Button extends Component {
 
   getHref() {
     return (this.props.disabled)
-      ? 'javascript:void(0)'
+      ? '#!'
       : this.props.href;
   }
 

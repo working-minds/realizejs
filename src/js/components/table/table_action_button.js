@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
-import Button from '../button/button';
+import _ from 'lodash';
+
 import PropTypes from '../../prop_types';
-import { mixin } from '../../utils/decorators';
+import i18n from '../../i18n/i18n';
+import QueryStringParser from '../../utils/query_string_parser';
+import { autobind, mixin } from '../../utils/decorators';
 
 import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
+import Button from '../button/button';
+import { Link } from '../link/link';
 
 @mixin(CssClassMixin, RequestHandlerMixin)
 export default class TableActionButton extends Component {
@@ -19,9 +23,13 @@ export default class TableActionButton extends Component {
     method: PropTypes.string,
     disabled: PropTypes.bool,
     selectionContext: PropTypes.oneOf(['none', 'atLeastOne']),
-    conditionToShowActionButton: PropTypes.func,
-    component: PropTypes.func,
+    conditionParams: PropTypes.object,
     params: PropTypes.object,
+    element: PropTypes.component,
+    confirmsWith: PropTypes.string,
+    href: PropTypes.string,
+    onClick: PropTypes.func,
+    conditionToShowActionButton: PropTypes.func,
   };
 
   static defaultProps = {
@@ -29,109 +37,73 @@ export default class TableActionButton extends Component {
     selectedRowIds: [],
     allSelected: false,
     method: null,
-    conditionParams: null,
     disabled: false,
     selectionContext: 'none',
-    component: Button,
-    params: null,
+    element: Link,
+    conditionParams: null,
+    params: {},
+    confirmsWith: null,
+    href: null,
+    onClick() {},
     conditionToShowActionButton() { return true; },
   };
 
-  renderButton() {
-    const component = [];
-    if (!this.props.conditionToShowActionButton(this.props.conditionParams)) {
-      return component;
-    }
-
-    const buttonProps = Object.assign({}, this.props, {
-      isLoading: this.state.isLoading,
-      disabled: this.isDisabled(),
-      method: this.actionButtonMethod(),
-      href: this.actionButtonHref(),
-      onClick: this.actionButtonClick,
-      key: this.props.name,
-    });
-
-    const buttonComponent = React.createElement(this.props.component, buttonProps);
-    component.push(buttonComponent);
-
-    return component;
-  }
-
-  render() {
-    return (
-      <span>
-        {this.renderButton()}
-      </span>
-    );
-  }
-
   isDisabled() {
-    if (!!this.props.disabled || !!this.state.isLoading) {
-      return true;
-    }
-
-    let selectionContext = this.props.selectionContext;
-    if (selectionContext === 'none') {
-      return false;
-    } else if (selectionContext === 'atLeastOne') {
+    const { selectionContext } = this.props;
+    if (this.props.disabled || this.state.isLoading) return true;
+    else if (selectionContext === 'none') return false;
+    else if (selectionContext === 'atLeastOne') {
       return (this.props.selectedRowIds.length === 0);
     }
 
     return false;
   }
 
-  actionButtonMethod() {
-    let buttonHref = this.props.href;
-    if (!buttonHref) {
-      return null;
-    }
+  getHref() {
+    const { href, params } = this.props;
+    if (!href) return '#!';
 
-    return this.props.method;
-  }
-
-  actionButtonHref() {
-    let buttonHref = this.props.href;
-    if (!buttonHref) {
-      return '#!';
-    }
-
-    let selectedData = this.getSelectedData();
-    buttonHref = (buttonHref + '?' + $.param(selectedData));
-
-    if (!!this.props.params) {
-      for (let property in this.props.params) {
-        buttonHref = buttonHref + '&' + property + '=' + this.props.params[property];
-      }
-    }
-
-    return buttonHref;
-  }
-
-  actionButtonClick = (event) => {
-    if (this.isDisabled()) {
-      return;
-    }
-
-    let buttonOnClick = this.props.onClick;
-    let buttonAction = this.props.actionUrl;
-    let selectedData = this.getSelectedData();
-
-    if ($.isFunction(buttonOnClick)) {
-      buttonOnClick(event, selectedData);
-    } else if (!!buttonAction) {
-      this.performRequest(buttonAction, selectedData, this.props.method);
-    }
+    const selectedData = this.getSelectedData();
+    const hrefParams = Object.assign({}, selectedData, params);
+    return `${href}?${QueryStringParser.parseFromObject(hrefParams)}`;
   }
 
   getSelectedData() {
-    let selectedData = {};
-    if (this.props.allSelected && !!this.props.allSelectedData && !$.isEmptyObject(this.props.allSelectedData)) {
-      selectedData = this.props.allSelectedData;
-    } else {
-      selectedData[this.props.selectedRowIdsParam] = this.props.selectedRowIds;
+    const { allSelected, allSelectedData, selectedRowIdsParam, selectedRowIds } = this.props;
+    return (allSelected && !_.isEmpty(allSelectedData))
+      ? allSelectedData
+      : { [selectedRowIdsParam]: selectedRowIds };
+  }
+
+  @autobind
+  handleActionButtonClick(event) {
+    if (this.isDisabled()) return;
+
+    const { onClick, actionUrl, confirmsWith } = this.props;
+    const selectedData = this.getSelectedData();
+    if (confirmsWith && !confirm(i18n.t(confirmsWith))) return;
+    if (typeof onClick === 'function') {
+      onClick(event, selectedData);
+    } else if (actionUrl) {
+      this.performRequest(actionUrl, selectedData, this.props.method);
     }
 
-    return selectedData;
+    event.stopPropagation();
+  }
+
+  render() {
+    if (!this.props.conditionToShowActionButton(this.props.conditionParams)) {
+      return <span />;
+    }
+
+    return (
+      <Button
+        {...this.props}
+        isLoading={this.state.isLoading}
+        disabled={this.isDisabled()}
+        href={this.getHref()}
+        onClick={this.handleActionButtonClick}
+      />
+    );
   }
 }
