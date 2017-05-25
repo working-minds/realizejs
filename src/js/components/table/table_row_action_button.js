@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import PropTypes from '../../prop_types';
-import i18n from '../../i18n/i18n';
 import { autobind, mixin } from '../../utils/decorators';
 
 import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
@@ -35,7 +34,7 @@ export default class TableRowActionButton extends Component {
     href: null,
     confirmsWith: null,
     element: Link,
-    onClick: () => true,
+    onClick: null,
     conditionToShowActionButton: () => true,
   };
 
@@ -73,8 +72,7 @@ export default class TableRowActionButton extends Component {
 
   @autobind
   handleActionButtonClick(event) {
-    const { onClick, data, dataRowIdField, confirmsWith } = this.props;
-    if (confirmsWith && !confirm(i18n.t(confirmsWith))) return;
+    const { onClick, data, dataRowIdField } = this.props;
     if (typeof onClick === 'function') {
       onClick(event, data[dataRowIdField], data);
     } else if (this.props.actionUrl) {
