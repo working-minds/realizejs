@@ -3,7 +3,6 @@ import PropTypes from '../../prop_types';
 import moment from 'moment';
 import numeral from 'numeral';
 import i18n from '../../i18n/i18n';
-import $ from 'jquery';
 import { mixin } from '../../utils/decorators';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
@@ -25,10 +24,10 @@ export default class TableCell extends Component {
     name: PropTypes.string,
     data: PropTypes.object,
     dataRowIdField: PropTypes.string,
-    value: PropTypes.func,
+    value: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
     format: PropTypes.oneOf(validFormats),
     formatString: PropTypes.string,
-    component: PropTypes.string
+    component: PropTypes.component,
   };
 
   static defaultProps = {
@@ -36,56 +35,29 @@ export default class TableCell extends Component {
     data: {},
     format: 'text',
     formatString: null,
-    component: null
+    component: null,
+    value: null,
   };
 
-  renderValue() {
-    let format = this.props.format;
-    let customValue = this.props.value;
-    let dataValue = this.props.data[this.props.name];
-
-    let value = null;
-
-    if(!!customValue) {
-      value = customValue(this.props.data, this.props);
-    } else if(dataValue === null || dataValue === undefined) {
-      value = '-';
-    } else {
-      try {
-        value = this[format + "Value"](dataValue);
-      } catch(err) {
-        value = this.textValue(dataValue);
-      }
+  getValueFormatter() {
+    switch (this.props.format) {
+      case 'currency':
+      case 'number':
+        return this.numberValue;
+      case 'percentage':
+        return this.percentageValue;
+      case 'boolean':
+        return this.booleanValue;
+      case 'datetime':
+        return this.datetimeValue;
+      case 'date':
+        return this.dateValue;
+      case 'time':
+        return this.timeValue;
+      case 'text':
+      default:
+        return this.textValue;
     }
-
-    if(!!this.props.component){
-      return React.createElement(eval(this.props.component), $.extend({}, this.props, {value: value}));
-    }
-    else {
-      return value;
-    }
-
-  }
-
-  render() {
-    return (
-      <td className={this.cellClassName()}>
-        {this.renderValue()}
-      </td>
-    );
-  }
-
-  cellClassName() {
-    let className = this.className();
-    if(!!this.props.format) {
-      className += ' table-cell--' + this.props.format;
-    }
-
-    if(!!this.props.name) {
-      className += ' table-cell--' + this.props.name;
-    }
-
-    return className;
   }
 
   textValue(value) {
@@ -93,55 +65,92 @@ export default class TableCell extends Component {
   }
 
   numberValue(value) {
-    value = parseFloat(value);
-    return numeral(value).format(this.getFormatString());
+    const floatValue = parseFloat(value);
+    return numeral(floatValue).format(this.getFormatString());
   }
 
-  percentageValue (value) {
-    value = parseFloat(value);
-    if(value > 1.0 || value < -1.0) {
-      value = value / 100.0;
+  percentageValue(value) {
+    let floatValue = parseFloat(value);
+    if (floatValue > 1.0 || value < -1.0) {
+      floatValue = floatValue / 100.0;
     }
 
-    return numeral(value).format(this.getFormatString());
+    return numeral(floatValue).format(this.getFormatString());
   }
 
-  currencyValue (value) {
-    value = parseFloat(value);
-    return numeral(value).format(this.getFormatString());
-  }
-
-  booleanValue (value) {
+  booleanValue(value) {
     return i18n.t(String(value));
   }
 
-  dateValue (value) {
-    let dateValue = moment.utc(value, moment.ISO_8601);
-    if(dateValue.isValid()) {
+  dateValue(value) {
+    const dateValue = moment.utc(value, moment.ISO_8601);
+    if (dateValue.isValid()) {
       return dateValue.format(this.getFormatString());
     }
 
     return value;
   }
 
-  datetimeValue (value) {
-    let dateTimeValue = moment.utc(value, moment.ISO_8601);
-    if(dateTimeValue.isValid()) {
+  datetimeValue(value) {
+    const dateTimeValue = moment.utc(value, moment.ISO_8601);
+    if (dateTimeValue.isValid()) {
       return dateTimeValue.format(this.getFormatString());
     }
 
     return value;
   }
 
-  timeValue (value) {
-    value = moment.utc(value);
-    return value.format(this.getFormatString());
+  timeValue(value) {
+    return moment.utc(value).format(this.getFormatString());
   }
 
-  getFormatString () {
-    let format = this.props.format;
-    let formatString = this.props.formatString;
+  getFormatString() {
+    const { format, formatString } = this.props;
+    return formatString || i18n.t(`table.cell.formats.${format}`);
+  }
 
-    return formatString || i18n.t('table.cell.formats.' + format);
+  buildCellClassName() {
+    let className = this.className();
+    if (!!this.props.format) {
+      className += ` table-cell--${this.props.format}`;
+    }
+
+    if (!!this.props.name) {
+      className += ` table-cell--${this.props.name}`;
+    }
+
+    return className;
+  }
+
+  renderCustomComponent() {
+    const CustomComponent = this.props.component;
+    return <CustomComponent {...this.props} />;
+  }
+
+  renderCustomValue() {
+    const { value, data } = this.props;
+    return (typeof value === 'function')
+      ? value(data, this.props)
+      : this.renderFormattedValue(value);
+  }
+
+  renderFormattedValue(value) {
+    const valueFormatter = this.getValueFormatter().bind(this);
+    return value ? valueFormatter(value) : '-';
+  }
+
+  renderValue() {
+    const { component, value, data, name } = this.props;
+    if (component) return this.renderCustomComponent();
+    if (value) return this.renderCustomValue();
+    return this.renderFormattedValue(data[name]);
+  }
+
+  render() {
+    return (
+      <td className={this.buildCellClassName()}>
+        {this.renderValue()}
+      </td>
+    );
   }
 }

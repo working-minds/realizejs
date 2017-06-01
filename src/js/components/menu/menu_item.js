@@ -1,30 +1,32 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 
-import Button from '../../components/button/button';
+import Link from '../link/link';
+import Button from '../button/button';
 
 export default class MenuItem extends Component {
   static propTypes = {
-    icon: PropTypes.string,
-    iconAlign: PropTypes.string,
-    href: PropTypes.string,
-    target: PropTypes.string,
-    onClick: PropTypes.func,
-    className: PropTypes.string,
+    text: PropTypes.string,
     method: PropTypes.string,
-    element: PropTypes.string
+    element: PropTypes.component,
+    clearTheme: PropTypes.bool,
   };
 
   static defaultProps = {
-    iconAlign: 'left',
-    method: 'get',
-    element: 'a'
+    text: '',
+    method: 'GET',
+    element: Link,
+    clearTheme: true,
   };
 
-  render () {
+  render() {
     return (
       <li>
-        <Button {...this.props} clearTheme={true} name={this.props.text} />
+        <Button
+          {...this.props}
+          name={this.props.text}
+          clearTheme
+        />
       </li>
     );
   }
