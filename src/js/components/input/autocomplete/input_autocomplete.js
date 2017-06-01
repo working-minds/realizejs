@@ -44,7 +44,7 @@ export default class InputAutocomplete extends InputBase {
     ...this.state,
     active: 0,
     searchValue: '',
-    value: [],
+    value: this.ensureIsArray(this.props.value),
   };
 
   componentWillMount() {

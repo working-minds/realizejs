@@ -310,14 +310,18 @@ export default {
       cssClass: 'tab',
 
       error: {
-        cssClass: 'tab--error red lighten-4'
-      }
-    }
+        cssClass: 'tab--error red lighten-4',
+      },
+    },
 
   },
 
   header: {
-    cssClass: 'blue-grey darken-2'
+    cssClass: 'blue-grey darken-2',
+
+    menu: {
+      cssClass: 'header__menu',
+    },
   },
 
   sidenav: {
