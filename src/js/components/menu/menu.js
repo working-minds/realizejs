@@ -1,40 +1,43 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
-import { isString } from 'lodash';
+import { mixin } from '../../utils/decorators';
 
+import CssClassMixin from '../../mixins/css_class_mixin';
 import MenuItem from './menu_item';
 
+@mixin(CssClassMixin)
 export default class Menu extends Component {
   static propTypes = {
     id: PropTypes.string,
-    items: PropTypes.array
+    items: PropTypes.arrayOf(React.PropTypes.node),
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(React.PropTypes.node),
+      PropTypes.node,
+    ]),
   };
 
   static defaultProps = {
-    id: '',
-    items: []
+    id: 'menu',
+    items: [],
   };
 
-  renderPropItems () {
-    let menuItems = this.props.items.map(function ( item,i ) {
-      return <MenuItem {...item } key={ 'menu_'+i }/>;
-    },this);
-    return menuItems;
+  renderPropItems() {
+    return this.props.items.map((item, i) => (
+      <MenuItem {...item} key={`menu_${i}`} />
+    ));
   }
 
-  renderChildItems () {
-    let menuItems = React.Children.map(this.props.children, function(item) {
-      if(item && item.type && (item.type.displayName || item.type.name) === 'MenuItem')
+  renderChildItems() {
+    return React.Children.map(this.props.children, item => {
+      if (item && item.type && (item.type.displayName || item.type.name) === 'MenuItem') {
         return item;
+      }
     });
-    return menuItems;
   }
 
-  render () {
-    let id = isString(this.props.id) ? this.props.id : null;
-
+  render() {
     return (
-      <ul id={id} className={this.props.className}>
+      <ul id={this.props.id} className={this.className()}>
         {this.renderPropItems()}
         {this.renderChildItems()}
       </ul>

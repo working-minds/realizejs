@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import i18n from '../../i18n/i18n';
 import { autobind, mixin } from '../../utils/decorators';
-import { Icon } from '../icon';
+import Icon from '../icon/icon';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 import RequestHandlerMixin from '../../mixins/request_handler_mixin';
