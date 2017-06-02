@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 
 import PropTypes from '../../prop_types';
-import QueryStringParser from '../../utils/query_string_parser';
+import URL from '../../utils/url';
 import { autobind, mixin } from '../../utils/decorators';
 
 import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
@@ -64,7 +64,7 @@ export default class TableActionButton extends Component {
 
     const selectedData = this.getSelectedData();
     const hrefParams = Object.assign({}, selectedData, params);
-    return `${href}?${QueryStringParser.parseFromObject(hrefParams)}`;
+    return `${href}?${URL.buildQueryStringFromObject(hrefParams)}`;
   }
 
   getSelectedData() {

@@ -1,13 +1,23 @@
-// TODO: mudar jQuery.ajax para client rest
 import Realize from '../../realize';
-import { merge } from 'lodash';
+import _ from 'lodash';
 import { extractQueryString, removeQueryString } from '../../utils/url'
 
 export default class RestClient {
+  _options;
+  _config;
+
   constructor(options) {
-    this.options = options;
-    this.config = Realize.config;
+    this._options = options;
+    this._config = Realize.config;
     this.configureActions(this.actionNames);
+  }
+
+  get options() {
+    return this._options;
+  }
+
+  get config() {
+    return this._config;
   }
 
   get actionNames() {
@@ -19,19 +29,19 @@ export default class RestClient {
   }
 
   get actionUrls() {
-    return merge({}, Realize.config.restUrls, this.options.actionUrls);
+    return _.merge({}, this.config.restUrls, this.options.actionUrls);
   }
 
   get actionMethods() {
-    return merge({}, Realize.config.restMethods, this.options.actionMethods);
+    return _.merge({}, this.config.restMethods, this.options.actionMethods);
   }
 
   request(url, method, data, options = {}) {
-    return Realize.config.httpClient(url, this.mergeRequestParameters(method, data, options));
+    return this.config.httpClient(url, this.mergeRequestParameters(method, data, options));
   }
 
-  mergeRequestParameters(method, data, options = {}){
-    return merge({}, options, {method, data});
+  mergeRequestParameters(method, data, options = {}) {
+    return _.merge({}, options, { method, data });
   }
 
   getRestActionUrl(action, id) {
@@ -40,7 +50,7 @@ export default class RestClient {
     const actionQueryString = extractQueryString(this.baseUrl);
 
     const argsRegEx = id ? /:id/ : /:url/;
-    const value = id || actionBaseUrl;  
+    const value = id || actionBaseUrl;
 
     const replacedActionUrl = actionUrl.replace(argsRegEx, value);
     return replacedActionUrl + actionQueryString;
