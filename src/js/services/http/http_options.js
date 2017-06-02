@@ -1,26 +1,35 @@
 export default class HttpOptions {
-    constructor(url, headers = {}, method = {}, data = {}, customOptions = {}){
-        this.url = url;
-        this.headers = headers;
-        this.method = method;
-        this.data = data;
-        this.customOptions = customOptions;
-    }
-    get url(){
-        this.url;
-    }
-    get headers(){
-        this.headers;
-    }
-    get method(){
-        this.method;
-    }
+  _url;
+  _headers;
+  _method;
+  _data;
+  _customOptions;
 
-    get data(){
-        this.data;
-    }
+  constructor(url, headers = {}, method = {}, data = {}, customOptions = {}) {
+    this._url = url;
+    this._headers = headers;
+    this._method = method;
+    this._data = data;
+    this._customOptions = customOptions;
+  }
 
-    get customOptions(){
-        this.customOptions;
-    }
+  get url() {
+    return this._url;
+  }
+
+  get headers() {
+    return this._headers;
+  }
+
+  get method() {
+    return this._method;
+  }
+
+  get data() {
+    return this._data;
+  }
+
+  get customOptions() {
+    return this._customOptions;
+  }
 };

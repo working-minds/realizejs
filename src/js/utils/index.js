@@ -1,17 +1,17 @@
 export * as uuid from './uuid';
 export * as decorators from './decorators';
-export * as QueryStringParser from './query_string_parser';
 
-export function getProp(key, obj) {
-  var keyArr = key.split('.');
-  var prop = obj;
+export const getProp = (key, obj) => {
+  const keyArr = key.split('.');
+  let prop = obj;
 
   try {
-    while(keyArr.length > 0) {
+    while (keyArr.length > 0) {
       prop = prop[keyArr.shift()];
     }
-  } catch(err) {
+  } catch (err) {
     return '';
   }
+
   return prop;
 };
