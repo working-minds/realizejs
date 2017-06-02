@@ -1,13 +1,12 @@
 // TODO: mudar jQuery.ajax para client rest
-import Realize from '../realize';
-import $ from 'jquery';
+import Realize from '../../realize';
 import { merge } from 'lodash';
+import { extractQueryString, removeQueryString } from '../../utils/url'
 
 export default class RestClient {
   constructor(options) {
     this.options = options;
     this.config = Realize.config;
-
     this.configureActions(this.actionNames);
   }
 
@@ -28,25 +27,20 @@ export default class RestClient {
   }
 
   request(url, method, data, options = {}) {
-    return new Promise((resolve, reject) => {
-      $.ajax({
-        method,
-        data,
-        url,
-        ...options,
-        success: resolve,
-        error: reject,
-      });
-    });
+    return Realize.config.httpClient(url, this.mergeRequestParameters(method, data, options));
+  }
+
+  mergeRequestParameters(method, data, options = {}){
+    return merge({}, options, {method, data});
   }
 
   getRestActionUrl(action, id) {
     const actionUrl = this.actionUrls[action];
-    const actionBaseUrl = this.getActionBaseUrl();
-    const actionQueryString = this.getActionQueryString();
+    const actionBaseUrl = removeQueryString(this.baseUrl);
+    const actionQueryString = extractQueryString(this.baseUrl);
 
     const argsRegEx = id ? /:id/ : /:url/;
-    const value = id || actionBaseUrl;
+    const value = id || actionBaseUrl;  
 
     const replacedActionUrl = actionUrl.replace(argsRegEx, value);
     return replacedActionUrl + actionQueryString;
@@ -77,15 +71,5 @@ export default class RestClient {
       enumerable: true,
       writable: false,
     });
-  }
-
-  getActionBaseUrl() {
-    const matches = this.baseUrl.match(/^(.*)\?/);
-    return matches ? matches[1] : this.baseUrl;
-  }
-
-  getActionQueryString() {
-    const matches = this.baseUrl.match(/\?.*$/);
-    return matches ? matches[1] : '';
   }
 }

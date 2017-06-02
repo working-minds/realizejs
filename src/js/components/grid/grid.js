@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 
 import PropTypes from '../../prop_types';
 import Realize from '../../realize';
-import RestClient from '../../services/rest_client';
+import { RestClient } from '../../services/http';
 import I18n from '../../i18n';
 
 import {
