@@ -1,14 +1,23 @@
-// TODO: mudar jQuery.ajax para client rest
-import Realize from '../realize';
-import $ from 'jquery';
-import { merge } from 'lodash';
+import Realize from '../../realize';
+import _ from 'lodash';
+import { extractQueryString, removeQueryString } from '../../utils/url'
 
 export default class RestClient {
-  constructor(options) {
-    this.options = options;
-    this.config = Realize.config;
+  _options;
+  _config;
 
+  constructor(options) {
+    this._options = options;
+    this._config = Realize.config;
     this.configureActions(this.actionNames);
+  }
+
+  get options() {
+    return this._options;
+  }
+
+  get config() {
+    return this._config;
   }
 
   get actionNames() {
@@ -20,30 +29,25 @@ export default class RestClient {
   }
 
   get actionUrls() {
-    return merge({}, Realize.config.restUrls, this.options.actionUrls);
+    return _.merge({}, this.config.restUrls, this.options.actionUrls);
   }
 
   get actionMethods() {
-    return merge({}, Realize.config.restMethods, this.options.actionMethods);
+    return _.merge({}, this.config.restMethods, this.options.actionMethods);
   }
 
   request(url, method, data, options = {}) {
-    return new Promise((resolve, reject) => {
-      $.ajax({
-        method,
-        data,
-        url,
-        ...options,
-        success: resolve,
-        error: reject,
-      });
-    });
+    return this.config.httpClient(url, this.mergeRequestParameters(method, data, options));
+  }
+
+  mergeRequestParameters(method, data, options = {}) {
+    return _.merge({}, options, { method, data });
   }
 
   getRestActionUrl(action, id) {
     const actionUrl = this.actionUrls[action];
-    const actionBaseUrl = this.getActionBaseUrl();
-    const actionQueryString = this.getActionQueryString();
+    const actionBaseUrl = removeQueryString(this.baseUrl);
+    const actionQueryString = extractQueryString(this.baseUrl);
 
     const argsRegEx = id ? /:id/ : /:url/;
     const value = id || actionBaseUrl;
@@ -77,15 +81,5 @@ export default class RestClient {
       enumerable: true,
       writable: false,
     });
-  }
-
-  getActionBaseUrl() {
-    const matches = this.baseUrl.match(/^(.*)\?/);
-    return matches ? matches[1] : this.baseUrl;
-  }
-
-  getActionQueryString() {
-    const matches = this.baseUrl.match(/\?.*$/);
-    return matches ? matches[1] : '';
   }
 }

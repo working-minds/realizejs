@@ -1,3 +1,4 @@
+import { defaultHttpClient } from '../services/http'
 
 export default {
   restUrls: {
@@ -19,6 +20,8 @@ export default {
     update: 'PUT',
     destroy: 'DELETE',
   },
+
+  httpClient: defaultHttpClient,
 
   grid: {
     pagination: {
