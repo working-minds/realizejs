@@ -8,10 +8,7 @@ import CssClassMixin from '../../mixins/css_class_mixin';
 import RequestHandlerMixin from '../../mixins/request_handler_mixin';
 
 // TODO (PJ): Separar em dois componentes os concerns de href e actionURL.
-@mixin(
-  CssClassMixin,
-  RequestHandlerMixin
-)
+@mixin(CssClassMixin, RequestHandlerMixin)
 export default class Button extends Component {
   static propTypes = {
     name: PropTypes.localizedString,
@@ -47,6 +44,7 @@ export default class Button extends Component {
     element: 'button',
     method: 'POST',
     hidden: false,
+    buttonStyle: 'primary',
   };
 
   constructor(props) {
@@ -135,8 +133,8 @@ export default class Button extends Component {
     if (hidden) return <span />;
     return (
       <ButtonElement
-        className={this.getClassName()}
         {...this.props}
+        className={this.getClassName()}
         disabled={disabled || isLoading}
         href={this.getHref()}
         onClick={this.handleClick}

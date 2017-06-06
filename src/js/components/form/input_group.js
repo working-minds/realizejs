@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
-import { filter, merge } from 'lodash';
 import { mixin } from '../../utils/decorators';
+import themes from '../../theme';
 
 import { Input } from '../../components';
 import { CssClassMixin } from '../../mixins';
@@ -11,7 +11,10 @@ export default class InputGroup extends Component {
   static propTypes = {
     inputs: PropTypes.object,
     data: PropTypes.object,
-    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+    errors: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array,
+    ]),
     resource: PropTypes.string,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -19,7 +22,11 @@ export default class InputGroup extends Component {
     separator: PropTypes.bool,
     formStyle: PropTypes.string,
     wrapperClassName: PropTypes.string,
-    inputWrapperComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.element, PropTypes.string])
+    inputWrapperComponent: PropTypes.component,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(React.PropTypes.node),
+      PropTypes.node,
+    ]),
   };
 
   static defaultProps = {
@@ -33,111 +40,75 @@ export default class InputGroup extends Component {
     readOnly: false,
     themeClassKey: 'form.inputGroup',
     wrapperClassName: 'wrapper_input_group',
-    inputWrapperComponent: null
+    inputWrapperComponent: Input,
+    children: <span />,
   };
 
-  renderInputs () {
-    var inputsProps = this.props.inputs;
-    var inputComponents = [];
-    var inputIndex = 0;
-    var InputWrapperComponent = this.getInputWrapperComponent();
-
-    for(var inputId in inputsProps) {
-      if(inputsProps.hasOwnProperty(inputId)) {
-        var inputProps = inputsProps[inputId];
-        if(!inputProps.id) {
-          inputProps.id = inputId;
-        }
-
-        inputComponents.push(
-          <InputWrapperComponent
-            disabled={this.props.disabled}
-            readOnly={this.props.readOnly}
-            formStyle={this.props.formStyle}
-            inputWrapperComponent={this.props.inputWrapperComponent}
-            key={"input_" + inputIndex}
-            {...inputProps}
-            data={this.props.data}
-            errors={this.props.errors}
-            resource={this.props.resource}
-            ref={"input_" + inputIndex}
-          />
-        );
-
-        inputIndex++;
-      }
-    }
-
-    return inputComponents;
-  }
-
-  renderLabel () {
-    if(this.props.label === null) {
-      return '';
-    }
-
-    return (<h5>{this.props.label}</h5>);
-  }
-
-  renderDivider () {
-    if(!this.props.separator) {
-      return '';
-    }
-
-    //TODO: refatorar para um componente
-    var className = Realize.themes.getCssClass('form.inputGroup.divider');
-    return (
-      <div className={className}>
-        <hr />
-      </div>
-    );
-  }
-
-  render () {
-    return (
-      <div className={this.props.wrapperClassName}>
-        <div className={this.inputGroupClassName()}>
-          {this.renderLabel()}
-          {this.renderInputs()}
-          {this.props.children}
-        </div>
-        {this.renderDivider()}
-      </div>
-    );
-  }
-
-  inputGroupClassName () {
-    var className = this.className();
-    if(this.props.label !== null) {
-      className += ' ' + Realize.themes.getCssClass('form.inputGroup.section');
+  getClassName() {
+    let className = this.className();
+    if (this.props.label !== null) {
+      className += ` ${themes.getCssClass('form.inputGroup.section')}`;
     }
 
     return className;
   }
 
-  getInputWrapperComponent() {
-    let inputWrapperComponent = this.props.inputWrapperComponent;
-    if(typeof inputWrapperComponent == "string") {
-      return window[inputWrapperComponent];
-    }
-    else if(typeof inputWrapperComponent == "function") {
-      return inputWrapperComponent;
-    }
-    else {
-      return Input;
-    }
+  serialize() {
+    return Object.keys(this.refs)
+      .filter(refKey => refKey.match(/^input_/))
+      .reduce((acc, refKey) => Object.assign({}, acc, this.refs[refKey].serialize()), {});
   }
 
-  serialize () {
-    var inputRefs = filter(this.refs, function(ref, refName) {
-      return refName.match(/^input_/);
-    });
+  renderInputs() {
+    const { inputs, disabled, readOnly, formStyle, errors, data, resource } = this.props;
+    const InputWrapperComponent = this.props.inputWrapperComponent || Input;
 
-    var inputValues = {};
-    inputRefs.forEach(function(inputRef) {
-      merge(inputValues, inputRef.serialize());
+    return Object.keys(inputs).map((inputKey, i) => {
+      const inputProps = inputs[inputKey];
+      return (
+        <InputWrapperComponent
+          disabled={disabled}
+          readOnly={readOnly}
+          formStyle={formStyle}
+          id={inputKey}
+          errors={errors}
+          {...inputProps}
+          data={data}
+          resource={resource}
+          key={`input_${inputKey}_${i}`}
+          ref={`input_${inputKey}_${i}`}
+        />
+      );
     });
+  }
 
-    return inputValues;
+  renderLabel() {
+    return (
+      <h5 className={themes.getCssClass('form.inputGroup.label')}>
+        {this.props.label}
+      </h5>
+    );
+  }
+
+  renderDivider() {
+    return (
+      <div className={themes.getCssClass('form.inputGroup.divider')}>
+        <hr />
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div className={this.props.wrapperClassName}>
+        <div className={this.getClassName()}>
+          {this.props.label ? this.renderLabel() : <span />}
+          <div>
+            {this.renderInputs()}
+          </div>
+        </div>
+        {this.props.separator ? this.renderDivider() : <span />}
+      </div>
+    );
   }
 }

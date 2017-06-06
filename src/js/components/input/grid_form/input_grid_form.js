@@ -1,8 +1,7 @@
 import React from 'react';
+import _ from 'lodash';
 import PropTypes from '../../../prop_types';
-import { merge } from 'lodash';
-import { mapValues } from 'lodash';
-import { mixin } from '../../../utils/decorators';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import GridForm from '../../grid_form/grid_form';
 import InputGridFormFields from './input_grid_form_fields';
@@ -20,6 +19,7 @@ export default class InputGridForm extends InputBase {
     fields: PropTypes.object,
     form: PropTypes.object,
     clientSide: PropTypes.bool,
+    clientSideIdField: React.PropTypes.string,
     inputWrapperComponent: PropTypes.component,
     onSuccess: PropTypes.func,
     onDestroySuccess: PropTypes.func,
@@ -43,81 +43,45 @@ export default class InputGridForm extends InputBase {
     };
   }
 
-  getColumnName(column, columnKey) {
-    let columnName = column.name || columnKey;
-    if (this.columnHaveDisplayValueKey(columnName)) {
-      columnName += 'Display';
-    }
-
-    return columnName;
-  }
-
-  getSerializedValue() {
-    return JSON.stringify(this.state.value);
-  }
-
   parseFormProp() {
-    const formProp = merge(this.getDefaultFormProps(), this.props.form);
-    const fieldsProp = merge({}, this.props.fields);
-    formProp.inputs = mapValues(fieldsProp, (field) => {
-      delete field.format;
-      return field;
-    });
+    const formProp = _.merge(this.getDefaultFormProps(), this.props.form);
+    formProp.inputs = Object.assign({}, this.props.inputs);
 
     return formProp;
   }
 
   parseColumnsProp() {
-    let columnsProp = merge({}, this.props.fields);
-    columnsProp = mapValues(columnsProp, (column, columnKey) => {
-      delete column.component;
-      delete column.className;
-      delete column.value;
-      column.name = this.getColumnName(column, columnKey);
-      return column;
-    });
+    const { columns } = this.props;
 
-    return columnsProp;
-  }
-
-  columnHaveDisplayValueKey(columnName) {
-    const value = this.state.value;
-    const firstValueRow = value == null ? null : value[0];
-    if (firstValueRow == null) {
-      return false;
-    }
-
-    const valueKeys = Object.keys(firstValueRow);
-    return valueKeys.indexOf(`${columnName}Display`) >= 0;
+    return _.mapValues(columns, (column, key) => Object.assign(column, {
+      name: column.name || key,
+    }));
   }
 
   /* GridForm Result serializer */
 
-  serializeGridForm() {
-    const gridFormRef = this.refs.gridForm;
-    this.setState({
-      value: gridFormRef.serialize()
-    });
-  }
-
-  _getValue() {
-    return JSON.stringify(this.state.value);
+  serialize() {
+    return { [this.props.name]: this.state.value };
   }
 
   /* Event handling functions */
 
+  @autobind
   handleOnSuccess() {
-    let gridFormValue = this.refs.gridForm.serialize();
+    const gridFormValue = this.refs.gridForm.serialize();
 
-    this.props.onSuccess(gridFormValue);
-    this.serializeGridForm();
+    this.setState({ value: gridFormValue }, () => (
+      this.props.onSuccess(gridFormValue)
+    ));
   }
 
+  @autobind
   handleOnDestroySuccess() {
-    let gridFormValue = this.refs.gridForm.serialize();
+    const gridFormValue = this.refs.gridForm.serialize();
 
-    this.props.onDestroySuccess(gridFormValue);
-    this.serializeGridForm();
+    this.setState({ value: gridFormValue }, () => (
+      this.props.onDestroySuccess(gridFormValue)
+    ));
   }
 
   /* Renderers */
@@ -129,9 +93,9 @@ export default class InputGridForm extends InputBase {
     }
 
     return (
-      <h3 className={this.themedClassName('input.gridForm.label')}>
+      <h5 className={this.themedClassName('input.gridForm.label')}>
         {label}
-      </h3>
+      </h5>
     );
   }
 
@@ -151,7 +115,7 @@ export default class InputGridForm extends InputBase {
         />
         <InputHidden
           {...this.propsWithoutCSS()}
-          value={this.getSerializedValue()}
+          value={this.serialize()}
           ref="input"
         />
       </div>

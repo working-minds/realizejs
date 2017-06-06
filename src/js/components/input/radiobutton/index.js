@@ -1,1 +1,1 @@
-export InputRadioGroup from './input_radio_group';
+export { default as InputRadioGroup } from './input_radio_group';

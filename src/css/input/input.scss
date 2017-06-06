@@ -12,6 +12,7 @@
 .input-datepicker__button {
   padding: 0;
   right: 1rem;
+  color: white !important;
 }
 
 .input-checkbox-group.align-horizontal p {
@@ -31,4 +32,13 @@
 .input-switch {
   height: 3rem;
   margin-bottom: 1.1rem;
+
+  > label {
+    height: 2rem;
+
+    .lever {
+      margin-right: 10px;
+      margin-left: 15px;
+    }
+  }
 }

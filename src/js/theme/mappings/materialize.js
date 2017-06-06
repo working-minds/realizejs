@@ -61,20 +61,24 @@ export default {
     cssClass: 'form row',
 
     buttonGroup: {
-      cssClass: 'form__button-group col s12 m12 l12 right-align'
+      cssClass: 'form__button-group col s12 m12 l12 right-align',
     },
 
     inputGroup: {
       cssClass: 'form__input-group',
 
       section: {
-        cssClass: 'input-group__section'
+        cssClass: 'input-group__section',
+      },
+
+      label: {
+        cssClass: 'input-group__label col s12 m12 l12',
       },
 
       divider: {
-        cssClass: 'input-group__divider'
-      }
-    }
+        cssClass: 'input-group__divider col s12 m12 l12',
+      },
+    },
   },
 
   gridForm: {

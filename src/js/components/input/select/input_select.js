@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../../prop_types';
-import $ from 'jquery';
 import i18n from '../../../i18n';
 import { autobind, mixin } from '../../../utils/decorators';
 
