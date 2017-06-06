@@ -1,13 +1,12 @@
 import Realize from '../../realize';
 import React from 'react';
 import PropTypes from '../../prop_types';
-import { capitalize } from 'lodash';
 import { mixin } from '../../utils/decorators';
 
 import { CssClassMixin } from '../../mixins';
 import { Label } from '../../components';
 
-import InputComponentsMap from './input_components_map';
+import { InputComponentsMap, InputsWithMaxlength, InputsWithoutLabel } from '../../enums/input';
 import InputError from './input_error';
 import InputGridForm from './grid_form/input_grid_form';
 
@@ -18,7 +17,7 @@ export default class Input extends React.Component {
     name: PropTypes.string,
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
     value: PropTypes.any,
-    component: PropTypes.string,
+    component: PropTypes.oneOfType([PropTypes.string, PropTypes.component]),
     formStyle: PropTypes.oneOf(['default', 'filter', 'oneLine']),
     data: PropTypes.object,
     errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
@@ -37,198 +36,145 @@ export default class Input extends React.Component {
     errors: {},
     resource: null,
     scope: 'resource',
-    maxLength: null,
+    maxLength: undefined,
     renderLabel: true,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      value: this.props.value,
+      value: props.value,
     };
   }
 
-  renderInput() {
-    return (
-      <div className={this.inputClassName()} id={this.getInputContainerId()}>
-        {this.renderComponentInput()}
-        {this.renderLabel()}
-        {this.renderInputErrors()}
-      </div>
-    );
-  }
-
-  renderInputWithoutLabel() {
-    return (
-      <div className={this.inputClassName()} id={this.getInputContainerId()}>
-        {this.renderComponentInput()}
-        {this.renderInputErrors()}
-      </div>
-    );
-  }
-
-  renderAutocompleteInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderDatefilterInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderDatepickerInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderNumberInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderSwitchInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderFileInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderColorpickerInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderGridformInput() {
-    return this.renderInputWithoutLabel();
-  }
-
-  renderHiddenInput() {
-    return this.renderComponentInput();
-  }
-
-  renderComponentInput() {
-    const componentInputClass = this.getInputComponentClass(this.props.component);
-    const isGrid = (componentInputClass === InputGridForm);
-
-    const componentInputProps = Object.assign(this.propsWithoutCSS(), {
-      originalId: this.props.id,
-      originalName: this.props.name,
-      id: this.getInputComponentId(),
-      name: this.getInputComponentName(),
-      errors: isGrid ? this.props.errors : this.getInputErrors(),
-      value: this.getInputComponentValue(),
-      maxLength: this.getMaxLength(),
-      ref: 'inputComponent',
-    });
-
-    return React.createElement(componentInputClass, componentInputProps);
-  }
-
-  renderLabel() {
-    const inputValue = this.getInputComponentValue();
-    const isActive = this.labelIsActive(inputValue);
-
-    return (
-      <Label {...this.propsWithoutCSS()} id={this.getInputComponentId()} active={isActive} />
-    );
-  }
-
   labelIsActive(inputValue) {
-    if (this.props.component === 'checkbox') return false;
-
-    return (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
+    return (this.props.component !== 'checkbox') &&
+           (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
   }
+
+  canRenderLabel() {
+    return this.props.renderLabel && this.inputAllowsLabel();
+  }
+
+  inputAllowsLabel() {
+    return InputsWithoutLabel.indexOf(this.props.component) < 0;
+  }
+
+  /* Props parsers and getters */
+
+  getInputWrapperClassName() {
+    const { className, formStyle } = this.props;
+    const formStyleClass = Realize.themes.getCssClass(`input.grid.${formStyle}`);
+    return this.className() + (!className ? ` ${formStyleClass}` : '');
+  }
+
+  getInputWrapperContainerId() {
+    return `input__${this.props.id}`;
+  }
+
+  getInputComponent(component) {
+    return (InputComponentsMap[component] || component);
+  }
+
+  getInputId() {
+    const { id, resource, scope } = this.props;
+
+    return (resource && scope === 'resource')
+      ? `${resource}_${id}`
+      : id;
+  }
+
+  getInputName() {
+    const { name, id, resource, scope } = this.props;
+    const inputName = name || id;
+
+    return (resource && scope === 'resource')
+      ? `${resource}[${inputName}]`
+      : inputName;
+  }
+
+  getInputValue() {
+    const { value, data, resource, id } = this.props;
+
+    if (value) return value;
+    return (data[resource] && data[resource][id])
+      ? data[resource][id]
+      : data[id];
+  }
+
+  getMaxLength() {
+    const { component, maxLength } = this.props;
+
+    return (InputsWithMaxlength.indexOf(component) < 0)
+      ? undefined
+      : maxLength;
+  }
+
+  getInputErrors() {
+    const { errors, resource, id } = this.props;
+
+    return (errors[resource] && errors[resource][id])
+      ? errors[resource][id]
+      : errors[id];
+  }
+
+  /* Serializer functions */
+
+  serialize() {
+    const inputComponentRef = this.refs.inputComponent;
+    if (typeof inputComponentRef.serialize === 'function') {
+      return inputComponentRef.serialize();
+    }
+
+    const value = typeof inputComponentRef.getValue === 'function'
+      ? inputComponentRef.getValue()
+      : this.getInputValue();
+
+    return { [this.getInputName()]: value };
+  }
+
+  /* Renderization */
 
   renderInputErrors() {
     return (<InputError errors={this.getInputErrors()} />);
   }
 
+  renderInput() {
+    const { id, name, errors } = this.props;
+    const InputComponent = this.getInputComponent(this.props.component);
+    const isGrid = (InputComponent === InputGridForm);
+
+    return (
+      <InputComponent
+        {...this.propsWithoutCSS()}
+        originalId={id}
+        originalName={name}
+        id={this.getInputId()}
+        name={this.getInputName()}
+        errors={isGrid ? errors : this.getInputErrors()}
+        value={this.getInputValue()}
+        maxLength={this.getMaxLength()}
+        ref="inputComponent"
+      />
+    );
+  }
+
+  renderLabel() {
+    const inputValue = this.getInputValue();
+    const isActive = this.labelIsActive(inputValue);
+
+    return (
+      <Label {...this.propsWithoutCSS()} id={this.getInputId()} active={isActive} />
+    );
+  }
+
   render() {
-    const renderFunction = `render${capitalize(this.props.component)}Input`;
-    const renderLabel = this.props.renderLabel;
-
-    if (renderFunction in this) {
-      return this[renderFunction]();
-    } else if (!renderLabel) {
-      return this.renderInputWithoutLabel();
-    }
-
-    return this.renderInput();
-  }
-
-  inputClassName() {
-    const className = this.props.className;
-    const formStyle = Realize.themes.getCssClass(`input.grid.${this.props.formStyle}`);
-    return this.className() + (!className ? ` ${formStyle}` : '');
-  }
-
-  getInputContainerId() {
-    return `input__${this.props.id}`;
-  }
-
-  getInputComponentClass(component) {
-    return (InputComponentsMap[component] || window[component] || component);
-  }
-
-  getInputComponentId() {
-    const inputId = this.props.id;
-    const hasResource = this.props.resource !== null && this.props.scope === 'resource';
-    const resource = this.props.resource;
-
-    return hasResource ? `${resource}_${inputId}` : inputId;
-  }
-
-  getInputComponentName() {
-    const inputName = this.props.name || this.props.id;
-    const hasResource = this.props.resource !== null && this.props.scope === 'resource';
-    const resource = this.props.resource;
-
-    return hasResource ? `${resource}[${inputName}]` : inputName;
-  }
-
-  getInputComponentValue() {
-    if (!!this.props.value) return this.props.value;
-
-    const data = this.props.data || {};
-    const dataValue = data[this.props.id];
-    const isBooleanData = typeof dataValue === 'boolean';
-
-    return isBooleanData ? (dataValue ? 1 : 0) : dataValue;
-  }
-
-  getMaxLength() {
-    const acceptComponents = ['text', 'masked', 'number', 'textarea'];
-    const isComponentAccepted = acceptComponents.includes(this.props.component);
-    const maxLength = this.props.maxLength;
-
-    return ('maxLength' in this.props) && isComponentAccepted ? maxLength : undefined;
-  }
-
-  getInputErrors() {
-    if (this.props.errors[this.props.resource] && this.props.errors[this.props.resource][this.props.id])
-      return this.props.errors[this.props.resource][this.props.id];
-    return this.props.errors[this.props.id];
-  }
-
-  /* Serializer functions */
-
-  getName() {
-    return this.getInputComponentName();
-  }
-
-  getValue() {
-    const inputComponentRef = this.refs.inputComponent;
-    const isValueFunction = typeof inputComponentRef.getValue == 'function';
-
-    return isValueFunction ? inputComponentRef.getValue() : this.getInputComponentValue();
-  }
-
-  serialize() {
-    const inputComponentRef = this.refs.inputComponent;
-    if (typeof inputComponentRef.serialize == 'function') {
-      return inputComponentRef.serialize();
-    }
-
-    const name = this.getName();
-    const value = this.getValue();
-
-    return { [name]: value };
+    return (
+      <div className={this.getInputWrapperClassName()} id={this.getInputWrapperContainerId()}>
+        {this.renderInput()}
+        {this.canRenderLabel() ? this.renderLabel() : <span />}
+        {this.renderInputErrors()}
+      </div>
+    );
   }
 }
