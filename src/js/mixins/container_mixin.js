@@ -1,31 +1,31 @@
 import React from 'react';
 import PropTypes from '../prop_types';
-import $ from 'jquery';
-import { isEqual } from 'lodash';
+import _ from 'lodash';
 
 export default {
   propTypes: {
-    forwardedProps: PropTypes.object
+    forwardedProps: PropTypes.object,
+    ignoreForwarded: PropTypes.array,
   },
 
-  getDefaultProps () {
+  getDefaultProps() {
     return {
-      forwardedProps: {}
+      forwardedProps: {},
     };
   },
 
-  getChildren () {
+  getChildren() {
     return this.cloneChildrenWithProps();
   },
 
-  renderChildren () {
+  renderChildren() {
     return this.cloneChildrenWithProps();
   },
 
-  filterChildren (childType) {
-    let result = [];
-    React.Children.map(this.props.children, function(child) {
-      if (!!child && child.type == childType) {
+  filterChildren(childType) {
+    const result = [];
+    React.Children.map(this.props.children, (child) => {
+      if (!!child && child.type === childType) {
         result.push(child);
       }
     });
@@ -33,71 +33,58 @@ export default {
     return result;
   },
 
-  cloneChildrenWithProps (options) {
-    let props = this.buildPropsToForward();
+  cloneChildrenWithProps(options) {
+    const props = this.buildPropsToForward();
+    const cloneChildWithProps = this.cloneChildWithProps.bind(this, props);
 
     if (!!options && !!options.childrenType) {
-      return React.Children.map(this.filterChildren(options.childrenType), function(child) {
-        let forwardedProps = $.extend({}, this.props.forwardedProps, props);
-        if(!child || !child.type) {
-          return null;
-        }
-
-        return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
-      }.bind(this));
-    } else {
-      return React.Children.map(this.props.children, function(child) {
-        let forwardedProps = $.extend({}, this.props.forwardedProps, props);
-        if(!child || !child.type) {
-          return null;
-        }
-
-        return React.cloneElement(child, $.extend({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps: forwardedProps }));
-      }.bind(this));
+      return React.Children.map(this.filterChildren(options.childrenType), cloneChildWithProps);
     }
+
+    return React.Children.map(this.props.children, cloneChildWithProps);
   },
 
-  buildChildPropsToKeep (child) {
-    let defaultChildProps = {};
-    let keepProps = [];
-
-    if(!!child.type.getDefaultProps)
-      defaultChildProps = child.type.getDefaultProps();
-
-    if($.isArray(child.props['ignoreForwarded']))
-      keepProps = child.props['ignoreForwarded'];
-
-    var newProps = {};
-
-    for(var k in child.props) {
-      if( this.childPropValueIsNotDefault(child.props[k], defaultChildProps[k]) ||
-          this.shouldKeepChildPropValueAnyway(k, keepProps))
-        newProps[k] = child.props[k];
+  cloneChildWithProps(props, child) {
+    const forwardedProps = _.merge({}, this.props.forwardedProps, props);
+    if (!child || !child.type) {
+      return null;
     }
-    return newProps;
+
+    return React.cloneElement(
+      child,
+      _.merge({}, forwardedProps, this.buildChildPropsToKeep(child), { forwardedProps })
+    );
   },
 
-  childPropValueIsNotDefault (propValue, defaultPropValue) {
-    return !isEqual(propValue, defaultPropValue);
+  buildChildPropsToKeep(child) {
+    const { getDefaultProps } = child.type;
+    const { ignoreForwarded } = child.props;
+    const defaultChildProps = getDefaultProps ? child.type.getDefaultProps() : {};
+    const keepProps = Array.isArray(ignoreForwarded) ? ignoreForwarded : [];
+
+    return Object.keys(child.props)
+      .filter((propKey) => (
+        this.childPropValueIsNotDefault(child.props[propKey], defaultChildProps[propKey]) ||
+        this.shouldKeepChildPropValueAnyway(propKey, keepProps)
+      ))
+      .reduce((acc, propKey) => Object.assign(acc, { [propKey]: child.props[propKey] }), {});
   },
 
+  childPropValueIsNotDefault(propValue, defaultPropValue) {
+    return !_.isEqual(propValue, defaultPropValue);
+  },
 
   shouldKeepChildPropValueAnyway (propName, keepList) {
     return keepList.indexOf(propName) >= 0;
   },
 
-  buildPropsToForward () {
-    let propsToForward = !!this.propsToForward ? this.propsToForward() : [];
-    let forwardMapping = !!this.propsToForwardMapping ? this.propsToForwardMapping() : {};
-    let props = {};
+  buildPropsToForward() {
+    const propsToForward = this.propsToForward ? this.propsToForward() : [];
+    const forwardMapping = this.propsToForwardMapping ? this.propsToForwardMapping() : {};
 
-    for(let i = 0; i < propsToForward.length; i++) {
-      let propToForward = propsToForward[i];
+    return _.merge(propsToForward.reduce((acc, propToForward) => (
+      Object.assign(acc, { [propToForward]: this.props[propToForward] })
+    ), {}), forwardMapping);
+  },
 
-      props[propToForward] = this.props[propToForward];
-    }
-
-    return $.extend(props, forwardMapping);
-  }
-
-}
+};
