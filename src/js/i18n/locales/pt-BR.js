@@ -43,8 +43,7 @@ export default {
       alias: 'dd/mm/yyyy',
     },
     datetime: {
-      mask: 'd/m/y h:s',
-      placeholder: 'dd/mm/yyyy, hh:ss',
+      mask: 'd/m/y hh:ss',
     },
     cpf: '999.999.999-99',
     cnpj: '99.999.999/9999-99',

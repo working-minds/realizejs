@@ -8,6 +8,7 @@ import { mixin, autobind } from '../../utils/decorators';
 import {
   InputGroup,
   FormButtonGroup,
+  Input,
 } from '../../components';
 
 import {
@@ -36,14 +37,11 @@ export default class Form extends Component {
     formStyle: PropTypes.string,
     resource: PropTypes.string,
     ajaxSubmit: PropTypes.bool,
+    jquerySerialize: PropTypes.bool,
     isLoading: PropTypes.bool,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
-    inputWrapperComponent: PropTypes.oneOfType([
-      PropTypes.func,
-      PropTypes.element,
-      PropTypes.string,
-    ]),
+    inputWrapperComponent: PropTypes.component,
     submitButton: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     otherButtons: PropTypes.array,
     onSubmit: PropTypes.func,
@@ -63,10 +61,11 @@ export default class Form extends Component {
     formStyle: 'default',
     resource: null,
     ajaxSubmit: true,
+    jquerySerialize: true,
     isLoading: false,
     disabled: false,
     readOnly: false,
-    inputWrapperComponent: null,
+    inputWrapperComponent: Input,
     submitButton: {
       name: 'actions.send',
       icon: 'send',
@@ -89,7 +88,7 @@ export default class Form extends Component {
   }
 
   propsToForward() {
-    return ['resource', 'data', 'readOnly', 'disabled'];
+    return ['resource', 'data', 'readOnly', 'disabled', 'inputWrapperComponent'];
   }
 
   propsToForwardMapping() {
@@ -112,8 +111,19 @@ export default class Form extends Component {
   }
 
   serialize() {
+    return (this.props.jquerySerialize)
+      ? this.jquerySerialize()
+      : this.inputsSerialize();
+  }
+
+  jquerySerialize() {
     const form = ReactDOM.findDOMNode(this.refs.form);
     return $(form).serializeObject();
+  }
+
+  inputsSerialize() {
+    const inputGroup = this.refs.inputGroup;
+    return inputGroup.serialize();
   }
 
   @autobind

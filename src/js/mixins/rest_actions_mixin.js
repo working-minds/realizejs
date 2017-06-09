@@ -15,7 +15,7 @@ export default {
     return {
       actionUrls: {},
       actionMethods: null,
-      destroyConfirm: i18n.t('table.destroyConfirm')
+      destroyConfirm: i18n.t('table.destroyConfirm'),
     };
   },
 

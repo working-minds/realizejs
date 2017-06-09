@@ -69,6 +69,7 @@ export default class Grid extends Component {
   };
 
   static defaultProps = {
+    url: '',
     actionUrls: {},
     actionMethods: null,
     destroyConfirm: I18n.t('table.destroyConfirm'),

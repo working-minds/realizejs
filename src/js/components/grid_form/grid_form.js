@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
-import $ from 'jquery';
-import { merge } from 'lodash';
+import _ from 'lodash';
 import { uuid } from '../../utils';
-import { mixin } from '../../utils/decorators';
+import { autobind, mixin } from '../../utils/decorators';
+import { RestClient } from '../../services/http';
 import { Grid } from '../grid';
 import { Form } from '../form';
 
-import {
-  CssClassMixin,
-  RestActionsMixin
-} from '../../mixins';
+import { CssClassMixin, RestActionsMixin } from '../../mixins';
 
-@mixin(
-  CssClassMixin,
-  RestActionsMixin
-)
+@mixin(CssClassMixin, RestActionsMixin)
 export default class GridForm extends Component {
   static propTypes = {
     clientSide: PropTypes.bool,
@@ -34,11 +28,14 @@ export default class GridForm extends Component {
     createButton: PropTypes.object,
     updateButton: PropTypes.object,
     cancelButton: PropTypes.object,
+    editActionButton: PropTypes.object,
+    destroyActionButton: PropTypes.object,
     isLoading: PropTypes.bool,
     selectable: PropTypes.oneOf(['multiple', 'none', 'one']),
     eagerLoad: PropTypes.bool,
     readOnly: PropTypes.bool,
-    formComponent: PropTypes.func,
+    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+    formComponent: PropTypes.component,
     onSubmit: PropTypes.func,
     onReset: PropTypes.func,
     onSuccess: PropTypes.func,
@@ -46,298 +43,246 @@ export default class GridForm extends Component {
     onLoadSuccess: PropTypes.func,
     onLoadError: PropTypes.func,
     onDestroySuccess: PropTypes.func,
-    onDestroyError: PropTypes.func
+    onDestroyError: PropTypes.func,
   };
 
   static defaultProps = {
+    url: '',
     clientSide: false,
     clientSideIdField: '_clientSideId',
     form: {},
     actionButtons: null,
     themeClassKey: 'gridForm',
     isLoading: false,
+    editActionButton: {},
+    destroyActionButton: {},
     createButton: {
       name: 'actions.add',
-      icon: 'add'
+      icon: 'add',
     },
     updateButton: {
       name: 'actions.update',
-      icon: 'edit'
+      icon: 'edit',
     },
     cancelButton: {
       name: 'actions.cancel',
-      buttonStyle: 'cancel'
+      buttonStyle: 'cancel',
     },
     selectable: 'multiple',
     eagerLoad: true,
     readOnly: false,
     formComponent: Form,
-    onSubmit: function(event, postData) {},
-    onReset: function(event) {},
-    onSuccess: function(data, status, xhr) { return true; },
-    onError: function(xhr, status, error) { return true; },
-    onLoadSuccess: function(data) {},
-    onLoadError: function(xhr, status, error) {},
-    onDestroySuccess: function(data) {},
-    onDestroyError: function(xhr, status, error) {}
+    onSubmit() {},
+    onReset() {},
+    onSuccess() { return true; },
+    onError() { return true; },
+    onLoadSuccess() {},
+    onLoadError() {},
+    onDestroySuccess() {},
+    onDestroyError() {},
   };
 
   state = {
     formAction: 'create',
-    selectedDataRow: null,
+    selectedDataRow: {},
     selectedRowId: null,
     isLoading: this.props.isLoading,
-    clientSideData: []
+    clientSideData: [],
   };
 
-  renderForm () {
-    if(this.props.readOnly) {
-      return <span/>;
-    }
+  constructor(props) {
+    super(props);
 
-    var formProps = merge({formStyle: 'filter'}, this.props.form, {
-      action: this.getFormAction(),
-      data: this.state.selectedDataRow,
-      method: this.getFormMethod(),
-      resource: !!this.props.clientSide ? null : this.props.form.resource,
-      inputs: this.getFormInputs(),
-      errors: this.props.errors,
-      submitButton: this.getFormSubmitButton(),
-      otherButtons: this.getFormOtherButtons(),
-      onSubmit: this.onSubmit,
-      onReset: this.onReset,
-      onSuccess: this.onSuccess,
-      onError: this.onError,
-      key: "form_" + uuid.v4(),
-      ref: "form"
+    this.restClient = new RestClient({
+      baseUrl: this.props.url,
+      actionUrls: this.props.actionUrls,
+      actionMethods: this.props.actionMethods,
     });
-
-    return React.createElement(this.props.formComponent, formProps, null);
   }
 
-  render () {
-    return (
-      <div className={this.className()}>
-        <div className={this.className() + "__form"}>
-          {this.renderForm()}
-        </div>
-
-        <div className={this.className() + "__grid"}>
-          <Grid
-            {...this.getGridProps()}
-            actionButtons={this.getActionButtons()}
-            ref="grid"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  getFormAction () {
-    if(!!this.props.clientSide) {
-      return null;
-    }
-
+  getFormAction() {
+    if (this.props.clientSide) return null;
     return this.getRestActionUrl(this.state.formAction, this.state.selectedRowId);
   }
 
-  getFormMethod () {
+  getFormMethod() {
     return this.getRestActionMethod(this.state.formAction);
   }
 
-  getFormSubmitButton () {
-    if(this.state.formAction == 'create') {
+  getFormSubmitButton() {
+    if (this.state.formAction === 'create') {
       return this.props.createButton;
-    } else if(this.state.formAction == 'update') {
+    }
+
+    if (this.state.formAction === 'update') {
       return this.props.updateButton;
     }
 
     return '';
   }
 
-  getFormOtherButtons () {
-    if(this.state.formAction == 'update') {
-      var cancelButtonProps = $.extend({}, this.props.cancelButton, {
-        type: "reset",
-        onClick: this.handleResetClick
-      });
-
-      return [cancelButtonProps];
+  getFormOtherButtons() {
+    if (this.state.formAction === 'update') {
+      return [
+        Object.assign({}, this.props.cancelButton, {
+          type: 'reset',
+          onClick: this.handleResetClick,
+        }),
+      ];
     }
 
     return [];
   }
 
-  getFormInputs () {
-    var formInputs = this.props.form.inputs;
-    if(!!this.props.clientSide) {
-      formInputs[this.props.clientSideIdField] = { component: 'hidden' };
+  getFormInputs() {
+    const { clientSide, clientSideIdField } = this.props;
+    const { inputs: formInputs } = this.props.form;
+    if (clientSide) {
+      formInputs[clientSideIdField] = { component: 'hidden' };
     }
 
     return formInputs;
   }
 
-  getActionButtons () {
-    var actionButtons = this.props.actionButtons || {};
+  getActionButtons() {
+    const actionButtons = this.props.actionButtons || {};
 
-    if(!actionButtons.member) {
+    if (!actionButtons.member) {
       actionButtons.member = this.getDefaultMemberActionButtons();
     }
 
-    if(!actionButtons.collection) {
-      actionButtons.collection = this.getDefaultCollectionActionButtons();
+    if (!actionButtons.collection) {
+      actionButtons.collection = [];
     }
 
     return actionButtons;
   }
 
-  getDefaultMemberActionButtons () {
-    if(this.props.readOnly) {
+  getDefaultMemberActionButtons() {
+    if (this.props.readOnly) {
       return [];
     }
 
     return [
       this.getDefaultEditActionProps(),
-      this.getDefaultDestroyActionProps()
+      this.getDefaultDestroyActionProps(),
     ];
   }
 
-  getDefaultCollectionActionButtons () {
-    return [];
-  }
-
-  getDefaultEditActionProps () {
-    return $.extend({}, {
+  getDefaultEditActionProps() {
+    return Object.assign({}, {
       icon: 'edit',
-      onClick: this.editAction
+      onClick: this.editAction,
     }, this.props.editActionButton);
   }
 
-  getDefaultDestroyActionProps () {
-    return $.extend({}, {
+  getDefaultDestroyActionProps() {
+    return Object.assign({}, {
       icon: 'destroy',
-      onClick: this.destroyAction
+      onClick: this.destroyAction,
     }, this.props.destroyActionButton);
   }
 
-  onSubmit (event, postData) {
+  @autobind
+  onSubmit(event, postData) {
     this.props.onSubmit(event, postData);
-    if(!!this.props.clientSide) {
+    if (this.props.clientSide) {
       this.handleClientSideSubmit(event, postData);
     }
   }
 
-  onSuccess (data, status, xhr) {
-      if(this.props.onSuccess(data, status, xhr)) {
+  @autobind
+  onSuccess(data, status, xhr) {
+    if (this.props.onSuccess(data, status, xhr)) {
       this.loadGridData();
       this.resetForm();
     }
   }
 
-  onError (xhr, status, error) {
+  @autobind
+  onError(xhr, status, error) {
     return this.props.onError(xhr, status, error);
   }
 
-  onReset (event) {
+  @autobind
+  onReset(event) {
     this.setState({
       formAction: 'create',
       selectedRowId: null,
-      selectedDataRow: null
+      selectedDataRow: null,
     });
 
     this.clearFormErrors();
     this.props.onReset(event);
   }
 
-  handleResetClick = (event) => {
-    var formRef = this.refs.form;
-    if(!(typeof formRef.haveNativeReset == "function" && !!formRef.haveNativeReset())) {
+  @autobind
+  handleResetClick(event) {
+    const { form: formRef } = this.refs;
+    if (!(typeof formRef.haveNativeReset === 'function' && !!formRef.haveNativeReset())) {
       this.onReset(event);
     }
   }
 
-  resetForm () {
-    var formRef = this.refs.form;
-    if(typeof formRef.reset == "function") {
+  resetForm() {
+    const { form: formRef } = this.refs;
+    if (typeof formRef.reset === 'function') {
       formRef.reset();
     }
   }
 
-  editAction (event, id, data) {
+  @autobind
+  editAction(event, id, data) {
     this.setState({
       formAction: 'update',
       selectedRowId: id,
-      selectedDataRow: data
+      selectedDataRow: data,
     });
 
     this.clearFormErrors();
   }
 
-  destroyAction (event, id) {
-    if(!!this.props.clientSide) {
-      this.destroyActionClientSide(event, id);
-    }
-    else {
-      this.destroyActionServerSide(event, id);
-    }
+  @autobind
+  destroyAction(event, id) {
+    return (this.props.clientSide)
+      ? this.destroyActionClientSide(event, id)
+      : this.destroyActionServerSide(event, id);
   }
 
-  destroyActionServerSide (event, id) {
-    var destroyUrl = this.getRestActionUrl('destroy', id);
-    var destroyMethod = this.getRestActionMethod('destroy');
+  destroyActionServerSide(event, id) {
+    const { destroyConfirm } = this.props;
 
-    if(!this.props.destroyConfirm || confirm(this.props.destroyConfirm)) {
-      this.setState({isLoading: true});
-      this.resetForm();
-
-      $.ajax({
-        url: destroyUrl,
-        method: destroyMethod,
-        success: this.handleDestroy,
-        error: this.handleDestroyError
+    if (!destroyConfirm || confirm(destroyConfirm)) {
+      this.setState({ isLoading: true }, () => {
+        this.resetForm();
+        this.restClient.destroy(id)
+          .then(this.handleDestroy)
+          .catch(this.handleDestroyError);
       });
     }
   }
 
-  handleDestroy = (data, status, xhr) => {
+  @autobind
+  handleDestroy(data, status, xhr) {
     this.props.onDestroySuccess(data, status, xhr);
     this.loadGridData();
   }
 
-  handleDestroyError = (xhr, status, error) => {
-    this.setState({isLoading: false});
-    this.props.onDestroyError(xhr, status, error);
+  @autobind
+  handleDestroyError(xhr, status, error) {
+    this.setState({ isLoading: false }, () =>
+      this.props.onDestroyError(xhr, status, error)
+    );
   }
 
-  getGridProps () {
-    var gridProps = merge({}, this.propsWithoutCSS());
-    if(!!this.props.clientSide) {
-      merge(gridProps, {
-        url: '',
-        pagination: false,
-        selectable: 'none',
-        eagerLoad: false,
-        key: uuid.v4(),
-        dataRowIdField: this.props.clientSideIdField,
-        data: {
-          dataRows: this.state.clientSideData
-        },
-        sortConfigs: {
-          sortable: false
-        }
-      });
-    }
-
-    return gridProps;
-  }
-
-  handleClientSideSubmit = (event, postData) => {
+  @autobind
+  handleClientSideSubmit(event, postData) {
     event.preventDefault();
+    const { clientSideIdField } = this.props;
+    const submittedDataRow = Object.assign({}, postData);
+    const submittedDataRowIndex = this.findClientSideDataIndex(submittedDataRow[clientSideIdField]);
 
-    var submittedDataRow = merge({}, postData);
-    var submittedDataRowIndex = this.findClientSideDataIndex(submittedDataRow[this.props.clientSideIdField]);
-
-    if(submittedDataRowIndex >= 0) {
+    if (submittedDataRowIndex >= 0) {
       this.state.clientSideData.splice(submittedDataRowIndex, 1, submittedDataRow);
     } else {
       submittedDataRow[this.props.clientSideIdField] = uuid.v4();
@@ -347,37 +292,107 @@ export default class GridForm extends Component {
     this.setState({
       formAction: 'create',
       selectedRowId: null,
-      selectedDataRow: null
+      selectedDataRow: {},
     }, this.props.onSuccess);
   }
 
-  destroyActionClientSide (event, id) {
-    var itemIndex = this.findClientSideDataIndex(id);
+  destroyActionClientSide(event, id) {
+    const itemIndex = this.findClientSideDataIndex(id);
 
     this.state.clientSideData.splice(itemIndex, 1);
     this.forceUpdate(this.props.onDestroySuccess);
   }
 
-  findClientSideDataIndex (id) {
-    return _findIndex(this.state.clientSideData, function(item) {
-      return item[this.props.clientSideIdField] == id;
-    }.bind(this));
+  findClientSideDataIndex(id) {
+    const { clientSideData } = this.state;
+    const { clientSideIdField } = this.props;
+
+    return _.findIndex(clientSideData, (item) => item[clientSideIdField] === id);
   }
 
-  serialize () {
-    var gridRef = this.refs.grid;
-    return gridRef.serialize();
+  serialize() {
+    return this.refs.grid.serialize();
   }
 
-  loadGridData () {
-    var gridRef = this.refs.grid;
-    gridRef.loadData();
+  loadGridData() {
+    this.refs.grid.loadData();
   }
 
-  clearFormErrors () {
-    var formRef = this.refs.form;
-    if(typeof formRef.clearErrors == "function") {
+  clearFormErrors() {
+    const { form: formRef } = this.refs;
+    if (typeof formRef.clearErrors === 'function') {
       formRef.clearErrors();
     }
+  }
+
+  getGridProps() {
+    const gridProps = Object.assign({}, this.propsWithoutCSS());
+    if (this.props.clientSide) {
+      Object.assign(gridProps, {
+        url: '',
+        pagination: false,
+        selectable: 'none',
+        eagerLoad: false,
+        key: uuid.v4(),
+        dataRowIdField: this.props.clientSideIdField,
+        data: {
+          dataRows: this.state.clientSideData,
+        },
+        sortConfigs: {
+          sortable: false,
+        },
+      });
+    }
+
+    return gridProps;
+  }
+
+  renderForm() {
+    if (this.props.readOnly) return <span />;
+
+    const formProps = Object.assign({ formStyle: 'filter' }, this.props.form, {
+      action: this.getFormAction(),
+      data: this.state.selectedDataRow || {},
+      method: this.getFormMethod(),
+      resource: this.props.clientSide ? null : this.props.form.resource,
+      inputs: this.getFormInputs(),
+      errors: this.props.errors,
+      submitButton: this.getFormSubmitButton(),
+      otherButtons: this.getFormOtherButtons(),
+      onSubmit: this.onSubmit,
+      onReset: this.onReset,
+      onSuccess: this.onSuccess,
+      onError: this.onError,
+      key: `form_${uuid.v4()}`,
+      ref: 'form',
+    });
+
+    return React.createElement(this.props.formComponent, formProps, null);
+  }
+
+  renderGrid() {
+    return (
+      <Grid
+        {...this.getGridProps()}
+        actionButtons={this.getActionButtons()}
+        ref="grid"
+      />
+    );
+  }
+
+  render() {
+    const className = this.className();
+
+    return (
+      <div className={className}>
+        <div className={`${className}__form`}>
+          {this.renderForm()}
+        </div>
+
+        <div className={`${className}__grid`}>
+          {this.renderGrid()}
+        </div>
+      </div>
+    );
   }
 }
