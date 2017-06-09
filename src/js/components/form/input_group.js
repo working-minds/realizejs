@@ -56,7 +56,7 @@ export default class InputGroup extends Component {
   serialize() {
     return Object.keys(this.refs)
       .filter(refKey => refKey.match(/^input_/))
-      .reduce((acc, refKey) => this.refs[refKey].serialize(), {});
+      .reduce((acc, refKey) => Object.assign({}, acc, this.refs[refKey].serialize()), {});
   }
 
   renderInputs() {

@@ -36,6 +36,10 @@ export default class InputSwitch extends InputCheckboxBase {
     return this.props;
   }
 
+  serialize() {
+    return { [this.props.name]: this.state.checked };
+  }
+
   renderLabel() {
     if (!this.props.label) {
       return null;

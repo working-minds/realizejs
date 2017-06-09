@@ -1,8 +1,7 @@
 import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from '../../prop_types';
-import $ from 'jquery';
-import themes from '../../theme'
+import themes from '../../theme';
 import i18n from '../../i18n';
 import { autobind } from '../../utils/decorators';
 import { setState } from '../../utils/react';

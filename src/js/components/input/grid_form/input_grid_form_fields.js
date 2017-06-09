@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import PropTypes from '../../../prop_types';
-import $ from 'jquery';
-import { mixin } from '../../../utils/decorators';
+import { autobind, mixin } from '../../../utils/decorators';
 
 import {
   Button,
@@ -22,6 +22,7 @@ export default class InputGridFormFields extends Component {
     readOnly: PropTypes.bool,
     submitButton: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     otherButtons: PropTypes.array,
+    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     onSubmit: PropTypes.func,
     onReset: PropTypes.func,
   };
@@ -37,43 +38,34 @@ export default class InputGridFormFields extends Component {
     readOnly: false,
     submitButton: {
       name: 'actions.send',
-      icon: 'send'
+      icon: 'send',
     },
     otherButtons: [],
-    onSubmit: () => {},
-    onReset: () => {}
+    onSubmit() {},
+    onReset() {},
   };
 
   state = {
-    errors: this.props.errors
+    errors: this.props.errors,
   };
 
+  @autobind
   submitFormFields(event) {
     const inputGroupRef = this.refs.inputGroup;
     const fieldsData = inputGroupRef.serialize();
 
     this.props.onSubmit(event, fieldsData);
-    this.clearErrors();
-  }
-
-  clearErrors() {
-    //TODO implementar uma forma de limpar os errors do form nos campos do gridform.
-  }
-
-  reset() {
-    console.log('reset!');
   }
 
   renderInputs() {
-    if (!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
-      return [];
+    if (!this.props.inputs || _.isEmpty(this.props.inputs)) {
+      return <span />;
     }
 
     return (
       <InputGroup
         {...this.propsWithoutCSS()}
         errors={this.state.errors}
-        formStyle={this.props.formStyle}
         ref="inputGroup"
       />
     );

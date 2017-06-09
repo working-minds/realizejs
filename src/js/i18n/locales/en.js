@@ -44,7 +44,6 @@ export default {
     },
     datetime: {
       mask: 'm/d/y h:s',
-      placeholder: 'mm/dd/yyyy, hh:ss',
     },
     cpf: '999.999.999-99',
     cnpj: '99.999.999/9999-99',
