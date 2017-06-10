@@ -136,7 +136,7 @@ export default class TableCell extends Component {
 
   renderFormattedValue(value) {
     const valueFormatter = this.getValueFormatter().bind(this);
-    return (!_.isEmpty(value) || typeof value === 'boolean') ? valueFormatter(value) : '-';
+    return (!_.isEmpty(value) || typeof value === 'boolean' || typeof value === 'number') ? valueFormatter(value) : '-';
   }
 
   renderValue() {
