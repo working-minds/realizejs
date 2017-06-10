@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import PropTypes from '../../../prop_types';
 import { autobind, mixin } from '../../../utils/decorators';
+import { uuid } from '../../../utils';
 
 import GridForm from '../../grid_form/grid_form';
 import InputGridFormFields from './input_grid_form_fields';
@@ -31,6 +32,7 @@ export default class InputGridForm extends InputBase {
     fields: {},
     form: {},
     clientSide: true,
+    clientSideIdField: '_clientSideId',
     inputWrapperComponent: null,
     onSuccess() {},
     onDestroySuccess() {},
@@ -56,6 +58,15 @@ export default class InputGridForm extends InputBase {
     return _.mapValues(columns, (column, key) => Object.assign(column, {
       name: column.name || key,
     }));
+  }
+
+  buildGridData() {
+    const { value, clientSideIdField } = this.props;
+    const dataRows = !value || value === ''
+      ? []
+      : value.map((v) => { return { ...v, [clientSideIdField]: uuid.v4() }; });
+
+    return { dataRows };
   }
 
   /* GridForm Result serializer */
@@ -108,6 +119,7 @@ export default class InputGridForm extends InputBase {
           formComponent={InputGridFormFields}
           form={this.parseFormProp()}
           columns={this.parseColumnsProp()}
+          data={this.buildGridData()}
           onSuccess={this.handleOnSuccess}
           onDestroySuccess={this.handleOnDestroySuccess}
           errors={this.props.errors}

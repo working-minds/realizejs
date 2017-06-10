@@ -72,6 +72,9 @@ export default class GridForm extends Component {
     eagerLoad: true,
     readOnly: false,
     formComponent: Form,
+    data: {
+      dataRows: []
+    },
     onSubmit() {},
     onReset() {},
     onSuccess() { return true; },
@@ -87,7 +90,7 @@ export default class GridForm extends Component {
     selectedDataRow: {},
     selectedRowId: null,
     isLoading: this.props.isLoading,
-    clientSideData: [],
+    clientSideData: this.props.data.dataRows,
   };
 
   constructor(props) {
