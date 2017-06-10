@@ -251,17 +251,16 @@ export default {
 
   /* Serializer functions */
 
-  getDisplayValues () {
-    return map(this.selectedOptions(), function(selectedOption) {
-      return selectedOption[this.props.nameField];
-    }.bind(this));
+  getSelectValue() {
+    const { multiple } = this.props;
+    const { value } = this.state;
+
+    return (!multiple && Array.isArray(value))
+      ? value[0]
+      : value;
   },
 
-  serialize () {
-    var serializedInput = {};
-    serializedInput[this.props.name] = this.getValue();
-    serializedInput[this.props.name + "Display"] = this.getDisplayValues();
-
-    return serializedInput;
-  }
-}
+  serialize() {
+    return { [this.props.name]: this.getSelectValue() };
+  },
+};
