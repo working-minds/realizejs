@@ -1,5 +1,6 @@
 export * from './acl';
 export * from './button';
+export * from './card';
 export * from './container';
 export * from './flash';
 export * from './form';

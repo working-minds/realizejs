@@ -48,8 +48,10 @@ export default class Input extends React.Component {
   }
 
   labelIsActive(inputValue) {
-    return (this.props.component !== 'checkbox') &&
-           (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0);
+    const { component } = this.props;
+    return (component === 'checkbox_group') || (component === 'radio_group') ||
+      ((component !== 'checkbox') &&
+       (inputValue !== null && inputValue !== undefined && String(inputValue).length > 0));
   }
 
   canRenderLabel() {

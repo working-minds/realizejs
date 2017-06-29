@@ -1,74 +1,71 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from '../../../prop_types';
-import { mixin } from '../../../utils/decorators';
+import { mixin, autobind } from '../../../utils/decorators';
+import { CssClassMixin, SelectComponentMixin } from '../../../mixins';
 
-import { Label } from '../../../components';
 import InputBase from '../input_base';
-import {
-  CssClassMixin,
-  SelectComponentMixin,
-} from '../../../mixins';
+import InputRadio from './input_radio';
 
-@mixin(
-  CssClassMixin,
-  SelectComponentMixin,
-)
+@mixin(CssClassMixin, SelectComponentMixin)
 export default class InputRadioGroup extends InputBase {
   static propTypes = {
+    ...InputBase.propTypes,
     align: PropTypes.oneOf(['vertical', 'horizontal']),
-    currentValue: PropTypes.string,
     withGap: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    disabled: PropTypes.bool,
+    onClick: PropTypes.func,
   };
 
   static defaultProps = {
-    name: '',
+    ...InputBase.defaultProps,
+    themeClassKey: 'input.radiogroup',
     align: 'vertical',
-    currentValue: null,
     withGap: false,
+    readOnly: false,
+    disabled: false,
+    onClick() {},
   };
 
-  state = {
-    ...this.state,
-    currentValue: this.props.currentValue,
-  };
+  @autobind
+  handleClick(event) {
+    const value = event.target.value;
+    this.props.onClick(event);
+
+    if (!event.isDefaultPrevented()) {
+      this.setState({ value });
+    }
+  }
+
+  radioIsChecked(radioValue, groupValue) {
+    return groupValue !== null && radioValue !== null &&
+      groupValue !== undefined && radioValue !== undefined &&
+      radioValue.toString() === groupValue.toString();
+  }
 
   renderOptions() {
-    const selectOptions = [];
-    const options = this.state.options;
+    const { options, value } = this.state;
+    const { id, name, readOnly, disabled } = this.props;
+    const groupValue = Array.isArray(value) ? value[0] : value;
 
-    for (let i = 0; i < options.length; i++) {
-      const optionProps = options[i];
-      optionProps.id = `${this.props.name}_${i}`;
-      optionProps.type = 'radio';
-
-      if (this.state.currentValue === optionProps.value) {
-        optionProps.defaultChecked = optionProps.value;
-      }
-
-      if (this.props.withGap) {
-        optionProps.className = 'with-gap';
-      }
-
-      selectOptions.push(
-        <p key={`p_input_${i}`} id={`input_${optionProps.value}`}>
-          <input
-            {...optionProps}
-            name={this.props.name}
-            onChange={this.handleChange}
-          />
-          <Label id={optionProps.id} label={optionProps.name} />
-        </p>
-      );
-    }
-    return selectOptions;
+    return options.map((option, i) => (
+      <InputRadio
+        key={`${id}_radio_${i}`}
+        {...option}
+        id={`${id}_${i}`}
+        name={name}
+        label={option.label || option.name}
+        checked={this.radioIsChecked(option.value, groupValue)}
+        disabled={disabled}
+        readOnly={readOnly}
+        onClick={this.handleClick}
+      />
+    ));
   }
 
   render() {
     return (
-      <div
-        className={`input-checkbox-group align-${this.props.align}`}
-        ref="radioGroup"
-      >
+      <div className={`${this.inputClassName()} align-${this.props.align}`}>
         {this.renderOptions()}
       </div>
     );

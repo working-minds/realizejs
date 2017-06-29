@@ -42,6 +42,7 @@ export default class GridForm extends Component {
     onError: PropTypes.func,
     onLoadSuccess: PropTypes.func,
     onLoadError: PropTypes.func,
+    onEdit: PropTypes.func,
     onDestroySuccess: PropTypes.func,
     onDestroyError: PropTypes.func,
   };
@@ -73,7 +74,7 @@ export default class GridForm extends Component {
     readOnly: false,
     formComponent: Form,
     data: {
-      dataRows: []
+      dataRows: [],
     },
     onSubmit() {},
     onReset() {},
@@ -81,6 +82,7 @@ export default class GridForm extends Component {
     onError() { return true; },
     onLoadSuccess() {},
     onLoadError() {},
+    onEdit() {},
     onDestroySuccess() {},
     onDestroyError() {},
   };
@@ -240,7 +242,7 @@ export default class GridForm extends Component {
       formAction: 'update',
       selectedRowId: id,
       selectedDataRow: data,
-    });
+    }, () => this.props.onEdit(event, id, data));
 
     this.clearFormErrors();
   }
@@ -332,11 +334,11 @@ export default class GridForm extends Component {
     const gridProps = Object.assign({}, this.propsWithoutCSS());
     if (this.props.clientSide) {
       Object.assign(gridProps, {
-        url: '',
         pagination: false,
         selectable: 'none',
         eagerLoad: false,
         key: uuid.v4(),
+        selectedRowIds: [this.state.selectedRowId],
         dataRowIdField: this.props.clientSideIdField,
         data: {
           dataRows: this.state.clientSideData,

@@ -82,7 +82,7 @@ export default {
   },
 
   gridForm: {
-    cssClass: 'grid-form'
+    cssClass: 'grid-form',
   },
 
   input: {
@@ -90,15 +90,15 @@ export default {
 
     grid: {
       default: {
-        cssClass: 'col l6 m6 s12'
+        cssClass: 'col l6 m6 s12',
       },
 
       filter: {
-        cssClass: 'col l3 m4 s12'
+        cssClass: 'col l3 m4 s12',
       },
 
       oneLine: {
-        cssClass: 'col s12'
+        cssClass: 'col s12',
       }
     },
 
@@ -106,59 +106,67 @@ export default {
       cssClass: 'invalid',
 
       hint: {
-        cssClass: 'form__input-error'
-      }
+        cssClass: 'form__input-error',
+      },
     },
 
     text: {
-      cssClass: ''
+      cssClass: '',
     },
 
     autocomplete: {
       cssClass: 'input-autocomplete',
 
       result: {
-        cssClass: 'input-autocomplete__result z-depth-1'
+        cssClass: 'input-autocomplete__result z-depth-1',
       },
 
       list: {
-        cssClass: 'input-autocomplete__list'
+        cssClass: 'input-autocomplete__list',
       },
 
       option: {
         cssClass: 'input-autocomplete__option',
         active: {
-          cssClass: 'active'
-        }
+          cssClass: 'active',
+        },
       },
 
       select: {
-        cssClass: 'select-wrapper initialized'
+        cssClass: 'select-wrapper initialized',
       },
 
       actionButton: {
-        cssClass: 'button btn waves-effect waves-light black-text grey lighten-2'
-      }
+        cssClass: 'button btn waves-effect waves-light black-text grey lighten-2',
+      },
     },
 
     checkbox: {
-      cssClass: ''
+      cssClass: '',
+    },
+
+    checkboxgroup: {
+      cssClass: 'input-checkbox-group',
+    },
+
+    radiogroup: {
+      cssClass: 'input-radio-group',
     },
 
     switch: {
-      cssClass: 'input-switch switch'
+      cssClass: 'input-switch switch',
     },
 
     datefilter: {
       cssClass: 'input-datefilter',
 
       select: {
-        cssClass: 'input-datefilter__select select-wrapper initialized'
+        cssClass: 'input-datefilter__select select-wrapper initialized',
       },
 
       body: {
-        cssClass: 'input-datefilter__body z-depth-1'
-      }
+        cssClass: 'input-datefilter__body z-depth-1',
+      },
     },
 
     datepicker: {

@@ -27,6 +27,7 @@ export default class InputGroup extends Component {
       PropTypes.arrayOf(React.PropTypes.node),
       PropTypes.node,
     ]),
+    onKeyDown: PropTypes.func,
   };
 
   static defaultProps = {
@@ -42,6 +43,7 @@ export default class InputGroup extends Component {
     wrapperClassName: 'wrapper_input_group',
     inputWrapperComponent: Input,
     children: <span />,
+    onKeyDown() {},
   };
 
   getClassName() {
@@ -100,7 +102,7 @@ export default class InputGroup extends Component {
 
   render() {
     return (
-      <div className={this.props.wrapperClassName}>
+      <div className={this.props.wrapperClassName} onKeyDown={this.props.onKeyDown}>
         <div className={this.getClassName()}>
           {this.props.label ? this.renderLabel() : <span />}
           <div>

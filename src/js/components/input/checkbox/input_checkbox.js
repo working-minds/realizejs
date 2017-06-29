@@ -22,6 +22,7 @@ export default class InputCheckbox extends InputCheckboxBase {
         checked={this.state.checked}
         className={this.inputClassName()}
         onChange={this.handleChange}
+        disabled={this.props.disabled || this.props.readOnly}
         type="checkbox"
         ref="input"
       />
