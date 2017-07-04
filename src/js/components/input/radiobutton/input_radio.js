@@ -21,14 +21,14 @@ export default class InputRadio extends InputBase {
   };
 
   render() {
-    const { id, name, label, withGap } = this.props;
+    const { id, name, label, withGap, disabled, readOnly } = this.props;
 
     return (
       <p>
         <input
           type="radio"
           {...this.props}
-          disabled={this.props.disabled || this.props.readOnly}
+          disabled={disabled || readOnly}
           className={withGap ? 'with-gap' : 'gap'}
         />
         <Label id={id} label={label || name} />
