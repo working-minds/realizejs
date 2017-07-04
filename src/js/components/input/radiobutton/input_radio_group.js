@@ -38,8 +38,7 @@ export default class InputRadioGroup extends InputBase {
   }
 
   radioIsChecked(radioValue, groupValue) {
-    return groupValue !== null && radioValue !== null &&
-      groupValue !== undefined && radioValue !== undefined &&
+    return groupValue !== undefined && radioValue !== undefined &&
       radioValue.toString() === groupValue.toString();
   }
 
