@@ -135,7 +135,6 @@ window.InputMasked = React.createClass({
     var $input = $(this.getInputElement());
     var maskOptions = this.parseMaskOptions();
 
-    console.log(maskOptions);
     $input.inputmask(maskOptions);
     this.setMaskPlaceholder(maskOptions);
     return maskOptions;
