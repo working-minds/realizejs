@@ -17,7 +17,11 @@
 
 .input-checkbox-group.align-horizontal p {
   float: left;
-  margin-left: 15px;
+  margin-right: 1rem;
+
+  & > label {
+    width: 100%;
+  }
 }
 
 .select-wrapper > input[type=text] {
@@ -26,7 +30,11 @@
 
 .input-radio-group.align-horizontal p {
   float: left;
-  margin-left: 15px;
+  margin-right: 1rem;
+
+  & > label {
+    width: 100%;
+  }
 }
 
 .input-switch {

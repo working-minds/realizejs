@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from '../../../prop_types';
 import { mixin } from '../../../utils/decorators';
+import { ensureIsArray } from '../../../utils/array';
 import InputBase from '../input_base';
 import {
   CssClassMixin,
@@ -9,70 +10,43 @@ import {
 
 import { InputCheckbox, Label } from '../../../components';
 
-@mixin(
-  CssClassMixin,
-  SelectComponentMixin
-)
+@mixin(CssClassMixin, SelectComponentMixin)
 export default class InputCheckboxGroup extends InputBase {
   static propTypes = {
-    align: React.PropTypes.oneOf(['vertical', 'horizontal']),
-    currentValues: React.PropTypes.string
+    align: PropTypes.oneOf(['vertical', 'horizontal']),
+    value: PropTypes.array,
   };
 
   static defaultProps = {
-    themeClassKey: 'input.checkbox',
-    name:'',
-    align: 'vertical'
+    themeClassKey: 'input.checkboxgroup',
+    name: '',
+    align: 'vertical',
+    value: [],
   };
 
-  constructor (props) {
-    super(props);
-    this.state = {
-      currentValues: this.props.currentValues
-    };
+  renderCheckboxes() {
+    const { options } = this.state;
+    const { id, name, value: groupValues } = this.props;
+
+    return options.map((option, i) => (
+      <p key={`${id}_checkbox_${i}`}>
+        <InputCheckbox
+          {...option}
+          id={`${id}_${i}`}
+          name={name}
+          className={option.filled ? 'filled-in' : ''}
+          checked={ensureIsArray(groupValues).includes(option.value)}
+        />
+        <Label {...option} />
+      </p>
+    ));
   }
 
-  renderChildItems () {
-    let items = React.Children.map(this.props.children, function(item) {
-      if((item !== null) && (item.props.children[0].type.displayName == "input"))
-        return item;
-    });
-    return items;
-  }
-
-  renderPropItems () {
-    let selectOptions = [];
-    let options = this.state.options;
-
-    for(let i = 0; i < options.length; i++) {
-      let optionProps = options[i];
-
-      let filledClass =  optionProps.filled? 'filled-in' : '';
-      optionProps.id = this.props.id + '_' + i;
-
-      selectOptions.push(
-        <p key={'p_input'+i}>
-          <InputCheckbox {...optionProps } name={this.props.name} className={filledClass} checked={this.isChecked(optionProps)}/>
-          <Label {...optionProps} />
-        </p>
-      );
-    }
-    return selectOptions;
-  }
-
-  render () {
+  render() {
     return (
-      <div className={'input-checkbox-group align-' + this.props.align}>
-        {this.renderChildItems()}
-        {this.renderPropItems()}
+      <div className={`${this.inputClassName()} align-${this.props.align}`}>
+        {this.renderCheckboxes()}
       </div>
     );
-  }
-
-  isChecked (item) {
-    let currentValues = this.state.currentValues;
-    if(!$.isArray(currentValues))
-      currentValues = [currentValues];
-    return ($.inArray( item.value , currentValues ) !== -1);
   }
 }

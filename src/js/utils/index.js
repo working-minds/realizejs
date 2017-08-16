@@ -1,5 +1,6 @@
 export * as uuid from './uuid';
 export * as decorators from './decorators';
+export * as ArrayUtils from './array';
 
 export const getProp = (key, obj) => {
   const keyArr = key.split('.');

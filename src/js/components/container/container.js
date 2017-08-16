@@ -11,8 +11,8 @@ export default class Container extends Component {
   };
 
   static defaultProps = {
-    className: 'row'
-  }
+    className: 'row',
+  };
 
   render () {
     return (

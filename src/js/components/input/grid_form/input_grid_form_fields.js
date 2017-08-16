@@ -57,6 +57,16 @@ export default class InputGridFormFields extends Component {
     this.props.onSubmit(event, fieldsData);
   }
 
+  @autobind
+  handleKeyPressSubmit(event) {
+    const { keyCode } = event;
+
+    if (keyCode === 13) {
+      event.stopPropagation();
+      this.submitFormFields(event);
+    }
+  }
+
   renderInputs() {
     if (!this.props.inputs || _.isEmpty(this.props.inputs)) {
       return <span />;
@@ -66,6 +76,7 @@ export default class InputGridFormFields extends Component {
       <InputGroup
         {...this.propsWithoutCSS()}
         errors={this.state.errors}
+        onKeyDown={this.handleKeyPressSubmit}
         ref="inputGroup"
       />
     );

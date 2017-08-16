@@ -23,6 +23,8 @@ export default class InputFile extends InputBase {
   };
 
   static defaultProps = {
+    wrapperClassName: 'file-field',
+    buttonClassName: 'btn',
     themeClassKey: 'input.file',
     buttonName: 'inputs.file.buttonName',
     filePathField: null,
@@ -86,8 +88,8 @@ export default class InputFile extends InputBase {
 
   render() {
     return (
-      <div className={this.wrapperClassName}>
-        <div className={this.buttonClassName}>
+      <div className={this.props.wrapperClassName}>
+        <div className={this.props.buttonClassName}>
           <span>{this.getButtonName()}</span>
           <input
             {...this.props}

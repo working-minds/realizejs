@@ -55,14 +55,18 @@ export default class TableRow extends Component {
     let className = this.className();
 
     if (!!this.props.onClickRow || !!this.props.rowHref) {
-      className = `${className} clickable-row`;
+      className += ` clickable-row`;
     }
 
     if (!!this.props.tableRowCssClass) {
       const cssClass = this.props.tableRowCssClass(this.props.data);
       if (!!cssClass) {
-        className = `${className} ${cssClass}`;
+        className += ` ${cssClass}`;
       }
+    }
+
+    if (this.props.selected) {
+      className += ` selected`;
     }
 
     return className;
