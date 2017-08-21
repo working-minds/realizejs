@@ -157,8 +157,6 @@ export default class Form extends Component {
     let submitOptions = {
       method: this.props.method,
       data: postData,
-      success: (...args) => this.handleSuccess(...args),
-      error: (...args) => this.handleError(...args),
     };
 
     if (!!this.props.dataType) {
@@ -184,7 +182,9 @@ export default class Form extends Component {
       submitOptions = Object.assign({}, submitOptions, multipartOptions);
     }
 
-    config.httpClient(this.props.action, submitOptions);
+    config.httpClient(this.props.action, submitOptions)
+      .then(this.handleSuccess)
+      .catch(this.handleError);
   }
 
   formSubmit() {
