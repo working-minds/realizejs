@@ -183,7 +183,7 @@ export default class Form extends Component {
     }
 
     config.httpClient(this.props.action, submitOptions)
-      .then(this.handleSuccess)
+      .then((data, status, xhr) => this.handleSuccess(data, status, xhr))
       .catch(this.handleError);
   }
 
