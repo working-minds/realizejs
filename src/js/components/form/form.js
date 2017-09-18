@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import $ from 'jquery';
+import _ from 'lodash';
+
 import PropTypes from '../../prop_types';
 import { FormActions } from '../../actions';
-import $ from 'jquery';
 import { mixin, autobind } from '../../utils/decorators';
+import { config } from '../../realize';
 
 import {
   InputGroup,
@@ -152,11 +155,8 @@ export default class Form extends Component {
 
   ajaxSubmit(postData) {
     let submitOptions = {
-      url: this.props.action,
       method: this.props.method,
       data: postData,
-      success: (...args) => this.handleSuccess(...args),
-      error: (...args) => this.handleError(...args),
     };
 
     if (!!this.props.dataType) {
@@ -179,10 +179,12 @@ export default class Form extends Component {
         processData: false,
         contentType: false,
       };
-      submitOptions = $.extend({}, submitOptions, multipartOptions);
+      submitOptions = Object.assign({}, submitOptions, multipartOptions);
     }
 
-    $.ajax(submitOptions);
+    config.httpClient(this.props.action, submitOptions)
+      .then((data, status, xhr) => this.handleSuccess(data, status, xhr))
+      .catch(this.handleError);
   }
 
   formSubmit() {
@@ -219,7 +221,7 @@ export default class Form extends Component {
   }
 
   renderInputs() {
-    if (!this.props.inputs || $.isEmptyObject(this.props.inputs)) {
+    if (!this.props.inputs || _.isEmpty(this.props.inputs)) {
       return [];
     }
 

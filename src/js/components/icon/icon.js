@@ -16,14 +16,14 @@ export default class Icon extends Component {
   };
 
   static defaultProps = {
-    type: ''
+    type: '',
   };
 
   constructor (props) {
     super(props);
     this.state = {
-      themeClassKey: 'icon'
-    }
+      themeClassKey: 'icon',
+    };
   }
 
   render () {

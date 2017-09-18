@@ -1,6 +1,7 @@
 export TableActionButton from './table_action_button';
 export TableActions from './table_actions';
 export TableCell from './table_cell';
+export TableCellValue from './table_cell_value';
 export TableHeader from './table_header';
 export TableRowActionButton from './table_row_action_button';
 export TableRowActions from './table_row_actions';
