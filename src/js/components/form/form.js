@@ -49,6 +49,7 @@ export default class Form extends Component {
     otherButtons: PropTypes.array,
     onSubmit: PropTypes.func,
     onReset: PropTypes.func,
+    onValidationErrors: PropTypes.func,
   };
 
   static defaultProps = {
@@ -76,6 +77,7 @@ export default class Form extends Component {
     otherButtons: [],
     onSubmit() {},
     onReset() {},
+    onValidationErrors() {},
   };
 
   state = {
@@ -119,6 +121,15 @@ export default class Form extends Component {
       : this.inputsSerialize();
   }
 
+  validate(event, postData) {
+    const inputGroup = this.refs.inputGroup;
+    const validationErrors = inputGroup.validate();
+    if (!_.isEmpty(validationErrors)) {
+      this.props.onValidationErrors(validationErrors, postData);
+      event.preventDefault();
+    }
+  }
+
   jquerySerialize() {
     const form = ReactDOM.findDOMNode(this.refs.form);
     return $(form).serializeObject();
@@ -137,6 +148,7 @@ export default class Form extends Component {
 
     return Promise.resolve()
       .then(() => this.props.onSubmit(event, postData))
+      .then(() => this.validate(event, postData))
       .then(() => {
         FormActions.submit(this.props.id, event, postData);
 
