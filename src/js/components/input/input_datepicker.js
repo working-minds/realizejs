@@ -29,6 +29,7 @@ export default class InputDatepicker extends InputBase {
     format: null,
     maskType: 'date',
     calendar: true,
+    visible: true
   };
 
   state = {
@@ -91,6 +92,7 @@ export default class InputDatepicker extends InputBase {
 
   @autobind
   setPickadatePlugin() {
+    const self = this;
     const $inputNode = $(ReactDOM.findDOMNode(this.refs.input)).pickadate({
       editable: true,
       selectMonths: true,
@@ -131,7 +133,7 @@ export default class InputDatepicker extends InputBase {
       : '';
 
     $(ReactDOM.findDOMNode(this.refs.input)).pickadate('close');
-    this.setState({ inputMaskedKey: this.generateUUID(), value });
+    this.setState({ inputMaskedKey: uuid.v4(), value });
   }
 
   @autobind
