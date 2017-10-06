@@ -135,6 +135,17 @@ export default class Input extends React.Component {
     return { [this.getInputName()]: value };
   }
 
+  /* Validator */
+
+  validate() {
+    const inputComponentRef = this.refs.inputComponent;
+    if (typeof inputComponentRef.validate === 'function') {
+      return inputComponentRef.validate();
+    }
+
+    return null;
+  }
+
   /* Renderization */
 
   renderInputErrors() {

@@ -61,6 +61,12 @@ export default class InputGroup extends Component {
       .reduce((acc, refKey) => Object.assign({}, acc, this.refs[refKey].serialize()), {});
   }
 
+  validate() {
+    return Object.keys(this.refs)
+      .filter(refKey => refKey.match(/^input_/) && typeof this.refs[refKey].validate === 'function')
+      .reduce((acc, refKey) => Object.assign({}, acc, this.refs[refKey].validate()), {});
+  }
+
   renderInputs() {
     const { inputs, disabled, readOnly, formStyle, errors, data, resource } = this.props;
     const InputWrapperComponent = this.props.inputWrapperComponent || Input;
