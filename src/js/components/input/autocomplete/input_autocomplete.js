@@ -82,7 +82,7 @@ export default class InputAutocomplete extends InputBase {
 
   @autobind
   showResult(event) {
-    if (this.state.disabled || this.props.readOnly) {
+    if (this.props.disabled || this.props.readOnly) {
       const selectInput = event.currentTarget;
       selectInput.blur();
 

@@ -40,7 +40,6 @@ export default {
     return {
       options: this.props.options,
       optionsCache: this.props.options,
-      disabled: this.props.disabled,
       mustDisable: false,
       loadParams: {},
       loadData: [],
@@ -246,7 +245,7 @@ export default {
   },
 
   isDisabled () {
-    return this.state.disabled || this.state.mustDisable;
+    return this.props.disabled || this.state.mustDisable;
   },
 
   /* Serializer functions */
