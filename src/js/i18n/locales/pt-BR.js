@@ -91,7 +91,7 @@ export default {
   date: {
     formats: {
       default: 'DD/MM/YYYY HH:mm',
-      date: 'DD/MM/YYYY'
+      date: 'DD/MM/YYYY',
     },
   },
 
