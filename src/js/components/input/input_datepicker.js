@@ -42,8 +42,16 @@ export default class InputDatepicker extends InputBase {
     this.setPickadatePlugin();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(_, state) {
     this.setPickadatePlugin();
+    if (!this.state.value && !!this.state.value !== !!state.value) {
+      this.clearPickadate();
+    }
+  }
+
+  clearPickadate() {
+    const picker = $(ReactDOM.findDOMNode(this.refs.input)).pickadate('picker');
+    if (picker && picker.clear) picker.clear();
   }
 
   getDateFormat() {
