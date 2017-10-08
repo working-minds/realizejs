@@ -7,9 +7,12 @@ export default {
   },
 
   componentDidUpdate(previousProps, previousState) {
-    if (this.state.options !== previousState.options) {
-      this.applyMaterialize();
-    }
+      const bothEmpty = this.state.options.length === 0 && previousState.options.length === 0;
+      const optionsChanged = !bothEmpty && this.state.options !== previousState.options;
+
+      if (optionsChanged) {
+          this.applyMaterialize();
+      }
   },
 
   applyMaterialize(onMount) {
