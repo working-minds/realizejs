@@ -67,10 +67,10 @@ export default class InputDatepicker extends InputBase {
       return date.format(this.getDateFormat());
     }
 
-    date = moment.utc(value);
-    if (date.isValid() && !/^(\d{2})\/(\d{2})\/(\d{4})$/.test(value)) {
+    date = moment.utc(value, this.getDateFormat());
+    if (date.isValid() && /^(\d{2})\/(\d{2})\/(\d{4})$/.test(value)) {
       return date.format(this.getDateFormat());
-    } else if (typeof value === 'string' && !isNaN(value)) {
+    } else if (!isNaN(value)) {
       return this.formatDate(new Date(parseInt(value)));
     }
 
@@ -139,7 +139,7 @@ export default class InputDatepicker extends InputBase {
   @autobind
   handleComplete(event) {
     const { value } = event.target;
-    this.setState({ value });
+    this.setState({ inputMaskedKey: uuid.v4(), value });
   }
 
   @autobind
@@ -156,7 +156,7 @@ export default class InputDatepicker extends InputBase {
     if (!value) return value;
 
     let date = moment.utc(value, this.getDateFormat());
-    if (date.isValid()) {
+    if (date.isValid() && /^(\d{2})\/(\d{2})\/(\d{4})$/.test(value)) {
       return date.toISOString();
     }
 
