@@ -67,8 +67,9 @@ export default class PaginationItem extends Component {
     return themeClassKey;
   }
 
-  handleClick = () => {
-    if(!this.props.disabled) {
+  handleClick = (event) => {
+    event.preventDefault();
+    if (!this.props.disabled) {
       this.props.onClick();
     }
   }
