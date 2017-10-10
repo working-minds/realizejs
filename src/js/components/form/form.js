@@ -123,6 +123,8 @@ export default class Form extends Component {
 
   validate(event, postData) {
     const inputGroup = this.refs.inputGroup;
+    if (!inputGroup) return;
+
     const validationErrors = inputGroup.validate();
     if (!_.isEmpty(validationErrors)) {
       this.props.onValidationErrors(validationErrors, postData);
@@ -146,17 +148,15 @@ export default class Form extends Component {
     event.persist();
     const postData = this.serialize();
 
-    return Promise.resolve()
-      .then(() => this.props.onSubmit(event, postData))
-      .then(() => this.validate(event, postData))
-      .then(() => {
-        FormActions.submit(this.props.id, event, postData);
+    this.validate(event, postData);
+    this.props.onSubmit(event, postData);
 
-        if (!event.isDefaultPrevented()) {
-          this.setState({ isLoading: true, errors: [], showSuccessFlash: false });
-          this.submit(postData);
-        }
-      });
+    FormActions.submit(this.props.id, event, postData);
+
+    if (!event.isDefaultPrevented()) {
+      this.setState({ isLoading: true, errors: [], showSuccessFlash: false });
+      this.submit(postData);
+    }
   }
 
   submit(postData) {
