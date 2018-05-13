@@ -5,7 +5,7 @@ import { autobind, mixin } from '../../utils/decorators';
 
 import { CssClassMixin, RequestHandlerMixin } from '../../mixins';
 import Button from '../../components/button/button';
-import { Link } from 'components/link';
+import { Link } from '../../components/link';
 
 @mixin(CssClassMixin, RequestHandlerMixin)
 export default class TableRowActionButton extends Component {

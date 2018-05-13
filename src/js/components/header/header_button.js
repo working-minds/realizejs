@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'components/link';
+import { Link } from '../../components/link';
 import PropTypes from '../../prop_types';
 
 export default class HeaderButton extends Component {
