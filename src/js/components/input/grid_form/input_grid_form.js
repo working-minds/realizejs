@@ -20,7 +20,7 @@ export default class InputGridForm extends InputBase {
     fields: PropTypes.object,
     form: PropTypes.object,
     clientSide: PropTypes.bool,
-    clientSideIdField: React.PropTypes.string,
+    clientSideIdField: PropTypes.string,
     inputWrapperComponent: PropTypes.component,
     onSuccess: PropTypes.func,
     onDestroySuccess: PropTypes.func,

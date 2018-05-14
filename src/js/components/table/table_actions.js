@@ -10,7 +10,7 @@ import TableSelectionIndicator from './table_selection_indicator';
 export default class TableActions extends Component {
   static propTypes = {
     dataRows: PropTypes.array,
-    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
+    selectable: PropTypes.oneOf(['multiple', 'none', 'one']),
     selectedRowIds: PropTypes.array,
     selectedRowIdsParam: PropTypes.string,
     actionButtons: PropTypes.array,

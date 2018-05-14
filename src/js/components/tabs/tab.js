@@ -13,7 +13,7 @@ import {
 )
 export default class Tab extends Component {
   static propTypes = {
-    id: React.PropTypes.string
+    id: PropTypes.string
   };
 
   render () {

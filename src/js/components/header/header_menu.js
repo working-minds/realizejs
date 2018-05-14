@@ -20,7 +20,7 @@ export default class HeaderMenu extends Component {
     items: PropTypes.array,
     onClick: PropTypes.func,
     children: PropTypes.oneOfType([
-      PropTypes.arrayOf(React.PropTypes.node),
+      PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
   };
