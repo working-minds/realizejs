@@ -12,7 +12,7 @@ export default class Label extends Component {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
     active: PropTypes.bool,
     onClick: PropTypes.func,
-    required: React.PropTypes.bool
+    required: PropTypes.bool
   };
 
   static defaultProps = {

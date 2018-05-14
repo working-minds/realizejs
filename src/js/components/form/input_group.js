@@ -24,7 +24,7 @@ export default class InputGroup extends Component {
     wrapperClassName: PropTypes.string,
     inputWrapperComponent: PropTypes.component,
     children: PropTypes.oneOfType([
-      PropTypes.arrayOf(React.PropTypes.node),
+      PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
     onKeyDown: PropTypes.func,

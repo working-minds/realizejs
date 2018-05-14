@@ -9,9 +9,9 @@ import MenuItem from './menu_item';
 export default class Menu extends Component {
   static propTypes = {
     id: PropTypes.string,
-    items: PropTypes.arrayOf(React.PropTypes.node),
+    items: PropTypes.arrayOf(PropTypes.node),
     children: PropTypes.oneOfType([
-      PropTypes.arrayOf(React.PropTypes.node),
+      PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
     ]),
   };

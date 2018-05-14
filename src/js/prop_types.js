@@ -1,8 +1,8 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from './i18n/i18n';
 
 export default {
-  ...React.PropTypes,
+  ...PropTypes,
   localizedString(props, propName, componentName) {
     const value = props[propName];
     if (value === null ||
@@ -22,9 +22,9 @@ export default {
 
     return null;
   },
-  component: React.PropTypes.oneOfType([
-    React.PropTypes.func,
-    React.PropTypes.element,
-    React.PropTypes.string,
+  component: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.element,
+    PropTypes.string,
   ]),
 };

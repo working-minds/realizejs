@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from '../../prop_types';
 
 export const Link = (props) => (
   <a {...props}>{props.children}</a>
@@ -6,7 +7,7 @@ export const Link = (props) => (
 
 Link.propTypes = {
   children: PropTypes.oneOfType([
-    PropTypes.arrayOf(React.PropTypes.node),
+    PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
 };

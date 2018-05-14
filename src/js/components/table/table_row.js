@@ -15,7 +15,7 @@ export default class TableRow extends Component {
     columns: PropTypes.object,
     data: PropTypes.object,
     dataRowIdField: PropTypes.string,
-    selectable: React.PropTypes.oneOf(['multiple', 'none', 'one']),
+    selectable: PropTypes.oneOf(['multiple', 'none', 'one']),
     selected: PropTypes.bool,
     actionButtons: PropTypes.array,
     rowSelectableFilter: PropTypes.func,

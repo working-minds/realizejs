@@ -5,7 +5,7 @@ import themes from '../../theme';
 
 export default {
   propTypes: {
-    errors: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
+    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     errorThemeClassKey: PropTypes.string
   },
 

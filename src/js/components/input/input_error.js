@@ -7,7 +7,7 @@ import { CssClassMixin } from '../../mixins';
 @mixin(CssClassMixin)
 export default class InputError extends Component {
   static propTypes = {
-    errors: PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
+    errors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   };
 
   static defaultProps = {
