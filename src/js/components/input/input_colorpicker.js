@@ -70,7 +70,7 @@ export default class InputColorpicker extends InputBase {
           placeholder=""
           className={this.inputClassName()}
           type="text"
-          ref="input"
+          ref={ref => { this.input = ref; }}
           readOnly
         />
         <Label {...this.propsWithoutCSS()} id="colorpicker_input" active />

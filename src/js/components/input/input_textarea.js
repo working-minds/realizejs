@@ -30,7 +30,7 @@ export default class InputTextarea extends InputBase {
         className={this.inputClassName()}
         onChange={this.handleChange}
         onFocus={this.handleFocus}
-        ref="input"
+        ref={ref => { this.input = ref; }}
       />
     );
   }

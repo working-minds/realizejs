@@ -24,7 +24,7 @@ export default class Tabs extends Component {
   };
 
   componentDidMount () {
-    $(ReactDOM.findDOMNode(this.refs.tabsContainer)).tabs();
+    $(ReactDOM.findDOMNode(this.tabsContainer)).tabs();
   }
 
   renderTabButtons () {
@@ -42,7 +42,7 @@ export default class Tabs extends Component {
   render () {
     return (
       <div className={this.className()}>
-        <ul className="tabs z-depth-1" ref="tabsContainer">
+        <ul className="tabs z-depth-1" ref={ref => { this.tabsContainer = ref; }}>
           {this.renderTabButtons()}
         </ul>
         <div>

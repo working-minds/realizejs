@@ -190,7 +190,7 @@ export default class EditPermissions extends Component {
   @autobind
   handleChange(permission) {
     return () => {
-      const checkbox = ReactDOM.findDOMNode(this.refs[`checkbox_${permission}`]);
+      const checkbox = ReactDOM.findDOMNode(this[`checkbox_${permission}`]);
       const checked = $($(checkbox).find('input')).is(':checked');
       if (!!this.props.saveOnSelect) {
         if (checked) {
@@ -220,7 +220,7 @@ export default class EditPermissions extends Component {
           <Input
             key={uuid.v4()}
             component="checkbox"
-            ref={`checkbox_${permission}`}
+            ref={ref => { this[`checkbox_${permission}`] = ref; }}
             label={I18n.t(`permissions.${permission}`)}
             value={permission}
             checked={this.checked(permission)}

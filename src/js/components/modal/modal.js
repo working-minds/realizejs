@@ -90,7 +90,7 @@ export default class Modal extends Component {
 
   renderHeader() {
     return (
-      <div ref="headerContainer" className="modal-header-container">
+      <div ref={ref => { this.headerContainer = ref; }} className="modal-header-container">
         {this.filterChildren(ModalHeader)}
       </div>
     );
@@ -98,7 +98,7 @@ export default class Modal extends Component {
 
   renderContent() {
     return (
-      <div ref="contentContainer" className="modal-content-container">
+      <div ref={ref => { this.contentContainer = ref; }} className="modal-content-container">
         {this.filterChildren(ModalContent)}
       </div>
     );
@@ -106,7 +106,7 @@ export default class Modal extends Component {
 
   renderFooter() {
     return (
-      <div ref="footerContainer" className="modal-footer-container">
+      <div ref={ref => { this.footerContainer = ref; }} className="modal-footer-container">
         {this.filterChildren(ModalFooter)}
       </div>
     );
@@ -159,7 +159,7 @@ export default class Modal extends Component {
   }
 
   open() {
-    const $modal = $(ReactDOM.findDOMNode(this.refs.modal));
+    const $modal = $(ReactDOM.findDOMNode(this.modal));
 
     $modal.openModal({
       dismissible: this.props.dismissible,
@@ -182,15 +182,15 @@ export default class Modal extends Component {
   }
 
   close() {
-    const $modal = $(ReactDOM.findDOMNode(this.refs.modal));
+    const $modal = $(ReactDOM.findDOMNode(this.modal));
 
     $modal.closeModal();
   }
 
   @autobind
   resizeContent() {
-    const modal = ReactDOM.findDOMNode(this.refs.modal);
-    const contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
+    const modal = ReactDOM.findDOMNode(this.modal);
+    const contentContainer = ReactDOM.findDOMNode(this.contentContainer);
 
     $(modal).css('max-height', $(window).height() - (this.props.marginHeaderFooter));
     $(modal).css('width', this.props.width);
@@ -209,8 +209,8 @@ export default class Modal extends Component {
   }
 
   getAvailableHeight() {
-    const headerContainer = ReactDOM.findDOMNode(this.refs.headerContainer);
-    const footerContainer = ReactDOM.findDOMNode(this.refs.footerContainer);
+    const headerContainer = ReactDOM.findDOMNode(this.headerContainer);
+    const footerContainer = ReactDOM.findDOMNode(this.footerContainer);
     const windowHeight = $(window).height() - (this.props.marginHeaderFooter);
     const containerHeight = ($(headerContainer).height() + $(footerContainer).height());
 
@@ -218,7 +218,7 @@ export default class Modal extends Component {
   }
 
   getContentHeight() {
-    const contentContainer = ReactDOM.findDOMNode(this.refs.contentContainer);
+    const contentContainer = ReactDOM.findDOMNode(this.contentContainer);
     const minContentHeight = this.props.minContentHeight;
     let contentHeight = 0;
 

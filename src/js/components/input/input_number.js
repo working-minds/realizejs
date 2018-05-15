@@ -29,7 +29,7 @@ export default class InputNumber extends InputBase {
           onChange={this.handleChange}
           onFocus={this.handleFocus}
           type="text"
-          ref="input"
+          ref={ref => { this.input = ref; }}
         />
         <Label {...this.propsWithoutCSS()} />
       </span>

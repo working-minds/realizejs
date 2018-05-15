@@ -16,7 +16,7 @@ export default {
   },
 
   applyMaterialize(onMount) {
-    const selectElement = ReactDOM.findDOMNode(this.refs.select);
+    const selectElement = ReactDOM.findDOMNode(this.select);
     $(selectElement).material_select(this.handleChangeMaterialize.bind(this, selectElement));
 
     if (!onMount) {

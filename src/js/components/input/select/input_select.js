@@ -33,7 +33,7 @@ export default class InputSelect extends InputBase {
   };
 
   getInputFormNode() {
-    return ReactDOM.findDOMNode(this.refs.select);
+    return ReactDOM.findDOMNode(this.select);
   }
 
   selectedValue() {
@@ -72,7 +72,7 @@ export default class InputSelect extends InputBase {
         onChange={this.handleChange}
         disabled={this.isDisabled() || this.props.readOnly}
         className={this.className()}
-        ref="select"
+        ref={ref => { this.select = ref; }}
       >
         {this.renderOptions()}
       </select>
@@ -81,7 +81,7 @@ export default class InputSelect extends InputBase {
 
   @autobind
   handleChange(event) {
-    const selectElement = ReactDOM.findDOMNode(this.refs.select);
+    const selectElement = ReactDOM.findDOMNode(this.select);
     const newValue = this.ensureIsArray(selectElement.value);
     this.props.onChange(event, newValue, this);
 

@@ -61,7 +61,7 @@ export default class HeaderNotifications extends Component {
           {this.renderIcon()}
           <NotificationNumber count={this.state.count} />
         </a>
-        <NotificationsList ref='notificationsList'
+        <NotificationsList ref={ref => { this.notificationsList = ref; }}
                            active={this.state.active}
                            baseUrl={this.props.baseUrl}
                            handleClickItem={this.handleClickItem}
@@ -98,7 +98,7 @@ export default class HeaderNotifications extends Component {
   }
 
   handleClick = () => {
-    var list = ReactDOM.findDOMNode(this.refs.notificationsList);
+    var list = ReactDOM.findDOMNode(this.notificationsList);
     $(list).slideDown();
     this.state.active = !this.state.active;
     this.forceUpdate();

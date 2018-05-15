@@ -49,7 +49,7 @@ export default class Flash extends Component {
 
   renderFlash () {
     return (
-      <div className={this.className()} ref="flash">
+      <div className={this.className()} ref={ref => { this.flash = ref; }}>
         <FlashContent {...this.props} />
         {this.props.canDismiss ? <FlashDismiss {...this.props} onClick={this.dismiss} />: ''}
       </div>

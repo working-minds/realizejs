@@ -52,19 +52,19 @@ export default class InputAutocomplete extends InputBase {
   }
 
   componentDidMount() {
-    const valuesSelect = ReactDOM.findDOMNode(this.refs.select);
+    const valuesSelect = ReactDOM.findDOMNode(this.select);
     const $form = $(valuesSelect.form);
     $form.on('reset', this.clearSelection);
   }
 
   componentWillUnmount() {
-    const valuesSelect = ReactDOM.findDOMNode(this.refs.select);
+    const valuesSelect = ReactDOM.findDOMNode(this.select);
     const $form = $(valuesSelect.form);
     $form.off('reset', this.clearSelection);
   }
 
   getResultComponent() {
-    return this.refs.result;
+    return this.result;
   }
 
   hideResult() {
@@ -135,12 +135,12 @@ export default class InputAutocomplete extends InputBase {
 
   selectOption() {
     const resultRef = this.getResultComponent();
-    const resultListRef = resultRef.refs.list;
+    const resultListRef = resultRef.list;
     if (!resultListRef) {
       return;
     }
 
-    const activeOptionRef = resultListRef.refs[`option_${this.state.active}`];
+    const activeOptionRef = resultListRef[`option_${this.state.active}`];
 
     this.handleSelect(null, {
       name: activeOptionRef.props.name,
@@ -174,7 +174,7 @@ export default class InputAutocomplete extends InputBase {
   @autobind
   handleDocumentClick(event) {
     const $resultNode = $(ReactDOM.findDOMNode(this.getResultComponent()));
-    const $containerNode = $(ReactDOM.findDOMNode(this.refs.container));
+    const $containerNode = $(ReactDOM.findDOMNode(this.container));
     const searchInput = $resultNode.find('input[type=text]')[0];
 
     if ($containerNode.find(event.target).length === 0) {
@@ -241,7 +241,7 @@ export default class InputAutocomplete extends InputBase {
 
   render() {
     return (
-      <div className={this.className()} ref="container">
+      <div className={this.className()} ref={ref => { this.container = ref; }}>
         <InputAutocompleteSelect
           {...this.propsWithoutCSS()}
           disabled={this.isDisabled()}
@@ -261,7 +261,7 @@ export default class InputAutocomplete extends InputBase {
           onSelect={this.handleSelect}
           onClear={this.clearSelection}
           onOptionMouseEnter={this.handleOptionMouseEnter}
-          ref="result"
+          ref={ref => { this.result = ref; }}
         />
 
         <InputAutocompleteValues
@@ -269,7 +269,7 @@ export default class InputAutocomplete extends InputBase {
           name={this.props.name}
           multiple={this.props.multiple}
           selectedOptions={this.selectedOptions()}
-          ref="select"
+          ref={ref => { this.select = ref; }}
         />
       </div>
     );

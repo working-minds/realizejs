@@ -224,7 +224,7 @@ export default {
   },
 
   triggerDependableChanged: function() {
-    var $valuesElement = $(ReactDOM.findDOMNode(this.refs.select));
+    var $valuesElement = $(ReactDOM.findDOMNode(this.select));
     var optionValues = this.ensureIsArray(this.state.value);
 
     $valuesElement.trigger('dependable_changed', [optionValues]);

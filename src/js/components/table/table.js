@@ -97,7 +97,7 @@ export default class Table extends Component {
     this.sortConfigs = $.extend({}, Realize.config.grid.sort, this.props.sortConfigs);
 
     if (!!this.props.customTableHeader) {
-      let $thead = $(ReactDOM.findDOMNode(this.refs.thead));
+      let $thead = $(ReactDOM.findDOMNode(this.thead));
       $thead.prepend(this.props.customTableHeader);
     }
   }
@@ -217,7 +217,7 @@ export default class Table extends Component {
       <div className={this.wrapperClassName()}>
         {this.renderActions()}
         <table className={this.className()}>
-          <thead ref="thead">
+          <thead ref={ref => { this.thead = ref; }}>
           <tr>
             {this.renderHeaderSelectCell()}
             {this.renderTableHeaders()}

@@ -70,7 +70,7 @@ export default class InputSwitch extends InputCheckboxBase {
               className={this.inputClassName()}
               onChange={this.handleChange}
               type="checkbox"
-              ref="input"
+              ref={ref => { this.input = ref; }}
             />
             <span className="lever"></span>
             {i18n.t(this.props.onLabel)}

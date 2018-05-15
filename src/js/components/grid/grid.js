@@ -367,7 +367,7 @@ export default class Grid extends Component {
         {...this.props.filter}
         isLoading={this.state.gridIsLoading}
         onSubmit={this.handleFilterSubmit}
-        ref="filter"
+        ref={ref => { this.filter = ref; }}
         {...extraProps}
       />
     );

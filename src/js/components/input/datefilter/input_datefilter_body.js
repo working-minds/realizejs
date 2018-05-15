@@ -77,15 +77,15 @@ export default class InputDatefilterBody extends Component {
   }
 
   get filterBodyNode() {
-    return ReactDOM.findDOMNode(this.refs.filterBody);
+    return ReactDOM.findDOMNode(this.filterBody);
   }
 
   get fromInputNode() {
-    return ReactDOM.findDOMNode(this.refs.fromInput);
+    return ReactDOM.findDOMNode(this.fromInput);
   }
 
   get toInputNode() {
-    return ReactDOM.findDOMNode(this.refs.toInput);
+    return ReactDOM.findDOMNode(this.toInput);
   }
 
   @autobind
@@ -150,7 +150,7 @@ export default class InputDatefilterBody extends Component {
           {...this.fromInputProps()}
           onKeyDown={this.handleInputKeypress}
           component="datepicker"
-          ref="fromInput"
+          ref={ref => { this.fromInput = ref; }}
         />
       </div>
     );
@@ -163,7 +163,7 @@ export default class InputDatefilterBody extends Component {
           {...this.toInputProps()}
           onKeyDown={this.handleInputKeypress}
           component="datepicker"
-          ref="toInput"
+          ref={ref => { this.toInput = ref; }}
         />
       </div>
     );
@@ -175,7 +175,7 @@ export default class InputDatefilterBody extends Component {
         className={this.className()}
         style={{ display: this.props.hidden ? 'none' : 'block' }}
         onClick={this.handleFilterBodyClick}
-        ref="filterBody"
+        ref={ref => { this.filterBody = ref; }}
       >
         {this.renderFromInput()}
         {this.renderToInput()}

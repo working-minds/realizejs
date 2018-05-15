@@ -76,9 +76,8 @@ export default class InputBase extends Component {
   }
 
   getInputFormNode() {
-    const inputRef = this.refs.input;
-    if (!!inputRef) {
-      return ReactDOM.findDOMNode(inputRef).form;
+    if (!!this.input) {
+      return ReactDOM.findDOMNode(this.input).form;
     }
 
     return null;
@@ -109,7 +108,7 @@ export default class InputBase extends Component {
   }
 
   inputNodeIsCheckbox() {
-    const inputNode = ReactDOM.findDOMNode(this.refs.input);
+    const inputNode = ReactDOM.findDOMNode(this.input);
     return (!!inputNode && inputNode.type === 'checkbox');
   }
 

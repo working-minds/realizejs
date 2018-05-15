@@ -51,7 +51,7 @@ export default class InputGridFormFields extends Component {
 
   @autobind
   submitFormFields(event) {
-    const inputGroupRef = this.refs.inputGroup;
+    const inputGroupRef = this.inputGroup;
     const fieldsData = inputGroupRef.serialize();
 
     this.props.onSubmit(event, fieldsData);
@@ -77,7 +77,7 @@ export default class InputGridFormFields extends Component {
         {...this.propsWithoutCSS()}
         errors={this.state.errors}
         onKeyDown={this.handleKeyPressSubmit}
-        ref="inputGroup"
+        ref={ref => { this.inputGroup = ref; }}
       />
     );
   }
@@ -125,7 +125,7 @@ export default class InputGridFormFields extends Component {
 
   render() {
     return (
-      <div id={this.props.id} className={this.className()} ref="form">
+      <div id={this.props.id} className={this.className()} ref={ref => { this.form = ref; }}>
         {this.renderInputs()}
         {this.renderButtons()}
       </div>

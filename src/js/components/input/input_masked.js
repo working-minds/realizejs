@@ -55,7 +55,7 @@ export default class InputMasked extends InputBase {
   }
 
   getInputElement() {
-    return ReactDOM.findDOMNode(this.refs.input);
+    return ReactDOM.findDOMNode(this.input);
   }
 
   setMaskPlaceholder(appliedMaskOptions) {
@@ -210,7 +210,7 @@ export default class InputMasked extends InputBase {
         className={this.inputClassName()}
         onKeyUp={this.handleChange}
         onFocus={this.handleFocus}
-        ref="input"
+        ref={ref => { this.input = ref; }}
       >
         {this.props.children}
       </input>

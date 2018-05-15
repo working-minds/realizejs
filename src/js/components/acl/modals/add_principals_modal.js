@@ -75,7 +75,7 @@ export default class AddPrincipalsModal extends Component {
   }
 
   componentWillReceiveProps() {
-    this.refs.grid.backToInitialState();
+    this.grid.backToInitialState();
   }
 
   getData() {
@@ -86,8 +86,8 @@ export default class AddPrincipalsModal extends Component {
   }
 
   getSelectedDatas() {
-    const selectedRowsIds = this.refs.grid.state.selectedRowIds;
-    const dataRows = this.refs.grid.state.dataRows;
+    const selectedRowsIds = this.grid.state.selectedRowIds;
+    const dataRows = this.grid.state.dataRows;
     const selectedDatas = [];
 
     selectedRowsIds.forEach((rowId) => {
@@ -167,7 +167,7 @@ export default class AddPrincipalsModal extends Component {
         style={{ 'z-index': '9000' }}
         className={this.props.className}
         headerSize={this.props.headerSize}
-        ref="add-principals-modal"
+        ref={ref => { this.addPrincipalsModal = ref; }}
       >
         <ModalHeader>
           <h5>Selecionar Usuário/Grupo</h5>
@@ -176,7 +176,7 @@ export default class AddPrincipalsModal extends Component {
         <ModalContent>
           <div className="principal-modal-content">
             <Grid
-              ref="grid"
+              ref={ref => { this.grid = ref; }}
               {...this.props.gridProps}
               url={this.props.potentialPrincipalsBaseUrl}
               filter={this.filters()}
