@@ -8,11 +8,9 @@ import { FormActions } from '../../actions';
 import { mixin, autobind } from '../../utils/decorators';
 import { config } from '../../realize';
 
-import {
-  InputGroup,
-  FormButtonGroup,
-  Input,
-} from '../../components';
+import InputGroup from './input_group';
+import FormButtonGroup from './form_button_group';
+import Input from '../input/input';
 
 import {
   CssClassMixin,

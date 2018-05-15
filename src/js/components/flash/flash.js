@@ -5,7 +5,8 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 
-import {FlashContent, FlashDismiss} from '../flash';
+import FlashContent from './flash_content';
+import FlashDismiss from './flash_dismiss';
 
 @mixin(CssClassMixin)
 export default class Flash extends Component {
