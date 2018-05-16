@@ -7,6 +7,7 @@ import InputBase from './input_base';
 import {
   CssClassMixin,
 } from '../../mixins';
+import InputMasked from './input_masked';
 
 @mixin(
   CssClassMixin,
@@ -23,12 +24,21 @@ export default class InputText extends InputBase {
     themeClassKey: 'input.text',
   };
 
+  static ommitedProps = [
+    'originalName', 'originalId', 'renderLabel', 'formStyle',
+    'clearTheme',
+  ];
+
+  prepareProps() {
+    return _.omit(this.propsWithoutCSS(), InputText.ommitedProps);
+  }
+
   render() {
     const { children, ...props } = this.propsWithoutCSS(); // eslint-disable-line no-unused-vars
 
     return (
       <input
-        {...props}
+        {...this.prepareProps()}
         value={this.state.value}
         placeholder={this.getPlaceholder()}
         className={this.inputClassName()}

@@ -187,7 +187,7 @@ export default class InputDatepicker extends InputBase {
   /* Renderers */
 
   parsePropsForInputMasked() {
-    return _.omit(this.props, ['onChange', 'separator']);
+    return _.omit(this.props, ['onChange', 'separator', 'calendar']);
   }
 
   renderMaskedInput() {

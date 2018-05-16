@@ -6,6 +6,7 @@ import Icon from '../icon/icon';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 import RequestHandlerMixin from '../../mixins/request_handler_mixin';
+import InputText from "../input/input_text";
 
 // TODO (PJ): Separar em dois componentes os concerns de href e actionURL.
 @mixin(CssClassMixin, RequestHandlerMixin)
@@ -46,6 +47,13 @@ export default class Button extends Component {
     hidden: false,
     buttonStyle: 'primary',
   };
+
+  static ommitedProps = [
+    'onComplete', 'onSuccess', 'onRequest', 'buttonStyle',
+    'confirmsWith', 'disableWith', 'actionData', 'actionUrl',
+    'isLoading', 'themeClassKey', 'clearTheme', 'element',
+    'imgSrc', 'iconAlign',
+  ];
 
   constructor(props) {
     super(props);
@@ -96,6 +104,10 @@ export default class Button extends Component {
     }
   }
 
+  prepareProps() {
+    return _.omit(this.propsWithoutCSS(), Button.ommitedProps);
+  }
+
   renderIcon() {
     const { icon } = this.props;
     const iconProps = (typeof icon === 'string')
@@ -133,7 +145,7 @@ export default class Button extends Component {
     if (hidden) return <span />;
     return (
       <ButtonElement
-        {...this.props}
+        {...this.prepareProps()}
         className={this.getClassName()}
         disabled={disabled || isLoading}
         href={this.getHref()}
