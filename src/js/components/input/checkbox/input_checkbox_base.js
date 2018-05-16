@@ -22,7 +22,7 @@ export default class InputCheckboxBase extends InputBase {
   componentDidMount() {
     super.componentDidMount();
 
-    const inputNode = ReactDOM.findDOMNode(this.refs.input);
+    const inputNode = ReactDOM.findDOMNode(this.input);
     inputNode.indeterminate = this.props.renderAsIndeterminate;
   }
 

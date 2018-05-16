@@ -50,7 +50,7 @@ export default class InputDatepicker extends InputBase {
   }
 
   clearPickadate() {
-    const picker = $(ReactDOM.findDOMNode(this.refs.input)).pickadate('picker');
+    const picker = $(ReactDOM.findDOMNode(this.input)).pickadate('picker');
     if (picker && picker.clear) picker.clear();
   }
 
@@ -101,7 +101,7 @@ export default class InputDatepicker extends InputBase {
   @autobind
   setPickadatePlugin() {
     const self = this;
-    const $inputNode = $(ReactDOM.findDOMNode(this.refs.input)).pickadate({
+    const $inputNode = $(ReactDOM.findDOMNode(this.input)).pickadate({
       editable: true,
       selectMonths: true,
       selectYears: true,
@@ -120,7 +120,7 @@ export default class InputDatepicker extends InputBase {
 
   @autobind
   handleCalendarClick(event) {
-    const $inputNode = $(ReactDOM.findDOMNode(this.refs.input));
+    const $inputNode = $(ReactDOM.findDOMNode(this.input));
     const picker = $inputNode.pickadate('picker');
 
     event.preventDefault();
@@ -140,7 +140,7 @@ export default class InputDatepicker extends InputBase {
         : pickadateObject.select
       : '';
 
-    $(ReactDOM.findDOMNode(this.refs.input)).pickadate('close');
+    $(ReactDOM.findDOMNode(this.input)).pickadate('close');
     this.setState({ inputMaskedKey: uuid.v4(), value });
   }
 
@@ -187,7 +187,7 @@ export default class InputDatepicker extends InputBase {
   /* Renderers */
 
   parsePropsForInputMasked() {
-    return _.omit(this.props, ['onChange', 'separator']);
+    return _.omit(this.props, ['onChange', 'separator', 'calendar']);
   }
 
   renderMaskedInput() {
@@ -199,7 +199,7 @@ export default class InputDatepicker extends InputBase {
         onIncomplete={this.handleMaskIncomplete}
         onComplete={this.handleComplete}
         key={this.state.inputMaskedKey}
-        ref="input"
+        ref={ref => { this.input = ref; }}
       />
     );
   }
@@ -212,7 +212,7 @@ export default class InputDatepicker extends InputBase {
         className="input-datepicker__button prefix"
         onClick={this.handleCalendarClick}
         element={Link}
-        ref="button"
+        ref={ref => { this.button = ref; }}
       />
     );
   }

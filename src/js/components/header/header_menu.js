@@ -36,7 +36,7 @@ export default class HeaderMenu extends Component {
   };
 
   componentDidMount() {
-    $(ReactDOM.findDOMNode(this.refs.readerMenu)).dropdown();
+    $(ReactDOM.findDOMNode(this.headerMenu)).dropdown();
   }
 
   renderIcon(propName, className) {
@@ -54,7 +54,7 @@ export default class HeaderMenu extends Component {
   renderButton() {
     return (
       <a
-        ref="readerMenu"
+        ref={ref => { this.headerMenu = ref; }}
         href={this.props.href}
         onClick={this.props.onClick}
         target={this.props.target}

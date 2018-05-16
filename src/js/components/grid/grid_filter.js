@@ -51,7 +51,7 @@ export default class GridFilter extends Component {
   }
 
   componentDidUpdate() {
-    const collapsible = ReactDOM.findDOMNode(this.refs.collapsible);
+    const collapsible = ReactDOM.findDOMNode(this.collapsible);
     if (!!collapsible) {
       $(collapsible).collapsible();
     }
@@ -70,7 +70,7 @@ export default class GridFilter extends Component {
       <ul
         className="collapsible"
         data-collapsible="accordion"
-        ref="collapsible"
+        ref={ref => { this.collapsible = ref; }}
         key="collapsible_form"
       >
         <li>
@@ -94,7 +94,7 @@ export default class GridFilter extends Component {
         {...this.props}
         otherButtons={[this.props.clearButton]}
         formStyle="filter"
-        ref="form"
+        ref={ref => { this.form = ref; }}
       />
     );
   }
@@ -110,6 +110,6 @@ export default class GridFilter extends Component {
   }
 
   serialize() {
-    return this.refs.form.serialize();
+    return this.form.serialize();
   }
 }

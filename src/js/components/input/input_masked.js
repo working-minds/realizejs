@@ -36,6 +36,12 @@ export default class InputMasked extends InputBase {
     onCleared: () => {},
   };
 
+  static ommitedProps = [
+    'onCleared', 'onComplete', 'onIncomplete', 'autoUnmask', 'maskType',
+    'originalName', 'originalId', 'renderLabel', 'formStyle', 'themeClassKey',
+    'clearTheme',
+  ];
+
   state = {
     ...this.state,
     placeholder: this.getPlaceholder(),
@@ -55,7 +61,7 @@ export default class InputMasked extends InputBase {
   }
 
   getInputElement() {
-    return ReactDOM.findDOMNode(this.refs.input);
+    return ReactDOM.findDOMNode(this.input);
   }
 
   setMaskPlaceholder(appliedMaskOptions) {
@@ -201,16 +207,21 @@ export default class InputMasked extends InputBase {
     }
   }
 
+  prepareProps() {
+    const { visible = true, ...props } = _.omit(this.props, InputMasked.ommitedProps);
+    return { ...props, hidden: !visible };
+  }
+
   render() {
     return (
       <input
-        {...this.props}
+        {...this.prepareProps()}
         value={this.state.value}
         placeholder={this.state.placeholder}
         className={this.inputClassName()}
         onKeyUp={this.handleChange}
         onFocus={this.handleFocus}
-        ref="input"
+        ref={ref => { this.input = ref; }}
       >
         {this.props.children}
       </input>

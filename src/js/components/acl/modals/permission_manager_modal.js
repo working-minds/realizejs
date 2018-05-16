@@ -54,7 +54,7 @@ export default class PermissionManagerModal extends Component {
   }
 
   getPostData() {
-    const principalPermissions = this.refs.permissionManager.state.principalsPermissions;
+    const principalPermissions = this.permissionManager.state.principalsPermissions;
     const postData = [];
 
     for (let i = 0; i < principalPermissions.length; i++) {
@@ -82,7 +82,7 @@ export default class PermissionManagerModal extends Component {
   }
 
   loadPrincipalsPermissions(selectedDatas) {
-    this.refs.permissionManager.createPrincipalsPermissions(selectedDatas);
+    this.permissionManager.createPrincipalsPermissions(selectedDatas);
   }
 
   @autobind
@@ -113,7 +113,7 @@ export default class PermissionManagerModal extends Component {
         className={this.props.className}
         headerSize={this.props.headerSize}
         opened
-        ref="modal"
+        ref={ref => { this.modal = ref; }}
       >
         <ModalHeader>
           <h5>Gerenciar Permissões - {this.props.resource.name}</h5>
@@ -122,7 +122,7 @@ export default class PermissionManagerModal extends Component {
         <ModalContent>
           <div className="permissions-modal-content">
             <PermissionManager
-              ref="permissionManager"
+              ref={ref => { this.permissionManager = ref; }}
               handleRemovePrincipal={this.props.handleRemovePrincipal}
               permissionManagerInModal={this.props.permissionManagerInModal}
               principal={this.props.principal}

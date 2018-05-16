@@ -27,7 +27,7 @@ export default class ModalButton extends Component {
         {...this.props}
         className={this.getClassName()}
         onClick={this.handleOpenModal}
-        ref="modalButton"
+        ref={ref => { this.modalButton = ref; }}
       />
     );
   }

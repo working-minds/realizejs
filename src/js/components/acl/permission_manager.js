@@ -150,7 +150,7 @@ export default class PermissionManager extends Component {
     $.ajax({
       url: this.props.principalsBaseUrl,
       dataType: 'json',
-      async:false,
+      async: false,
       data: {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType,
@@ -168,7 +168,7 @@ export default class PermissionManager extends Component {
     $.ajax({
       url: this.props.principalsPermissionsBaseUrl,
       dataType: 'json',
-      async:false,
+      async: false,
       data: {
         resource_id: this.props.resource.id,
         resource_type: this.props.resourceType,
@@ -284,7 +284,7 @@ export default class PermissionManager extends Component {
         <div>
           <div className="principal-grid">
             <Grid
-              ref="grid"
+              ref={ref => { this.grid = ref; }}
               {...this.props.PrincipalGridProps}
               key={Math.random()}
               onClickRow={this.handleSelectPrincipal}

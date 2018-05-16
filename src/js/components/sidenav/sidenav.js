@@ -28,7 +28,7 @@ export default class SideNav extends Component {
   };
 
   componentDidMount (){
-    $(ReactDOM.findDOMNode(this.refs.sideNav)).sideNav();
+    $(ReactDOM.findDOMNode(this.sideNav)).sideNav();
   }
 
   renderMenu (){
@@ -47,7 +47,7 @@ export default class SideNav extends Component {
 
     return (
       <div>
-        <a href={this.props.href} className={this.className()} ref="sideNav" onClick={this.props.onClick} target={this.props.target} data-activates={this.props.id}>
+        <a href={this.props.href} className={this.className()} ref={ref => { this.sideNav = ref; }} onClick={this.props.onClick} target={this.props.target} data-activates={this.props.id}>
           <i className={'material-icons ' + iconAlign}>{this.props.icon}</i>
           {this.props.text}
         </a>

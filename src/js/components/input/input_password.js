@@ -30,7 +30,7 @@ export default class InputPassword extends InputBase {
         onChange={this.handleChange}
         onFocus={this.handleFocus}
         type="password"
-        ref="input"
+        ref={ref => { this.input = ref; }}
       />
     );
   }

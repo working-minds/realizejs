@@ -223,16 +223,14 @@ export default class GridForm extends Component {
 
   @autobind
   handleResetClick(event) {
-    const { form: formRef } = this.refs;
-    if (!(typeof formRef.haveNativeReset === 'function' && !!formRef.haveNativeReset())) {
+    if (!(typeof this.form.haveNativeReset === 'function' && !!this.form.haveNativeReset())) {
       this.onReset(event);
     }
   }
 
   resetForm() {
-    const { form: formRef } = this.refs;
-    if (typeof formRef.reset === 'function') {
-      formRef.reset();
+    if (typeof this.form.reset === 'function') {
+      this.form.reset();
     }
   }
 
@@ -316,17 +314,16 @@ export default class GridForm extends Component {
   }
 
   serialize() {
-    return this.refs.grid.serialize();
+    return this.grid.serialize();
   }
 
   loadGridData() {
-    this.refs.grid.loadData();
+    this.grid.loadData();
   }
 
   clearFormErrors() {
-    const { form: formRef } = this.refs;
-    if (typeof formRef.clearErrors === 'function') {
-      formRef.clearErrors();
+    if (typeof this.form.clearErrors === 'function') {
+      this.form.clearErrors();
     }
   }
 
@@ -369,7 +366,7 @@ export default class GridForm extends Component {
       onSuccess: this.onSuccess,
       onError: this.onError,
       key: `form_${uuid.v4()}`,
-      ref: 'form',
+      ref: ref => { this.form = ref; },
     });
 
     return React.createElement(this.props.formComponent, formProps, null);
@@ -380,7 +377,7 @@ export default class GridForm extends Component {
       <Grid
         {...this.getGridProps()}
         actionButtons={this.getActionButtons()}
-        ref="grid"
+        ref={ref => { this.grid = ref; }}
       />
     );
   }

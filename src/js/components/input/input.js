@@ -123,7 +123,7 @@ export default class Input extends React.Component {
   /* Serializer functions */
 
   serialize() {
-    const inputComponentRef = this.refs.inputComponent;
+    const inputComponentRef = this.inputComponent;
     if (typeof inputComponentRef.serialize === 'function') {
       return inputComponentRef.serialize();
     }
@@ -138,7 +138,7 @@ export default class Input extends React.Component {
   /* Validator */
 
   validate() {
-    const inputComponentRef = this.refs.inputComponent;
+    const inputComponentRef = this.inputComponent;
     if (typeof inputComponentRef.validate === 'function') {
       return inputComponentRef.validate();
     }
@@ -167,7 +167,7 @@ export default class Input extends React.Component {
         errors={isGrid ? errors : this.getInputErrors()}
         value={this.getInputValue()}
         maxLength={this.getMaxLength()}
-        ref="inputComponent"
+        ref={ref => { this.inputComponent = ref; }}
       />
     );
   }

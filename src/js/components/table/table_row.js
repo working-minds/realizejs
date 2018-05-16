@@ -145,12 +145,16 @@ export default class TableRow extends Component {
       return <td />;
     }
 
-    return <TableRowActions {...this.propsWithoutCSS()} ref="actions" />;
+    return <TableRowActions {...this.propsWithoutCSS()} ref={ref => { this.actions = ref; }} />;
   }
 
   render() {
     return (
-      <tr className={this.getClassName()} ref="row" onClick={this.handleRowClick}>
+      <tr
+        className={this.getClassName()}
+        ref={ref => { this.row = ref; }}
+        onClick={this.handleRowClick}
+      >
         {this.renderSelectCell()}
         {this.renderCells()}
         {this.renderActionsCell()}

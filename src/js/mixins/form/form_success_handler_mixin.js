@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from '../../prop_types';
 import { FormActions } from '../../actions';
 
-import { Flash } from '../../components';
+import Flash from '../../components/flash/flash';
 
 export default {
   propTypes: {

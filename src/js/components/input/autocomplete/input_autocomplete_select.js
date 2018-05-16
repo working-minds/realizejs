@@ -35,7 +35,7 @@ export default class InputAutocompleteSelect extends InputBase {
   }
 
   focusSelect() {
-    const selectInput = ReactDOM.findDOMNode(this.refs.select);
+    const selectInput = ReactDOM.findDOMNode(this.select);
     selectInput.focus();
   }
 
@@ -58,7 +58,7 @@ export default class InputAutocompleteSelect extends InputBase {
             placeholder={this.props.placeholder}
             onFocus={this.props.onFocus}
             errors={this.props.errors}
-            ref="select"
+            ref={ref => { this.select = ref; }}
             key={`autocomplete_select_${uuid.v4()}`}
           />
         </div>

@@ -58,7 +58,7 @@ export default class ModalForm extends Component {
           otherButtons={[]}
           onError={this.handleSubmitError}
           onSuccess={this.handleSubmitSuccess}
-          ref="form"
+          ref={ref => { this.form = ref; }}
         >
 
           {this.props.children}
@@ -100,7 +100,7 @@ export default class ModalForm extends Component {
   }
 
   submitForm(event) {
-    this.refs.form.handleSubmit(event);
+    this.form.handleSubmit(event);
     this.setState({ isLoading: true });
   }
 

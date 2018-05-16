@@ -33,19 +33,19 @@ export default class InputDatefilter extends InputBase {
   };
 
   getInputFormNode() {
-    const container = ReactDOM.findDOMNode(this.refs.container);
+    const container = ReactDOM.findDOMNode(this.container);
     return container.querySelector('input').form;
   }
 
   focusBody() {
-    const bodyNode = ReactDOM.findDOMNode(this.refs.body);
+    const bodyNode = ReactDOM.findDOMNode(this.body);
     const firstFilterInput = bodyNode.querySelector('input[type=text]');
     firstFilterInput.focus();
   }
 
   render() {
     return (
-      <div className={this.className()} ref="container">
+      <div className={this.className()} ref={ref => { this.container = ref; }}>
         <InputDatefilterSelect
           {...this.propsWithoutCSS()}
           selectedDates={this.state.selectedDates}
@@ -58,7 +58,7 @@ export default class InputDatefilter extends InputBase {
           id={this.props.originalId}
           name={this.props.originalName}
           onSelectDate={this.handleSelectDate}
-          ref="body"
+          ref={ref => { this.body = ref; }}
         />
       </div>
     );
@@ -66,7 +66,7 @@ export default class InputDatefilter extends InputBase {
 
   @autobind
   handleDocumentClick(event) {
-    const container = ReactDOM.findDOMNode(this.refs.container);
+    const container = ReactDOM.findDOMNode(this.container);
     const containerHasTargetNode = container.contains(event.target);
 
     if (!containerHasTargetNode) this.handleHideBody();

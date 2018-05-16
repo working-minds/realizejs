@@ -46,7 +46,7 @@ export default class InputDatefilterSelect extends InputBase {
             placeholder={this.props.placeholder}
             onFocus={this.props.onFocus}
             errors={this.props.errors}
-            ref="select"
+            ref={ref => { this.select = ref; }}
             key={`datefilter_select_${uuid.v4()}`}
           />
         </div>
@@ -57,7 +57,7 @@ export default class InputDatefilterSelect extends InputBase {
 
   @autobind
   handleFocusSelect() {
-    const selectInput = ReactDOM.findDOMNode(this.refs.select);
+    const selectInput = ReactDOM.findDOMNode(this.select);
     selectInput.focus();
   }
 }

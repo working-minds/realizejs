@@ -61,7 +61,7 @@ export default class InputFile extends InputBase {
   }
 
   setFilePathValue() {
-    const filePathNode = ReactDOM.findDOMNode(this.refs.filePath);
+    const filePathNode = ReactDOM.findDOMNode(this.filePath);
     const filePathField = this.getFilePathField();
 
     if (!!filePathField) {
@@ -80,8 +80,8 @@ export default class InputFile extends InputBase {
   handleChange(event) {
     super.handleChange(event);
 
-    const fileInput = ReactDOM.findDOMNode(this.refs.input);
-    const filePathInput = ReactDOM.findDOMNode(this.refs.filePath);
+    const fileInput = ReactDOM.findDOMNode(this.input);
+    const filePathInput = ReactDOM.findDOMNode(this.filePath);
 
     $(filePathInput).val(fileInput.files[0].name);
   }
@@ -97,7 +97,7 @@ export default class InputFile extends InputBase {
             onChange={this.handleChange}
             disabled={this.props.disabled || this.props.readOnly}
             type="file"
-            ref="input"
+            ref={ref => { this.input = ref; }}
           />
         </div>
         <div className={this.filePathWrapperClassName()}>
@@ -106,7 +106,7 @@ export default class InputFile extends InputBase {
             placeholder={this.getLabelName()}
             onFocus={this.handleFocus}
             type="text"
-            ref="filePath"
+            ref={ref => { this.filePath = ref; }}
           />
         </div>
       </div>

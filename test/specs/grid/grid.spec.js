@@ -808,16 +808,7 @@ describe('<Grid/>', () => {
         gridIsLoading: chance.bool()
       };
 
-      const extraProps = {[chance.word()]: chance.hash()}
-
-      const expected = <GridFilter
-        action={props.url}
-        {...props.filter}
-        isLoading={state.gridIsLoading}
-        onSubmit={onSubmit}
-        ref="filter"
-        {...extraProps}
-      />;
+      const extraProps = {[chance.word()]: chance.hash()};
 
       const wrapper = shallow(<Grid url={dummyUrl} {...props} />);
       const instance = wrapper.instance();
@@ -826,7 +817,16 @@ describe('<Grid/>', () => {
       instance.handleFilterSubmit = onSubmit;
 
       const result = instance.renderFilter(extraProps);
-      expect(result).to.be.eql(expected);
+      const { ref, ...resultProps } = result.props;
+      expect(result.type).to.be.eql(GridFilter);
+      expect(resultProps).to.be.eql({
+        ...GridFilter.defaultProps,
+        action: props.url,
+        ...props.filter,
+        isLoading: state.gridIsLoading,
+        onSubmit: onSubmit,
+        ...extraProps,
+      })
     });
   });
 

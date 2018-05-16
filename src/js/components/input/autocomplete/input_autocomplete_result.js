@@ -78,7 +78,7 @@ export default class InputAutocompleteResult extends Component {
         active={this.props.active}
         onSelect={this.props.onSelect}
         onOptionMouseEnter={this.props.onOptionMouseEnter}
-        ref="list"
+        ref={ref => { this.list = ref; }}
       />
     );
   }

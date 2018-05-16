@@ -79,7 +79,7 @@ export default class InputGridForm extends InputBase {
 
   @autobind
   handleOnSuccess() {
-    const gridFormValue = this.refs.gridForm.serialize();
+    const gridFormValue = this.gridForm.serialize();
 
     this.setState({ value: gridFormValue }, () => (
       this.props.onSuccess(gridFormValue)
@@ -88,7 +88,7 @@ export default class InputGridForm extends InputBase {
 
   @autobind
   handleOnDestroySuccess() {
-    const gridFormValue = this.refs.gridForm.serialize();
+    const gridFormValue = this.gridForm.serialize();
 
     this.setState({ value: gridFormValue }, () => (
       this.props.onDestroySuccess(gridFormValue)
@@ -123,12 +123,12 @@ export default class InputGridForm extends InputBase {
           onSuccess={this.handleOnSuccess}
           onDestroySuccess={this.handleOnDestroySuccess}
           errors={this.props.errors}
-          ref="gridForm"
+          ref={ref => { this.gridForm = ref; }}
         />
         <InputHidden
           {...this.propsWithoutCSS()}
           value={this.serialize()}
-          ref="input"
+          ref={ref => { this.input = ref; }}
         />
       </div>
     );

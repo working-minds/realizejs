@@ -8,11 +8,9 @@ import { FormActions } from '../../actions';
 import { mixin, autobind } from '../../utils/decorators';
 import { config } from '../../realize';
 
-import {
-  InputGroup,
-  FormButtonGroup,
-  Input,
-} from '../../components';
+import InputGroup from './input_group';
+import FormButtonGroup from './form_button_group';
+import Input from '../input/input';
 
 import {
   CssClassMixin,
@@ -122,7 +120,7 @@ export default class Form extends Component {
   }
 
   validate(event, postData) {
-    const inputGroup = this.refs.inputGroup;
+    const inputGroup = this.inputGroup;
     if (!inputGroup) return;
 
     const validationErrors = inputGroup.validate();
@@ -133,12 +131,12 @@ export default class Form extends Component {
   }
 
   jquerySerialize() {
-    const form = ReactDOM.findDOMNode(this.refs.form);
+    const form = ReactDOM.findDOMNode(this.form);
     return $(form).serializeObject();
   }
 
   inputsSerialize() {
-    const inputGroup = this.refs.inputGroup;
+    const inputGroup = this.inputGroup;
     return inputGroup.serialize();
   }
 
@@ -184,7 +182,7 @@ export default class Form extends Component {
     }
 
     if (this.props.multipart) {
-      const fd = new FormData(ReactDOM.findDOMNode(this.refs.form));
+      const fd = new FormData(ReactDOM.findDOMNode(this.form));
       const multipartOptions = {
         data: fd,
         enctype: 'multipart/form-data',
@@ -200,7 +198,7 @@ export default class Form extends Component {
   }
 
   formSubmit() {
-    const formNode = ReactDOM.findDOMNode(this.refs.form);
+    const formNode = ReactDOM.findDOMNode(this.form);
     formNode.submit();
   }
 
@@ -211,7 +209,7 @@ export default class Form extends Component {
   }
 
   reset() {
-    const formNode = ReactDOM.findDOMNode(this.refs.form);
+    const formNode = ReactDOM.findDOMNode(this.form);
     formNode.reset();
   }
 
@@ -242,7 +240,7 @@ export default class Form extends Component {
         {...this.propsWithoutCSS()}
         formStyle={this.props.formStyle}
         errors={this.state.errors}
-        ref="inputGroup"
+        ref={ref => { this.inputGroup = ref; }}
       />
     );
   }
@@ -258,7 +256,7 @@ export default class Form extends Component {
         onReset={this.handleReset}
         className={this.className()}
         hidden={this.props.hidden}
-        ref="form"
+        ref={ref => { this.form = ref; }}
       >
 
         {this.renderFlashErrors()}

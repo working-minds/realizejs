@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from '../../prop_types';
 import { autobind, mixin } from '../../utils/decorators';
+import { i18n } from '../../realize';
 
 import { Grid } from '../../components';
 
@@ -51,7 +52,8 @@ export default class IndexPermissions extends Component {
 
   @autobind
   onLoadSuccess() {
-    const dataRows = this.refs.grid.state.dataRows;
+    // TODO(rferrari): remove state access via refs
+    const dataRows = this.grid.state.dataRows;
     if (dataRows.length === 0) {
       this.setState({
         hasResource: false,
@@ -91,7 +93,7 @@ export default class IndexPermissions extends Component {
   defaultColumns(resourceType) {
     return {
       resource_name: {
-        label: I18n.t(`models.${resourceType}`),
+        label: i18n.t(`models.${resourceType}`),
       },
       permission: {
         label: 'Permissão',
@@ -131,7 +133,7 @@ export default class IndexPermissions extends Component {
       <div className={this.props.className} style={{ display }}>
         <Grid
           {...this.props.gridProps}
-          ref="grid"
+          ref={ref => { this.grid = ref; }}
           columns={this.getColumns()}
           filter={this.filters()}
           onLoadSuccess={this.onLoadSuccess}

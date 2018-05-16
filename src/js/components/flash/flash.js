@@ -5,7 +5,8 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import CssClassMixin from '../../mixins/css_class_mixin';
 
-import {FlashContent, FlashDismiss} from '../flash';
+import FlashContent from './flash_content';
+import FlashDismiss from './flash_dismiss';
 
 @mixin(CssClassMixin)
 export default class Flash extends Component {
@@ -49,7 +50,7 @@ export default class Flash extends Component {
 
   renderFlash () {
     return (
-      <div className={this.className()} ref="flash">
+      <div className={this.className()} ref={ref => { this.flash = ref; }}>
         <FlashContent {...this.props} />
         {this.props.canDismiss ? <FlashDismiss {...this.props} onClick={this.dismiss} />: ''}
       </div>

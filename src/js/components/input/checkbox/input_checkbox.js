@@ -24,7 +24,7 @@ export default class InputCheckbox extends InputCheckboxBase {
         onChange={this.handleChange}
         disabled={this.props.disabled || this.props.readOnly}
         type="checkbox"
-        ref="input"
+        ref={ref => { this.input = ref; }}
       />
     );
   }

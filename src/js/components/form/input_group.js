@@ -56,15 +56,15 @@ export default class InputGroup extends Component {
   }
 
   serialize() {
-    return Object.keys(this.refs)
+    return Object.keys(this)
       .filter(refKey => refKey.match(/^input_/))
-      .reduce((acc, refKey) => Object.assign({}, acc, this.refs[refKey].serialize()), {});
+      .reduce((acc, refKey) => Object.assign({}, acc, this[refKey].serialize()), {});
   }
 
   validate() {
-    return Object.keys(this.refs)
-      .filter(refKey => refKey.match(/^input_/) && typeof this.refs[refKey].validate === 'function')
-      .reduce((acc, refKey) => Object.assign({}, acc, this.refs[refKey].validate()), {});
+    return Object.keys(this)
+      .filter(refKey => refKey.match(/^input_/) && typeof this[refKey].validate === 'function')
+      .reduce((acc, refKey) => Object.assign({}, acc, this[refKey].validate()), {});
   }
 
   renderInputs() {
@@ -84,7 +84,7 @@ export default class InputGroup extends Component {
           data={data}
           resource={resource}
           key={`input_${inputKey}_${i}`}
-          ref={`input_${inputKey}_${i}`}
+          ref={ref => { this[`input_${inputKey}_${i}`] = ref; }}
         />
       );
     });

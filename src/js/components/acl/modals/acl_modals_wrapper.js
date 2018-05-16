@@ -51,7 +51,7 @@ export default class AclModalsWrapper extends Component {
 
     this.performRequest(url, data, 'POST');
     $('#add-principals-modal').closeModal();
-    this.refs.permissionManagerModal.loadPrincipalsPermissions(selectedDatas);
+    this.permissionManagerModal.loadPrincipalsPermissions(selectedDatas);
   }
 
   @autobind
@@ -73,7 +73,7 @@ export default class AclModalsWrapper extends Component {
     const component = [];
     component.push(
       <PermissionManagerModal
-        ref="permissionManagerModal"
+        ref={ref => { this.permissionManagerModal = ref; }}
         title={this.props.title}
         resource={this.props.resource}
         resourceType={this.props.resourceType}

@@ -13,7 +13,7 @@ export default class FormButtonGroup extends Component {
     inputs: PropTypes.object,
     submitButton: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     otherButtons: PropTypes.array,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -21,13 +21,13 @@ export default class FormButtonGroup extends Component {
     inputs: {},
     submitButton: {
       name: 'actions.send',
-      icon: 'send'
+      icon: 'send',
     },
     otherButtons: [],
-    isLoading: false
+    isLoading: false,
   };
 
-  renderOtherButtons () {
+  renderOtherButtons() {
     if (!isEmpty(this.props.inputs) && this.isAllInputsHidden()) {
       return '';
     }
@@ -35,7 +35,7 @@ export default class FormButtonGroup extends Component {
     var otherButtonsProps = this.props.otherButtons;
     var otherButtons = [];
 
-    for(var i = 0; i < otherButtonsProps.length; i++) {
+    for (var i = 0; i < otherButtonsProps.length; i++) {
       var otherButtonProps = otherButtonsProps[i];
       otherButtons.push(<Button {...otherButtonProps} key={otherButtonProps.name} />);
     }
@@ -43,17 +43,21 @@ export default class FormButtonGroup extends Component {
     return otherButtons;
   }
 
-  renderSubmitButton () {
+  renderSubmitButton() {
     if ((!isEmpty(this.props.inputs) && this.isAllInputsHidden()) || !this.props.submitButton) {
       return '';
     }
 
-    var submitButton = [];
-    submitButton.push(<Button {...this.submitButtonProps()} ref="submitButton" key='submit_button' />);
-    return submitButton;
+    return (
+      <Button
+        {...this.submitButtonProps()}
+        ref={ref => { this.submitButton = ref; }}
+        key="submit_button"
+      />
+    );
   }
 
-  render () {
+  render() {
     return (
       <div className={this.className()}>
         {this.renderOtherButtons()}
@@ -62,12 +66,12 @@ export default class FormButtonGroup extends Component {
     );
   }
 
-  isAllInputsHidden () {
+  isAllInputsHidden() {
     var allHidden = true;
     var inputs = this.props.inputs;
 
-    for(var property in inputs ) {
-      if(inputs.hasOwnProperty(property)) {
+    for (var property in inputs) {
+      if (inputs.hasOwnProperty(property)) {
         var input = inputs[property];
         if (input.component !== 'hidden')
           return allHidden = false;
@@ -77,12 +81,12 @@ export default class FormButtonGroup extends Component {
     return allHidden;
   }
 
-  submitButtonProps () {
+  submitButtonProps() {
     var isLoading = this.props.isLoading;
     return $.extend({}, this.props.submitButton, {
-      type: "submit",
+      type: 'submit',
       disabled: isLoading,
-      isLoading: isLoading
+      isLoading,
     });
   }
 }
